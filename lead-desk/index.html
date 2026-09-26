@@ -1,0 +1,785 @@
+<title>Valley Lead Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#F3F4F0; --surface:#FFFFFF; --surface-2:#EAECE6; --line:#D9DDD4;
+  --ink:#1A1F1C; --muted:#5C655F; --faint:#8A928C;
+  --accent:#2E6A4E; --accent-ink:#FFFFFF; --accent-soft:#DDEBE3;
+  --sun:#B86E00; --sun-soft:#FBEBD0;
+  --danger:#B3261E; --danger-soft:#F8DEDB;
+  --s-new:#4B5D73; --s-new-bg:#E3E8EF;
+  --s-contacted:#2A5DB0; --s-contacted-bg:#DEE7F7;
+  --s-interested:#9A5B00; --s-interested-bg:#FBEBD0;
+  --s-sample:#6B3FA0; --s-sample-bg:#ECE2F7;
+  --s-won:#1F6B43; --s-won-bg:#D6EDDF;
+  --s-lost:#6E736F; --s-lost-bg:#E6E8E5;
+  --shadow:0 12px 40px rgba(20,30,24,.18);
+  --display:"Bricolage Grotesque", "Figtree", system-ui, sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#101412; --surface:#181D1A; --surface-2:#212824; --line:#2E3631;
+    --ink:#E6EBE7; --muted:#A3ADA6; --faint:#77817A;
+    --accent:#62B98C; --accent-ink:#0C1410; --accent-soft:#1E3429;
+    --sun:#F0A73A; --sun-soft:#3A2A10;
+    --danger:#F08A80; --danger-soft:#3D1D1A;
+    --s-new:#AEBCCD; --s-new-bg:#26303B;
+    --s-contacted:#8FB3F0; --s-contacted-bg:#1E2B42;
+    --s-interested:#F0B45E; --s-interested-bg:#3A2A10;
+    --s-sample:#C5A3EE; --s-sample-bg:#2F2240;
+    --s-won:#7FD3A5; --s-won-bg:#1B3528;
+    --s-lost:#9AA19C; --s-lost-bg:#262B28;
+    --shadow:0 12px 40px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#101412; --surface:#181D1A; --surface-2:#212824; --line:#2E3631;
+  --ink:#E6EBE7; --muted:#A3ADA6; --faint:#77817A;
+  --accent:#62B98C; --accent-ink:#0C1410; --accent-soft:#1E3429;
+  --sun:#F0A73A; --sun-soft:#3A2A10;
+  --danger:#F08A80; --danger-soft:#3D1D1A;
+  --s-new:#AEBCCD; --s-new-bg:#26303B;
+  --s-contacted:#8FB3F0; --s-contacted-bg:#1E2B42;
+  --s-interested:#F0B45E; --s-interested-bg:#3A2A10;
+  --s-sample:#C5A3EE; --s-sample-bg:#2F2240;
+  --s-won:#7FD3A5; --s-won-bg:#1B3528;
+  --s-lost:#9AA19C; --s-lost-bg:#262B28;
+  --shadow:0 12px 40px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:1080px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-block:28px 18px}
+.brand small{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.brand h1{font-size:30px;font-weight:800;letter-spacing:-.01em}
+.brand h1 span{color:var(--accent)}
+.stats{display:flex;flex-wrap:wrap;gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-width:108px}
+.stat b{display:block;font-family:var(--mono);font-size:20px;font-weight:500;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+.stat.money{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.stat.money span{color:inherit;opacity:.85}
+
+/* tabs */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.tab{background:none;border:0;padding:12px 14px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
+.tab .count{font-family:var(--mono);font-size:12px;margin-left:6px;padding:1px 6px;border-radius:99px;background:var(--surface-2);color:var(--muted)}
+.tab .count.hot{background:var(--sun-soft);color:var(--sun)}
+section.view{padding-top:22px}
+
+.banner{margin-top:16px;padding:12px 14px;border-radius:10px;background:var(--sun-soft);color:var(--ink);border:1px solid var(--line)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 12px;font-weight:600;font-size:14px}
+.btn:hover{border-color:var(--faint)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--danger)}
+.btn.small{padding:4px 9px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+
+/* today */
+.group{margin-bottom:28px}
+.group-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.group-head h2{font-size:19px;font-weight:600}
+.group-head p{margin:0;color:var(--muted);font-size:14px}
+.empty{color:var(--muted);font-size:14px;padding:14px;border:1px dashed var(--line);border-radius:10px}
+
+.task{display:grid;grid-template-columns:1fr auto;gap:10px 16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.task.due{border-left-color:var(--sun)}
+.task.fresh{border-left-color:var(--s-new)}
+.task.req{border-left-color:var(--s-sample)}
+.task .who{min-width:0}
+.task .who strong{font-size:16px}
+.task .who .meta{color:var(--muted);font-size:13.5px}
+.task .who .why{font-size:13.5px;margin-top:2px}
+.task .acts{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+@media (max-width:640px){.task{grid-template-columns:1fr}.task .acts{justify-content:flex-start}}
+
+.phone{font-family:var(--mono);font-size:14px;white-space:nowrap}
+.copy{border:0;background:var(--surface-2);border-radius:6px;padding:2px 7px;font-size:12px;color:var(--muted);margin-left:4px}
+
+/* leads list */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.toolbar input[type=search]{flex:1 1 220px;min-width:0}
+.field,.toolbar input,.toolbar select{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.list{display:flex;flex-direction:column;gap:6px}
+.lead{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr) auto minmax(0,1.1fr);gap:12px;align-items:center;text-align:left;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 14px}
+.lead:hover{border-color:var(--faint)}
+.lead .name{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lead .meta{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lead .fu{font-size:13px;color:var(--muted);text-align:right}
+.lead .fu.late{color:var(--sun);font-weight:600}
+@media (max-width:720px){
+  .lead{grid-template-columns:1fr auto}
+  .lead .ph{grid-column:1}
+  .lead .fu{text-align:right}
+}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap;letter-spacing:.01em}
+.s-new{color:var(--s-new);background:var(--s-new-bg)}
+.s-contacted{color:var(--s-contacted);background:var(--s-contacted-bg)}
+.s-interested{color:var(--s-interested);background:var(--s-interested-bg)}
+.s-sample{color:var(--s-sample);background:var(--s-sample-bg)}
+.s-won{color:var(--s-won);background:var(--s-won-bg)}
+.s-lost{color:var(--s-lost);background:var(--s-lost-bg)}
+
+.funnel{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.funnel button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 11px;font-size:13px;font-weight:600;color:var(--muted)}
+.funnel button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.funnel .n{font-family:var(--mono);margin-left:5px}
+
+/* clients */
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.r,th.r{text-align:right}
+tfoot td{font-weight:700;border-bottom:0}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--surface-2)}
+
+/* scripts */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
+.card h3{font-size:17px;font-weight:600;margin-bottom:8px}
+.card p,.card li{max-width:65ch}
+.script{background:var(--surface-2);border-radius:8px;padding:12px 14px;margin:8px 0;white-space:pre-wrap}
+.obj dt{font-weight:700;margin-top:10px}
+.obj dd{margin:2px 0 0}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-grid .full{grid-column:1/-1}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:var(--muted)}
+label.f .field{font-weight:400;color:var(--ink);width:100%}
+textarea.field{resize:vertical;min-height:70px}
+@media (max-width:520px){.form-grid{grid-template-columns:1fr}}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,15,12,.45);z-index:20}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(540px,100%);background:var(--bg);z-index:21;box-shadow:var(--shadow);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.drawer-head h2{font-size:20px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drawer-body{overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:18px}
+.drawer-foot{display:flex;flex-wrap:wrap;gap:8px;padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
+.drawer-foot .spacer{flex:1}
+.block h4{margin:0 0 8px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:6px}
+.history{list-style:none;margin:0;padding:0;font-size:14px}
+.history li{display:grid;grid-template-columns:86px 1fr;gap:8px;padding:5px 0;border-bottom:1px solid var(--line)}
+.history li span:first-child{color:var(--muted);font-family:var(--mono);font-size:12.5px}
+.draft{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
+.draft pre{white-space:pre-wrap;font:inherit;margin:6px 0 10px}
+.confirm{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:var(--danger-soft);border-radius:8px;padding:8px 10px;font-size:14px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;z-index:40;max-width:calc(100% - 32px)}
+@media (prefers-reduced-motion:no-preference){.drawer{animation:slide .18s ease-out}@keyframes slide{from{transform:translateX(24px);opacity:.6}}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <small id="agency-line">Phoenix Valley · web + ads</small>
+      <h1>Valley <span>Lead Desk</span></h1>
+    </div>
+    <div class="stats" aria-label="Summary">
+      <div class="stat"><b id="st-leads">0</b><span>Active leads</span></div>
+      <div class="stat"><b id="st-today">0</b><span>To do today</span></div>
+      <div class="stat"><b id="st-clients">0</b><span>Clients</span></div>
+      <div class="stat money"><b id="st-mrr">$0</b><span>Monthly recurring</span></div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="today" aria-selected="true">Today<span class="count" id="c-today">0</span></button>
+    <button class="tab" role="tab" data-tab="leads" aria-selected="false">Leads<span class="count" id="c-leads">0</span></button>
+    <button class="tab" role="tab" data-tab="clients" aria-selected="false">Clients<span class="count" id="c-clients">0</span></button>
+    <button class="tab" role="tab" data-tab="scripts" aria-selected="false">Scripts &amp; setup</button>
+  </nav>
+
+  <div class="banner" id="banner" hidden></div>
+
+  <section class="view" id="v-today"></section>
+
+  <section class="view" id="v-leads" hidden>
+    <div class="funnel" id="funnel"></div>
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="Search name, owner, phone, notes…" aria-label="Search leads">
+      <select id="f-cat" aria-label="Type of business"></select>
+      <select id="f-city" aria-label="City"></select>
+      <select id="f-sort" aria-label="Sort">
+        <option value="follow">Sort: follow-up date</option>
+        <option value="new">Sort: newest</option>
+        <option value="name">Sort: name</option>
+      </select>
+      <button class="btn primary" id="add-lead">+ Add lead</button>
+    </div>
+    <div class="list" id="list"></div>
+  </section>
+
+  <section class="view" id="v-clients" hidden></section>
+
+  <section class="view" id="v-scripts" hidden>
+    <div class="cols">
+      <div class="card">
+        <h3>Call script</h3>
+        <p style="color:var(--muted);margin-top:0">About 30 seconds. Fills in your name from the setup card.</p>
+        <div class="script" id="script-call"></div>
+        <h3 style="margin-top:16px">If they push back</h3>
+        <dl class="obj">
+          <dt>"I get enough work from Facebook."</dt>
+          <dd>"That's great. A website catches the people who never open Facebook. They Google '<i>[service] near me</i>' and call whoever shows up first."</dd>
+          <dt>"How much is it?"</dt>
+          <dd id="obj-price"></dd>
+          <dt>"I already have a guy."</dt>
+          <dd>"No problem. If you ever want a second opinion, I'll text you the free sample anyway so you can compare."</dd>
+          <dt>"Send me some info."</dt>
+          <dd>"Even better, I'll send you your own sample site. What's the best number to text?"</dd>
+          <dt>"Not interested."</dt>
+          <dd>"All good. Mind if I text the sample anyway? If you never look at it, no harm done."</dd>
+        </dl>
+        <h3 style="margin-top:16px">Voicemail</h3>
+        <div class="script" id="script-vm"></div>
+        <h3 style="margin-top:16px">Text after the call</h3>
+        <div class="script" id="script-text"></div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card">
+          <h3>Your details</h3>
+          <p style="color:var(--muted);margin-top:0">Used in scripts and email drafts. Email law (CAN-SPAM) requires a real mailing address in every cold email.</p>
+          <form id="settings-form" class="form-grid">
+            <label class="f">Your name<input class="field" id="s-yourName" autocomplete="name"></label>
+            <label class="f">Business name<input class="field" id="s-agencyName" placeholder="Optional for now"></label>
+            <label class="f">Phone<input class="field" id="s-phone" autocomplete="tel"></label>
+            <label class="f">Email<input class="field" id="s-email" type="email" autocomplete="email"></label>
+            <label class="f full">Mailing address<input class="field" id="s-address" placeholder="A PO box works"></label>
+            <label class="f">Website build fee ($)<input class="field num" id="s-buildFee" inputmode="numeric"></label>
+            <label class="f">Hosting ($/month)<input class="field num" id="s-hosting" inputmode="numeric"></label>
+            <label class="f">Ads management ($/month)<input class="field num" id="s-ads" inputmode="numeric"></label>
+            <div class="full"><button class="btn primary" type="submit" id="s-save">Save details</button></div>
+          </form>
+        </div>
+        <div class="card">
+          <h3>Cold email rules</h3>
+          <ul style="padding-left:18px;margin:0">
+            <li>Send 20–30 a day at most from a new inbox.</li>
+            <li>Use your real name and a subject line that matches the email.</li>
+            <li>Include your mailing address and a way to opt out.</li>
+            <li>If someone says stop, mark them "Not interested" and never email again.</li>
+            <li>Read every draft before you send it.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Working with Claude</h3>
+          <p style="margin:0 0 8px">This desk shares its data with Claude. In a chat you can say:</p>
+          <ul style="padding-left:18px;margin:0">
+            <li>"Find 20 more leads in Scottsdale and add them to my lead desk."</li>
+            <li>"Build my requested sample sites."</li>
+            <li>"Who should I call today?"</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-labelledby="d-title" role="dialog">
+  <div class="drawer-head">
+    <h2 id="d-title">Lead</h2>
+    <button class="btn ghost" id="d-close" aria-label="Close">Close</button>
+  </div>
+  <div class="drawer-body">
+    <div class="block" id="d-quick"></div>
+    <form id="lead-form" class="form-grid">
+      <label class="f full">Business name<input class="field" id="l-name" required></label>
+      <label class="f">Owner<input class="field" id="l-owner"></label>
+      <label class="f">Type of business<input class="field" id="l-category" list="cat-list" placeholder="e.g. Mobile detailing"></label>
+      <label class="f">City<input class="field" id="l-city" list="city-list"></label>
+      <label class="f">Stage
+        <select class="field" id="l-stage"></select>
+      </label>
+      <label class="f">Phone<input class="field num" id="l-phone" inputmode="tel"></label>
+      <label class="f">Email<input class="field" id="l-email" type="email"></label>
+      <label class="f">Follow up on<input class="field" id="l-followUp" type="date"></label>
+      <label class="f">Where we found them (link)<input class="field" id="l-sourceUrl" placeholder="https://"></label>
+      <label class="f full">Why they're a good lead<textarea class="field" id="l-why" rows="2"></textarea></label>
+      <label class="f full">Notes<textarea class="field" id="l-notes" rows="3"></textarea></label>
+      <label class="f full">Sample site link<input class="field" id="l-sampleUrl" placeholder="Claude adds this when the sample is built"></label>
+      <label class="f">Build fee ($)<input class="field num" id="l-buildFee" inputmode="numeric"></label>
+      <label class="f">Hosting ($/mo)<input class="field num" id="l-hosting" inputmode="numeric"></label>
+      <label class="f">Ads ($/mo)<input class="field num" id="l-ads" inputmode="numeric"></label>
+      <label class="f">Live website<input class="field" id="l-liveUrl" placeholder="After they're a client"></label>
+    </form>
+    <div class="block" id="d-email" hidden></div>
+    <div class="block" id="d-report" hidden></div>
+    <div class="block" id="d-history-block">
+      <h4>History</h4>
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <input class="field" id="d-note" placeholder="Add a note (e.g. talked to Ethan, call back Friday)" style="flex:1;min-width:0">
+        <button class="btn" id="d-note-add">Add</button>
+      </div>
+      <ul class="history" id="d-history"></ul>
+    </div>
+    <div id="d-confirm"></div>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn danger" id="d-delete">Delete</button>
+    <span class="spacer"></span>
+    <button class="btn" id="d-cancel">Cancel</button>
+    <button class="btn primary" id="d-save">Save</button>
+  </div>
+</aside>
+<datalist id="cat-list"></datalist>
+<datalist id="city-list"></datalist>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+const STAGES=[
+  {id:'new',label:'New'},
+  {id:'contacted',label:'Contacted'},
+  {id:'interested',label:'Interested'},
+  {id:'sample',label:'Sample sent'},
+  {id:'won',label:'Client'},
+  {id:'lost',label:'Not interested'}
+];
+const stageLabel=id=>(STAGES.find(s=>s.id===id)||STAGES[0]).label;
+const ACTIVE=['new','contacted','interested','sample'];
+
+let db=null, sample=null;
+let leads=[], settings={};
+let tab='today', stageFilter='active';
+let editing=null; // lead object or {} for new
+const busy=new Set();
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'$'+Math.round(n||0).toLocaleString('en-US');
+const numOr0=v=>{const n=parseFloat(String(v??'').replace(/[^0-9.]/g,''));return isFinite(n)?n:0};
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function addDays(n){const d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function daysAgo(ds){if(!ds)return 999;const a=new Date(ds+'T12:00:00'),b=new Date(today()+'T12:00:00');return Math.round((b-a)/864e5)}
+function fmtDate(ds){if(!ds)return '';const d=new Date(ds+'T12:00:00');return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}
+const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'';
+const mrrOf=l=>numOr0(l.hosting)+numOr0(l.ads);
+
+function toast(msg){const t=$('toast');t.textContent=msg;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2600)}
+async function copy(text){try{await navigator.clipboard.writeText(text);toast('Copied')}catch(e){toast('Copy blocked here. Select the text and copy it.')}}
+
+/* ---------- derived lists ---------- */
+function todayBuckets(){
+  const t=today();
+  const due=[],fresh=[],req=[];
+  for(const l of leads){
+    if(l.sampleRequested && !l.sampleUrl && l.stage!=='lost') req.push(l);
+    if(!ACTIVE.includes(l.stage)) continue;
+    if(l.followUp && l.followUp<=t){due.push({l,why:l.followUp<t?'Follow-up was due '+fmtDate(l.followUp):'Follow-up due today'});continue}
+    if(l.stage==='sample' && daysAgo(l.lastContact)>=3 && !l.followUp){due.push({l,why:'Sample sent '+daysAgo(l.lastContact)+' days ago with no reply'});continue}
+    if(l.stage==='new') fresh.push(l);
+  }
+  due.sort((a,b)=>(a.l.followUp||'').localeCompare(b.l.followUp||''));
+  fresh.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+  return {due,fresh,req};
+}
+
+/* ---------- render ---------- */
+function render(){
+  const active=leads.filter(l=>ACTIVE.includes(l.stage));
+  const clients=leads.filter(l=>l.stage==='won');
+  const mrr=clients.reduce((s,l)=>s+mrrOf(l),0);
+  const b=todayBuckets();
+  const todo=b.due.length+Math.min(b.fresh.length,10);
+  $('st-leads').textContent=active.length;
+  $('st-today').textContent=todo;
+  $('st-clients').textContent=clients.length;
+  $('st-mrr').textContent=money(mrr);
+  $('c-today').textContent=todo; $('c-today').classList.toggle('hot',b.due.length>0);
+  $('c-leads').textContent=leads.length;
+  $('c-clients').textContent=clients.length;
+  $('agency-line').textContent=(settings.agencyName?settings.agencyName+' · ':'')+'Phoenix Valley · web + ads';
+  renderToday(b); renderLeads(); renderClients(clients,mrr); renderScripts(); renderLists();
+}
+
+function taskRow(l,cls,why,acts){
+  return `<div class="task ${cls}">
+    <div class="who">
+      <strong>${esc(l.name)}</strong> <span class="pill s-${esc(l.stage)}">${esc(stageLabel(l.stage))}</span>
+      <div class="meta">${esc([l.category,l.city,l.owner&&('Owner: '+l.owner)].filter(Boolean).join(' · '))}</div>
+      ${l.phone?`<div><span class="phone">${esc(l.phone)}</span><button class="copy" data-copy="${esc(l.phone)}">Copy</button></div>`:''}
+      ${why?`<div class="why">${esc(why)}</div>`:''}
+    </div>
+    <div class="acts">${acts}</div>
+  </div>`;
+}
+function renderToday(b){
+  const v=$('v-today');
+  if(!leads.length){v.innerHTML=`<div class="empty">No leads yet. Tap <b>Leads → + Add lead</b>, or ask Claude to find some for you.</div>`;return}
+  const callActs=id=>`<button class="btn small" data-q="noanswer" data-id="${id}">No answer</button>
+    <button class="btn small" data-q="interested" data-id="${id}">Interested</button>
+    <button class="btn small" data-q="lost" data-id="${id}">Not interested</button>
+    <button class="btn small ghost" data-open="${id}">Open</button>`;
+  let h='';
+  h+=`<div class="group"><div class="group-head"><h2>Follow up</h2><p>${b.due.length?b.due.length+' waiting on you':'Nothing overdue'}</p></div>`;
+  h+=b.due.length?b.due.map(x=>taskRow(x.l,'due',x.why+(x.l.notes?' · '+x.l.notes:''),callActs(esc(x.l.id)))).join(''):`<div class="empty">You're caught up. Follow-ups you set on a lead show up here on their day.</div>`;
+  h+=`</div>`;
+  h+=`<div class="group"><div class="group-head"><h2>New leads to call</h2><p>${b.fresh.length>10?'Top 10 of '+b.fresh.length:b.fresh.length+' ready'}</p></div>`;
+  h+=b.fresh.length?b.fresh.slice(0,10).map(l=>taskRow(l,'fresh',l.why,callActs(esc(l.id)))).join(''):`<div class="empty">No new leads. Ask Claude: "Find 20 more leads and add them to my lead desk."</div>`;
+  h+=`</div>`;
+  if(b.req.length){
+    h+=`<div class="group"><div class="group-head"><h2>Sample sites requested</h2><p>Tell Claude "build my requested sample sites"</p></div>`;
+    h+=b.req.map(l=>taskRow(l,'req','Waiting for Claude to build the sample',`<button class="btn small ghost" data-open="${esc(l.id)}">Open</button>`)).join('');
+    h+=`</div>`;
+  }
+  v.innerHTML=h;
+}
+
+function fillSelect(sel,label,values){
+  const cur=sel.value;
+  sel.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option>${esc(v)}</option>`).join('');
+  if(values.includes(cur)) sel.value=cur;
+}
+function uniq(key){return [...new Set(leads.map(l=>(l[key]||'').trim()).filter(Boolean))].sort()}
+function renderLists(){
+  $('cat-list').innerHTML=uniq('category').map(v=>`<option value="${esc(v)}">`).join('');
+  $('city-list').innerHTML=uniq('city').map(v=>`<option value="${esc(v)}">`).join('');
+}
+function renderLeads(){
+  fillSelect($('f-cat'),'All types',uniq('category'));
+  fillSelect($('f-city'),'All cities',uniq('city'));
+  const counts={active:leads.filter(l=>ACTIVE.includes(l.stage)).length,all:leads.length};
+  STAGES.forEach(s=>counts[s.id]=leads.filter(l=>l.stage===s.id).length);
+  const chips=[{id:'active',label:'Active'},...STAGES,{id:'all',label:'All'}];
+  $('funnel').innerHTML=chips.map(c=>`<button data-stage="${c.id}" aria-pressed="${stageFilter===c.id}">${esc(c.label)}<span class="n">${counts[c.id]||0}</span></button>`).join('');
+
+  const q=$('q').value.trim().toLowerCase(), cat=$('f-cat').value, city=$('f-city').value, sort=$('f-sort').value;
+  let rows=leads.filter(l=>{
+    if(stageFilter==='active'&&!ACTIVE.includes(l.stage))return false;
+    if(stageFilter!=='active'&&stageFilter!=='all'&&l.stage!==stageFilter)return false;
+    if(cat&&(l.category||'').trim()!==cat)return false;
+    if(city&&(l.city||'').trim()!==city)return false;
+    if(q&&![l.name,l.owner,l.category,l.city,l.phone,l.email,l.notes,l.why].join(' ').toLowerCase().includes(q))return false;
+    return true;
+  });
+  if(sort==='name')rows.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  else if(sort==='new')rows.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+  else rows.sort((a,b)=>(a.followUp||'9999').localeCompare(b.followUp||'9999')||(a.name||'').localeCompare(b.name||''));
+  const t=today();
+  $('list').innerHTML=rows.length?rows.map(l=>`
+    <button class="lead" data-open="${esc(l.id)}">
+      <span style="min-width:0"><span class="name" style="display:block">${esc(l.name)}</span><span class="meta" style="display:block">${esc([l.category,l.city].filter(Boolean).join(' · '))}</span></span>
+      <span class="ph phone">${esc(l.phone||'')}</span>
+      <span class="pill s-${esc(l.stage)}">${esc(stageLabel(l.stage))}</span>
+      <span class="fu ${l.followUp&&l.followUp<=t&&ACTIVE.includes(l.stage)?'late':''}">${l.followUp?'Follow up '+esc(fmtDate(l.followUp)):''}</span>
+    </button>`).join(''):`<div class="empty">No leads match these filters.</div>`;
+}
+
+function renderClients(clients,mrr){
+  const v=$('v-clients');
+  if(!clients.length){v.innerHTML=`<div class="empty">No paying clients yet. When you close a deal, open the lead, set the stage to <b>Client</b> and enter what they pay. Your monthly recurring total updates at the top.</div>`;return}
+  const setup=clients.reduce((s,l)=>s+numOr0(l.buildFee),0);
+  v.innerHTML=`<div class="tablewrap"><table>
+    <thead><tr><th>Client</th><th>Since</th><th class="r">Hosting</th><th class="r">Ads</th><th class="r">Monthly</th><th class="r">Build fee</th></tr></thead>
+    <tbody>${clients.sort((a,b)=>mrrOf(b)-mrrOf(a)).map(l=>`<tr data-open="${esc(l.id)}">
+      <td><b>${esc(l.name)}</b><div style="color:var(--muted);font-size:13px">${esc(l.city||'')}${safeUrl(l.liveUrl)?' · site live':''}</div></td>
+      <td>${esc(fmtDate(l.wonAt))}</td>
+      <td class="r num">${money(l.hosting)}</td><td class="r num">${money(l.ads)}</td>
+      <td class="r num"><b>${money(mrrOf(l))}</b></td><td class="r num">${money(l.buildFee)}</td></tr>`).join('')}</tbody>
+    <tfoot><tr><td>Total</td><td></td><td class="r num">${money(clients.reduce((s,l)=>s+numOr0(l.hosting),0))}</td><td class="r num">${money(clients.reduce((s,l)=>s+numOr0(l.ads),0))}</td><td class="r num">${money(mrr)}</td><td class="r num">${money(setup)}</td></tr></tfoot>
+  </table></div>
+  <p style="color:var(--muted);font-size:14px">That's <b class="num">${money(mrr*12)}</b> a year in recurring income. Open a client to write their monthly ads report.</p>`;
+}
+
+function renderScripts(){
+  const n=settings.yourName||'[your name]';
+  $('script-call').textContent=`"Hey, is this [owner]? My name's ${n}, I'm a local web designer here in the Valley. I was looking you up and saw you've got great reviews, but no website. So people searching Google are probably finding your competitors instead of you.
+
+I build sites for local businesses. Would it be alright if I put together a free sample site for [business]? No cost, no commitment. If you like it we talk, if not, no problem. Can I text it to you this week?"`;
+  $('script-vm').textContent=`"Hey [owner], this is ${n}, a local web designer. I saw [business] has great reviews but no website, and I'd like to build you a free sample, no strings. Call or text me back at ${settings.phone||'[your number]'}. Thanks!"`;
+  $('script-text').textContent=`Hey [owner], it's ${n}. Thanks for the chat! Here's the sample site I made for [business]: [link]. Let me know what you think. Happy to tweak anything.`;
+  const fee=numOr0(settings.buildFee), host=numOr0(settings.hosting);
+  $('obj-price').textContent=fee||host
+    ? `"Let me show you the free sample first. If you love it, it's ${fee?money(fee)+' to build':'a one-time build fee'}${host?' and '+money(host)+' a month to keep it online and updated':''}. Usually one job pays for it."`
+    : `"Let me show you the free sample first. If you love it, it costs less than one job's worth of income." (Add your prices in the setup card and this line fills in.)`;
+  for(const k of ['yourName','agencyName','phone','email','address','buildFee','hosting','ads']){
+    const el=$('s-'+k); if(document.activeElement!==el) el.value=settings[k]??'';
+  }
+}
+
+/* ---------- drawer ---------- */
+const FIELDS=['name','owner','category','city','stage','phone','email','followUp','sourceUrl','why','notes','sampleUrl','buildFee','hosting','ads','liveUrl'];
+function openDrawer(lead){
+  editing=lead?{...lead}:{stage:'new',history:[]};
+  $('d-title').textContent=lead?lead.name:'New lead';
+  $('l-stage').innerHTML=STAGES.map(s=>`<option value="${s.id}">${s.label}</option>`).join('');
+  for(const f of FIELDS) $('l-'+f).value=editing[f]??'';
+  if(!lead){$('l-buildFee').value=settings.buildFee??'';}
+  $('d-delete').hidden=!lead; $('d-confirm').innerHTML=''; $('d-email').hidden=true; $('d-report').hidden=true;
+  $('d-history-block').hidden=!lead;
+  renderDrawerExtras();
+  $('scrim').hidden=false; $('drawer').hidden=false;
+  setTimeout(()=>$('l-name').focus({preventScroll:true}),30);
+}
+function closeDrawer(){$('scrim').hidden=true;$('drawer').hidden=true;editing=null}
+function renderDrawerExtras(){
+  const l=editing; if(!l)return;
+  const src=safeUrl(l.sourceUrl), smp=safeUrl(l.sampleUrl);
+  let q='';
+  if(l.id){
+    q+=`<h4>Quick actions</h4><div class="actions">`;
+    if(l.phone) q+=`<button class="btn small" data-copy="${esc(l.phone)}">Copy phone</button>`;
+    if(src) q+=`<a class="btn small" href="${esc(src)}" target="_blank" rel="noopener">Where we found them ↗</a>`;
+    if(smp) q+=`<a class="btn small" href="${esc(smp)}" target="_blank" rel="noopener">View sample site ↗</a>`;
+    if(!smp) q+=`<button class="btn small" id="d-reqsample" ${l.sampleRequested?'disabled':''}>${l.sampleRequested?'Sample site requested':'Build sample site'}</button>`;
+    if(sample && l.stage!=='won') q+=`<button class="btn small" id="d-draft">Draft email</button>`;
+    if(l.stage==='won') q+=`<button class="btn small" id="d-reportbtn">${sample?'Write monthly report':'Monthly report'}</button>`;
+    q+=`</div>`;
+  }
+  $('d-quick').innerHTML=q; $('d-quick').hidden=!q;
+  const h=(l.history||[]).slice().reverse();
+  $('d-history').innerHTML=h.length?h.map(x=>`<li><span>${esc(fmtDate(x.d))}</span><span>${esc(x.t)}</span></li>`).join(''):`<li><span></span><span style="color:var(--muted)">Nothing logged yet.</span></li>`;
+}
+function readForm(){
+  const o={};
+  for(const f of FIELDS){let v=$('l-'+f).value.trim(); if(['buildFee','hosting','ads'].includes(f)) v=v===''?'':numOr0(v); o[f]=v;}
+  return o;
+}
+function withHistory(l,text){const h=(l.history||[]).concat([{d:today(),t:text}]);return h.slice(-40)}
+
+async function write(id,data,isNew){
+  if(!db){toast('Saving isn’t available in this view.');return false}
+  if(busy.has(id))return false;
+  busy.add(id);
+  try{
+    const ref=db.collection('leads').doc(id);
+    if(isNew) await ref.set(data); else await ref.update(data);
+    return true;
+  }catch(e){
+    toast(e&&e.code==='quota_exceeded'?'The lead desk is full. Delete old leads to add more.':'Couldn’t save. Try again.');
+    return false;
+  }finally{busy.delete(id)}
+}
+
+async function saveDrawer(){
+  const f=readForm();
+  if(!f.name){toast('Add a business name first.');$('l-name').focus();return}
+  const now=new Date().toISOString();
+  const l=editing;
+  const data={...f,updatedAt:now};
+  if(f.stage==='won'&&!l.wonAt) data.wonAt=today();
+  if(l.stage&&l.id&&f.stage!==l.stage) data.history=withHistory(l,'Stage: '+stageLabel(l.stage)+' → '+stageLabel(f.stage));
+  if(['contacted','interested','sample'].includes(f.stage)&&f.stage!==l.stage) data.lastContact=today();
+  if(f.sampleUrl&&!l.sampleUrl) data.sampleRequested=false;
+  if(l.id){ if(await write(l.id,data,false)){toast('Saved');closeDrawer()} }
+  else{
+    const id=db?db.collection('leads').doc().id:'x';
+    const full={...data,createdAt:now,history:[{d:today(),t:'Added'}],source:'Added by hand',sampleRequested:false};
+    if(f.stage==='won') full.wonAt=today();
+    if(await write(id,full,true)){toast('Lead added');closeDrawer()}
+  }
+}
+
+async function quick(id,kind){
+  const l=leads.find(x=>x.id===id); if(!l)return;
+  let data;
+  if(kind==='noanswer') data={stage:l.stage==='new'?'contacted':l.stage,lastContact:today(),followUp:addDays(1),history:withHistory(l,'Called, no answer')};
+  if(kind==='interested') data={stage:'interested',lastContact:today(),followUp:addDays(2),history:withHistory(l,'Interested. Build and send the sample.')};
+  if(kind==='lost') data={stage:'lost',followUp:'',history:withHistory(l,'Not interested')};
+  data.updatedAt=new Date().toISOString();
+  if(await write(id,data,false)) toast(kind==='noanswer'?'Logged. Follow-up set for tomorrow.':kind==='interested'?'Nice! Moved to Interested.':'Marked not interested');
+}
+
+async function requestSample(){
+  const l=editing; if(!l||!l.id)return;
+  if(await write(l.id,{sampleRequested:true,updatedAt:new Date().toISOString(),history:withHistory(l,'Asked Claude for a sample site')},false)){
+    editing.sampleRequested=true; renderDrawerExtras();
+    toast('Requested. Tell Claude "build my requested sample sites".');
+  }
+}
+
+async function addNote(){
+  const l=editing,t=$('d-note').value.trim(); if(!l||!l.id||!t)return;
+  const h=withHistory(l,t);
+  if(await write(l.id,{history:h,lastContact:today(),updatedAt:new Date().toISOString()},false)){editing.history=h;$('d-note').value='';renderDrawerExtras()}
+}
+
+function confirmDelete(){
+  $('d-confirm').innerHTML=`<div class="confirm">Delete ${esc(editing.name)} for good? <button class="btn small danger" id="d-del-yes">Delete</button><button class="btn small" id="d-del-no">Keep</button></div>`;
+}
+async function doDelete(){
+  const l=editing; if(!l||!l.id||!db)return;
+  try{await db.collection('leads').doc(l.id).delete();toast('Deleted');closeDrawer()}catch(e){toast('Couldn’t delete. Try again.')}
+}
+
+/* ---------- Claude-written drafts (sample capability) ---------- */
+function senderBlock(){
+  return `Sender name: ${settings.yourName||'[Your name]'}
+Business name: ${settings.agencyName||'(none yet, just use the sender name)'}
+Sender phone: ${settings.phone||'[Your phone]'}
+Sender email: ${settings.email||'[Your email]'}
+Mailing address: ${settings.address||'[Your mailing address]'}`;
+}
+function showDraftUI(){
+  const box=$('d-email'); box.hidden=false;
+  const hasEmail=!!(editing.email);
+  box.innerHTML=`<h4>Email draft</h4>
+    ${hasEmail?'':'<p style="margin:0 0 8px;color:var(--sun);font-size:14px">No email saved for this lead. Add one above, or use the draft as a text or Facebook message.</p>'}
+    <div class="actions" style="margin-bottom:8px">
+      <button class="btn small" data-draft="first">First email</button>
+      <button class="btn small" data-draft="followup">Follow-up</button>
+      <button class="btn small" data-draft="sample">Here's your sample</button>
+    </div>
+    <div id="d-draft-out"></div>`;
+}
+async function draftEmail(kind){
+  const l=editing,out=$('d-draft-out'); if(!sample||!l)return;
+  out.innerHTML=`<div class="draft" style="color:var(--muted)">Writing…</div>`;
+  const kinds={first:'a first cold email offering to build them a free sample website',followup:'a short, friendly follow-up to an earlier email or call that got no reply',sample:'an email sharing the free sample website link that was built for them and asking if they want it live'};
+  const prompt=`You write short cold emails for a one-person web design business in the Phoenix, Arizona area. Write ${kinds[kind]}.
+
+${senderBlock()}
+
+Recipient business: ${l.name}
+Owner: ${l.owner||'unknown (open with "Hi there")'}
+Type of business: ${l.category||'unknown'}
+City: ${l.city||'Phoenix area'}
+What we know: ${l.why||'They do not appear to have a website.'}
+Notes: ${l.notes||'none'}
+Sample site link: ${safeUrl(l.sampleUrl)||'not built yet'}
+
+Rules: under 110 words in the body. Plain, friendly, local, no hype, no exclamation-mark spam. Never invent facts, reviews, numbers or results that are not given above. One clear ask. Put placeholders in [brackets] for anything missing. End the body with a signature, then these lines exactly: the mailing address, and "Not interested? Reply STOP and I won't email again."
+Return JSON only: {"subject": "...", "body": "..."}`;
+  try{
+    const r=await sample.json(prompt,{modelTier:'default'});
+    const subject=String(r&&r.subject||''),body=String(r&&r.body||'');
+    out.innerHTML=`<div class="draft"><b>Subject:</b> <span id="dr-s"></span><pre id="dr-b"></pre>
+      <div class="actions"><button class="btn small" id="dr-copy">Copy email</button><button class="btn small primary" id="dr-sent">I sent it</button></div></div>`;
+    $('dr-s').textContent=subject; $('dr-b').textContent=body;
+    $('dr-copy').onclick=()=>copy('Subject: '+subject+'\n\n'+body);
+    $('dr-sent').onclick=async()=>{
+      const label={first:'Sent first email',followup:'Sent follow-up email',sample:'Emailed the sample site'}[kind];
+      const stage=kind==='sample'?'sample':(editing.stage==='new'?'contacted':editing.stage);
+      const h=withHistory(editing,label);
+      if(await write(editing.id,{stage,lastContact:today(),followUp:addDays(3),history:h,updatedAt:new Date().toISOString()},false)){
+        editing.history=h;editing.stage=stage;$('l-stage').value=stage;$('l-followUp').value=addDays(3);renderDrawerExtras();toast('Logged. Follow-up set for 3 days out.');
+      }
+    };
+  }catch(e){
+    out.innerHTML=`<div class="draft" style="color:var(--danger)">${e&&e.code==='rate_limited'?'Too many drafts at once. Wait a minute and try again.':e&&e.code==='not_granted'?'Drafting needs your permission. Try again and allow it.':'Couldn’t write a draft this time. Try again.'}</div>`;
+  }
+}
+function showReportUI(){
+  const box=$('d-report'); box.hidden=false;
+  if(!sample){box.innerHTML=`<h4>Monthly report</h4><p style="margin:0;font-size:14px">Ask Claude in chat: "Write ${esc(editing.name)}'s monthly ads report" and paste in the numbers from the ads dashboard.</p>`;return}
+  box.innerHTML=`<h4>Monthly ads report</h4>
+    <p style="margin:0 0 8px;font-size:14px;color:var(--muted)">Enter this month's numbers from the ads dashboard. Leave blank what you don't track.</p>
+    <div class="form-grid">
+      <label class="f">Month<input class="field" id="r-month" placeholder="September"></label>
+      <label class="f">Ad spend ($)<input class="field num" id="r-spend" inputmode="decimal"></label>
+      <label class="f">Clicks<input class="field num" id="r-clicks" inputmode="numeric"></label>
+      <label class="f">Calls / leads<input class="field num" id="r-leads" inputmode="numeric"></label>
+      <label class="f full">What changed or what's next<input class="field" id="r-next" placeholder="e.g. new photos, testing a summer offer"></label>
+    </div>
+    <div class="actions" style="margin-top:8px"><button class="btn small primary" id="r-go">Write report</button></div>
+    <div id="r-out" style="margin-top:8px"></div>`;
+}
+async function writeReport(){
+  const l=editing,out=$('r-out'); if(!sample||!l)return;
+  const v=id=>$(id).value.trim();
+  out.innerHTML=`<div class="draft" style="color:var(--muted)">Writing…</div>`;
+  const prompt=`Write a short monthly ads report email from a local marketing freelancer to their client. Friendly and clear, for a busy small-business owner. Use ONLY the numbers given; never invent results. If a number is missing, skip it. Include cost per lead only if both spend and leads are given (compute it). End with one line on next month's plan.
+
+${senderBlock()}
+Client: ${l.name} (${l.category||'local business'}, ${l.city||'Phoenix area'}), owner ${l.owner||'unknown'}
+Month: ${v('r-month')||'this month'}
+Ad spend: ${v('r-spend')||'not given'}
+Clicks: ${v('r-clicks')||'not given'}
+Calls/leads: ${v('r-leads')||'not given'}
+Notes/next: ${v('r-next')||'none'}
+Return JSON only: {"subject":"...","body":"..."}`;
+  try{
+    const r=await sample.json(prompt,{modelTier:'default'});
+    const subject=String(r&&r.subject||''),body=String(r&&r.body||'');
+    out.innerHTML=`<div class="draft"><b>Subject:</b> <span id="rr-s"></span><pre id="rr-b"></pre><button class="btn small" id="rr-copy">Copy report</button></div>`;
+    $('rr-s').textContent=subject;$('rr-b').textContent=body;
+    $('rr-copy').onclick=()=>copy('Subject: '+subject+'\n\n'+body);
+  }catch(e){out.innerHTML=`<div class="draft" style="color:var(--danger)">Couldn’t write the report this time. Try again.</div>`}
+}
+
+/* ---------- settings ---------- */
+async function saveSettings(ev){
+  ev.preventDefault();
+  if(!db){toast('Saving isn’t available in this view.');return}
+  const o={};
+  for(const k of ['yourName','agencyName','phone','email','address']) o[k]=$('s-'+k).value.trim();
+  for(const k of ['buildFee','hosting','ads']){const v=$('s-'+k).value.trim();o[k]=v===''?'':numOr0(v)}
+  $('s-save').disabled=true;
+  try{await db.doc('settings/main').set(o);toast('Details saved')}catch(e){toast('Couldn’t save. Try again.')}
+  finally{$('s-save').disabled=false}
+}
+
+/* ---------- events ---------- */
+document.querySelector('.tabs').addEventListener('click',e=>{
+  const b=e.target.closest('[data-tab]'); if(!b)return;
+  tab=b.dataset.tab;
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t===b)));
+  for(const v of ['today','leads','clients','scripts']) $('v-'+v).hidden=v!==tab;
+  try{localStorage.setItem('lead-desk-tab',tab)}catch(_){}
+});
+document.addEventListener('click',e=>{
+  const c=e.target.closest('[data-copy]'); if(c){e.stopPropagation();copy(c.dataset.copy);return}
+  const q=e.target.closest('[data-q]'); if(q){quick(q.dataset.id,q.dataset.q);return}
+  const o=e.target.closest('[data-open]'); if(o){const l=leads.find(x=>x.id===o.dataset.open);if(l)openDrawer(l);return}
+  const s=e.target.closest('[data-stage]'); if(s){stageFilter=s.dataset.stage;renderLeads();return}
+  const d=e.target.closest('[data-draft]'); if(d){draftEmail(d.dataset.draft);return}
+  const id=e.target.id;
+  if(id==='d-reqsample')requestSample();
+  else if(id==='d-draft')showDraftUI();
+  else if(id==='d-reportbtn')showReportUI();
+  else if(id==='r-go')writeReport();
+  else if(id==='d-del-yes')doDelete();
+  else if(id==='d-del-no')$('d-confirm').innerHTML='';
+});
+['q','f-cat','f-city','f-sort'].forEach(id=>$(id).addEventListener('input',renderLeads));
+$('add-lead').onclick=()=>openDrawer(null);
+$('d-close').onclick=closeDrawer; $('d-cancel').onclick=closeDrawer; $('scrim').onclick=closeDrawer;
+$('d-save').onclick=saveDrawer;
+$('lead-form').addEventListener('submit',e=>{e.preventDefault();saveDrawer()});
+$('d-delete').onclick=confirmDelete;
+$('d-note-add').onclick=addNote;
+$('d-note').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addNote()}});
+$('settings-form').addEventListener('submit',saveSettings);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('drawer').hidden)closeDrawer()});
+
+/* ---------- boot ---------- */
+try{const t=localStorage.getItem('lead-desk-tab');if(t&&$('v-'+t)){document.querySelector(`[data-tab="${t}"]`).click()}}catch(_){}
+render();
+(async()=>{
+  const c=window.claude;
+  if(!c||!c.use){$('banner').hidden=false;$('banner').textContent='Open this page on claude.ai to load and save your leads.';return}
+  db=await c.use('db');
+  if(!db){$('banner').hidden=false;$('banner').textContent='Your saved leads can’t load in this view. Open the page from your claude.ai artifacts while signed in.';return}
+  db.collection('leads').onSnapshot(snap=>{
+    leads=snap.docs.map(d=>({id:d.id,...d.data()})).map(l=>({...l,stage:STAGES.some(s=>s.id===l.stage)?l.stage:'new'}));
+    render();
+    if(editing&&editing.id){const fresh=leads.find(x=>x.id===editing.id);if(fresh){editing={...fresh};renderDrawerExtras()}}
+  },()=>{$('banner').hidden=false;$('banner').textContent='Lost the connection to your leads. Reload the page.'});
+  db.doc('settings/main').onSnapshot(s=>{settings=s.exists?{...s.data()}:{};render()},()=>{});
+  sample=await c.use('sample');
+  if(sample&&editing)renderDrawerExtras();
+})();
+})();
+</script>
