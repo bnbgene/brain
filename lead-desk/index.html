@@ -318,7 +318,7 @@ textarea.field{resize:vertical;min-height:70px}
       <label class="f">Where we found them (link)<input class="field" id="l-sourceUrl" placeholder="https://"></label>
       <label class="f full">Why they're a good lead<textarea class="field" id="l-why" rows="2"></textarea></label>
       <label class="f full">Notes<textarea class="field" id="l-notes" rows="3"></textarea></label>
-      <label class="f full">Sample site link<input class="field" id="l-sampleUrl" placeholder="Claude adds this when the sample is built"></label>
+      <label class="f full">Sample site link<input class="field" id="l-sampleUrl" placeholder="Claude adds a picture of the sample here"></label>
       <label class="f">Build fee ($)<input class="field num" id="l-buildFee" inputmode="numeric"></label>
       <label class="f">Hosting ($/mo)<input class="field num" id="l-hosting" inputmode="numeric"></label>
       <label class="f">Ads ($/mo)<input class="field num" id="l-ads" inputmode="numeric"></label>
@@ -542,7 +542,7 @@ function renderDrawerExtras(){
     q+=`<h4>Quick actions</h4><div class="actions">`;
     if(l.phone) q+=`<button class="btn small" data-copy="${esc(l.phone)}">Copy phone</button>`;
     if(src) q+=`<a class="btn small" href="${esc(src)}" target="_blank" rel="noopener">Where we found them ↗</a>`;
-    if(smp) q+=`<a class="btn small" href="${esc(smp)}" target="_blank" rel="noopener">View sample site ↗</a>`;
+    if(smp) q+=`<a class="btn small" href="${esc(smp)}" target="_blank" rel="noopener">${/\.(png|jpe?g|webp)(\?|$)/i.test(smp)?'See sample (picture)':'Open sample site'} ↗</a>`;
     if(!smp) q+=`<button class="btn small" id="d-reqsample" ${l.sampleRequested?'disabled':''}>${l.sampleRequested?'Sample site requested':'Build sample site'}</button>`;
     if(sample && l.stage!=='won') q+=`<button class="btn small" id="d-draft">Draft email</button>`;
     if(l.stage==='won') q+=`<button class="btn small" id="d-reportbtn">${sample?'Write monthly report':'Monthly report'}</button>`;
