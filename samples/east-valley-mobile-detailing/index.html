@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>East Valley Mobile Detailing | Mobile Car Detailing in Mesa, AZ</title>
+<meta name="description" content="Mobile auto detailing at your home or work across Mesa and the East Valley since 2015. Washes, full details, clay bar, water spot removal and ceramic coatings.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0B0F14; --panel:#121820; --panel-2:#18212B; --line:#243040;
+  --ink:#EEF3F8; --muted:#9AA8B8;
+  --bead:#5CC8FF; --bead-deep:#1E88D8; --shine:#DDF3FF;
+  --sun:#FFB547;
+  --display:"Unbounded", "Arial Black", system-ui, sans-serif;
+  --body:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--body)}
+a{color:inherit}
+img{max-width:100%}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--display);line-height:1.1;text-wrap:balance;margin:0}
+:focus-visible{outline:2px solid var(--bead);outline-offset:3px}
+
+.sample-note{background:var(--sun);color:#1A1204;font-size:13px;font-weight:700;text-align:center;padding:7px 16px}
+
+header.nav{position:sticky;top:0;z-index:10;background:rgba(11,15,20,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px}
+.logo{font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:.02em;text-decoration:none;display:flex;align-items:center;gap:10px}
+.logo .drop{width:22px;height:22px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:radial-gradient(circle at 65% 35%,var(--shine),var(--bead) 40%,var(--bead-deep))}
+.nav nav{display:flex;gap:22px;font-weight:600;font-size:14px}
+.nav nav a{text-decoration:none;color:var(--muted)}
+.nav nav a:hover{color:var(--ink)}
+@media (max-width:760px){.nav nav{display:none}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;text-decoration:none;border-radius:999px;padding:13px 24px;border:1px solid transparent;font-size:15px}
+.btn.primary{background:linear-gradient(180deg,#7AD4FF,var(--bead-deep));color:#04121F;box-shadow:0 8px 30px rgba(92,200,255,.25)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:var(--line);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--muted)}
+.btn.sm{padding:9px 16px;font-size:14px}
+
+/* hero */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,15,20,.96) 0%,rgba(11,15,20,.75) 45%,rgba(11,15,20,.2) 100%);pointer-events:none}
+.hero .wrap{position:relative;z-index:1;padding-block:96px 104px}
+.eyebrow{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--bead);font-weight:700;margin-bottom:18px}
+.hero h1{font-size:clamp(36px,6.4vw,68px);font-weight:800;max-width:14ch}
+.hero h1 em{font-style:normal;background:linear-gradient(100deg,var(--shine),var(--bead) 60%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{font-size:clamp(17px,2vw,20px);color:var(--muted);max-width:46ch;margin:22px 0 32px}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:12px}
+@media (max-width:640px){.hero .wrap{padding-block:64px 72px}.hero::after{background:rgba(11,15,20,.78)}}
+
+.trust-band{border-bottom:1px solid var(--line)}
+.trust{display:grid;grid-template-columns:repeat(4,1fr)}
+.trust div:first-child{padding-left:0}
+.trust div{padding:22px 20px;border-right:1px solid var(--line)}
+.trust div:last-child{border-right:0}
+.trust b{display:block;font-family:var(--display);font-size:20px;font-weight:600}
+.trust span{color:var(--muted);font-size:14px}
+@media (max-width:760px){.trust{grid-template-columns:1fr 1fr}.trust div:nth-child(2){border-right:0}.trust div:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+
+section{padding-block:88px}
+.head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:40px}
+.head h2{font-size:clamp(28px,4vw,42px);font-weight:800;max-width:18ch}
+.head p{color:var(--muted);max-width:44ch;margin:0}
+
+.services{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.svc.feature{grid-column:span 2}
+@media (max-width:860px){.services{grid-template-columns:1fr 1fr}.svc.feature{grid-column:span 1}.svc:first-child{grid-column:span 2}}
+@media (max-width:560px){.services{grid-template-columns:1fr}.svc:first-child,.svc.feature{grid-column:auto}}
+.svc{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px;display:flex;flex-direction:column;gap:10px}
+.svc h3{font-size:18px;font-weight:600}
+.svc p{color:var(--muted);margin:0;flex:1}
+.svc .tag{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--bead)}
+.svc.feature{background:linear-gradient(160deg,#10324A,#0F1A26 60%);border-color:#1F4C6E}
+.svc a{font-weight:700;color:var(--bead);text-decoration:none;font-size:14px}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;counter-reset:s}
+.step{border-top:2px solid var(--line);padding-top:20px}
+.step::before{counter-increment:s;content:"0" counter(s);font-family:var(--display);color:var(--bead);font-size:14px;font-weight:600}
+.step h3{font-size:19px;font-weight:600;margin:10px 0 6px}
+.step p{color:var(--muted);margin:0}
+@media (max-width:760px){.steps{grid-template-columns:1fr}}
+
+.band{background:var(--panel);border-block:1px solid var(--line)}
+.about{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center}
+.about p{color:var(--muted);max-width:56ch}
+.about .facts{display:grid;gap:12px}
+.fact{display:flex;gap:14px;align-items:flex-start;background:var(--panel-2);border-radius:14px;padding:16px 18px}
+.fact .dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--bead);margin-top:8px;box-shadow:0 0 12px var(--bead)}
+@media (max-width:860px){.about{grid-template-columns:1fr}}
+
+.areas{display:flex;flex-wrap:wrap;gap:10px}
+.areas span{border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-weight:600;font-size:15px}
+
+.reviews-slot{border:1.5px dashed #3A4C62;border-radius:18px;padding:34px;text-align:center;color:var(--muted)}
+.reviews-slot b{color:var(--ink);display:block;font-size:18px;margin-bottom:6px}
+
+.cta{background:radial-gradient(ellipse at 80% 0%,#15476A,transparent 60%),var(--panel);border:1px solid #1F4C6E;border-radius:28px;padding:56px clamp(24px,5vw,64px);display:grid;grid-template-columns:1.3fr 1fr;gap:32px;align-items:center}
+.cta h2{font-size:clamp(28px,4vw,40px);font-weight:800}
+.cta p{color:var(--muted)}
+.contact{display:grid;gap:12px}
+.contact .row{background:rgba(11,15,20,.5);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+.contact .row small{display:block;color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+.contact .row b{font-size:18px}
+@media (max-width:860px){.cta{grid-template-columns:1fr}}
+
+footer{border-top:1px solid var(--line);padding-block:28px;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+
+.callbar{display:none}
+@media (max-width:640px){
+  .callbar{display:flex;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));background:rgba(11,15,20,.94);border-top:1px solid var(--line)}
+  .callbar .btn{flex:1;padding:12px}
+  body{padding-bottom:72px}
+}
+</style>
+</head>
+<body>
+
+<div class="sample-note">Sample design prepared for East Valley Mobile Detailing. Not the official website.</div>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top"><span class="drop" aria-hidden="true"></span>East Valley Mobile Detailing</a>
+    <nav aria-label="Main">
+      <a href="#services">Services</a>
+      <a href="#how">How it works</a>
+      <a href="#about">About</a>
+      <a href="#areas">Service area</a>
+    </nav>
+    <a class="btn primary sm" href="#book">Book a detail</a>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <canvas id="beads" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div class="eyebrow">Mesa · East Valley · Since 2015</div>
+      <h1>Showroom shine, <em>in your driveway.</em></h1>
+      <p class="lead">We bring the full detail shop to your home or office. Washes, full interior and exterior details, and ceramic coatings that make water bead right off.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#book">Book your detail</a>
+        <a class="btn ghost" href="#services">See services</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="trust-band"><div class="wrap trust">
+    <div><b>10+ years</b><span>Detailing the Valley</span></div>
+    <div><b>BBB</b><span>Accredited business</span></div>
+    <div><b>We come to you</b><span>Home or work</span></div>
+    <div><b>Ceramic</b><span>Coatings available</span></div>
+  </div></div>
+
+  <section id="services">
+    <div class="wrap">
+      <div class="head">
+        <h2>Every level of clean, one call away.</h2>
+        <p>Not sure what your car needs? Tell us the make, model and condition and we'll recommend the right package.</p>
+      </div>
+      <div class="services">
+        <div class="svc">
+          <span class="tag">Maintenance</span>
+          <h3>Basic wash</h3>
+          <p>A thorough hand wash and dry, wheels and tires cleaned, windows streak-free. Ideal for keeping a clean car clean.</p>
+          <a href="#book">Get a quote →</a>
+        </div>
+        <div class="svc">
+          <span class="tag">Most complete</span>
+          <h3>Full detail</h3>
+          <p>Inside and out. Deep interior vacuum and wipe-down, seats and carpets, door jambs, plus a full exterior wash and protection.</p>
+          <a href="#book">Get a quote →</a>
+        </div>
+        <div class="svc">
+          <span class="tag">Paint care</span>
+          <h3>Clay bar treatment</h3>
+          <p>Pulls out bonded grime a wash can't reach, leaving paint smooth as glass and ready for wax or coating.</p>
+          <a href="#book">Get a quote →</a>
+        </div>
+        <div class="svc">
+          <span class="tag">Arizona special</span>
+          <h3>Water spot removal</h3>
+          <p>Hard water and sprinklers leave mineral spots that etch into paint and glass. We lift them safely.</p>
+          <a href="#book">Get a quote →</a>
+        </div>
+        <div class="svc feature">
+          <span class="tag">Long-term protection</span>
+          <h3>Ceramic coating</h3>
+          <p>A hard, glossy layer that shields paint from Arizona sun, dust and bird droppings, and makes every future wash easier.</p>
+          <a href="#book">Ask about coatings →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" class="band">
+    <div class="wrap">
+      <div class="head"><h2>How it works</h2></div>
+      <div class="steps">
+        <div class="step"><h3>Book online</h3><p>Pick your service and a time that works. Evenings and weekends too.</p></div>
+        <div class="step"><h3>We roll up</h3><p>We arrive at your home or office with everything needed. You don't have to be there the whole time.</p></div>
+        <div class="step"><h3>Drive away clean</h3><p>Walk out to a car that looks and smells like the day you bought it.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap about">
+      <div>
+        <div class="eyebrow">Locally owned</div>
+        <h2 style="font-size:clamp(28px,4vw,40px);font-weight:800">A Mesa business, run by Ruben Espinoza.</h2>
+        <p>East Valley Mobile Detailing started in 2015 with one simple idea: people are busy, so the detail shop should come to them. Over ten years later we're still locally owned, still showing up on time, and still treating every car like it's our own.</p>
+        <a class="btn primary" href="#book">Book with Ruben's team</a>
+      </div>
+      <div class="facts">
+        <div class="fact"><span class="dot"></span><div><b>Serving the Valley since 2015</b><br><span style="color:var(--muted)">Over a decade of detailing in the Arizona sun.</span></div></div>
+        <div class="fact"><span class="dot"></span><div><b>BBB Accredited</b><br><span style="color:var(--muted)">Accredited by the Better Business Bureau.</span></div></div>
+        <div class="fact"><span class="dot"></span><div><b>Fully mobile</b><br><span style="color:var(--muted)">Your driveway, your office lot, your schedule.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="areas" class="band">
+    <div class="wrap">
+      <div class="head"><h2>Where we detail</h2><p>Based in Mesa and serving the whole East Valley. Outside these areas? Ask, we travel.</p></div>
+      <div class="areas">
+        <span>Mesa</span><span>Gilbert</span><span>Chandler</span><span>Tempe</span><span>Queen Creek</span><span>San Tan Valley</span><span>Apache Junction</span><span>Scottsdale</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="reviews">
+    <div class="wrap">
+      <div class="head"><h2>What customers say</h2></div>
+      <div class="reviews-slot"><b>Your best Google and Facebook reviews go here.</b>We'll pull in your real customer reviews so new visitors see them first.</div>
+    </div>
+  </section>
+
+  <section id="book" style="padding-top:0">
+    <div class="wrap">
+      <div class="cta">
+        <div>
+          <h2>Ready for that new-car feeling?</h2>
+          <p>Book online in under a minute, or call or text and we'll find a time that works for you.</p>
+          <a class="btn primary" href="https://www.vagaro.com/eastvalleymobiledetailing" target="_blank" rel="noopener">Book online</a>
+        </div>
+        <div class="contact">
+          <div class="row"><small>Call or text</small><b>(480) 000-0000</b></div>
+          <div class="row"><small>Hours</small><b>Your hours here</b></div>
+          <div class="row"><small>Based in</small><b>Mesa, AZ</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 East Valley Mobile Detailing L.L.C. · Mesa, Arizona</span>
+    <span>Mobile auto detailing · Ceramic coatings</span>
+  </div>
+</footer>
+
+<div class="callbar">
+  <a class="btn ghost" href="#book">Call or text</a>
+  <a class="btn primary" href="https://www.vagaro.com/eastvalleymobiledetailing" target="_blank" rel="noopener">Book now</a>
+</div>
+
+<script>
+/* Water beading on ceramic-coated paint: the hero's background. */
+(function(){
+  const c=document.getElementById('beads'); if(!c) return;
+  const ctx=c.getContext('2d');
+  const still=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W,H,dpr,beads=[];
+  function size(){
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    W=c.clientWidth;H=c.clientHeight;c.width=W*dpr;c.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    const n=Math.round(W*H/2600);
+    beads=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.pow(Math.random(),2.2)*16+2,v:0}));
+  }
+  function paint(){
+    const g=ctx.createLinearGradient(0,0,W,H);
+    g.addColorStop(0,'#0A1622');g.addColorStop(.5,'#123452');g.addColorStop(1,'#0B1824');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    const sheen=ctx.createLinearGradient(W*.3,0,W*.9,H);
+    sheen.addColorStop(0,'rgba(255,255,255,0)');sheen.addColorStop(.5,'rgba(190,230,255,.10)');sheen.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=sheen;ctx.fillRect(0,0,W,H);
+    for(const b of beads){
+      ctx.beginPath();ctx.arc(b.x+b.r*.25,b.y+b.r*.35,b.r,0,Math.PI*2);ctx.fillStyle='rgba(0,8,16,.35)';ctx.fill();
+      const rg=ctx.createRadialGradient(b.x-b.r*.35,b.y-b.r*.4,b.r*.1,b.x,b.y,b.r);
+      rg.addColorStop(0,'rgba(235,248,255,.85)');rg.addColorStop(.35,'rgba(120,200,255,.28)');rg.addColorStop(1,'rgba(40,110,170,.18)');
+      ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fillStyle=rg;ctx.fill();
+    }
+  }
+  function tick(){
+    for(const b of beads){
+      if(b.r>12){b.v=Math.min(b.v+.02,1.6);b.y+=b.v;
+        for(const o of beads){if(o!==b&&o.r>0&&Math.hypot(o.x-b.x,o.y-b.y)<b.r){b.r=Math.min(Math.sqrt(b.r*b.r+o.r*o.r*.5),18);o.r=0}}
+        if(b.y-b.r>H){b.y=-20;b.x=Math.random()*W;b.r=Math.random()*6+2;b.v=0}}
+      else if(b.r<=0){b.r=Math.random()*5+2;b.x=Math.random()*W;b.y=Math.random()*H}
+      else if(Math.random()<.004){b.r+=.6}
+    }
+    paint();requestAnimationFrame(tick);
+  }
+  size();paint();
+  window.addEventListener('resize',()=>{size();paint()});
+  if(!still) requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
