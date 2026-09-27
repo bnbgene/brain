@@ -1,0 +1,19 @@
+<!--
+  Spam-protected quote form (Netlify Forms).
+  Paste this into the client's page where the quote form goes.
+  - Netlify collects submissions and emails them to the client:
+    Netlify dashboard > Site > Forms > Form notifications > Email.
+  - The hidden "bot-field" catches spam bots (real visitors never see it).
+  - Turn on Netlify's spam filter too: Forms > Settings > Spam filtering.
+  - Never ask for card numbers, passwords or ID numbers in this form.
+-->
+<form name="quote" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field" class="form">
+  <input type="hidden" name="form-name" value="quote">
+  <p hidden><label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+  <label>Name<input name="name" required maxlength="80" autocomplete="name"></label>
+  <label>Phone<input name="phone" required maxlength="30" inputmode="tel" autocomplete="tel"></label>
+  <label>Email (optional)<input name="email" type="email" maxlength="120" autocomplete="email"></label>
+  <label>What do you need?<textarea name="message" rows="4" maxlength="1000"></textarea></label>
+  <button type="submit">Request my quote</button>
+  <small>We'll only use your details to reply to this request. <a href="/privacy.html">Privacy</a></small>
+</form>
