@@ -1,0 +1,303 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>
+<title>A Plus Pressure Washing Concept</title>
+<meta name="description" content="Pressure washing for Phoenix homes and businesses: driveways, house exteriors, patios, pool decks and pavers. Owner-operated since 2017.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F4F2EE; --paper:#FFFFFF; --concrete:#D8D4CB; --line:#DCD8D0;
+  --ink:#14202C; --muted:#56606B;
+  --navy:#0E2A47; --spray:#15A6D6; --spray-deep:#0B7FA8; --foam:#E6F6FC;
+  --sun:#FFB547;
+  --display:"Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --body:"Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--body)}
+a{color:inherit}
+.wrap{max-width:1140px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--display);line-height:1;text-wrap:balance;margin:0;text-transform:uppercase;letter-spacing:.01em}
+:focus-visible{outline:3px solid var(--spray);outline-offset:3px}
+
+.sample-note{position:sticky;top:0;z-index:30;background:var(--sun);color:#1A1204;font-size:13px;font-weight:700;text-align:center;padding:7px 16px}
+header.nav{position:sticky;top:33px;z-index:10;background:var(--navy);color:#fff}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px}
+.logo{font-family:var(--display);font-weight:800;font-size:24px;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:10px;letter-spacing:.02em}
+.logo .mark{display:grid;place-items:center;width:34px;height:34px;border-radius:8px;background:var(--spray);font-size:22px;line-height:1}
+.nav nav{display:flex;gap:24px;font-weight:600;font-size:15px}
+.nav nav a{text-decoration:none;opacity:.8;white-space:nowrap}
+.logo,.nav .btn{white-space:nowrap}
+.nav nav a:hover{opacity:1}
+@media (max-width:1000px){.nav nav{display:none}}
+@media (max-width:420px){.logo{font-size:19px}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;text-decoration:none;border-radius:10px;padding:14px 24px;border:2px solid transparent;font-size:16px}
+.btn.primary{background:var(--spray);color:#fff}
+.btn.primary:hover{background:var(--spray-deep)}
+.btn.line{border-color:currentColor}
+.btn.sm{padding:9px 16px;font-size:15px}
+
+/* hero: dirty concrete getting a clean stripe */
+.hero{position:relative;overflow:hidden;background:var(--concrete)}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero .wrap{position:relative;z-index:1;padding-block:84px 92px}
+.hero .card{background:rgba(255,255,255,.93);max-width:560px;border-radius:18px;padding:34px 34px 30px;box-shadow:0 20px 50px rgba(14,42,71,.18)}
+.eyebrow{font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--spray-deep);font-weight:700;margin-bottom:12px}
+.hero h1{font-size:clamp(46px,7vw,78px);font-weight:800;color:var(--navy)}
+.hero h1 span{color:var(--spray)}
+.hero p{color:var(--muted);font-size:18px;margin:16px 0 24px;max-width:44ch}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.hero .phone{font-family:var(--display);font-size:26px;font-weight:800;color:var(--navy);letter-spacing:.02em}
+@media (max-width:600px){.hero .wrap{padding-block:48px 56px}.hero .card{padding:24px 20px}}
+
+.proof{background:var(--navy);color:#fff}
+.proof .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.proof div{padding:20px 18px;border-left:1px solid rgba(255,255,255,.15)}
+.proof div:first-child{border-left:0;padding-left:0}
+.proof b{display:block;font-family:var(--display);font-size:26px;font-weight:800;text-transform:uppercase}
+.proof span{font-size:14px;opacity:.75}
+@media (max-width:780px){.proof .wrap{grid-template-columns:1fr 1fr}.proof div{padding:16px 0;border-left:0}}
+
+section{padding-block:84px}
+.head{margin-bottom:36px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px}
+.head h2{font-size:clamp(36px,5vw,54px);font-weight:800;color:var(--navy)}
+.head p{color:var(--muted);max-width:46ch;margin:0}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:900px){.grid{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.grid{grid-template-columns:1fr}}
+.svc{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:8px}
+.svc h3{font-size:28px;font-weight:800;color:var(--navy)}
+.svc p{margin:0;color:var(--muted);flex:1}
+.svc .swatch{height:8px;border-radius:99px;background:linear-gradient(90deg,#8C8578 0 45%,var(--foam) 45% 100%);margin-bottom:6px}
+
+.az{background:var(--paper);border-block:1px solid var(--line)}
+.az .cols{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.az ul{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.az li{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start}
+.az li::before{content:"";width:22px;height:22px;border-radius:50%;background:var(--foam);border:6px solid var(--spray);margin-top:3px}
+.az li b{display:block}
+.az li span{color:var(--muted)}
+@media (max-width:860px){.az .cols{grid-template-columns:1fr}}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.step{background:var(--paper);border-radius:16px;padding:24px;border-top:6px solid var(--spray)}
+.step small{font-family:var(--display);font-weight:800;font-size:18px;color:var(--spray-deep)}
+.step h3{font-size:26px;color:var(--navy);margin:6px 0 6px}
+.step p{margin:0;color:var(--muted)}
+@media (max-width:780px){.steps{grid-template-columns:1fr}}
+
+.areas{display:flex;flex-wrap:wrap;gap:10px}
+.areas span{background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-weight:600}
+
+.reviews-slot{border:2px dashed #B9B3A8;border-radius:16px;padding:32px;text-align:center;color:var(--muted);background:var(--paper)}
+.reviews-slot b{display:block;color:var(--ink);font-size:19px;margin-bottom:4px}
+
+.quote{background:var(--navy);color:#fff;border-radius:24px;padding:52px clamp(22px,5vw,60px);display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:center}
+.quote h2{font-size:clamp(36px,5vw,52px);font-weight:800}
+.quote p{opacity:.8}
+.quote .big{font-family:var(--display);font-weight:800;font-size:clamp(34px,5vw,48px);color:var(--spray)}
+.form{background:#fff;color:var(--ink);border-radius:16px;padding:22px;display:grid;gap:10px}
+.form label{display:grid;gap:4px;font-size:14px;font-weight:600;color:var(--muted)}
+.form input,.form select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.form small{color:var(--muted)}
+@media (max-width:860px){.quote{grid-template-columns:1fr}}
+
+footer{padding-block:28px;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
+
+.callbar{display:none}
+@media (max-width:600px){
+  .callbar{display:flex;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));background:var(--navy)}
+  .callbar .btn{flex:1;padding:12px}
+  .callbar .btn.line{color:#fff}
+  body{padding-bottom:74px}
+}
+</style>
+
+<div class="sample-note">Website concept prepared for A Plus Pressure Washing. Not their official site. Buttons are for preview only.</div>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top"><span class="mark" aria-hidden="true">A+</span>A Plus Pressure Washing</a>
+    <nav aria-label="Main">
+      <a href="#services">Services</a>
+      <a href="#arizona">Why it matters here</a>
+      <a href="#how">How it works</a>
+      <a href="#quote">Free quote</a>
+    </nav>
+    <a class="btn primary sm" href="#quote">Free quote</a>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <canvas id="wash" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div class="card">
+        <div class="eyebrow">North Phoenix · Owner-operated since 2017</div>
+        <h1>Blast away the <span>Arizona grime.</span></h1>
+        <p>Driveways, house exteriors, patios, pool decks and pavers, cleaned right by the owner himself. Your property, looking new again.</p>
+        <div class="ctas">
+          <a class="btn primary" href="#quote">Get a free quote</a>
+          <span class="phone">(602) 326-7420</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="proof">
+    <div class="wrap">
+      <div><b>Since 2017</b><span>Serving Phoenix</span></div>
+      <div><b>Owner-run</b><span>Ian does the work</span></div>
+      <div><b>Homes + business</b><span>Residential and commercial</span></div>
+      <div><b>Free quotes</b><span>No obligation</span></div>
+    </div>
+  </div>
+
+  <section id="services">
+    <div class="wrap">
+      <div class="head">
+        <h2>What we clean</h2>
+        <p>Not sure what you need? Send a photo and we'll tell you what it'll take.</p>
+      </div>
+      <div class="grid">
+        <div class="svc"><div class="swatch"></div><h3>Driveways</h3><p>Oil drips, tire marks and years of dust lifted out of the concrete.</p></div>
+        <div class="svc"><div class="swatch"></div><h3>House exteriors</h3><p>Stucco, block walls and trim washed with the right pressure so nothing gets damaged.</p></div>
+        <div class="svc"><div class="swatch"></div><h3>Patios &amp; pavers</h3><p>Pavers, flagstone and patios brought back to their original color.</p></div>
+        <div class="svc"><div class="swatch"></div><h3>Pool decks</h3><p>Slippery buildup and hard-water rings cleaned off before swim season.</p></div>
+        <div class="svc"><div class="swatch"></div><h3>Walkways &amp; walls</h3><p>Sidewalks, entryways and garden walls that greet every guest.</p></div>
+        <div class="svc"><div class="swatch"></div><h3>Commercial</h3><p>Storefronts, dumpster pads and parking areas for local businesses.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="arizona" class="az">
+    <div class="wrap cols">
+      <div>
+        <div class="eyebrow">Why it matters in Phoenix</div>
+        <h2 style="font-size:clamp(36px,5vw,54px);font-weight:800;color:var(--navy)">The desert is hard on concrete.</h2>
+        <p style="color:var(--muted);max-width:48ch">Between monsoon dust storms, hard water and 110° summers, Phoenix surfaces get dirty fast and stay stained. A proper wash keeps them looking sharp and helps them last.</p>
+      </div>
+      <ul>
+        <li><div><b>Monsoon dust</b><span>Haboobs coat everything in a layer of fine dirt.</span></div></li>
+        <li><div><b>Hard-water stains</b><span>Sprinklers and pool splash leave white mineral rings.</span></div></li>
+        <li><div><b>Baked-in oil spots</b><span>The summer heat sets oil drips deep into the driveway.</span></div></li>
+        <li><div><b>White haze on pavers</b><span>Salts rise out of block and pavers and leave a chalky film.</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="head"><h2>How it works</h2></div>
+      <div class="steps">
+        <div class="step"><small>Step 1</small><h3>Send a photo</h3><p>Call, text or fill out the form with what you'd like cleaned.</p></div>
+        <div class="step"><small>Step 2</small><h3>Get your quote</h3><p>A clear price up front, with no surprises when the job is done.</p></div>
+        <div class="step"><small>Step 3</small><h3>Watch it come clean</h3><p>We show up, do the work and leave the place spotless.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>Areas we serve</h2><p>Based on Thunderbird Road in North Phoenix.</p></div>
+      <div class="areas">
+        <span>North Phoenix</span><span>Moon Valley</span><span>Deer Valley</span><span>Sunnyslope</span><span>Paradise Valley</span><span>Scottsdale</span><span>Glendale</span><span>Peoria</span><span>Cave Creek</span>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>What customers say</h2></div>
+      <div class="reviews-slot"><b>Your best reviews go here.</b>We'll add your real reviews from Yelp, Google and HomeAdvisor.</div>
+    </div>
+  </section>
+
+  <section id="quote" style="padding-top:0">
+    <div class="wrap">
+      <div class="quote">
+        <div>
+          <h2>Get your free quote</h2>
+          <p>Tell us what needs cleaning and we'll get back to you the same day.</p>
+          <div class="big">(602) 326-7420</div>
+          <p style="margin-top:4px">Call or text</p>
+        </div>
+        <form class="form" onsubmit="event.preventDefault();this.querySelector('small').textContent='Preview only. On the live site this sends Ian your request.'">
+          <label>Name<input id="q-name" autocomplete="off"></label>
+          <label>Phone<input id="q-phone" inputmode="tel" autocomplete="off"></label>
+          <label>What needs cleaning?
+            <select id="q-what"><option>Driveway</option><option>House exterior</option><option>Patio or pavers</option><option>Pool deck</option><option>Commercial property</option><option>Something else</option></select>
+          </label>
+          <button class="btn primary" type="submit">Request my quote</button>
+          <small>We'll reply by call or text.</small>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 A Plus Pressure Washing · 428 E Thunderbird Rd, Phoenix, AZ 85022</span>
+    <span>Pressure washing · Phoenix, Arizona</span>
+  </div>
+</footer>
+
+<div class="callbar">
+  <a class="btn line" href="#quote">Call or text</a>
+  <a class="btn primary" href="#quote">Free quote</a>
+</div>
+
+<script>
+/* Hero: grimy concrete with a clean stripe sprayed across it. */
+(function(){
+  const c=document.getElementById('wash'); if(!c) return;
+  const ctx=c.getContext('2d');
+  const still=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W,H,dpr,dirt,cleanX=0,start=null;
+  function makeDirt(){
+    dirt=document.createElement('canvas');dirt.width=W;dirt.height=H;
+    const d=dirt.getContext('2d');
+    d.fillStyle='#8E877A';d.fillRect(0,0,W,H);
+    for(let i=0;i<W*H/60;i++){const x=Math.random()*W,y=Math.random()*H,r=Math.random()*2+.4;d.fillStyle=`rgba(${40+Math.random()*40|0},${36+Math.random()*30|0},${28+Math.random()*25|0},${Math.random()*.35})`;d.fillRect(x,y,r,r)}
+    for(let i=0;i<14;i++){const x=Math.random()*W,y=Math.random()*H,r=30+Math.random()*90;const g=d.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,'rgba(35,30,24,.35)');g.addColorStop(1,'rgba(35,30,24,0)');d.fillStyle=g;d.beginPath();d.arc(x,y,r,0,7);d.fill()}
+    d.strokeStyle='rgba(60,54,46,.5)';d.lineWidth=2;
+    for(let x=0;x<W;x+=180){d.beginPath();d.moveTo(x,0);d.lineTo(x+40,H);d.stroke()}
+  }
+  function cleanLayer(){
+    ctx.fillStyle='#E9E6DF';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(150,142,130,.35)';ctx.lineWidth=2;
+    for(let x=0;x<W;x+=180){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x+40,H);ctx.stroke()}
+  }
+  function draw(){
+    cleanLayer();
+    ctx.save();ctx.beginPath();ctx.rect(cleanX,0,W-cleanX,H);ctx.clip();ctx.drawImage(dirt,0,0);ctx.restore();
+    if(cleanX<W){
+      const g=ctx.createLinearGradient(cleanX-60,0,cleanX+10,0);
+      g.addColorStop(0,'rgba(21,166,214,0)');g.addColorStop(1,'rgba(230,246,252,.85)');
+      ctx.fillStyle=g;ctx.fillRect(cleanX-60,0,70,H);
+      for(let i=0;i<40;i++){ctx.fillStyle='rgba(255,255,255,.7)';ctx.beginPath();ctx.arc(cleanX+Math.random()*16,Math.random()*H,Math.random()*2.2,0,7);ctx.fill()}
+    }
+  }
+  function size(){
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    W=c.clientWidth;H=c.clientHeight;c.width=W*dpr;c.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    makeDirt();
+  }
+  function frame(t){
+    if(start===null) start=t;
+    const p=Math.min((t-start)/4200,1);
+    cleanX=W*(.12+ .5*(1-Math.pow(1-p,3)));
+    draw(); if(p<1) requestAnimationFrame(frame);
+  }
+  size();
+  if(still){cleanX=W*.62;draw()} else {cleanX=W*.12;draw();requestAnimationFrame(frame)}
+  window.addEventListener('resize',()=>{size();draw()});
+})();
+</script>
+</body></html>
