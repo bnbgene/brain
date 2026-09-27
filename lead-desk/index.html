@@ -142,6 +142,21 @@ section.view{padding-top:22px}
 .funnel button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .funnel .n{font-family:var(--mono);margin-left:5px}
 
+/* find leads */
+.finder{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px}
+.finder h2{font-size:18px;font-weight:600;margin-bottom:4px}
+.finder p.sub{margin:0 0 12px;color:var(--muted);font-size:14px}
+.finder form{display:grid;grid-template-columns:2fr 1.4fr .8fr auto;gap:8px;align-items:end}
+@media (max-width:720px){.finder form{grid-template-columns:1fr 1fr}.finder form .f:first-child{grid-column:1/-1}}
+.searches{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.searches li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;font-size:14px;padding:8px 10px;border-radius:8px;background:var(--surface-2)}
+.searches .st{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.st-queued{color:var(--s-new);background:var(--s-new-bg)}
+.st-running{color:var(--s-interested);background:var(--s-interested-bg)}
+.st-done{color:var(--s-won);background:var(--s-won-bg)}
+.st-failed{color:var(--danger);background:var(--danger-soft)}
+.searches .sm{color:var(--muted);font-size:13px}
+
 /* clients */
 .tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
 table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
@@ -191,7 +206,7 @@ textarea.field{resize:vertical;min-height:70px}
 <div class="wrap">
   <header class="top">
     <div class="brand">
-      <small id="agency-line">Phoenix Valley · web + ads</small>
+      <small id="agency-line">Websites + ads · lead desk</small>
       <h1>Valley <span>Lead Desk</span></h1>
     </div>
     <div class="stats" aria-label="Summary">
@@ -214,6 +229,19 @@ textarea.field{resize:vertical;min-height:70px}
   <section class="view" id="v-today"></section>
 
   <section class="view" id="v-leads" hidden>
+    <div class="finder">
+      <h2>Find new leads</h2>
+      <p class="sub">Anywhere in the world: a zip or postal code, city, state or country. Claude finds businesses with no website and adds them here, usually in 10–20 minutes.</p>
+      <form id="find-form">
+        <label class="f">Where<input class="field" id="find-where" maxlength="80" placeholder="85022, Austin TX, Ontario, Manchester UK…" required></label>
+        <label class="f">Type of business<input class="field" id="find-type" list="type-list" maxlength="60" value="Any"></label>
+        <label class="f">How many
+          <select class="field" id="find-count"><option>5</option><option selected>10</option><option>15</option></select>
+        </label>
+        <button class="btn primary" id="find-go" type="submit">Search</button>
+      </form>
+      <ul class="searches" id="searches"></ul>
+    </div>
     <div class="funnel" id="funnel"></div>
     <div class="toolbar">
       <input type="search" id="q" placeholder="Search name, owner, phone, notes…" aria-label="Search leads">
@@ -266,6 +294,7 @@ textarea.field{resize:vertical;min-height:70px}
             <label class="f">Phone<input class="field" id="s-phone" autocomplete="tel"></label>
             <label class="f">Email<input class="field" id="s-email" type="email" autocomplete="email"></label>
             <label class="f full">Mailing address<input class="field" id="s-address" placeholder="A PO box works"></label>
+            <label class="f full">Daily search area<input class="field" id="s-dailyArea" placeholder="Phoenix metro, AZ" maxlength="80"></label>
             <label class="f">Website build fee ($)<input class="field num" id="s-buildFee" inputmode="numeric"></label>
             <label class="f">Hosting ($/month)<input class="field num" id="s-hosting" inputmode="numeric"></label>
             <label class="f">Ads management ($/month)<input class="field num" id="s-ads" inputmode="numeric"></label>
@@ -345,6 +374,12 @@ textarea.field{resize:vertical;min-height:70px}
 </aside>
 <datalist id="cat-list"></datalist>
 <datalist id="city-list"></datalist>
+<datalist id="type-list">
+  <option value="Any"><option value="Mobile auto detailing"><option value="Pressure washing"><option value="House cleaning"><option value="Pool cleaning">
+  <option value="Landscaping"><option value="Handyman"><option value="Mobile mechanic"><option value="Barbershop"><option value="Nail salon">
+  <option value="Food truck"><option value="Restaurant"><option value="Painter"><option value="Roofing"><option value="Plumber"><option value="Electrician">
+  <option value="Pest control"><option value="Moving company"><option value="Tree service"><option value="Dog grooming"><option value="Personal trainer">
+</datalist>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -360,7 +395,8 @@ const STAGES=[
 const stageLabel=id=>(STAGES.find(s=>s.id===id)||STAGES[0]).label;
 const ACTIVE=['new','contacted','interested','sample'];
 
-let db=null, sample=null;
+let db=null, sample=null, mcp=null, searches=[];
+const SEARCH_TRIGGER='trig_01XvZ9sQnAJM8hRCNAvzzECf';
 let leads=[], settings={};
 let tab='today', stageFilter='active';
 let editing=null; // lead object or {} for new
@@ -410,7 +446,7 @@ function render(){
   $('c-today').textContent=todo; $('c-today').classList.toggle('hot',b.due.length>0);
   $('c-leads').textContent=leads.length;
   $('c-clients').textContent=clients.length;
-  $('agency-line').textContent=(settings.agencyName?settings.agencyName+' · ':'')+'Phoenix Valley · web + ads';
+  $('agency-line').textContent=(settings.agencyName?settings.agencyName+' · ':'')+'Websites + ads · lead desk';
   renderToday(b); renderLeads(); renderClients(clients,mrr); renderScripts(); renderLists();
 }
 
@@ -471,7 +507,7 @@ function renderLeads(){
     if(stageFilter!=='active'&&stageFilter!=='all'&&l.stage!==stageFilter)return false;
     if(cat&&(l.category||'').trim()!==cat)return false;
     if(city&&(l.city||'').trim()!==city)return false;
-    if(q&&![l.name,l.owner,l.category,l.city,l.phone,l.email,l.notes,l.why].join(' ').toLowerCase().includes(q))return false;
+    if(q&&![l.name,l.owner,l.category,l.city,l.region,l.country,l.zip,l.phone,l.email,l.notes,l.why].join(' ').toLowerCase().includes(q))return false;
     return true;
   });
   if(sort==='name')rows.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
@@ -505,7 +541,7 @@ function renderClients(clients,mrr){
 
 function renderScripts(){
   const n=settings.yourName||'[your name]';
-  $('script-call').textContent=`"Hey, is this [owner]? My name's ${n}, I'm a local web designer here in the Valley. I was looking you up and saw you've got great reviews, but no website. So people searching Google are probably finding your competitors instead of you.
+  $('script-call').textContent=`"Hey, is this [owner]? My name's ${n}, I'm a local web designer. I was looking you up and saw you've got great reviews, but no website. So people searching Google are probably finding your competitors instead of you.
 
 I build sites for local businesses. Would it be alright if I put together a free sample site for [business]? No cost, no commitment. If you like it we talk, if not, no problem. Can I text it to you this week?"`;
   $('script-vm').textContent=`"Hey [owner], this is ${n}, a local web designer. I saw [business] has great reviews but no website, and I'd like to build you a free sample, no strings. Call or text me back at ${settings.phone||'[your number]'}. Thanks!"`;
@@ -514,7 +550,7 @@ I build sites for local businesses. Would it be alright if I put together a free
   $('obj-price').textContent=fee||host
     ? `"Let me show you the free sample first. If you love it, it's ${fee?money(fee)+' to build':'a one-time build fee'}${host?' and '+money(host)+' a month to keep it online and updated':''}. Usually one job pays for it."`
     : `"Let me show you the free sample first. If you love it, it costs less than one job's worth of income." (Add your prices in the setup card and this line fills in.)`;
-  for(const k of ['yourName','agencyName','phone','email','address','buildFee','hosting','ads']){
+  for(const k of ['yourName','agencyName','phone','email','address','dailyArea','buildFee','hosting','ads']){
     const el=$('s-'+k); if(document.activeElement!==el) el.value=settings[k]??'';
   }
 }
@@ -648,14 +684,14 @@ async function draftEmail(kind){
   const l=editing,out=$('d-draft-out'); if(!sample||!l)return;
   out.innerHTML=`<div class="draft" style="color:var(--muted)">Writing…</div>`;
   const kinds={first:'a first cold email offering to build them a free sample website',followup:'a short, friendly follow-up to an earlier email or call that got no reply',sample:'an email sharing the free sample website link that was built for them and asking if they want it live'};
-  const prompt=`You write short cold emails for a one-person web design business in the Phoenix, Arizona area. Write ${kinds[kind]}.
+  const prompt=`You write short cold emails for a one-person web design business that works with small local businesses. Match the spelling and tone to the recipient's country. Write ${kinds[kind]}.
 
 ${senderBlock()}
 
 Recipient business: ${l.name}
 Owner: ${l.owner||'unknown (open with "Hi there")'}
 Type of business: ${l.category||'unknown'}
-City: ${l.city||'Phoenix area'}
+City: ${[l.city,l.region,l.country].filter(Boolean).join(', ')||'unknown'}
 What we know: ${l.why||'They do not appear to have a website.'}
 Notes: ${l.notes||'none'}
 Sample site link: ${safeUrl(l.sampleUrl)||'not built yet'}
@@ -703,7 +739,7 @@ async function writeReport(){
   const prompt=`Write a short monthly ads report email from a local marketing freelancer to their client. Friendly and clear, for a busy small-business owner. Use ONLY the numbers given; never invent results. If a number is missing, skip it. Include cost per lead only if both spend and leads are given (compute it). End with one line on next month's plan.
 
 ${senderBlock()}
-Client: ${l.name} (${l.category||'local business'}, ${l.city||'Phoenix area'}), owner ${l.owner||'unknown'}
+Client: ${l.name} (${l.category||'local business'}, ${[l.city,l.region,l.country].filter(Boolean).join(', ')||'their area'}), owner ${l.owner||'unknown'}
 Month: ${v('r-month')||'this month'}
 Ad spend: ${v('r-spend')||'not given'}
 Clicks: ${v('r-clicks')||'not given'}
@@ -719,12 +755,54 @@ Return JSON only: {"subject":"...","body":"..."}`;
   }catch(e){out.innerHTML=`<div class="draft" style="color:var(--danger)">Couldn’t write the report this time. Try again.</div>`}
 }
 
+/* ---------- find leads ---------- */
+function ago(iso){if(!iso)return '';const m=Math.round((Date.now()-Date.parse(iso))/60000);if(m<1)return 'just now';if(m<60)return m+' min ago';const h=Math.round(m/60);if(h<24)return h+' hr ago';return Math.round(h/24)+' days ago'}
+function renderSearches(){
+  const el=$('searches'); if(!el)return;
+  if(!searches.length){el.innerHTML='';return}
+  const lbl={queued:'Waiting',running:'Searching',done:'Done',failed:'Failed'};
+  el.innerHTML=searches.map(x=>{
+    const st=lbl[x.status]?x.status:'queued';
+    let detail='';
+    if(st==='done') detail=`Added ${Number(x.added)||0} lead${Number(x.added)===1?'':'s'}${Array.isArray(x.names)&&x.names.length?': '+x.names.slice(0,6).join(', ')+(x.names.length>6?'…':''):''}`;
+    else if(st==='running') detail='Claude is searching now. New leads appear in your list as soon as it finishes.';
+    else if(st==='failed') detail=x.note||'Something went wrong.';
+    else detail=x.startError?'Saved, but it could not start from here. Tell Claude "run my lead searches".':'Starting…';
+    if(st==='done'&&x.note) detail+=' · '+x.note;
+    return `<li><span class="st st-${st}">${lbl[st]}</span><div><b>${esc(x.type||'Any')}</b> in <b>${esc(x.location)}</b> <span class="sm">· ${esc(ago(x.createdAt))}</span><div class="sm">${esc(detail)}</div></div></li>`;
+  }).join('');
+}
+async function startSearch(ev){
+  ev.preventDefault();
+  if(!db){toast('Saving isn’t available in this view.');return}
+  const where=$('find-where').value.replace(/[\u0000-\u001f<>]/g,'').trim().slice(0,80);
+  const type=($('find-type').value.replace(/[\u0000-\u001f<>]/g,'').trim()||'Any').slice(0,60);
+  const count=Math.min(15,Math.max(1,parseInt($('find-count').value,10)||10));
+  if(!where){$('find-where').focus();return}
+  $('find-go').disabled=true;
+  const ref=db.collection('searches').doc();
+  try{
+    await ref.set({location:where,type,count,status:'queued',createdAt:new Date().toISOString()});
+  }catch(e){toast('Couldn’t save the search. Try again.');$('find-go').disabled=false;return}
+  $('find-where').value='';
+  let started=false;
+  if(mcp){
+    try{
+      await mcp.callTool('Claude Code Remote','fire_trigger',{trigger_id:SEARCH_TRIGGER,text:'Run search request id '+ref.id+'.'},{cache:false});
+      started=true;
+    }catch(e){ started=false; }
+  }
+  if(!started){ try{await ref.update({startError:true})}catch(_){} }
+  toast(started?'Search started. Leads usually arrive in 10–20 minutes.':'Search saved. Tell Claude "run my lead searches" to start it.');
+  $('find-go').disabled=false;
+}
+
 /* ---------- settings ---------- */
 async function saveSettings(ev){
   ev.preventDefault();
   if(!db){toast('Saving isn’t available in this view.');return}
   const o={};
-  for(const k of ['yourName','agencyName','phone','email','address']) o[k]=$('s-'+k).value.trim();
+  for(const k of ['yourName','agencyName','phone','email','address','dailyArea']) o[k]=$('s-'+k).value.trim();
   for(const k of ['buildFee','hosting','ads']){const v=$('s-'+k).value.trim();o[k]=v===''?'':numOr0(v)}
   $('s-save').disabled=true;
   try{await db.doc('settings/main').set(o);toast('Details saved')}catch(e){toast('Couldn’t save. Try again.')}
@@ -762,6 +840,7 @@ $('d-delete').onclick=confirmDelete;
 $('d-note-add').onclick=addNote;
 $('d-note').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addNote()}});
 $('settings-form').addEventListener('submit',saveSettings);
+$('find-form').addEventListener('submit',startSearch);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('drawer').hidden)closeDrawer()});
 
 /* ---------- boot ---------- */
@@ -778,6 +857,8 @@ render();
     if(editing&&editing.id){const fresh=leads.find(x=>x.id===editing.id);if(fresh){editing={...fresh};renderDrawerExtras()}}
   },()=>{$('banner').hidden=false;$('banner').textContent='Lost the connection to your leads. Reload the page.'});
   db.doc('settings/main').onSnapshot(s=>{settings=s.exists?{...s.data()}:{};render()},()=>{});
+  db.collection('searches').orderBy('createdAt','desc').limit(8).onSnapshot(s=>{searches=s.docs.map(d=>({id:d.id,...d.data()}));renderSearches()},()=>{});
+  c.use('mcp').then(m=>{mcp=m}).catch(()=>{});
   sample=await c.use('sample');
   if(sample&&editing)renderDrawerExtras();
 })();
