@@ -195,6 +195,17 @@ textarea.field{resize:vertical;min-height:70px}
 .history{list-style:none;margin:0;padding:0;font-size:14px}
 .history li{display:grid;grid-template-columns:86px 1fr;gap:8px;padding:5px 0;border-bottom:1px solid var(--line)}
 .history li span:first-child{color:var(--muted);font-family:var(--mono);font-size:12.5px}
+.onboard{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.onboard label{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:start;padding:7px 8px;border-radius:8px;cursor:pointer;font-size:14px}
+.onboard label:hover{background:var(--surface-2)}
+.onboard input{width:17px;height:17px;margin:2px 0 0;accent-color:var(--accent)}
+.onboard .hint{display:block;color:var(--muted);font-size:12.5px}
+.onboard .when{color:var(--muted);font-family:var(--mono);font-size:12px;white-space:nowrap}
+.onboard .done .t{text-decoration:line-through;color:var(--muted)}
+.bar{height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin:4px 0 10px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.setup{font-size:13px;color:var(--muted);white-space:nowrap}
+.setup.full{color:var(--s-won);font-weight:700}
 .draft{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
 .draft pre{white-space:pre-wrap;font:inherit;margin:6px 0 10px}
 .confirm{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:var(--danger-soft);border-radius:8px;padding:8px 10px;font-size:14px}
@@ -333,6 +344,7 @@ textarea.field{resize:vertical;min-height:70px}
   </div>
   <div class="drawer-body">
     <div class="block" id="d-quick"></div>
+    <div class="block" id="d-onboard" hidden></div>
     <form id="lead-form" class="form-grid">
       <label class="f full">Business name<input class="field" id="l-name" required></label>
       <label class="f">Owner<input class="field" id="l-owner"></label>
@@ -528,13 +540,14 @@ function renderClients(clients,mrr){
   if(!clients.length){v.innerHTML=`<div class="empty">No paying clients yet. When you close a deal, open the lead, set the stage to <b>Client</b> and enter what they pay. Your monthly recurring total updates at the top.</div>`;return}
   const setup=clients.reduce((s,l)=>s+numOr0(l.buildFee),0);
   v.innerHTML=`<div class="tablewrap"><table>
-    <thead><tr><th>Client</th><th>Since</th><th class="r">Hosting</th><th class="r">Ads</th><th class="r">Monthly</th><th class="r">Build fee</th></tr></thead>
+    <thead><tr><th>Client</th><th>Setup</th><th>Since</th><th class="r">Hosting</th><th class="r">Ads</th><th class="r">Monthly</th><th class="r">Build fee</th></tr></thead>
     <tbody>${clients.sort((a,b)=>mrrOf(b)-mrrOf(a)).map(l=>`<tr data-open="${esc(l.id)}">
       <td><b>${esc(l.name)}</b><div style="color:var(--muted);font-size:13px">${esc(l.city||'')}${safeUrl(l.liveUrl)?' · site live':''}</div></td>
+      <td><span class="setup ${onboardDone(l)===ONBOARD.length?'full':''}">${onboardDone(l)===ONBOARD.length?'Complete':onboardDone(l)+' of '+ONBOARD.length}</span></td>
       <td>${esc(fmtDate(l.wonAt))}</td>
       <td class="r num">${money(l.hosting)}</td><td class="r num">${money(l.ads)}</td>
       <td class="r num"><b>${money(mrrOf(l))}</b></td><td class="r num">${money(l.buildFee)}</td></tr>`).join('')}</tbody>
-    <tfoot><tr><td>Total</td><td></td><td class="r num">${money(clients.reduce((s,l)=>s+numOr0(l.hosting),0))}</td><td class="r num">${money(clients.reduce((s,l)=>s+numOr0(l.ads),0))}</td><td class="r num">${money(mrr)}</td><td class="r num">${money(setup)}</td></tr></tfoot>
+    <tfoot><tr><td>Total</td><td></td><td></td><td class="r num">${money(clients.reduce((s,l)=>s+numOr0(l.hosting),0))}</td><td class="r num">${money(clients.reduce((s,l)=>s+numOr0(l.ads),0))}</td><td class="r num">${money(mrr)}</td><td class="r num">${money(setup)}</td></tr></tfoot>
   </table></div>
   <p style="color:var(--muted);font-size:14px">That's <b class="num">${money(mrr*12)}</b> a year in recurring income. Open a client to write their monthly ads report.</p>`;
 }
@@ -570,7 +583,41 @@ function openDrawer(lead){
   setTimeout(()=>$('l-name').focus({preventScroll:true}),30);
 }
 function closeDrawer(){$('scrim').hidden=true;$('drawer').hidden=true;editing=null}
+const ONBOARD=[
+  {k:'agreement',t:'Agreement signed',h:'One-page agreement: price, monthly fee, what’s included, they own the domain.'},
+  {k:'deposit',t:'Deposit paid',h:'Usually 50% of the setup fee up front.'},
+  {k:'billing',t:'Monthly billing set up',h:'Automatic recurring charge in Stripe or Square, starting on launch day.'},
+  {k:'info',t:'Client info collected',h:'Logo, real photos, services, hours, service area, reviews, where quote requests go.'},
+  {k:'build',t:'Final site built',h:'Concept bar removed, real details in, changes done.'},
+  {k:'domain',t:'Domain bought in their name',h:'They own it; you manage it.'},
+  {k:'live',t:'Site live on hosting',h:'On Netlify, domain connected, call button and quote form tested on a phone.'},
+  {k:'tracking',t:'Tracking set up',h:'Google Analytics (or Cloudflare), Search Console, Call-tap and quote-form tracking. Cookie banner if they’re in Europe or the UK.'},
+  {k:'gbp',t:'Google Business Profile linked',h:'Website link added so it shows on Google Maps.'},
+  {k:'final',t:'Final payment collected',h:'The rest of the setup fee.'},
+  {k:'handoff',t:'Handoff message sent',h:'Live link, what’s included each month, how to request changes.'},
+  {k:'ads',t:'Ads offered',h:'About 30 days after launch, with their first month of numbers.'}
+];
+function onboardDone(l){const o=l.onboarding||{};return ONBOARD.filter(x=>o[x.k]).length}
+function renderOnboard(){
+  const box=$('d-onboard'),l=editing;
+  if(!l||!l.id||l.stage!=='won'){box.hidden=true;box.innerHTML='';return}
+  const o=l.onboarding||{},n=onboardDone(l);
+  box.hidden=false;
+  box.innerHTML=`<h4>Client setup · ${n} of ${ONBOARD.length}</h4><div class="bar"><i style="width:${Math.round(n/ONBOARD.length*100)}%"></i></div>
+  <ul class="onboard">${ONBOARD.map(x=>`<li class="${o[x.k]?'done':''}"><label><input type="checkbox" data-onboard="${x.k}" ${o[x.k]?'checked':''}><span><span class="t">${esc(x.t)}</span><span class="hint">${esc(x.h)}</span></span><span class="when">${o[x.k]?esc(fmtDate(o[x.k])):''}</span></label></li>`).join('')}</ul>`;
+}
+async function toggleOnboard(k,on){
+  const l=editing; if(!l||!l.id)return;
+  const step=ONBOARD.find(x=>x.k===k); if(!step)return;
+  const val=on?today():'';
+  const o={...(l.onboarding||{}),[k]:val};
+  const h=on?withHistory(l,'Setup: '+step.t):l.history;
+  if(await write(l.id,{onboarding:{[k]:val},history:h,updatedAt:new Date().toISOString()},false)){
+    editing.onboarding=o;editing.history=h;renderDrawerExtras();
+  }else renderOnboard();
+}
 function renderDrawerExtras(){
+  renderOnboard();
   const l=editing; if(!l)return;
   const src=safeUrl(l.sourceUrl), smp=safeUrl(l.sampleUrl);
   let q='';
@@ -824,6 +871,7 @@ document.addEventListener('click',e=>{
   const s=e.target.closest('[data-stage]'); if(s){stageFilter=s.dataset.stage;renderLeads();return}
   const d=e.target.closest('[data-draft]'); if(d){draftEmail(d.dataset.draft);return}
   const id=e.target.id;
+  const ob=e.target.closest('[data-onboard]'); if(ob){toggleOnboard(ob.dataset.onboard,ob.checked);return}
   if(id==='d-reqsample')requestSample();
   else if(id==='d-draft')showDraftUI();
   else if(id==='d-reportbtn')showReportUI();
