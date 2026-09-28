@@ -164,7 +164,8 @@ textarea.field{resize:vertical;min-height:70px}
 .history{list-style:none;margin:0;padding:0;font-size:14px}
 .history li{display:grid;grid-template-columns:86px 1fr;gap:8px;padding:5px 0;border-bottom:1px solid var(--line)}
 .history li span:first-child{color:var(--muted);font-family:var(--mono);font-size:12.5px}
-.drop{border:2px dashed var(--line);border-radius:14px;padding:18px;text-align:center;color:var(--muted);font-size:14px;cursor:pointer;background:var(--surface)}
+.drop{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;border:2px dashed var(--line);border-radius:14px;padding:18px 16px;text-align:center;color:var(--muted);font-size:13.5px;line-height:1.45;cursor:pointer;background:var(--surface)}
+.drop b{font-size:15px}
 .drop:hover,.drop.over{border-color:var(--accent);color:var(--ink);background:var(--accent-soft)}
 .drop b{color:var(--ink)}
 .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:10px}
@@ -340,7 +341,7 @@ textarea.field{resize:vertical;min-height:70px}
       <label class="f">Where we found them (link)<input class="field" id="l-sourceUrl" placeholder="https://"></label>
       <label class="f full">Why they're a good lead<textarea class="field" id="l-why" rows="2"></textarea></label>
       <label class="f full">Notes<textarea class="field" id="l-notes" rows="3"></textarea></label>
-      <label class="f full">Sample site link<input class="field" id="l-sampleUrl" placeholder="Claude adds a picture of the sample here"></label>
+      <label class="f full">Sample site link<input class="field" id="l-sampleUrl" placeholder="Claude adds the sample site link here"></label>
       <label class="f">Build fee ($)<input class="field num" id="l-buildFee" inputmode="numeric"></label>
       <label class="f">Hosting ($/mo)<input class="field num" id="l-hosting" inputmode="numeric"></label>
       <label class="f">Ads ($/mo)<input class="field num" id="l-ads" inputmode="numeric"></label>
@@ -608,7 +609,7 @@ function renderPhotos(){
   const ph=Array.isArray(l.photos)?l.photos:[];
   box.hidden=false;
   box.innerHTML=`<h4>Photos &amp; logo${ph.length?' · '+ph.length:''}</h4>
-    <label class="drop" id="ph-drop" for="ph-input"><b>Drop pictures here</b> or tap to choose<br>Photos of their work, their logo, their truck. Claude uses them on the sample site.</label>
+    <label class="drop" id="ph-drop" for="ph-input"><b>Drop pictures here or tap to choose</b><span>Photos of their work, their logo, their truck. Claude uses them on the sample site.</span></label>
     <input type="file" id="ph-input" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" multiple hidden>
     ${phBusy?`<div class="ph-status">${esc(phBusy)}</div>`:''}
     ${ph.length?`<div class="thumbs">${ph.map(x=>`<div class="thumb ${x.logo?'logo':''}">
