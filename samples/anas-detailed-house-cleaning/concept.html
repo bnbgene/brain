@@ -1,0 +1,245 @@
+<title>Ana's Detailed Cleaning Concept</title>
+<meta name="description" content="Family-run house cleaning in Berkeley, CA. Detailed, thorough cleaning by Ana and her daughter Rosa.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F7FAF8; --paper:#FFFFFF; --mist:#EAF5FA; --leaf:#EEF5E4; --line:#DCE6E2;
+  --ink:#1E3340; --muted:#5A6B74;
+  --blue:#1E95C9; --blue-deep:#157AA6; --green:#6E9E2E; --sun:#F2B42C;
+  --display:"Fraunces", Georgia, serif;
+  --body:"Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 var(--body)}
+a{color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.1;text-wrap:balance;margin:0;letter-spacing:-.01em}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+
+.sample-note{position:sticky;top:0;z-index:30;background:#FFD27A;color:#2A1D00;font-size:13px;font-weight:700;text-align:center;padding:7px 16px}
+header.nav{position:sticky;top:33px;z-index:10;background:rgba(247,250,248,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;white-space:nowrap}
+.brand .mark{width:46px;aspect-ratio:1;border-radius:12px;overflow:hidden;background:#fff;border:1px solid var(--line)}
+.brand .mark img{width:100%;height:100%;object-fit:cover;object-position:50% 12%;transform:scale(1.35);transform-origin:50% 25%}
+.brand span{font-size:17px}
+.nav nav{display:flex;gap:24px;font-weight:600;font-size:15px}
+.nav nav a{text-decoration:none;color:var(--muted)}
+.nav nav a:hover{color:var(--ink)}
+@media (max-width:900px){.nav nav{display:none}}
+@media (max-width:420px){.brand span{font-size:15px}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;text-decoration:none;border-radius:999px;padding:13px 24px;border:2px solid transparent;font-size:16px;white-space:nowrap}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.primary:hover{background:var(--blue-deep)}
+.btn.line{border-color:var(--line);background:var(--paper)}
+.btn.sm{padding:9px 16px;font-size:15px}
+
+.hero{padding-block:64px 72px;background:radial-gradient(ellipse at 85% 10%,var(--mist),transparent 55%),radial-gradient(ellipse at 0% 100%,var(--leaf),transparent 50%)}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--green);margin-bottom:14px}
+.eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--green)}
+.hero h1{font-size:clamp(40px,5.6vw,64px)}
+.hero h1 em{font-style:italic;color:var(--blue)}
+.hero p.lead{color:var(--muted);font-size:19px;max-width:42ch;margin:18px 0 26px}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.hero .meta{display:flex;flex-wrap:wrap;gap:18px;margin-top:24px;color:var(--muted);font-size:15px}
+.hero .meta b{color:var(--ink)}
+.collage{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.photo{border-radius:20px;overflow:hidden;background:var(--paper);box-shadow:0 18px 40px rgba(30,51,64,.14)}
+.photo img{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:50% 2%}
+.collage .photo:first-child{grid-column:1/-1}
+.collage .photo:first-child img{aspect-ratio:16/10}
+.collage .photo:nth-child(2) img{aspect-ratio:16/10}
+.collage .photo:nth-child(3) img{aspect-ratio:16/10;object-position:50% 50%}
+.photo img.framed{transform:scale(1.08);transform-origin:50% 8%}
+.family .logo-card{background:#fff;border:1px solid var(--line);border-radius:24px;display:grid;place-items:center;padding:28px;box-shadow:0 18px 40px rgba(30,51,64,.1)}
+.family .logo-card img{width:min(100%,320px);aspect-ratio:348/262;object-fit:cover;object-position:50% 0}
+.badge{position:absolute;left:-14px;bottom:-16px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:10px 16px;box-shadow:0 12px 30px rgba(30,51,64,.12);font-size:14px}
+.badge b{display:block;font-family:var(--display);font-size:22px;color:var(--ink)}
+@media (max-width:880px){.hero .wrap{grid-template-columns:1fr}.badge{left:10px}}
+
+section{padding-block:80px}
+.head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:36px}
+.head h2{font-size:clamp(30px,4.2vw,44px);max-width:20ch}
+.head p{color:var(--muted);max-width:44ch;margin:0}
+
+.services{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:880px){.services{grid-template-columns:1fr}}
+.svc{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:10px}
+.svc .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--mist);color:var(--blue);font-weight:700}
+.svc:nth-child(2) .ic{background:var(--leaf);color:var(--green)}
+.svc:nth-child(3) .ic{background:#FDF3DA;color:#B07E0A}
+.svc h3{font-size:23px}
+.svc p{margin:0;color:var(--muted)}
+.svc ul{margin:4px 0 0;padding-left:18px;color:var(--muted);font-size:15px}
+
+.family{background:var(--paper);border-block:1px solid var(--line)}
+.family .wrap{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:center}
+.family .photo img{aspect-ratio:1;object-position:50% 50%}
+.family p{color:var(--muted);max-width:52ch}
+.quote-mark{font-family:var(--display);font-size:22px;color:var(--ink);font-style:italic;border-left:3px solid var(--green);padding-left:16px;margin:22px 0}
+@media (max-width:880px){.family .wrap{grid-template-columns:1fr}}
+
+.checks{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media (max-width:880px){.checks{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.checks{grid-template-columns:1fr}}
+.check{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px}
+.check b{display:block;font-size:17px;margin-bottom:4px}
+.check span{color:var(--muted);font-size:15px}
+
+.reviews-slot{border:2px dashed var(--line);border-radius:20px;padding:32px;text-align:center;color:var(--muted);background:var(--paper)}
+.reviews-slot b{display:block;color:var(--ink);font-size:19px;margin-bottom:4px}
+
+.contact{background:linear-gradient(135deg,var(--mist),var(--leaf));border-radius:28px;padding:48px clamp(22px,5vw,56px);display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:center}
+.contact h2{font-size:clamp(30px,4.2vw,42px)}
+.contact p{color:var(--muted)}
+.rows{display:grid;gap:10px}
+.rows div{background:var(--paper);border-radius:14px;padding:14px 18px;border:1px solid var(--line)}
+.rows small{display:block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.rows b{font-size:18px;word-break:break-word}
+@media (max-width:880px){.contact{grid-template-columns:1fr}}
+
+footer{padding-block:30px;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
+
+.callbar{display:none}
+@media (max-width:600px){
+  .callbar{display:flex;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));background:var(--paper);border-top:1px solid var(--line)}
+  .callbar .btn{flex:1;padding:12px}
+  body{padding-bottom:74px}
+}
+</style>
+
+<div class="sample-note">Website concept prepared for Ana's Detailed House Cleaning. Not their official site. Buttons are for preview only.</div>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="mark"><img src="img/logo.jpg" alt="Ana's Detailed House Cleaning logo"></span><span>Ana's Detailed House Cleaning</span></a>
+    <nav aria-label="Main">
+      <a href="#services">Services</a>
+      <a href="#family">Our family</a>
+      <a href="#why">Why us</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="btn primary sm" href="#contact">Free quote</a>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <div class="eyebrow">Family-run in Berkeley, CA</div>
+        <h1>A home that feels <em>truly clean</em>, down to the details.</h1>
+        <p class="lead">Ana and her daughter Rosa clean every home like it's their own: the corners, the baseboards, the spots most cleaners skip.</p>
+        <div class="ctas">
+          <a class="btn primary" href="#contact">Get a free quote</a>
+          <a class="btn line" href="#services">See services</a>
+        </div>
+        <div class="meta"><span><b>74 reviews</b> on Yelp</span><span><b>Mon–Fri</b> 8:30am–5pm</span></div>
+      </div>
+      <div class="collage">
+        <div class="photo"><img class="framed" src="img/kitchen.jpg" alt="A spotless white kitchen with an island and wood floors"></div>
+        <div class="photo"><img class="framed" src="img/living-room.jpg" alt="A bright, tidy living room"></div>
+        <div class="photo"><img src="img/supplies.jpg" alt="Cleaning supplies on a freshly mopped wood floor"></div>
+        <div class="badge"><b>74</b>Yelp reviews</div>
+      </div>
+    </div>
+  </div>
+
+  <section id="services">
+    <div class="wrap">
+      <div class="head">
+        <h2>Cleaning that fits your home and schedule</h2>
+        <p>Every home is different. Tell us what you need and we'll put together a plan and a clear price.</p>
+      </div>
+      <div class="services">
+        <div class="svc">
+          <div class="ic" aria-hidden="true">01</div>
+          <h3>Regular cleaning</h3>
+          <p>Weekly, every other week or monthly visits that keep your home fresh without you lifting a finger.</p>
+          <ul><li>Kitchens and bathrooms</li><li>Dusting and floors</li><li>Beds made, trash out</li></ul>
+        </div>
+        <div class="svc">
+          <div class="ic" aria-hidden="true">02</div>
+          <h3>Deep cleaning</h3>
+          <p>A top-to-bottom reset for homes that need extra attention, or before a special occasion.</p>
+          <ul><li>Baseboards and doors</li><li>Inside appliances</li><li>Built-up grime and buildup</li></ul>
+        </div>
+        <div class="svc">
+          <div class="ic" aria-hidden="true">03</div>
+          <h3>Move-in &amp; move-out</h3>
+          <p>Hand over the keys, or move in, to a place that's spotless from the cabinets to the floors.</p>
+          <ul><li>Empty-home detail clean</li><li>Cabinets and closets</li><li>Ready for inspection</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="family" class="family">
+    <div class="wrap">
+      <div class="logo-card"><img src="img/logo.jpg" alt="Ana's Detailed House Cleaning logo"></div>
+      <div>
+        <div class="eyebrow">Mother and daughter</div>
+        <h2 style="font-size:clamp(30px,4.2vw,42px)">You'll always know who's in your home.</h2>
+        <p>Ana's Detailed House Cleaning is run by Ana and her daughter Rosa. No rotating crews of strangers, just the same trusted faces who know your home and how you like it done.</p>
+        <p class="quote-mark">"Detailed" is in our name for a reason.</p>
+        <a class="btn primary" href="#contact">Book your first clean</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="why">
+    <div class="wrap">
+      <div class="head"><h2>Why Berkeley families choose us</h2></div>
+      <div class="checks">
+        <div class="check"><b>Thorough, every time</b><span>Our reviews keep saying the same thing: nothing gets missed.</span></div>
+        <div class="check"><b>Family-owned</b><span>A local mother-and-daughter business, not a franchise.</span></div>
+        <div class="check"><b>Same faces</b><span>The people who clean your home know your home.</span></div>
+        <div class="check"><b>Clear pricing</b><span>A straight quote up front, no surprises.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>What customers say</h2></div>
+      <div class="reviews-slot"><b>Your best Yelp reviews go here.</b>We'll feature your real customer reviews so new visitors see them first.</div>
+    </div>
+  </section>
+
+  <section id="contact" style="padding-top:0">
+    <div class="wrap">
+      <div class="contact">
+        <div>
+          <h2>Ready for a cleaner home?</h2>
+          <p>Call, text or email for a free quote. We'll ask a few questions about your home and give you a clear price.</p>
+          <a class="btn primary" href="#contact">Request a free quote</a>
+        </div>
+        <div class="rows">
+          <div><small>Call or text</small><b>(510) 350-6094</b></div>
+          <div><small>Email</small><b>anasdetailedcleaning@gmail.com</b></div>
+          <div><small>Hours</small><b>Mon–Fri 8:30am–5pm · Closed weekends</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Ana's Detailed House Cleaning · Berkeley, California</span>
+    <span>House cleaning · Deep cleaning · Move-in &amp; move-out</span>
+  </div>
+</footer>
+
+<div class="callbar">
+  <a class="btn line" href="#contact">Call or text</a>
+  <a class="btn primary" href="#contact">Free quote</a>
+</div>
