@@ -164,6 +164,18 @@ textarea.field{resize:vertical;min-height:70px}
 .history{list-style:none;margin:0;padding:0;font-size:14px}
 .history li{display:grid;grid-template-columns:86px 1fr;gap:8px;padding:5px 0;border-bottom:1px solid var(--line)}
 .history li span:first-child{color:var(--muted);font-family:var(--mono);font-size:12.5px}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:18px;text-align:center;color:var(--muted);font-size:14px;cursor:pointer;background:var(--surface)}
+.drop:hover,.drop.over{border-color:var(--accent);color:var(--ink);background:var(--accent-soft)}
+.drop b{color:var(--ink)}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:10px}
+.thumb{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface-2)}
+.thumb img{display:block;width:100%;aspect-ratio:1;object-fit:cover}
+.thumb.logo img{object-fit:contain;padding:8px;background:var(--surface)}
+.thumb .row{display:flex;justify-content:space-between;align-items:center;gap:4px;padding:4px 6px;font-size:12px;background:var(--surface)}
+.thumb .row button{border:0;background:none;color:var(--muted);font-size:12px;padding:2px 4px;border-radius:6px}
+.thumb .row button:hover{color:var(--ink);background:var(--surface-2)}
+.thumb .tag{position:absolute;top:6px;left:6px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px}
+.ph-status{font-size:13px;color:var(--muted);margin-top:8px}
 .onboard{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
 .onboard label{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:start;padding:7px 8px;border-radius:8px;cursor:pointer;font-size:14px}
 .onboard label:hover{background:var(--surface-2)}
@@ -336,6 +348,7 @@ textarea.field{resize:vertical;min-height:70px}
     </form>
     <div class="block" id="d-email" hidden></div>
     <div class="block" id="d-report" hidden></div>
+    <div class="block" id="d-photos" hidden></div>
     <div class="block" id="d-history-block">
       <h4>History</h4>
       <div style="display:flex;gap:6px;margin-bottom:8px">
@@ -376,7 +389,7 @@ const STAGES=[
 const stageLabel=id=>(STAGES.find(s=>s.id===id)||STAGES[0]).label;
 const ACTIVE=['new','contacted','interested','sample'];
 
-let db=null, sample=null, mcp=null, searches=[];
+let db=null, sample=null, mcp=null, assets=null, searches=[], phBusy='', phConfirm=null;
 const SEARCH_TRIGGER='trig_01XvZ9sQnAJM8hRCNAvzzECf';
 let leads=[], settings={};
 let tab='today', stageFilter='active';
@@ -541,6 +554,7 @@ I build sites for local businesses. Would it be alright if I put together a free
 const FIELDS=['name','owner','category','city','stage','phone','email','followUp','sourceUrl','why','notes','sampleUrl','buildFee','hosting','ads','liveUrl'];
 function openDrawer(lead){
   editing=lead?{...lead}:{stage:'new',history:[]};
+  phConfirm=null;
   $('d-title').textContent=lead?lead.name:'New lead';
   $('l-stage').innerHTML=STAGES.map(s=>`<option value="${s.id}">${s.label}</option>`).join('');
   for(const f of FIELDS) $('l-'+f).value=editing[f]??'';
@@ -586,8 +600,86 @@ async function toggleOnboard(k,on){
     editing.onboarding=o;editing.history=h;renderDrawerExtras();
   }else renderOnboard();
 }
+/* ---------- photos & logo ---------- */
+const PH_TYPES=['image/png','image/jpeg','image/webp','image/gif','image/svg+xml'];
+function renderPhotos(){
+  const box=$('d-photos'),l=editing;
+  if(!l||!l.id||!assets){box.hidden=true;box.innerHTML='';return}
+  const ph=Array.isArray(l.photos)?l.photos:[];
+  box.hidden=false;
+  box.innerHTML=`<h4>Photos &amp; logo${ph.length?' · '+ph.length:''}</h4>
+    <label class="drop" id="ph-drop" for="ph-input"><b>Drop pictures here</b> or tap to choose<br>Photos of their work, their logo, their truck. Claude uses them on the sample site.</label>
+    <input type="file" id="ph-input" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" multiple hidden>
+    ${phBusy?`<div class="ph-status">${esc(phBusy)}</div>`:''}
+    ${ph.length?`<div class="thumbs">${ph.map(x=>`<div class="thumb ${x.logo?'logo':''}">
+      ${x.logo?'<span class="tag">Logo</span>':''}
+      <img src="/_blob/${esc(x.id)}" alt="${esc(x.name||'Photo')}" loading="lazy">
+      <div class="row">${phConfirm===x.id
+        ?`<button data-ph-del="${esc(x.id)}" style="color:var(--danger)">Remove</button><button data-ph-keep>Keep</button>`
+        :`<button data-ph-logo="${esc(x.id)}">${x.logo?'Not logo':'Set logo'}</button><button data-ph-ask="${esc(x.id)}" aria-label="Remove">✕</button>`}</div>
+    </div>`).join('')}</div>`:''}`;
+}
+async function shrink(file){
+  if(!/^image\/(jpeg|png|webp)$/.test(file.type)||!window.createImageBitmap) return file;
+  try{
+    const bmp=await createImageBitmap(file);const max=2000;
+    if(bmp.width<=max&&bmp.height<=max&&file.size<3e6) return file;
+    const k=Math.min(1,max/Math.max(bmp.width,bmp.height));
+    const c=document.createElement('canvas');c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);
+    c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+    const keepPng=file.type==='image/png'&&file.size<3e6;
+    const blob=await new Promise(r=>c.toBlob(r,keepPng?'image/png':'image/jpeg',.86));
+    return blob||file;
+  }catch(_){return file}
+}
+async function addPhotos(files){
+  const l=editing; if(!l||!l.id||!assets||!db)return;
+  const list=[...files].filter(f=>PH_TYPES.includes(f.type));
+  if(!list.length){toast('Only pictures work here: JPG, PNG, WebP, GIF or SVG.');return}
+  let ph=Array.isArray(l.photos)?l.photos.slice():[];
+  if(ph.length+list.length>40){toast('Up to 40 pictures per lead.');return}
+  let done=0,failed=0;
+  for(const f of list){
+    phBusy=`Uploading ${done+1} of ${list.length}…`;renderPhotos();
+    try{
+      const blob=await shrink(f);
+      const r=await assets.upload(blob,{type:blob.type||f.type});
+      ph.push({id:r.id,name:(f.name||'photo').slice(0,80),logo:/logo/i.test(f.name||'')&&!ph.some(x=>x.logo),at:today()});
+      done++;
+    }catch(e){
+      failed++;
+      if(e&&e.code==='too_large')toast(f.name+' is too big (20 MB max).');
+      else if(e&&e.code==='quota_or_state'){toast('Photo storage is full. Remove some old pictures first.');break}
+      else if(e&&e.code==='rate_limited'){toast('Too many uploads at once. Wait a moment and try again.');break}
+    }
+  }
+  phBusy='';
+  if(done){
+    const h=withHistory(l,`Added ${done} picture${done===1?'':'s'}`);
+    if(await write(l.id,{photos:ph,history:h,updatedAt:new Date().toISOString()},false)){editing.photos=ph;editing.history=h}
+  }
+  renderDrawerExtras();
+  if(done) toast(`Added ${done} picture${done===1?'':'s'}${failed?`, ${failed} didn’t upload`:''}.`);
+  else if(failed) toast('Those pictures didn’t upload. Try again.');
+}
+async function setLogo(id){
+  const l=editing; if(!l||!l.id)return;
+  const ph=(l.photos||[]).map(x=>({...x,logo:x.id===id?!x.logo:false}));
+  if(await write(l.id,{photos:ph,updatedAt:new Date().toISOString()},false)){editing.photos=ph;renderPhotos()}
+}
+async function removePhoto(id){
+  const l=editing; if(!l||!l.id)return;
+  const ph=(l.photos||[]).filter(x=>x.id!==id);
+  phConfirm=null;
+  if(await write(l.id,{photos:ph,updatedAt:new Date().toISOString()},false)){
+    editing.photos=ph;renderPhotos();
+    try{await assets.delete(id)}catch(_){}
+  }
+}
+
 function renderDrawerExtras(){
   renderOnboard();
+  renderPhotos();
   const l=editing; if(!l)return;
   const src=safeUrl(l.sourceUrl), smp=safeUrl(l.sampleUrl);
   let q='';
@@ -841,6 +933,10 @@ document.addEventListener('click',e=>{
   const s=e.target.closest('[data-stage]'); if(s){stageFilter=s.dataset.stage;renderLeads();return}
   const d=e.target.closest('[data-draft]'); if(d){draftEmail(d.dataset.draft);return}
   const id=e.target.id;
+  const pl=e.target.closest('[data-ph-logo]'); if(pl){setLogo(pl.dataset.phLogo);return}
+  const pa=e.target.closest('[data-ph-ask]'); if(pa){phConfirm=pa.dataset.phAsk;renderPhotos();return}
+  const pd=e.target.closest('[data-ph-del]'); if(pd){removePhoto(pd.dataset.phDel);return}
+  if(e.target.closest('[data-ph-keep]')){phConfirm=null;renderPhotos();return}
   const ob=e.target.closest('[data-onboard]'); if(ob){toggleOnboard(ob.dataset.onboard,ob.checked);return}
   if(id==='d-reqsample')requestSample();
   else if(id==='d-draft')showDraftUI();
@@ -859,6 +955,11 @@ $('d-note-add').onclick=addNote;
 $('d-note').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addNote()}});
 $('settings-form').addEventListener('submit',saveSettings);
 $('find-form').addEventListener('submit',startSearch);
+document.addEventListener('change',e=>{if(e.target.id==='ph-input'&&e.target.files.length){addPhotos(e.target.files);e.target.value=''}});
+$('d-photos').addEventListener('dragover',e=>{if(e.target.closest('#ph-drop')){e.preventDefault();e.target.closest('#ph-drop').classList.add('over')}});
+$('d-photos').addEventListener('dragleave',e=>{const d=e.target.closest('#ph-drop');if(d)d.classList.remove('over')});
+$('d-photos').addEventListener('drop',e=>{const d=e.target.closest('#ph-drop');if(!d)return;e.preventDefault();d.classList.remove('over');if(e.dataTransfer&&e.dataTransfer.files.length)addPhotos(e.dataTransfer.files)});
+$('drawer').addEventListener('paste',e=>{if(!editing||!editing.id||!assets)return;const fs=[...(e.clipboardData?.files||[])];if(fs.length){e.preventDefault();addPhotos(fs)}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('drawer').hidden)closeDrawer()});
 
 /* ---------- boot ---------- */
@@ -877,6 +978,7 @@ render();
   db.doc('settings/main').onSnapshot(s=>{settings=s.exists?{...s.data()}:{};render()},()=>{});
   db.collection('searches').orderBy('createdAt','desc').limit(8).onSnapshot(s=>{searches=s.docs.map(d=>({id:d.id,...d.data()}));renderSearches()},()=>{});
   c.use('mcp').then(m=>{mcp=m}).catch(()=>{});
+  c.use('assets').then(a=>{assets=a;if(editing)renderDrawerExtras()}).catch(()=>{});
   sample=await c.use('sample');
   if(sample&&editing)renderDrawerExtras();
 })();
