@@ -36,9 +36,10 @@ button{cursor:pointer}
 .brand h1{font-size:34px;font-weight:800;letter-spacing:-.03em}
 .brand h1 span{color:var(--accent)}
 .stats{display:flex;flex-wrap:wrap;gap:8px}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px 14px;min-width:108px}
+.stat{text-align:left;cursor:pointer;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px 14px;min-width:108px}
 .stat b{display:block;font-family:var(--mono);font-size:20px;font-weight:500;font-variant-numeric:tabular-nums}
 .stat span{font-size:12px;color:var(--muted)}
+.stat:hover{border-color:var(--faint)}
 .stat.money{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .stat.money span{color:inherit;opacity:.85}
 
@@ -87,16 +88,21 @@ section.view{padding-top:22px}
 .toolbar input[type=search]{flex:1 1 220px;min-width:0}
 .field,.toolbar input,.toolbar select{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
 .list{display:flex;flex-direction:column;gap:6px}
-.lead{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr) auto minmax(0,1.1fr);gap:12px;align-items:center;text-align:left;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:11px 14px;transition:border-color .15s}
-.lead:hover{border-color:var(--accent)}
-.lead .name{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lead .meta{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lead .fu{font-size:13px;color:var(--muted);text-align:right}
-.lead .fu.late{color:var(--sun);font-weight:600}
-@media (max-width:720px){
+.lead{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr) auto;gap:8px 14px;align-items:center;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;transition:border-color .15s}
+.lead:hover{border-color:var(--faint)}
+.lead .info{all:unset;display:block;min-width:0;cursor:pointer;border-radius:6px}
+.lead .info:hover .name{color:var(--accent)}
+.lead .info:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.lead .name{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lead .meta{display:block;color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lead .foot{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid var(--line)}
+.lead .when{font-size:13px;color:var(--muted)}
+.lead .when .late{color:var(--sun);font-weight:600}
+.lead .acts{display:flex;flex-wrap:wrap;gap:6px}
+@media (max-width:640px){
   .lead{grid-template-columns:1fr auto}
-  .lead .ph{grid-column:1}
-  .lead .fu{text-align:right}
+  .lead .ph{grid-column:1;grid-row:2}
+  .lead .pill{grid-column:2;grid-row:1}
 }
 .pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap;letter-spacing:.01em}
 .s-new{color:var(--s-new);background:var(--s-new-bg)}
@@ -203,10 +209,10 @@ textarea.field{resize:vertical;min-height:70px}
       <h1>Valley <span>Lead Desk</span></h1>
     </div>
     <div class="stats" aria-label="Summary">
-      <div class="stat"><b id="st-leads">0</b><span>Active leads</span></div>
-      <div class="stat"><b id="st-today">0</b><span>To do today</span></div>
-      <div class="stat"><b id="st-clients">0</b><span>Clients</span></div>
-      <div class="stat money"><b id="st-mrr">$0</b><span>Monthly recurring</span></div>
+      <button class="stat" data-goto="leads"><b id="st-leads">0</b><span>Active leads</span></button>
+      <button class="stat" data-goto="today"><b id="st-today">0</b><span>To do today</span></button>
+      <button class="stat" data-goto="clients"><b id="st-clients">0</b><span>Clients</span></button>
+      <button class="stat money" data-goto="clients"><b id="st-mrr">$0</b><span>Monthly recurring</span></button>
     </div>
   </header>
 
@@ -488,6 +494,15 @@ function renderLists(){
   $('cat-list').innerHTML=uniq('category').map(v=>`<option value="${esc(v)}">`).join('');
   $('city-list').innerHTML=uniq('city').map(v=>`<option value="${esc(v)}">`).join('');
 }
+function leadWhen(l,t){
+  const parts=[];
+  if(l.followUp&&ACTIVE.includes(l.stage)) parts.push(`<span class="${l.followUp<=t?'late':''}">${l.followUp<t?'Follow-up was due ':l.followUp===t?'Follow up today':'Follow up '}${l.followUp===t?'':esc(fmtDate(l.followUp))}</span>`);
+  if(l.lastContact) parts.push('Last contact '+esc(fmtDate(l.lastContact)));
+  else if(l.createdAt) parts.push('Added '+esc(fmtDate(String(l.createdAt).slice(0,10))));
+  if(Array.isArray(l.photos)&&l.photos.length) parts.push(l.photos.length+' photo'+(l.photos.length===1?'':'s'));
+  if(safeUrl(l.sampleUrl)) parts.push('Sample built');
+  return parts.join(' · ');
+}
 function renderLeads(){
   fillSelect($('f-cat'),'All types',uniq('category'));
   fillSelect($('f-city'),'All cities',uniq('city'));
@@ -510,12 +525,15 @@ function renderLeads(){
   else rows.sort((a,b)=>(a.followUp||'9999').localeCompare(b.followUp||'9999')||(a.name||'').localeCompare(b.name||''));
   const t=today();
   $('list').innerHTML=rows.length?rows.map(l=>`
-    <button class="lead" data-open="${esc(l.id)}">
-      <span style="min-width:0"><span class="name" style="display:block">${esc(l.name)}</span><span class="meta" style="display:block">${esc([l.category,l.city].filter(Boolean).join(' · '))}</span></span>
-      <span class="ph phone">${esc(l.phone||'')}</span>
+    <div class="lead">
+      <button class="info" data-open="${esc(l.id)}"><span class="name">${esc(l.name)}</span><span class="meta">${esc([l.category,[l.city,l.region].filter(Boolean).join(', ')].filter(Boolean).join(' · '))}</span></button>
+      <span class="ph">${l.phone?`<span class="phone">${esc(l.phone)}</span><button class="copy" data-copy="${esc(l.phone)}">Copy</button>`:'<span class="when">No phone yet</span>'}</span>
       <span class="pill s-${esc(l.stage)}">${esc(stageLabel(l.stage))}</span>
-      <span class="fu ${l.followUp&&l.followUp<=t&&ACTIVE.includes(l.stage)?'late':''}">${l.followUp?'Follow up '+esc(fmtDate(l.followUp)):''}</span>
-    </button>`).join(''):`<div class="empty">No leads match these filters.</div>`;
+      <div class="foot">
+        <span class="when">${leadWhen(l,t)}</span>
+        <span class="acts">${l.stage==='won'?'':`<button class="btn small" data-q="noanswer" data-id="${esc(l.id)}">No answer</button><button class="btn small" data-q="interested" data-id="${esc(l.id)}">Interested</button>${l.stage==='lost'?'':`<button class="btn small" data-q="lost" data-id="${esc(l.id)}">Not interested</button>`}`}<button class="btn small ghost" data-open="${esc(l.id)}">Open</button></span>
+      </div>
+    </div>`).join(''):`<div class="empty">No leads match these filters.</div>`;
 }
 
 function renderClients(clients,mrr){
@@ -741,9 +759,9 @@ async function saveDrawer(){
 async function quick(id,kind){
   const l=leads.find(x=>x.id===id); if(!l)return;
   let data;
-  if(kind==='noanswer') data={stage:l.stage==='new'?'contacted':l.stage,lastContact:today(),followUp:addDays(1),history:withHistory(l,'Called, no answer')};
+  if(kind==='noanswer') data={stage:(l.stage==='new'||l.stage==='lost')?'contacted':l.stage,lastContact:today(),followUp:addDays(1),history:withHistory(l,'Called, no answer')};
   if(kind==='interested') data={stage:'interested',lastContact:today(),followUp:addDays(2),history:withHistory(l,'Interested. Build and send the sample.')};
-  if(kind==='lost') data={stage:'lost',followUp:'',history:withHistory(l,'Not interested')};
+  if(kind==='lost') data={stage:'lost',followUp:'',lastContact:today(),history:withHistory(l,'Not interested')};
   data.updatedAt=new Date().toISOString();
   if(await write(id,data,false)) toast(kind==='noanswer'?'Logged. Follow-up set for tomorrow.':kind==='interested'?'Nice! Moved to Interested.':'Marked not interested');
 }
@@ -928,6 +946,7 @@ document.querySelector('.tabs').addEventListener('click',e=>{
   try{localStorage.setItem('lead-desk-tab',tab)}catch(_){}
 });
 document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-goto]'); if(g){document.querySelector(`[data-tab="${g.dataset.goto}"]`).click();if(g.dataset.goto==='leads'){stageFilter='active';renderLeads()}window.scrollTo({top:0});return}
   const c=e.target.closest('[data-copy]'); if(c){e.stopPropagation();copy(c.dataset.copy);return}
   const q=e.target.closest('[data-q]'); if(q){quick(q.dataset.id,q.dataset.q);return}
   const o=e.target.closest('[data-open]'); if(o){const l=leads.find(x=>x.id===o.dataset.open);if(l)openDrawer(l);return}
