@@ -270,6 +270,11 @@ textarea.field{resize:vertical;min-height:70px}
       <input type="search" id="q" placeholder="Search name, owner, phone, notes…" aria-label="Search leads">
       <select id="f-cat" aria-label="Type of business"></select>
       <select id="f-city" aria-label="City"></select>
+      <select id="f-email" aria-label="Email">
+        <option value="">Any email</option>
+        <option value="yes">Has email</option>
+        <option value="no">No email</option>
+      </select>
       <select id="f-sort" aria-label="Sort">
         <option value="follow">Sort: follow-up date</option>
         <option value="new">Sort: newest</option>
@@ -533,15 +538,20 @@ function renderLeads(){
   fillSelect($('f-city'),'All cities',uniq('city'));
   const counts={active:leads.filter(l=>ACTIVE.includes(l.stage)).length,all:leads.length};
   STAGES.forEach(s=>counts[s.id]=leads.filter(l=>l.stage===s.id).length);
+  const withEmail=leads.filter(l=>(l.email||'').trim()).length;
+  $('f-email').options[1].textContent=`Has email (${withEmail})`;
+  $('f-email').options[2].textContent=`No email (${leads.length-withEmail})`;
   const chips=[{id:'active',label:'Active'},...STAGES,{id:'all',label:'All'}];
   $('funnel').innerHTML=chips.map(c=>`<button data-stage="${c.id}" aria-pressed="${stageFilter===c.id}">${esc(c.label)}<span class="n">${counts[c.id]||0}</span></button>`).join('');
 
-  const q=$('q').value.trim().toLowerCase(), cat=$('f-cat').value, city=$('f-city').value, sort=$('f-sort').value;
+  const q=$('q').value.trim().toLowerCase(), cat=$('f-cat').value, city=$('f-city').value, em=$('f-email').value, sort=$('f-sort').value;
   let rows=leads.filter(l=>{
     if(stageFilter==='active'&&!ACTIVE.includes(l.stage))return false;
     if(stageFilter!=='active'&&stageFilter!=='all'&&l.stage!==stageFilter)return false;
     if(cat&&(l.category||'').trim()!==cat)return false;
     if(city&&(l.city||'').trim()!==city)return false;
+    if(em==='yes'&&!(l.email||'').trim())return false;
+    if(em==='no'&&(l.email||'').trim())return false;
     if(q&&![l.name,l.owner,l.category,l.city,l.region,l.country,l.zip,l.phone,l.email,l.notes,l.why].join(' ').toLowerCase().includes(q))return false;
     return true;
   });
@@ -1150,7 +1160,7 @@ document.addEventListener('click',e=>{
   else if(id==='d-del-yes')doDelete();
   else if(id==='d-del-no')$('d-confirm').innerHTML='';
 });
-['q','f-cat','f-city','f-sort'].forEach(id=>$(id).addEventListener('input',renderLeads));
+['q','f-cat','f-city','f-email','f-sort'].forEach(id=>$(id).addEventListener('input',renderLeads));
 $('add-lead').onclick=()=>openDrawer(null);
 $('d-close').onclick=closeDrawer; $('d-cancel').onclick=closeDrawer; $('scrim').onclick=closeDrawer;
 $('d-save').onclick=saveDrawer;
