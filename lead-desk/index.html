@@ -973,27 +973,40 @@ function showDraftUI(){
     <div class="actions" style="margin-bottom:8px">
       <button class="btn small" data-draft="first">First email</button>
       <button class="btn small" data-draft="followup">Follow-up</button>
-      <button class="btn small" data-draft="sample">Here's your sample</button>
+      <button class="btn small" data-draft="sample">After a call</button>
     </div>
+    ${safeUrl(editing.sampleUrl)?'':'<p style="margin:0 0 8px;color:var(--sun);font-size:14px">No sample site yet. These emails say one is built, so build it first (Build sample site above) to keep them true.</p>'}
     <div id="d-draft-out"></div>`;
 }
 async function draftEmail(kind){
   const l=editing,out=$('d-draft-out'); if(!sample||!l)return;
   out.innerHTML=`<div class="draft" style="color:var(--muted)">Writing…</div>`;
-  const kinds={first:'a first cold email offering to build them a free sample website',followup:'a short, friendly follow-up to an earlier email or call that got no reply',sample:'an email sharing the free sample website link that was built for them and asking if they want it live'};
-  const prompt=`You write short cold emails for a one-person web design business that works with small local businesses. Match the spelling and tone to the recipient's country. Write ${kinds[kind]}.
+  const kinds={
+    first:'the first email. They have never heard from me. Say I noticed they don\'t have a website, so I went ahead and put together a sample site for them, share the link, and ask when they\'re free for a quick 10-minute call to walk through it',
+    followup:'a short follow-up to an earlier email that got no reply. Two or three sentences. Remind them the sample site is still there for them, share the link again, and ask if there\'s a good day to hop on a quick call. No guilt, no "just bumping this"',
+    sample:'a short note after a phone call where they showed interest. Thank them for their time, share the sample site link, and suggest a time to talk again to go over changes'};
+  const prompt=`Write an email from a real person who builds websites for small local businesses. Write ${kinds[kind]}.
+
+How it should sound:
+- Like a friendly neighbor texting a local business owner, not a marketer. Short sentences. Plain everyday words.
+- Talk about THEM and their business, not about me or my services.
+- No sales words: never use "boost", "grow your business", "online presence", "take it to the next level", "game-changer", "no obligation", "limited time", "I hope this email finds you well", "I wanted to reach out".
+- No pricing, no pitch, no list of features, no bullet points, no exclamation marks.
+- The whole point is: I already built them a sample, here's the link, can we hop on a quick call. Make it easy to say yes: ask what day or time works for them.
+- Subject line: 2 to 5 words, lowercase is fine, sounds like a personal email (for example "a site for ${l.name}" or "made you something"). No clickbait.
+- Match spelling and tone to the recipient's country.
 
 ${senderBlock()}
 
 Recipient business: ${l.name}
-Owner: ${l.owner||'unknown (open with "Hi there")'}
+Owner: ${l.owner||'unknown (open with "Hi there" or "Hi '+l.name+' team")'}
 Type of business: ${l.category||'unknown'}
 City: ${[l.city,l.region,l.country].filter(Boolean).join(', ')||'unknown'}
 What we know: ${l.why||'They do not appear to have a website.'}
 Notes: ${l.notes||'none'}
-Sample site link: ${safeUrl(l.sampleUrl)||'not built yet'}
+Sample site link: ${safeUrl(l.sampleUrl)||'[sample link]'}
 
-Rules: under 110 words in the body. Plain, friendly, local, no hype, no exclamation-mark spam. Never invent facts, reviews, numbers or results that are not given above. One clear ask. Put placeholders in [brackets] for anything missing. End the body with a signature, then these lines exactly: the mailing address, and "Not interested? Reply STOP and I won't email again."
+Rules: body under 90 words before the signature. Never invent facts, reviews, numbers or results that are not given above. If a detail is missing, use a placeholder in [brackets]. Sign off with just the sender's first name and phone number. Then a blank line and these two short lines exactly: the mailing address, and "If you'd rather not hear from me, just reply and let me know."
 Return JSON only: {"subject": "...", "body": "..."}`;
   try{
     const r=await sample.json(prompt,{modelTier:'default'});
@@ -1003,7 +1016,7 @@ Return JSON only: {"subject": "...", "body": "..."}`;
     $('dr-s').textContent=subject; $('dr-b').textContent=body;
     $('dr-copy').onclick=()=>copy('Subject: '+subject+'\n\n'+body);
     $('dr-sent').onclick=async()=>{
-      const label={first:'Sent first email',followup:'Sent follow-up email',sample:'Emailed the sample site'}[kind];
+      const label={first:'Sent first email',followup:'Sent follow-up email',sample:'Sent after-call email with sample'}[kind];
       const stage=kind==='sample'?'sample':(editing.stage==='new'?'contacted':editing.stage);
       const h=withHistory(editing,label);
       if(await write(editing.id,{stage,lastContact:today(),followUp:addDays(3),history:h,updatedAt:new Date().toISOString()},false)){
