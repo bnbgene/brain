@@ -218,6 +218,7 @@ textarea.field{resize:vertical;min-height:70px}
 .bar i{display:block;height:100%;background:var(--accent)}
 .setup{font-size:13px;color:var(--muted);white-space:nowrap}
 .setup.full{color:var(--s-won);font-weight:700}
+.booktag{color:#7FA7CC;font-weight:600}
 .draft{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
 .draft pre{white-space:pre-wrap;font:inherit;margin:6px 0 10px}
 .confirm{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:var(--danger-soft);border-radius:8px;padding:8px 10px;font-size:14px}
@@ -274,6 +275,11 @@ textarea.field{resize:vertical;min-height:70px}
         <option value="">Any email</option>
         <option value="yes">Has email</option>
         <option value="no">No email</option>
+      </select>
+      <select id="f-book" aria-label="Booking page">
+        <option value="">Any booking page</option>
+        <option value="yes">Has booking page</option>
+        <option value="no">No booking page</option>
       </select>
       <select id="f-sort" aria-label="Sort">
         <option value="follow">Sort: follow-up date</option>
@@ -375,6 +381,7 @@ textarea.field{resize:vertical;min-height:70px}
       <label class="f">Email<input class="field" id="l-email" type="email"></label>
       <label class="f">Follow up on<input class="field" id="l-followUp" type="date"></label>
       <label class="f">Where we found them (link)<input class="field" id="l-sourceUrl" placeholder="https://"></label>
+      <label class="f">Booking page (Booksy, Square…)<input class="field" id="l-bookingUrl" placeholder="https://"></label>
       <label class="f full">Why they're a good lead<textarea class="field" id="l-why" rows="2"></textarea></label>
       <label class="f full">Notes<textarea class="field" id="l-notes" rows="3"></textarea></label>
       <label class="f full">Sample site link<input class="field" id="l-sampleUrl" placeholder="Claude adds the sample site link here"></label>
@@ -519,6 +526,8 @@ function fillSelect(sel,label,values){
   sel.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option>${esc(v)}</option>`).join('');
   if(values.includes(cur)) sel.value=cur;
 }
+const BOOKING=[[/booksy\./i,'Booksy'],[/square\.site|squareup\.com|book\.squareup/i,'Square'],[/vagaro\./i,'Vagaro'],[/styleseat\./i,'StyleSeat'],[/fresha\./i,'Fresha'],[/glossgenius\./i,'GlossGenius'],[/schedulicity\./i,'Schedulicity'],[/acuityscheduling\.|as\.me\//i,'Acuity'],[/calendly\./i,'Calendly'],[/setmore\./i,'Setmore'],[/mindbodyonline\.|mindbody\.io/i,'Mindbody'],[/housecallpro\./i,'Housecall Pro'],[/getjobber\.|clienthub\./i,'Jobber'],[/thumbtack\./i,'Thumbtack'],[/linktr\.ee/i,'Linktree']];
+function bookingName(l){const u=(l&&l.bookingUrl||'').trim(); if(!u)return ''; for(const [re,n] of BOOKING) if(re.test(u))return n; return 'a booking page'}
 function uniq(key){return [...new Set(leads.map(l=>(l[key]||'').trim()).filter(Boolean))].sort()}
 function renderLists(){
   $('cat-list').innerHTML=uniq('category').map(v=>`<option value="${esc(v)}">`).join('');
@@ -541,10 +550,13 @@ function renderLeads(){
   const withEmail=leads.filter(l=>(l.email||'').trim()).length;
   $('f-email').options[1].textContent=`Has email (${withEmail})`;
   $('f-email').options[2].textContent=`No email (${leads.length-withEmail})`;
+  const withBook=leads.filter(l=>(l.bookingUrl||'').trim()).length;
+  $('f-book').options[1].textContent=`Has booking page (${withBook})`;
+  $('f-book').options[2].textContent=`No booking page (${leads.length-withBook})`;
   const chips=[{id:'active',label:'Active'},...STAGES,{id:'all',label:'All'}];
   $('funnel').innerHTML=chips.map(c=>`<button data-stage="${c.id}" aria-pressed="${stageFilter===c.id}">${esc(c.label)}<span class="n">${counts[c.id]||0}</span></button>`).join('');
 
-  const q=$('q').value.trim().toLowerCase(), cat=$('f-cat').value, city=$('f-city').value, em=$('f-email').value, sort=$('f-sort').value;
+  const q=$('q').value.trim().toLowerCase(), cat=$('f-cat').value, city=$('f-city').value, em=$('f-email').value, bk=$('f-book').value, sort=$('f-sort').value;
   let rows=leads.filter(l=>{
     if(stageFilter==='active'&&!ACTIVE.includes(l.stage))return false;
     if(stageFilter!=='active'&&stageFilter!=='all'&&l.stage!==stageFilter)return false;
@@ -552,6 +564,8 @@ function renderLeads(){
     if(city&&(l.city||'').trim()!==city)return false;
     if(em==='yes'&&!(l.email||'').trim())return false;
     if(em==='no'&&(l.email||'').trim())return false;
+    if(bk==='yes'&&!(l.bookingUrl||'').trim())return false;
+    if(bk==='no'&&(l.bookingUrl||'').trim())return false;
     if(q&&![l.name,l.owner,l.category,l.city,l.region,l.country,l.zip,l.phone,l.email,l.notes,l.why].join(' ').toLowerCase().includes(q))return false;
     return true;
   });
@@ -561,7 +575,7 @@ function renderLeads(){
   const t=today();
   $('list').innerHTML=rows.length?rows.map(l=>`
     <div class="lead">
-      <button class="info" data-open="${esc(l.id)}"><span class="name">${esc(l.name)}</span><span class="meta">${esc([l.category,[l.city,l.region].filter(Boolean).join(', ')].filter(Boolean).join(' · '))}</span></button>
+      <button class="info" data-open="${esc(l.id)}"><span class="name">${esc(l.name)}</span><span class="meta">${esc([l.category,[l.city,l.region].filter(Boolean).join(', ')].filter(Boolean).join(' · '))}${bookingName(l)?` · <span class="booktag">Books on ${esc(bookingName(l))}</span>`:''}</span></button>
       <span class="ph">${l.phone?`<span class="phone">${esc(l.phone)}</span><button class="copy" data-copy="${esc(l.phone)}">Copy</button>`:'<span class="when">No phone yet</span>'}</span>
       <span class="pill s-${esc(l.stage)}">${esc(stageLabel(l.stage))}</span>
       <div class="foot">
@@ -748,7 +762,7 @@ function renderScripts(){
 }
 
 /* ---------- drawer ---------- */
-const FIELDS=['name','owner','category','city','stage','phone','email','followUp','sourceUrl','why','notes','sampleUrl','buildFee','hosting','ads','liveUrl'];
+const FIELDS=['name','owner','category','city','stage','phone','email','followUp','sourceUrl','bookingUrl','why','notes','sampleUrl','buildFee','hosting','ads','liveUrl'];
 function openDrawer(lead){
   editing=lead?{...lead}:{stage:'new',history:[]};
   phConfirm=null;
@@ -885,6 +899,7 @@ function renderDrawerExtras(){
     if(l.stage!=='won') q+=`<button class="btn small primary" id="d-guide">Call guide</button>`;
     if(l.phone) q+=`<button class="btn small" data-copy="${esc(l.phone)}">Copy phone</button>`;
     if(src) q+=`<a class="btn small" href="${esc(src)}" target="_blank" rel="noopener">Where we found them ↗</a>`;
+    const bk=safeUrl(l.bookingUrl); if(bk) q+=`<a class="btn small" href="${esc(bk)}" target="_blank" rel="noopener">${esc(bookingName(l)==='a booking page'?'Booking page':bookingName(l))} ↗</a>`;
     if(smp) q+=`<a class="btn small" href="${esc(smp)}" target="_blank" rel="noopener">${/\.(png|jpe?g|webp)(\?|$)/i.test(smp)?'See sample (picture)':'Open sample site'} ↗</a>`;
     if(!smp) q+=`<button class="btn small" id="d-reqsample" ${l.sampleRequested?'disabled':''}>${l.sampleRequested?'Sample site requested':'Build sample site'}</button>`;
     if(sample && l.stage!=='won') q+=`<button class="btn small" id="d-draft">Draft email</button>`;
@@ -984,6 +999,7 @@ function showDraftUI(){
       <button class="btn small" data-draft="first">First email</button>
       <button class="btn small" data-draft="followup">Follow-up</button>
       <button class="btn small" data-draft="sample">After a call</button>
+      ${bookingName(editing)?`<button class="btn small" data-draft="booking">Uses ${esc(bookingName(editing))}</button>`:''}
     </div>
     ${safeUrl(editing.sampleUrl)?'':'<p style="margin:0 0 8px;color:var(--sun);font-size:14px">No sample site yet. These emails say one is built, so build it first (Build sample site above) to keep them true.</p>'}
     <div id="d-draft-out"></div>`;
@@ -994,8 +1010,9 @@ async function draftEmail(kind){
   const kinds={
     first:'the first email. They have never heard from me. Say I noticed they don\'t have a website, so I went ahead and built a sample site for them, and ask when they\'re free for a quick 10-minute call so I can show it to them. Do NOT include the link or describe the site in detail: the point is to get them curious enough to hop on a call',
     followup:'a short follow-up to an earlier email that got no reply. Two or three sentences. Since they haven\'t had time for a call, share the sample site link so they can take a look whenever, and ask if there\'s a good day to talk it over. No guilt, no "just bumping this"',
-    sample:'a short note after a phone call where they showed interest. Thank them for their time, share the sample site link so they can look again or show someone, and suggest a time to talk again to go over changes'};
-  const withLink=kind!=='first';
+    sample:'a short note after a phone call where they showed interest. Thank them for their time, share the sample site link so they can look again or show someone, and suggest a time to talk again to go over changes',
+    booking:'the first email to a business that takes bookings through '+bookingName(l)+' but has no website of its own. Mention, without criticising, that I saw they book clients through '+bookingName(l)+'. Explain in one plain sentence that I built them a sample website that sends people straight to their '+bookingName(l)+' page, so they keep using what already works and just have a real home on Google. Then ask when they are free for a quick 10-minute call so I can show it to them. Do NOT include the sample link'};
+  const withLink=kind!=='first'&&kind!=='booking';
   const prompt=`Write an email from a real person who builds websites for small local businesses. Write ${kinds[kind]}.
 
 How it should sound:
@@ -1015,6 +1032,7 @@ Type of business: ${l.category||'unknown'}
 City: ${[l.city,l.region,l.country].filter(Boolean).join(', ')||'unknown'}
 What we know: ${l.why||'They do not appear to have a website.'}
 Notes: ${l.notes||'none'}
+Booking page: ${bookingName(l)||'none found'}
 ${withLink?'Sample site link: '+(safeUrl(l.sampleUrl)||'[sample link]'):'Sample site link: do not include it in this email'}
 
 Rules: body under 90 words before the signature. Never invent facts, reviews, numbers or results that are not given above. If a detail is missing, use a placeholder in [brackets]. Sign off with just the sender's first name and phone number. Then a blank line and these two short lines exactly: the mailing address, and "If you'd rather not hear from me, just reply and let me know."
@@ -1027,7 +1045,7 @@ Return JSON only: {"subject": "...", "body": "..."}`;
     $('dr-s').textContent=subject; $('dr-b').textContent=body;
     $('dr-copy').onclick=()=>copy('Subject: '+subject+'\n\n'+body);
     $('dr-sent').onclick=async()=>{
-      const label={first:'Sent first email',followup:'Sent follow-up email',sample:'Sent after-call email with sample'}[kind];
+      const label={first:'Sent first email',followup:'Sent follow-up email',sample:'Sent after-call email with sample',booking:'Sent booking-page email'}[kind];
       const stage=kind==='sample'?'sample':(editing.stage==='new'?'contacted':editing.stage);
       const h=withHistory(editing,label);
       if(await write(editing.id,{stage,lastContact:today(),followUp:addDays(3),history:h,updatedAt:new Date().toISOString()},false)){
@@ -1160,7 +1178,7 @@ document.addEventListener('click',e=>{
   else if(id==='d-del-yes')doDelete();
   else if(id==='d-del-no')$('d-confirm').innerHTML='';
 });
-['q','f-cat','f-city','f-email','f-sort'].forEach(id=>$(id).addEventListener('input',renderLeads));
+['q','f-cat','f-city','f-email','f-book','f-sort'].forEach(id=>$(id).addEventListener('input',renderLeads));
 $('add-lead').onclick=()=>openDrawer(null);
 $('d-close').onclick=closeDrawer; $('d-cancel').onclick=closeDrawer; $('scrim').onclick=closeDrawer;
 $('d-save').onclick=saveDrawer;
