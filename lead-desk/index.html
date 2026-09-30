@@ -149,6 +149,30 @@ tbody tr:hover{background:var(--surface-2)}
 .card p,.card li{max-width:65ch}
 .script{background:var(--surface-2);border-radius:8px;padding:12px 14px;margin:8px 0;white-space:pre-wrap}
 .obj dt{font-weight:700;margin-top:10px}
+.guide .guide-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:12px}
+.guide h3{font-size:20px;margin:0}
+.guide .sub{margin:4px 0 0;color:var(--muted);font-size:14px;max-width:60ch}
+.guide-pick{min-width:240px;flex:0 1 320px}
+.before{background:var(--surface-2);border-radius:10px;padding:10px 14px;margin-bottom:12px}
+.before summary{cursor:pointer;font-weight:700}
+.before ul{margin:8px 0 2px;padding-left:18px;font-size:14.5px}
+.before li{margin:3px 0}
+.guide-nav{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 14px}
+.guide-nav a{font-size:13px;font-weight:600;text-decoration:none;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:4px 11px}
+.guide-nav a:hover{color:var(--ink);border-color:var(--faint)}
+.g-group{margin-top:18px}
+.g-group h4{margin:0 0 8px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.g-item{border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--surface)}
+.g-item summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:10px}
+.g-item summary::-webkit-details-marker{display:none}
+.g-item summary::after{content:"+";color:var(--muted);font-weight:400}
+.g-item[open] summary::after{content:"–"}
+.g-item[open] summary{border-bottom:1px solid var(--line)}
+.g-item .in{padding:10px 14px 12px}
+.g-say{background:var(--surface-2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:9px 12px;margin:6px 0;max-width:75ch}
+.g-then{font-size:13.5px;color:var(--muted);margin:8px 0 2px}
+.g-then b{color:var(--ink)}
+.g-say .ph{background:var(--accent-soft);border-radius:4px;padding:0 3px}
 .obj dd{margin:2px 0 0}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .form-grid .full{grid-column:1/-1}
@@ -259,29 +283,30 @@ textarea.field{resize:vertical;min-height:70px}
   <section class="view" id="v-clients" hidden></section>
 
   <section class="view" id="v-scripts" hidden>
-    <div class="cols">
-      <div class="card">
-        <h3>Call script</h3>
-        <p style="color:var(--muted);margin-top:0">About 30 seconds. Fills in your name from the setup card.</p>
-        <div class="script" id="script-call"></div>
-        <h3 style="margin-top:16px">If they push back</h3>
-        <dl class="obj">
-          <dt>"I get enough work from Facebook."</dt>
-          <dd>"That's great. A website catches the people who never open Facebook. They Google '<i>[service] near me</i>' and call whoever shows up first."</dd>
-          <dt>"How much is it?"</dt>
-          <dd id="obj-price"></dd>
-          <dt>"I already have a guy."</dt>
-          <dd>"No problem. If you ever want a second opinion, I'll text you the free sample anyway so you can compare."</dd>
-          <dt>"Send me some info."</dt>
-          <dd>"Even better, I'll send you your own sample site. What's the best number to text?"</dd>
-          <dt>"Not interested."</dt>
-          <dd>"All good. Mind if I text the sample anyway? If you never look at it, no harm done."</dd>
-        </dl>
-        <h3 style="margin-top:16px">Voicemail</h3>
-        <div class="script" id="script-vm"></div>
-        <h3 style="margin-top:16px">Text after the call</h3>
-        <div class="script" id="script-text"></div>
+    <div class="card guide">
+      <div class="guide-head">
+        <div>
+          <h3>Call guide</h3>
+          <p class="sub">What to say for every way a call can go. Pick who you're calling and their details fill in.</p>
+        </div>
+        <label class="f guide-pick">Calling
+          <select class="field" id="guide-lead"></select>
+        </label>
       </div>
+      <details class="before">
+        <summary>Before you dial</summary>
+        <ul>
+          <li>Open their lead. Know their name, what they do, and one real detail (reviews, years in business).</li>
+          <li>Best times: Tuesday–Thursday, 9–11am or 2–4pm <b>their</b> time. Check the time zone when calling another state.</li>
+          <li>Stand up, smile, and talk slower than feels normal. You're a person offering something free, not a telemarketer.</li>
+          <li>Don't record calls. Some states (California included) require everyone's permission.</li>
+          <li>If anyone says don't call again, stop and mark them Not interested.</li>
+        </ul>
+      </details>
+      <nav class="guide-nav" id="guide-nav" aria-label="Jump to"></nav>
+      <div id="guide-body"></div>
+    </div>
+    <div class="cols" style="margin-top:16px">
 
       <div style="display:flex;flex-direction:column;gap:16px">
         <div class="card">
@@ -553,17 +578,160 @@ function renderClients(clients,mrr){
   <p style="color:var(--muted);font-size:14px">That's <b class="num">${money(mrr*12)}</b> a year in recurring income. Open a client to write their monthly ads report.</p>`;
 }
 
-function renderScripts(){
-  const n=settings.yourName||'[your name]';
-  $('script-call').textContent=`"Hey, is this [owner]? My name's ${n}, I'm a local web designer. I was looking you up and saw you've got great reviews, but no website. So people searching Google are probably finding your competitors instead of you.
-
-I build sites for local businesses. Would it be alright if I put together a free sample site for [business]? No cost, no commitment. If you like it we talk, if not, no problem. Can I text it to you this week?"`;
-  $('script-vm').textContent=`"Hey [owner], this is ${n}, a local web designer. I saw [business] has great reviews but no website, and I'd like to build you a free sample, no strings. Call or text me back at ${settings.phone||'[your number]'}. Thanks!"`;
-  $('script-text').textContent=`Hey [owner], it's ${n}. Thanks for the chat! Here's the sample site I made for [business]: [link]. Let me know what you think. Happy to tweak anything.`;
+let guideLeadId='';
+const GUIDE=[
+ {g:'Starting the call',items:[
+  {t:'The owner picks up',open:true,say:[
+   'Hi, is this {owner}?',
+   'Hey {owner}, my name\'s {me}. I\'ll be quick, I know you\'re busy. I build simple websites for local businesses, and I came across {biz}. You\'ve got great reviews, but I couldn\'t find a website for you.',
+   'I\'m just getting started and building up my portfolio, so I\'m making a few free sample sites for businesses around {city}. Would you be open to me making one for {biz}? No cost, no strings. If you like it, we can talk. If not, no hard feelings.'],
+   then:'<b>Then stop talking</b> and let them answer. Silence is fine.'},
+  {t:'You don\'t know the owner\'s name',say:[
+   'Hi, is this {biz}?',
+   'Great. Are you the owner? … Who would be the best person to talk to about the business\'s online stuff, like Google and a website?'],
+   then:'Once you have the owner, use <b>The owner picks up</b>.'},
+  {t:'Someone else answers (employee, family)',say:[
+   'No problem. Is the owner around?',
+   'When\'s a good time to catch them? … And what\'s their name, so I ask for the right person?',
+   'If they ask what it\'s about: "I build websites for local businesses and wanted to offer them a free sample site for {biz}. Nothing to buy."'],
+   then:'Tap <b>No answer</b> and write the name and best time in the notes.'},
+  {t:'You get voicemail',say:[
+   'Hi {owner}, this is {me}. I build websites for local businesses and came across {biz}. You\'ve got great reviews but no website, so I\'d like to make you a free sample to look at, no strings. Call or text me at {myphone}. Again, {myphone}. Thanks!'],
+   then:'Leave at most 2 voicemails per lead. Tap <b>No answer</b>.'},
+  {t:'They\'re busy or in the middle of a job',say:[
+   'Sounds like I caught you in the middle of something. When\'s a better time, later today or tomorrow morning?'],
+   then:'Put that time in <b>Follow up on</b>. Calling back when they said builds trust.'},
+  {t:'Wrong number or business closed',say:['Sorry to bother you. Have a good one!'],
+   then:'Mark <b>Not interested</b> and note why.'}
+ ]},
+ {g:'When they\'re interested',items:[
+  {t:'"Sure, go ahead" / "Send it over"',say:[
+   'Awesome. Is this the best number to text it to?',
+   'Anything you\'d want on it? The services you want more of, areas you cover, photos you\'re proud of?',
+   'I\'ll have it to you in a day or two. It\'ll come from {myphone}, so you know it\'s me.'],
+   then:'Tap <b>Interested</b>, then open the lead and tap <b>Build sample site</b>.'},
+  {t:'"Tell me more" / "What would it look like?"',say:[
+   'A clean, simple site: your services, the areas you cover, your reviews, and a big call button so people can reach you from their phone. It\'s made so Google can find you when people search for {type} in {city}.',
+   'Easiest thing is to just show you. I\'ll make a free one for {biz} and text it over.']},
+  {t:'"Do you have examples?"',say:[
+   'Yes, I can text you a couple I\'ve made.',
+   'Honestly, I\'m new, so the best example will be the one I make for you. It\'s free, so there\'s no risk in seeing it.']},
+  {t:'"What do you need from me?"',say:[
+   'Nothing right now. I\'ll use what\'s already public, like your Facebook and reviews.',
+   'If you like it, I\'d just ask for a few photos of your work and to double-check your services.']},
+  {t:'They want to set up a time to talk',say:[
+   'Sure. Would a quick 10-minute call work? I can show you the sample on screen. Is {day} or {day2} better?'],
+   then:'Put the date in <b>Follow up on</b> and a note with the time.'}
+ ]},
+ {g:'Questions they ask',items:[
+  {t:'"How much does it cost?"',say:[
+   'The sample is free. If you want it live, it\'s {fee} to set up and {host} a month, which covers hosting, updates, and any changes you need.',
+   'But see it first. No reason to talk price if you don\'t like it.']},
+  {t:'"Who are you?" / "What company is this?"',say:[
+   'I\'m {me}{agencyLine}. I\'m just starting out, so right now it\'s just me, which means you\'d deal with me directly, not a call center.']},
+  {t:'"How did you get my number?"',say:['It\'s listed on your {source} page. That\'s how I found {biz}.']},
+  {t:'"Why is it free? What\'s the catch?"',say:[
+   'No catch. I\'m building my portfolio, and showing you is the easiest way to prove I can do good work.',
+   'If you like it, you can pay to put it live. If not, you don\'t owe anything.']},
+  {t:'"Is this a sales call?" / "Is this a scam?"',say:[
+   'Fair question. I\'m not asking for any money or payment info today, just offering a free sample. You don\'t have to sign anything or commit to anything.']},
+  {t:'"Where are you located?"',say:[
+   'I\'m based in {mycity}, but everything\'s done by phone and online, so it works the same wherever you are.']},
+  {t:'"Do you do Google, SEO or ads?"',say:[
+   'Yes. The website comes first, since Google and ads need somewhere to send people.',
+   'Once it\'s live, I can help you show up on Google and run ads if you want. We can talk about that later.']},
+  {t:'"How long does it take?"',say:['The sample takes a day or two. If you want it live, usually about a week once I have your photos and info.']},
+  {t:'"Do I own it?"',say:['Yes. Your domain name and your content are yours. The monthly fee covers hosting and me keeping it running and updated.']},
+  {t:'"What if I want to cancel?"',say:['You can cancel any time with 30 days\' notice, and your domain stays yours.']}
+ ]},
+ {g:'Pushback',items:[
+  {t:'"Not interested"',say:[
+   'No problem at all. Can I ask, is it because you\'ve got all the work you need, or it\'s just not a priority right now?',
+   'Totally get it. Mind if I text you the sample anyway? If it\'s not for you, just ignore it.',
+   'If still no: "Thanks for your time, {owner}. Have a good one."'],
+   then:'One friendly try, then let it go. Mark <b>Not interested</b>.'},
+  {t:'"I have enough work" / "I\'m busy enough"',say:[
+   'That\'s a great problem to have. A website isn\'t only about more work. It helps you get better jobs and charge what you\'re worth.',
+   'But if you\'re maxed out, I get it. Want me to check back in a few months?'],
+   then:'If yes, set a follow-up 2–3 months out.'},
+  {t:'"I have Facebook / Yelp / Instagram"',say:[
+   'Those are great, and I\'d link them all on the site.',
+   'The difference is that people searching Google for {type} in {city} usually click websites first. And a website is yours; Facebook can change the rules any time.']},
+  {t:'"I already have a website"',say:[
+   'Oh, my mistake, I couldn\'t find it. What\'s the address?',
+   'If it looks outdated: "Mind if I take a look and send you a couple of free ideas?"'],
+   then:'Add the address to the lead\'s notes.'},
+  {t:'"I have a guy" / "My nephew does it"',say:[
+   'Nice, sounds like you\'re covered. If you ever want a second option, I\'d be glad to send the sample so you have something to compare.']},
+  {t:'"It\'s too expensive" / "Can\'t afford it"',say:[
+   'Totally understand. One new customer from the site usually covers it for a while.',
+   'Let me send the sample anyway. If it\'s not in the budget right now, no pressure.']},
+  {t:'"Can you do it cheaper?"',say:['I can do a simpler one-page version for less. Let\'s see which one you like first.'],
+   then:'Don\'t drop your price on the first call.'},
+  {t:'"I tried a website before and it didn\'t work"',say:[
+   'That\'s fair. A lot of sites just sit there. Can I ask what happened?',
+   'Mine are built to get calls: your number front and center, a big call button on phones, and set up so Google can find you.']},
+  {t:'"Just email me" / "Send me some info"',say:[
+   'Sure. Even better, I\'ll send you the actual sample site so you can see it. What\'s the best email?'],
+   then:'Add the email to the lead, then request the sample.'},
+  {t:'"I need to talk to my partner / spouse"',say:[
+   'Of course. I\'ll send the sample so you can look at it together. When should I check back, {day}?']},
+  {t:'"Call me back later"',say:['Sure. What day and time is best?'],
+   then:'Put it in <b>Follow up on</b> and call exactly then.'}
+ ]},
+ {g:'Ending the call',items:[
+  {t:'Wrapping up after a yes',say:[
+   'Perfect. So I\'ll text the sample to this number by {day}. Talk soon, {owner}!'],
+   then:'Tap <b>Interested</b> right away so you don\'t forget.'},
+  {t:'"Take me off your list" / "Don\'t call again"',say:['Absolutely, I\'ll take you off. Sorry to bother you.'],
+   then:'Required: mark <b>Not interested</b> and write "Do not contact" in the notes.'},
+  {t:'They get rude or hang up',say:['(Nothing. Don\'t call back that day.)'],
+   then:'It happens to everyone. Mark <b>Not interested</b> or <b>No answer</b> and move to the next call.'},
+  {t:'Text to send after the call',say:[
+   'Hey {owner}, it\'s {me}. Thanks for the chat! Here\'s the sample site I made for {biz}: [link]. Let me know what you think. Happy to change anything.']}
+ ]}
+];
+function guideVals(){
+  const l=leads.find(x=>x.id===guideLeadId)||{};
   const fee=numOr0(settings.buildFee), host=numOr0(settings.hosting);
-  $('obj-price').textContent=fee||host
-    ? `"Let me show you the free sample first. If you love it, it's ${fee?money(fee)+' to build':'a one-time build fee'}${host?' and '+money(host)+' a month to keep it online and updated':''}. Usually one job pays for it."`
-    : `"Let me show you the free sample first. If you love it, it costs less than one job's worth of income." (Add your prices in the setup card and this line fills in.)`;
+  const d1=new Date();d1.setDate(d1.getDate()+2);const d2=new Date();d2.setDate(d2.getDate()+3);
+  const wd=d=>d.toLocaleDateString('en-US',{weekday:'long'});
+  let src='Yelp or Facebook';
+  if(/facebook/i.test(l.sourceUrl||''))src='Facebook';else if(/yelp/i.test(l.sourceUrl||''))src='Yelp';else if(/bbb\./i.test(l.sourceUrl||''))src='Better Business Bureau';else if(/nextdoor/i.test(l.sourceUrl||''))src='Nextdoor';
+  return {
+    me:settings.yourName||'[your name]',
+    owner:(l.owner||'').split(/[ ,(]/)[0]||'[owner]',
+    biz:l.name||'[business]',
+    type:(l.category||'[what they do]').toLowerCase(),
+    city:l.city||'[their city]',
+    myphone:settings.phone||'[your number]',
+    mycity:(settings.dailyArea||'[your city]').split(',')[0],
+    fee:fee?money(fee):'[setup price]',
+    host:host?money(host):'[monthly price]',
+    agencyLine:settings.agencyName?' with '+settings.agencyName:'',
+    source:l.id?src:'[Yelp/Facebook]',
+    day:wd(d1),day2:wd(d2)
+  };
+}
+function fillGuide(str,v){
+  return esc(str).replace(/\{(\w+)\}/g,(m,k)=>{const val=v[k]??m;return /^\[.*\]$/.test(val)?`<span class="ph">${esc(val)}</span>`:esc(val)});
+}
+function renderGuide(){
+  const sel=$('guide-lead');
+  const active=leads.filter(l=>l.stage!=='won'&&l.stage!=='lost').sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  if(guideLeadId&&!leads.some(l=>l.id===guideLeadId))guideLeadId='';
+  sel.innerHTML='<option value="">No one picked (show blanks)</option>'+active.map(l=>`<option value="${esc(l.id)}" ${l.id===guideLeadId?'selected':''}>${esc(l.name)}${l.city?' · '+esc(l.city):''}</option>`).join('');
+  if(guideLeadId&&!active.some(l=>l.id===guideLeadId)){const l=leads.find(x=>x.id===guideLeadId);sel.insertAdjacentHTML('beforeend',`<option value="${esc(l.id)}" selected>${esc(l.name)}</option>`)}
+  const v=guideVals();
+  const openState={};document.querySelectorAll('#guide-body details').forEach(d=>openState[d.dataset.k]=d.open);
+  $('guide-nav').innerHTML=GUIDE.map((g,i)=>`<a href="#g${i}" data-gjump="g${i}">${esc(g.g)}</a>`).join('');
+  $('guide-body').innerHTML=GUIDE.map((g,i)=>`<div class="g-group" id="g${i}"><h4>${esc(g.g)}</h4>${g.items.map((it,j)=>{
+    const k=i+'-'+j;const op=k in openState?openState[k]:!!it.open;
+    return `<details class="g-item" data-k="${k}" ${op?'open':''}><summary>${esc(it.t)}</summary><div class="in">${it.say.map(x=>`<div class="g-say">${fillGuide(x,v)}</div>`).join('')}${it.then?`<p class="g-then">${it.then}</p>`:''}</div></details>`;
+  }).join('')}</div>`).join('');
+}
+function renderScripts(){
+  renderGuide();
   for(const k of ['yourName','agencyName','phone','email','address','dailyArea','buildFee','hosting','ads']){
     const el=$('s-'+k); if(document.activeElement!==el) el.value=settings[k]??'';
   }
@@ -704,6 +872,7 @@ function renderDrawerExtras(){
   let q='';
   if(l.id){
     q+=`<h4>Quick actions</h4><div class="actions">`;
+    if(l.stage!=='won') q+=`<button class="btn small primary" id="d-guide">Call guide</button>`;
     if(l.phone) q+=`<button class="btn small" data-copy="${esc(l.phone)}">Copy phone</button>`;
     if(src) q+=`<a class="btn small" href="${esc(src)}" target="_blank" rel="noopener">Where we found them ↗</a>`;
     if(smp) q+=`<a class="btn small" href="${esc(smp)}" target="_blank" rel="noopener">${/\.(png|jpe?g|webp)(\?|$)/i.test(smp)?'See sample (picture)':'Open sample site'} ↗</a>`;
@@ -946,6 +1115,8 @@ document.querySelector('.tabs').addEventListener('click',e=>{
   try{localStorage.setItem('lead-desk-tab',tab)}catch(_){}
 });
 document.addEventListener('click',e=>{
+  const gj=e.target.closest('[data-gjump]'); if(gj){e.preventDefault();const t=$(gj.dataset.gjump);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});return}
+  if(e.target.id==='d-guide'&&editing&&editing.id){guideLeadId=editing.id;closeDrawer();document.querySelector('[data-tab="scripts"]').click();renderGuide();window.scrollTo({top:0});return}
   const g=e.target.closest('[data-goto]'); if(g){document.querySelector(`[data-tab="${g.dataset.goto}"]`).click();if(g.dataset.goto==='leads'){stageFilter='active';renderLeads()}window.scrollTo({top:0});return}
   const c=e.target.closest('[data-copy]'); if(c){e.stopPropagation();copy(c.dataset.copy);return}
   const q=e.target.closest('[data-q]'); if(q){quick(q.dataset.id,q.dataset.q);return}
@@ -975,6 +1146,7 @@ $('d-note-add').onclick=addNote;
 $('d-note').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addNote()}});
 $('settings-form').addEventListener('submit',saveSettings);
 $('find-form').addEventListener('submit',startSearch);
+$('guide-lead').addEventListener('change',e=>{guideLeadId=e.target.value;renderGuide()});
 document.addEventListener('change',e=>{if(e.target.id==='ph-input'&&e.target.files.length){addPhotos(e.target.files);e.target.value=''}});
 $('d-photos').addEventListener('dragover',e=>{if(e.target.closest('#ph-drop')){e.preventDefault();e.target.closest('#ph-drop').classList.add('over')}});
 $('d-photos').addEventListener('dragleave',e=>{const d=e.target.closest('#ph-drop');if(d)d.classList.remove('over')});
