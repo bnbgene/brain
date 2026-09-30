@@ -982,9 +982,10 @@ async function draftEmail(kind){
   const l=editing,out=$('d-draft-out'); if(!sample||!l)return;
   out.innerHTML=`<div class="draft" style="color:var(--muted)">Writing…</div>`;
   const kinds={
-    first:'the first email. They have never heard from me. Say I noticed they don\'t have a website, so I went ahead and put together a sample site for them, share the link, and ask when they\'re free for a quick 10-minute call to walk through it',
-    followup:'a short follow-up to an earlier email that got no reply. Two or three sentences. Remind them the sample site is still there for them, share the link again, and ask if there\'s a good day to hop on a quick call. No guilt, no "just bumping this"',
-    sample:'a short note after a phone call where they showed interest. Thank them for their time, share the sample site link, and suggest a time to talk again to go over changes'};
+    first:'the first email. They have never heard from me. Say I noticed they don\'t have a website, so I went ahead and built a sample site for them, and ask when they\'re free for a quick 10-minute call so I can show it to them. Do NOT include the link or describe the site in detail: the point is to get them curious enough to hop on a call',
+    followup:'a short follow-up to an earlier email that got no reply. Two or three sentences. Since they haven\'t had time for a call, share the sample site link so they can take a look whenever, and ask if there\'s a good day to talk it over. No guilt, no "just bumping this"',
+    sample:'a short note after a phone call where they showed interest. Thank them for their time, share the sample site link so they can look again or show someone, and suggest a time to talk again to go over changes'};
+  const withLink=kind!=='first';
   const prompt=`Write an email from a real person who builds websites for small local businesses. Write ${kinds[kind]}.
 
 How it should sound:
@@ -992,7 +993,7 @@ How it should sound:
 - Talk about THEM and their business, not about me or my services.
 - No sales words: never use "boost", "grow your business", "online presence", "take it to the next level", "game-changer", "no obligation", "limited time", "I hope this email finds you well", "I wanted to reach out".
 - No pricing, no pitch, no list of features, no bullet points, no exclamation marks.
-- The whole point is: I already built them a sample, here's the link, can we hop on a quick call. Make it easy to say yes: ask what day or time works for them.
+- The whole point is: I already built them a sample and want to hop on a quick call. Make it easy to say yes: ask what day or time works for them.
 - Subject line: 2 to 5 words, lowercase is fine, sounds like a personal email (for example "a site for ${l.name}" or "made you something"). No clickbait.
 - Match spelling and tone to the recipient's country.
 
@@ -1004,7 +1005,7 @@ Type of business: ${l.category||'unknown'}
 City: ${[l.city,l.region,l.country].filter(Boolean).join(', ')||'unknown'}
 What we know: ${l.why||'They do not appear to have a website.'}
 Notes: ${l.notes||'none'}
-Sample site link: ${safeUrl(l.sampleUrl)||'[sample link]'}
+${withLink?'Sample site link: '+(safeUrl(l.sampleUrl)||'[sample link]'):'Sample site link: do not include it in this email'}
 
 Rules: body under 90 words before the signature. Never invent facts, reviews, numbers or results that are not given above. If a detail is missing, use a placeholder in [brackets]. Sign off with just the sender's first name and phone number. Then a blank line and these two short lines exactly: the mailing address, and "If you'd rather not hear from me, just reply and let me know."
 Return JSON only: {"subject": "...", "body": "..."}`;
