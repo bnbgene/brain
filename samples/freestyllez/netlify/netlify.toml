@@ -1,0 +1,40 @@
+# Security settings for every client site hosted on Netlify.
+# Netlify serves HTTPS automatically; these headers tell browsers to block
+# common attacks. Check the result at https://securityheaders.com after launch.
+
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Always use HTTPS, including on return visits.
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    # Stop other sites from showing this site inside a frame (clickjacking).
+    X-Frame-Options = "DENY"
+    # Stop browsers from guessing file types.
+    X-Content-Type-Options = "nosniff"
+    # CONCEPT ONLY: keep this out of Google until the owner says yes. Delete this line at launch.
+    X-Robots-Tag = "noindex, nofollow"
+    # Only send the site's own address when visitors click away.
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # Turn off device features the site never uses.
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    # Only allow code, fonts and images from trusted places.
+    # If you add analytics, uncomment the matching line in ANALYTICS below
+    # and add its domains to script-src and connect-src.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
+
+# ANALYTICS: domains to add to script-src and connect-src above
+#   Google Analytics:           https://www.googletagmanager.com https://*.google-analytics.com
+#   Cloudflare Web Analytics:   https://static.cloudflareinsights.com https://cloudflareinsights.com
+
+# Long cache for fonts and images, no cache for pages so edits show up right away.
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
