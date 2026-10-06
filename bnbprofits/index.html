@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>BNBProfits | NQ Trading Community &amp; 1:1 Mentorship</title>
-  <meta name="description" content="Trade the New York open with Gene (@bnbgene). Join the BNBProfits Discord for daily bias and weekly live calls, or apply for 1:1 mentorship.">
+  <meta name="description" content="Gene (@bnbgene) trades futures full time. Join the BNBProfits Discord for daily bias and weekly live calls, or apply for 1:1 mentorship.">
   <meta name="theme-color" content="#0a0a0b">
   <meta property="og:title" content="BNBProfits">
-  <meta property="og:description" content="I trade the New York open. Join the Discord or apply for 1:1 mentorship.">
+  <meta property="og:description" content="Stop guessing. Start getting paid. Join the Discord or apply for 1:1 mentorship.">
   <meta property="og:image" content="/img/og.jpg">
   <meta property="og:type" content="website">
   <link rel="icon" type="image/png" href="/favicon.png">
@@ -136,22 +136,21 @@
     .sec-head { display: grid; gap: 14px; margin-bottom: 40px; max-width: 760px; }
     .sec-head p { color: var(--muted); font-size: 1.08rem; }
 
-    /* The plan */
-    .plan { display: grid; grid-template-columns: 1.15fr 1fr; gap: 40px; align-items: start; }
-    .chart { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; min-width: 0; }
-    .chart svg { width: 100%; height: auto; display: block; }
-    .chart .cap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 4px 4px 10px; }
-    .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: s; }
-    .steps li { display: grid; grid-template-columns: 52px 1fr; gap: 14px; padding-block: 18px; border-top: 1px solid var(--line); }
-    .steps li:last-child { border-bottom: 1px solid var(--line); }
-    .steps li::before {
-      counter-increment: s; content: "0" counter(s);
-      font-family: var(--mono); font-size: .9rem; color: var(--dim); padding-top: 3px;
-    }
-    .steps h3 { margin-bottom: 4px; }
+    /* Fit + how it works */
+    .fit { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .fit-col { border: 1px solid var(--line); border-radius: 14px; padding: 28px; background: var(--surface); display: grid; gap: 16px; align-content: start; min-width: 0; }
+    .fit ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+    .fit li { display: grid; grid-template-columns: 24px 1fr; gap: 10px; }
+    .fit .yes li::before { content: "✓"; font-family: var(--mono); color: var(--money); }
+    .fit .no li::before { content: "✕"; font-family: var(--mono); color: var(--sweep); }
+    .fit .no li { color: var(--muted); }
+    .how { margin-top: 48px; display: grid; gap: 16px; }
+    .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; counter-reset: s; }
+    .steps li { display: grid; gap: 10px; padding-top: 18px; border-top: 1px solid var(--fg); align-content: start; }
+    .steps li::before { counter-increment: s; content: "0" counter(s); font-family: var(--mono); font-size: .9rem; color: var(--dim); }
+    .steps h3 { margin-bottom: 6px; }
     .steps p { color: var(--muted); }
-    .walk { margin-top: 22px; font-family: var(--mono); font-size: .95rem; color: var(--fg); }
-    @media (max-width: 880px) { .plan { grid-template-columns: 1fr; } }
+    @media (max-width: 820px) { .fit, .steps { grid-template-columns: 1fr; } }
 
     /* Proof */
     .payouts { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
@@ -193,6 +192,7 @@
     .pill { font-family: var(--mono); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); }
     .feature .pill { border-color: var(--fg); color: var(--fg); }
     .price { font-family: var(--display); font-variation-settings: "wdth" 115; font-weight: 900; font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; }
+    .price-sm { font-size: 1.5rem; line-height: 1.1; }
     .price span { font-family: var(--mono); font-size: .9rem; font-weight: 400; color: var(--muted); letter-spacing: 0; }
     .offer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
     .offer li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; }
@@ -285,7 +285,7 @@
   <div class="wrap">
     <a class="nav-logo" href="#top" aria-label="BNBProfits home"><img src="/img/logo.webp" alt="BNB Profits" width="480" height="329"></a>
     <nav class="nav-links" aria-label="Main">
-      <a href="#plan">The plan</a>
+      <a href="#fit">Is it for you</a>
       <a href="#proof">Proof</a>
       <a href="#join">Join</a>
       <a class="btn btn-solid" href="#apply">Apply for 1:1</a>
@@ -298,9 +298,9 @@
   <div class="hero">
     <div class="wrap">
       <div class="hero-copy">
-        <p class="label">NQ · MNQ · New York open</p>
-        <h1>I trade the New York open. I'll show you exactly how.</h1>
-        <p class="lede">Mark the levels. Wait for the sweep. Take the 1-minute confirmation. Target the other side. Same plan every day, no London session, no 40 indicators.</p>
+        <p class="label">NQ · MNQ futures · Full time</p>
+        <h1>Stop guessing. Start getting paid.</h1>
+        <p class="lede">I trade futures full time. Now I help traders pass their evals, stay consistent and get paid out, with daily bias, live calls and 1:1 help.</p>
         <div class="hero-ctas">
           <a class="btn btn-solid" href="https://whop.com/checkout/plan_vZincni3o08ii/" target="_blank" rel="noopener">Join the Discord <small>$75/mo</small></a>
           <a class="btn btn-ghost" href="#apply">Apply for 1:1</a>
@@ -308,7 +308,7 @@
         <div class="hero-stats">
           <div><strong class="money">$41.6K+</strong><span class="label">Payouts shown below</span></div>
           <div><strong>200+</strong><span class="label">Traders in the Discord</span></div>
-          <div><strong>3</strong><span class="label">Prop firms paid me</span></div>
+          <div><strong>1:1</strong><span class="label">Limited spots</span></div>
         </div>
       </div>
       <div class="hero-stack" aria-hidden="true">
@@ -321,50 +321,43 @@
 
   <div class="tape" aria-hidden="true">
     <div class="tape-track">
-      <span><b>LIQUIDITY</b></span><span>FVG</span><span><b>IFVG</b></span><span>BOS</span><span><b>MARKET STRUCTURE</b></span><span>BREAKER</span><span><b>EQH</b></span><span>EQL</span><span><b>SMT</b></span><span>RISK MANAGEMENT</span><span><b>WALK AWAY</b></span>
-      <span><b>LIQUIDITY</b></span><span>FVG</span><span><b>IFVG</b></span><span>BOS</span><span><b>MARKET STRUCTURE</b></span><span>BREAKER</span><span><b>EQH</b></span><span>EQL</span><span><b>SMT</b></span><span>RISK MANAGEMENT</span><span><b>WALK AWAY</b></span>
+      <span><b>DAILY BIAS</b></span><span>LIVE CALLS</span><span><b>PASS YOUR EVALS</b></span><span>GET FUNDED</span><span><b>GET PAID</b></span><span>REAL ANSWERS</span><span><b>DISCIPLINE</b></span><span>CONSISTENCY</span><span><b>RISK MANAGEMENT</b></span><span>PROTECT THE ACCOUNT</span><span><b>200+ TRADERS</b></span><span>WALK AWAY</span>
+      <span><b>DAILY BIAS</b></span><span>LIVE CALLS</span><span><b>PASS YOUR EVALS</b></span><span>GET FUNDED</span><span><b>GET PAID</b></span><span>REAL ANSWERS</span><span><b>DISCIPLINE</b></span><span>CONSISTENCY</span><span><b>RISK MANAGEMENT</b></span><span>PROTECT THE ACCOUNT</span><span><b>200+ TRADERS</b></span><span>WALK AWAY</span>
     </div>
   </div>
 
-  <section id="plan">
+  <section id="fit">
     <div class="wrap">
       <div class="sec-head">
-        <p class="label">The plan</p>
-        <h2>One setup. One session. Every day.</h2>
-        <p>This is the same thing I teach in the Discord and walk through 1:1. Simple first, then the details.</p>
+        <p class="label">Is this for you?</p>
+        <h2>Built for traders who are tired of guessing.</h2>
       </div>
-      <div class="plan">
-        <div class="chart">
-          <div class="cap"><span class="label">NQ · 1m · NY open</span><span class="label">Example</span></div>
-          <svg viewBox="0 0 600 300" role="img" aria-labelledby="chartTitle">
-            <title id="chartTitle">Price sweeps the previous session low, leaves a 1-minute fair value gap, then runs to the previous session high.</title>
-            <!-- levels -->
-            <line x1="10" y1="60" x2="590" y2="60" stroke="#3ddc84" stroke-width="1.5" stroke-dasharray="6 6"/>
-            <text x="12" y="50" fill="#3ddc84" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="1">PREV HIGH · TARGET</text>
-            <line x1="10" y1="230" x2="590" y2="230" stroke="#ff5a4e" stroke-width="1.5" stroke-dasharray="6 6"/>
-            <text x="12" y="270" fill="#ff5a4e" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="1">PREV LOW · LIQUIDITY</text>
-            <!-- FVG zone -->
-            <rect x="344" y="208" width="246" height="10" fill="#f4f4f1" fill-opacity=".14" stroke="#f4f4f1" stroke-opacity=".5" stroke-dasharray="3 3"/>
-            <text x="470" y="234" fill="#a3a3a8" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1">1M FVG</text>
-            <!-- candles drawn by script below -->
-            <g id="candles"></g>
-            <!-- sweep marker -->
-            <circle cx="286" cy="248" r="9" fill="none" stroke="#ff5a4e" stroke-width="1.5"/>
-            <text x="250" y="292" fill="#ff5a4e" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="1">SWEEP</text>
-            <!-- entry -->
-            <line x1="408" y1="200" x2="440" y2="200" stroke="#f4f4f1" stroke-width="1.5"/>
-            <text x="446" y="204" fill="#f4f4f1" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="1">ENTRY</text>
-          </svg>
+      <div class="fit">
+        <div class="fit-col">
+          <h3>For you if</h3>
+          <ul class="yes">
+            <li>You keep failing evals or blowing accounts</li>
+            <li>You're trading without a real plan</li>
+            <li>You make money, then give it all back</li>
+            <li>You want someone who actually trades to show you</li>
+          </ul>
         </div>
-        <div>
-          <ol class="steps">
-            <li><div><h3>Mark the levels</h3><p>Previous session highs and lows. That's where the liquidity sits, meaning everyone's stops.</p></div></li>
-            <li><div><h3>Wait for the sweep</h3><p>Let price run one side and take those stops. No sweep, no trade.</p></div></li>
-            <li><div><h3>Get confirmation</h3><p>Drop to the 1-minute. I want a fair value gap or a break of structure before I'm in.</p></div></li>
-            <li><div><h3>Target the other side</h3><p>Opposing liquidity is the target. Risk is set before I click anything.</p></div></li>
-          </ol>
-          <p class="walk">Then walk away. Take what the market gives you.</p>
+        <div class="fit-col">
+          <h3>Not for you if</h3>
+          <ul class="no">
+            <li>You just want signals to copy</li>
+            <li>You think you'll get rich in a week</li>
+            <li>You're not willing to follow rules</li>
+          </ul>
         </div>
+      </div>
+      <div class="how">
+        <p class="label">How it works</p>
+        <ol class="steps">
+          <li><div><h3>Pick how you want in</h3><p>Join the Discord for daily bias and live calls, or apply for 1:1 if you want hands-on help.</p></div></li>
+          <li><div><h3>Get a clear plan</h3><p>Learn how I think about the market, build your rules, and stop guessing.</p></div></li>
+          <li><div><h3>Pass, stay consistent, get paid</h3><p>Pass your evals, protect the account, and get paid out.</p></div></li>
+        </ol>
       </div>
     </div>
   </section>
@@ -430,7 +423,7 @@
         </article>
         <article class="offer feature">
           <div class="offer-top"><h3>1:1 Mentorship</h3><span class="pill">Limited spots</span></div>
-          <p class="price">$750–$1,500</p>
+          <p class="price price-sm">Apply to see if you're a fit</p>
           <ul>
             <li>Work directly with me, built around where you're at</li>
             <li>My exact entries, exits and risk rules</li>
@@ -445,10 +438,10 @@
 
   <section id="story">
     <div class="wrap story">
-      <p class="quote">Airbnb made me.<br><em>Trading is what I do now.</em></p>
+      <p class="quote">Just helping<br>people <em>make money.</em></p>
       <div>
-        <p>I'm Gene. I made my first real money running Airbnbs. Now it's NQ at the New York open, every morning.</p>
-        <p>I built BNBProfits because most people learning to trade get sold signals and hype. I'd rather teach you the plan, show you my trades, and help you get paid.</p>
+        <p>I'm Gene. I trade NQ futures full time and I get paid out from my funded accounts.</p>
+        <p>BNBProfits is how I help other traders get there: daily bias, live calls, real answers, and 1:1 if you want it hands-on. No signals to copy, no hype.</p>
       </div>
     </div>
   </section>
@@ -553,13 +546,12 @@
           </fieldset>
 
           <fieldset class="step" data-name="The investment" hidden>
-            <legend><h3>If this is the right fit, how much are you ready to put into getting 1:1 help?</h3><p class="hint">Compare it to what you've already spent on evals and resets.</p></legend>
+            <legend><h3>How much are you ready to invest in yourself right now?</h3><p class="hint">Compare it to what you've already spent on evals and resets.</p></legend>
             <div class="opts">
-              <label class="opt"><input type="radio" name="budget" value="Under $500" required><span>Under $500 right now</span></label>
-              <label class="opt"><input type="radio" name="budget" value="$500–$750"><span>$500–$750</span></label>
-              <label class="opt"><input type="radio" name="budget" value="$750–$1,500"><span>$750–$1,500</span></label>
-              <label class="opt"><input type="radio" name="budget" value="$1,500+"><span>$1,500+</span></label>
-              <label class="opt"><input type="radio" name="budget" value="Not sure, depends what's included"><span>Not sure, depends what's included</span></label>
+              <label class="opt"><input type="radio" name="budget" value="Under $500" required><span>Under $500</span></label>
+              <label class="opt"><input type="radio" name="budget" value="$500–$1,000"><span>$500–$1,000</span></label>
+              <label class="opt"><input type="radio" name="budget" value="$1,000–$2,000"><span>$1,000–$2,000</span></label>
+              <label class="opt"><input type="radio" name="budget" value="$2,000+"><span>$2,000+</span></label>
             </div>
           </fieldset>
 
@@ -593,12 +585,12 @@
     <div class="wrap">
       <div class="tf">
         <div class="tf-copy">
-          <p class="label">Need a funded account?</p>
-          <h3>I use Tradeify. Use my code for a discount.</h3>
-          <p>Tradeify runs a promo every month. Use code <b>BNB</b> at checkout.</p>
+          <p class="label">My code</p>
+          <h3>Use code BNB on your next funded account.</h3>
+          <p>Save on your next eval at checkout. New promo every month.</p>
         </div>
         <span class="code">BNB</span>
-        <a class="btn btn-solid" href="https://tradeify.co/?ref=BNB" target="_blank" rel="noopener sponsored">Go to Tradeify</a>
+        <a class="btn btn-solid" href="https://tradeify.co/?ref=BNB" target="_blank" rel="noopener sponsored">Get your account</a>
       </div>
     </div>
   </section>
@@ -614,7 +606,7 @@
         <a href="https://www.tiktok.com/@bnbgene" target="_blank" rel="noopener">TikTok @bnbgene</a>
       </div>
     </div>
-    <p class="disclaimer">Futures trading involves substantial risk of loss and isn't right for everyone. The payouts and results shown are real but aren't typical, and past results don't guarantee future results. Nothing on this site is financial advice. The Tradeify link and code BNB are affiliate links, so I may earn a commission at no extra cost to you. © <span id="yr">2026</span> BNBProfits.</p>
+    <p class="disclaimer">Futures trading involves substantial risk of loss and isn't right for everyone. The payouts and results shown are real but aren't typical, and past results don't guarantee future results. Nothing on this site is financial advice. The code BNB and account links are affiliate links, so I may earn a commission at no extra cost to you. © <span id="yr">2026</span> BNBProfits.</p>
   </div>
 </footer>
 
@@ -623,21 +615,6 @@
 <script>
 (function () {
   document.getElementById('yr').textContent = new Date().getFullYear();
-
-  // ---- chart candles: [open, close, high, low] in SVG y units (smaller = higher price)
-  var C = [[150,160,145,165],[160,170,155,176],[170,165,160,178],[165,185,162,190],[185,195,180,200],[195,190,186,205],[190,210,188,215],[210,222,205,226],[222,235,218,248],[235,205,200,240],[205,170,165,208],[172,195,168,210],[195,160,158,200],[160,130,125,165],[130,105,98,135],[105,80,72,110],[80,66,58,86]];
-  var g = document.getElementById('candles'), ns = 'http://www.w3.org/2000/svg';
-  C.forEach(function (c, i) {
-    var x = 30 + i * 32, up = c[1] < c[0], col = up ? '#f4f4f1' : '#6d6d73';
-    var w = document.createElementNS(ns, 'line');
-    w.setAttribute('x1', x); w.setAttribute('x2', x); w.setAttribute('y1', c[2]); w.setAttribute('y2', c[3]);
-    w.setAttribute('stroke', col); w.setAttribute('stroke-width', '1.5'); g.appendChild(w);
-    var r = document.createElementNS(ns, 'rect');
-    r.setAttribute('x', x - 6); r.setAttribute('width', 12);
-    r.setAttribute('y', Math.min(c[0], c[1])); r.setAttribute('height', Math.max(2, Math.abs(c[0] - c[1])));
-    r.setAttribute('fill', up ? '#f4f4f1' : '#0a0a0b'); r.setAttribute('stroke', col); r.setAttribute('stroke-width', '1.5');
-    g.appendChild(r);
-  });
 
   // ---- lightbox
   var lb = document.getElementById('lb'), lbImg = lb.querySelector('img');
@@ -699,7 +676,7 @@
     var budget = val('budget'), start = val('start_when'), spend = val('eval_spend');
     var tier;
     if (budget === 'Under $500') tier = 'DISCORD FIT';
-    else if ((budget === '$750–$1,500' || budget === '$1,500+') && (start === 'Right now' || start === 'Within 2 weeks')) tier = 'HOT';
+    else if ((budget === '$1,000–$2,000' || budget === '$2,000+') && (start === 'Right now' || start === 'Within 2 weeks')) tier = 'HOT';
     else if (start === 'Just looking for now') tier = 'COLD';
     else tier = 'WARM';
     var struggles = Array.prototype.map.call(form.querySelectorAll('#struggleOpts input:checked'), function (c) { return c.value; });
