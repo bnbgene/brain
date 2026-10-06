@@ -1,0 +1,542 @@
+<title>BNB Story Maker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,800;1,900&family=Archivo:wdth,wght@100..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Layout: editor app. Phone-sized story preview on the left, controls stacked on the right; one column on a phone. Single dark look to match the BNB logo. */
+  :root {
+    --bg: #0a0a0b;
+    --panel: #131315;
+    --panel-2: #1b1b1e;
+    --line: #2a2a2f;
+    --fg: #f4f4f1;
+    --muted: #a3a3a8;
+    --dim: #6d6d73;
+    --hl: #2f9bff;
+    --money: #3ddc84;
+    --display: "Archivo", "Arial Black", sans-serif;
+    --body: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5; padding-inline: 16px; padding-block: 20px 48px; }
+  .app { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 28px; align-items: start; }
+  @media (max-width: 820px) { .app { grid-template-columns: minmax(0, 1fr); } }
+  header.top { max-width: 1100px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  header.top h1 { margin: 0; font-family: var(--display); font-variation-settings: "wdth" 125; font-weight: 900; font-size: 1.4rem; text-transform: uppercase; letter-spacing: -.01em; }
+  .label { font-family: var(--mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+  .stage { position: sticky; top: 16px; display: grid; gap: 12px; }
+  @media (max-width: 820px) { .stage { position: static; } }
+  .canvas-wrap { background: #000; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; aspect-ratio: 9 / 16; max-width: 100%; max-height: 78vh; margin: 0 auto; }
+  @media (max-width: 820px) { .canvas-wrap { width: min(100%, 360px); } }
+  canvas { width: 100%; height: 100%; display: block; }
+  .save-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .note { color: var(--muted); font-size: .85rem; text-align: center; min-height: 1.3em; }
+
+  .controls { display: grid; gap: 14px; min-width: 0; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+  .card h2 { margin: 0; font-family: var(--display); font-variation-settings: "wdth" 115; font-weight: 800; font-size: .95rem; text-transform: uppercase; letter-spacing: .02em; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 4px; }
+  .seg button { border: 0; background: transparent; color: var(--muted); font: 600 .85rem var(--body); padding: 10px 6px; border-radius: 7px; cursor: pointer; min-height: 40px; }
+  .seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+  button.btn, label.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2); color: var(--fg); font: 700 .9rem var(--body); cursor: pointer; }
+  button.btn:hover, label.btn:hover { border-color: #4a4a50; }
+  .btn.primary { background: var(--fg); color: var(--bg); border-color: var(--fg); font-family: var(--display); font-variation-settings: "wdth" 112; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; min-height: 52px; font-size: 1rem; }
+  .btn[disabled] { opacity: .45; cursor: default; }
+  :focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+  input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .thumbs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .thumb { position: relative; width: 64px; height: 84px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); background: var(--bg); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb button { position: absolute; top: 3px; right: 3px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(0,0,0,.75); color: #fff; cursor: pointer; font-size: 14px; line-height: 1; }
+  .thumb .tag { position: absolute; left: 0; right: 0; bottom: 0; font: 500 .6rem var(--mono); text-align: center; background: rgba(0,0,0,.7); padding: 2px 0; letter-spacing: .06em; }
+  textarea, input[type="text"] { width: 100%; font: 600 1rem var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+  textarea { min-height: 72px; resize: vertical; }
+  textarea:focus, input[type="text"]:focus { outline: none; border-color: var(--fg); }
+  .hint { color: var(--dim); font-size: .8rem; }
+  .hint b { color: var(--hl); font-weight: 600; }
+  .slider { display: grid; grid-template-columns: 76px 1fr; gap: 10px; align-items: center; }
+  .slider span { font: 500 .72rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  input[type="range"] { width: 100%; accent-color: var(--fg); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 999px; padding: 8px 12px; font: 600 .85rem var(--body); cursor: pointer; text-align: left; }
+  .chip:hover { border-color: #4a4a50; }
+  .chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .bank { display: grid; gap: 6px; max-height: 260px; overflow: auto; padding-right: 4px; }
+  .bank button { text-align: left; border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 10px; padding: 10px 12px; font: 600 .9rem var(--body); cursor: pointer; }
+  .bank button:hover { border-color: var(--fg); }
+  .toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; }
+  .toggle input { width: 20px; height: 20px; accent-color: var(--fg); }
+  [hidden] { display: none !important; }
+  .ai-status { color: var(--muted); font-size: .85rem; }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: grid; place-items: center; padding: 20px; z-index: 30; }
+  .modal[hidden] { display: none; }
+  .modal-inner { display: grid; gap: 12px; justify-items: center; max-width: 420px; }
+  .modal img { max-height: 72vh; width: auto; border-radius: 12px; }
+  .modal p { color: var(--fg); text-align: center; margin: 0; }
+  @media (prefers-reduced-motion: no-preference) { .btn, .chip, .seg button { transition: background .12s ease, color .12s ease, border-color .12s ease; } }
+</style>
+
+<header class="top">
+  <h1>BNB Story Maker</h1>
+  <span class="label">1080 × 1920 · IG story</span>
+</header>
+
+<div class="app">
+  <div class="stage">
+    <div class="canvas-wrap"><canvas id="cv" width="1080" height="1920" aria-label="Story preview"></canvas></div>
+    <div class="save-row">
+      <button class="btn primary" id="saveBtn" type="button">Save story</button>
+      <p class="note" id="saveNote"></p>
+    </div>
+  </div>
+
+  <div class="controls">
+    <section class="card">
+      <h2>Layout</h2>
+      <div class="seg" id="layoutSeg" role="group" aria-label="Layout">
+        <button type="button" data-v="proof" aria-pressed="true">Proof card</button>
+        <button type="button" data-v="full" aria-pressed="false">Full photo</button>
+        <button type="button" data-v="collage" aria-pressed="false">Collage</button>
+      </div>
+      <p class="hint" id="layoutHint">Best for P&amp;L and payout screenshots. Your screenshot sits on a card with the logo up top.</p>
+    </section>
+
+    <section class="card">
+      <h2>Photos <span class="label" id="photoCount">1 / 4</span></h2>
+      <div class="thumbs" id="thumbs"></div>
+      <div class="row">
+        <label class="btn" for="photoIn">+ Add photos</label>
+        <input type="file" id="photoIn" accept="image/*" multiple>
+        <label class="btn" for="bgIn">Background photo</label>
+        <input type="file" id="bgIn" accept="image/*">
+        <button class="btn" type="button" id="bgClear" hidden>Remove background</button>
+      </div>
+      <p class="hint">Collage uses up to 4 photos. Proof card and Full photo use the first one. The background photo sits behind the card or collage, darkened.</p>
+    </section>
+
+    <section class="card">
+      <h2>Caption</h2>
+      <textarea id="caption" aria-label="Caption">New money coming in daily 🔥</textarea>
+      <p class="hint">Wrap words in *stars* to make them <b>blue</b>. Press return for a new line.</p>
+      <div class="seg" id="styleSeg" role="group" aria-label="Caption style">
+        <button type="button" data-v="bold" aria-pressed="true">Bold italic</button>
+        <button type="button" data-v="box" aria-pressed="false">Black box</button>
+      </div>
+      <div class="slider"><span>Size</span><input type="range" id="size" min="48" max="130" value="84" aria-label="Caption size"></div>
+      <div class="slider"><span>Height</span><input type="range" id="posY" min="8" max="92" value="80" aria-label="Caption height"></div>
+    </section>
+
+    <section class="card">
+      <h2>Caption ideas <button class="btn" type="button" id="shuffle" style="min-height:34px;padding:0 12px;font-size:.8rem;">Shuffle</button></h2>
+      <div class="chips" id="cats" role="group" aria-label="Caption topic"></div>
+      <div class="bank" id="bank"></div>
+      <div class="ai" id="aiBox" hidden>
+        <p class="label" style="margin:6px 0 0;">Write new ones with Claude</p>
+        <input type="text" id="aiNote" placeholder="What happened today? e.g. +$1,800 on 3 accounts, 1 trade, done by 9:50">
+        <div class="row">
+          <button class="btn" type="button" id="aiBtn">Write captions</button>
+          <button class="btn" type="button" id="aiStop" hidden>Stop</button>
+          <span class="ai-status" id="aiStatus"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Call to action</h2>
+      <div class="chips" id="ctaChips" role="group" aria-label="Call to action"></div>
+      <input type="text" id="cta" aria-label="Call to action text" value="Link in bio to join ( *BNBPROFITS* ) 💸">
+      <div class="slider"><span>Height</span><input type="range" id="ctaY" min="20" max="95" value="90" aria-label="Call to action height"></div>
+      <label class="toggle"><input type="checkbox" id="arrowOn"> Hand-drawn arrow to the CTA</label>
+    </section>
+
+    <section class="card">
+      <h2>Extras</h2>
+      <label class="toggle"><input type="checkbox" id="logoOn" checked> BNB Profits logo</label>
+      <div class="slider"><span>Darken</span><input type="range" id="dark" min="0" max="70" value="20" aria-label="Darken photo"></div>
+    </section>
+  </div>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-inner">
+    <img id="modalImg" alt="Your finished story">
+    <p>Press and hold the image, then tap <b>Save to Photos</b>.</p>
+    <button class="btn" type="button" id="modalClose">Done</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var W = 1080, H = 1920;
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var EMOJI = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji"';
+  var CAP_FONT = function (px) { return 'italic 900 ' + px + 'px Montserrat, ' + EMOJI + ', "Arial Black", sans-serif'; };
+  var CTA_FONT = function (px) { return 'italic 800 ' + px + 'px Montserrat, ' + EMOJI + ', "Arial Black", sans-serif'; };
+
+  var LOGO_SRC = '__LOGO__';
+  var SAMPLE_SRC = '__PNL__';
+
+  var state = {
+    layout: 'proof', style: 'bold',
+    photos: [], bg: null, logo: null,
+    caption: '', size: 84, posY: 80, cta: '', ctaY: 90, arrow: false, logoOn: true, dark: 20
+  };
+
+  var LAYOUT_DEFAULTS = {
+    proof:   { posY: 80, ctaY: 90, hint: 'Best for P&L and payout screenshots. Your screenshot sits on a card with the logo up top.' },
+    full:    { posY: 55, ctaY: 80, hint: 'Your photo fills the whole story. Good for setup, lifestyle and on-the-chart shots.' },
+    collage: { posY: 82, ctaY: 92, hint: 'Up to 4 photos scattered on top. Stack payouts or member wins.' }
+  };
+
+  var BANK = {
+    'Payouts': ['Another payout secured 🤝', '*MAX* payout secured 🤝', 'Prop firms keep paying 💸', 'Same setup. Different day. Paid again.', 'New money coming in daily 🔥', 'Payout day 💰'],
+    'Trade recap': ['Literally rinsed the market today', 'One trade. Done for the day.', 'Took what the market gave me and walked away', 'NY open did its thing 📈', 'Swept the lows, ran the highs 🎯', 'Green before 10am ✅'],
+    'Member wins': ['W day in the discord 🔥', 'More accounts passed today 🔥', 'From not knowing where to start to getting paid in 2 weeks', 'Built bro from the ground up 🔥', 'Helping people win has always been the goal 💯', 'First payout loading… 💰'],
+    'Discord': ['Daily bias drops before the open', 'Live call this week. Pull up.', '200+ traders and still growing', 'We eat together in here 🍽️', 'Ask questions. Get real answers.'],
+    '1:1': ['1:1 spots open this week', 'Stop guessing. Start trading with an *edge*.', 'Discipline + execution = payouts', "I'll show you exactly how I trade", 'Limited 1:1 spots. Apply in bio.'],
+    'Mindset': ['Take what you can get and walk away', 'No sweep, no trade', 'Overtrading is how you give it back', "The goal isn't more trades. It's the right ones.", 'Protect the account first']
+  };
+  var CTAS = [
+    ['Join Discord', 'Link in bio to join ( *BNBPROFITS* ) 💸'],
+    ['Highlight', 'Tap my ( *DISCORD* ) highlight to join 💸'],
+    ['Apply 1:1', 'Link in bio to apply for ( *1:1* ) 🥂'],
+    ['Tradeify code', 'Use code ( *BNB* ) on Tradeify ⚡'],
+    ['DM me', 'DM me ( *"1:1"* ) to get started'],
+    ['No CTA', '']
+  ];
+
+  // ---------- images
+  function loadImg(src) {
+    return new Promise(function (res, rej) { var i = new Image(); i.onload = function () { res(i); }; i.onerror = rej; i.src = src; });
+  }
+  function fileToImg(file) { return loadImg(URL.createObjectURL(file)).then(function (img) { img._thumb = img.src; return img; }); }
+
+  // ---------- text layout with *highlight* runs
+  function tokenize(text) {
+    var lines = text.split('\n'), out = [];
+    lines.forEach(function (ln) {
+      var words = [], on = false;
+      ln.split(/\s+/).filter(Boolean).forEach(function (w) {
+        var starts = w.charAt(0) === '*', ends = w.length > 1 && w.charAt(w.length - 1) === '*';
+        if (w === '*') { on = !on; return; }
+        if (starts) on = true;
+        words.push({ t: w.replace(/^\*|\*$/g, ''), hl: on || (starts && ends) });
+        if (ends || (starts && ends)) on = false;
+      });
+      out.push(words);
+    });
+    return out;
+  }
+  function wrap(paras, maxW) {
+    var space = ctx.measureText(' ').width, lines = [];
+    paras.forEach(function (words) {
+      var line = [], w = 0;
+      words.forEach(function (word) {
+        word.w = ctx.measureText(word.t).width;
+        var add = (line.length ? space : 0) + word.w;
+        if (line.length && w + add > maxW) { lines.push({ words: line, w: w }); line = [word]; w = word.w; }
+        else { line.push(word); w += add; }
+      });
+      if (line.length) lines.push({ words: line, w: w });
+    });
+    lines.space = space;
+    return lines;
+  }
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+  // Draws a text block centered on cy; returns its top and bottom.
+  function drawText(text, fontFn, px, cy, style, maxW) {
+    if (!text.trim()) return null;
+    ctx.save();
+    ctx.font = fontFn(px);
+    ctx.textBaseline = 'middle';
+    var lines = wrap(tokenize(text), maxW), lh = px * (style === 'box' ? 1.32 : 1.14);
+    var top = cy - (lines.length * lh) / 2;
+    lines.forEach(function (ln, i) {
+      var y = top + lh * i + lh / 2, x = W / 2 - ln.w / 2;
+      if (style === 'box') {
+        var padX = px * .34, padY = px * .2;
+        ctx.fillStyle = '#000';
+        roundRect(x - padX, y - px / 2 - padY, ln.w + padX * 2 + px * .08, px + padY * 2, px * .16);
+        ctx.fill();
+      } else {
+        ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = px * .28; ctx.shadowOffsetY = px * .04;
+      }
+      ln.words.forEach(function (wd) {
+        ctx.fillStyle = wd.hl ? '#2f9bff' : '#ffffff';
+        ctx.fillText(wd.t, x, y);
+        if (wd.hl) { ctx.fillRect(x, y + px * .52, wd.w, Math.max(3, px * .06)); }
+        x += wd.w + lines.space;
+      });
+    });
+    ctx.restore();
+    return { top: top, bottom: top + lines.length * lh };
+  }
+
+  // ---------- backgrounds and photos
+  function cover(img, x, y, w, h) {
+    var s = Math.max(w / img.width, h / img.height), iw = img.width * s, ih = img.height * s;
+    ctx.drawImage(img, x + (w - iw) / 2, y + (h - ih) / 2, iw, ih);
+  }
+  function darkBase() {
+    var g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#16161a'); g.addColorStop(1, '#050506');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  }
+  function backdrop(img, darkPct, blur) {
+    if (!img) { darkBase(); return; }
+    ctx.save();
+    if (blur) ctx.filter = 'blur(' + blur + 'px)';
+    cover(img, -40, -40, W + 80, H + 80);
+    ctx.restore();
+    ctx.fillStyle = 'rgba(0,0,0,' + darkPct / 100 + ')'; ctx.fillRect(0, 0, W, H);
+  }
+  function card(img, cx, cy, maxW, maxH, rot, fill) {
+    var w, h;
+    if (fill) { w = maxW; h = maxH; }
+    else { var s = Math.min(maxW / img.width, maxH / img.height); w = img.width * s; h = img.height * s; }
+    ctx.save();
+    ctx.translate(cx, cy); ctx.rotate(rot * Math.PI / 180);
+    ctx.shadowColor = 'rgba(0,0,0,.65)'; ctx.shadowBlur = 50; ctx.shadowOffsetY = 18;
+    roundRect(-w / 2, -h / 2, w, h, 26); ctx.fillStyle = '#000'; ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.clip();
+    if (fill) cover(img, -w / 2, -h / 2, w, h); else ctx.drawImage(img, -w / 2, -h / 2, w, h);
+    ctx.restore();
+    ctx.save();
+    ctx.translate(cx, cy); ctx.rotate(rot * Math.PI / 180);
+    roundRect(-w / 2, -h / 2, w, h, 26); ctx.strokeStyle = 'rgba(255,255,255,.14)'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.restore();
+  }
+  var COLLAGE = {
+    1: [[540, 860, 760, 1000, -2]],
+    2: [[330, 700, 520, 690, -4], [750, 1040, 520, 690, 4]],
+    3: [[310, 560, 450, 600, -5], [770, 640, 450, 600, 4], [540, 1120, 500, 640, -2]],
+    4: [[300, 560, 440, 580, -3], [785, 590, 440, 580, 3], [300, 1170, 440, 580, 2], [785, 1200, 440, 580, -3]]
+  };
+
+  function drawLogo(y, w) {
+    if (!state.logoOn || !state.logo) return;
+    var h = w * state.logo.height / state.logo.width;
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowBlur = 20;
+    ctx.drawImage(state.logo, W / 2 - w / 2, y, w, h); ctx.restore();
+  }
+
+  function drawArrow(x0, y0, x1, y1) {
+    ctx.save();
+    ctx.strokeStyle = '#2f9bff'; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 8;
+    var dx = x1 - x0;
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.bezierCurveTo(x0 + 170, y0 + 10, x0 + 120 + dx * .3, y0 + (y1 - y0) * .55, x1, y1);
+    ctx.stroke();
+    // head points along the final segment direction
+    var ang = Math.atan2(y1 - (y0 + (y1 - y0) * .55), x1 - (x0 + 120 + dx * .3)), L = 46;
+    ctx.beginPath();
+    ctx.moveTo(x1 + Math.cos(ang + 2.6) * L, y1 + Math.sin(ang + 2.6) * L);
+    ctx.lineTo(x1, y1);
+    ctx.lineTo(x1 + Math.cos(ang - 2.6) * L, y1 + Math.sin(ang - 2.6) * L);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, W, H);
+    var p = state.photos, L = state.layout;
+    if (L === 'full') {
+      if (p[0]) { cover(p[0], 0, 0, W, H); ctx.fillStyle = 'rgba(0,0,0,' + state.dark / 100 + ')'; ctx.fillRect(0, 0, W, H); }
+      else darkBase();
+      drawLogo(110, 230);
+    } else if (L === 'proof') {
+      backdrop(state.bg, Math.max(45, state.dark + 35), 24);
+      drawLogo(120, 300);
+      if (p[0]) card(p[0], W / 2, 830, 920, 1000, -1.5, false);
+    } else {
+      backdrop(state.bg, Math.max(35, state.dark + 25), 0);
+      var spots = COLLAGE[Math.min(4, Math.max(1, p.length))] || [];
+      p.slice(0, 4).forEach(function (img, i) { var s = spots[i]; card(img, s[0], s[1], s[2], s[3], s[4], false); });
+      drawLogo(90, 220);
+    }
+    var cap = drawText(state.caption, CAP_FONT, state.size, H * state.posY / 100, state.style, W - 120);
+    var ctaPx = Math.round(state.size * .52);
+    var cta = drawText(state.cta, CTA_FONT, ctaPx, H * state.ctaY / 100, 'box', W - 180);
+    if (state.arrow && cap && cta && cta.top - cap.bottom > 160) {
+      drawArrow(W / 2 + 40, cap.bottom + 40, W / 2 + 10, cta.top - 34);
+    }
+  }
+
+  // ---------- controls
+  function bindSeg(id, key, after) {
+    var seg = document.getElementById(id);
+    seg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      seg.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      state[key] = b.dataset.v; if (after) after(b.dataset.v); render();
+    });
+  }
+  bindSeg('layoutSeg', 'layout', function (v) {
+    var d = LAYOUT_DEFAULTS[v];
+    state.posY = d.posY; state.ctaY = d.ctaY;
+    document.getElementById('posY').value = d.posY; document.getElementById('ctaY').value = d.ctaY;
+    document.getElementById('layoutHint').textContent = d.hint;
+  });
+  bindSeg('styleSeg', 'style');
+
+  [['caption', 'caption', 'input', String], ['cta', 'cta', 'input', String], ['size', 'size', 'input', Number], ['posY', 'posY', 'input', Number], ['ctaY', 'ctaY', 'input', Number], ['dark', 'dark', 'input', Number]].forEach(function (c) {
+    var el = document.getElementById(c[0]);
+    state[c[1]] = c[3](el.value);
+    el.addEventListener(c[2], function () { state[c[1]] = c[3](el.value); render(); });
+  });
+  [['arrowOn', 'arrow'], ['logoOn', 'logoOn']].forEach(function (c) {
+    var el = document.getElementById(c[0]); state[c[1]] = el.checked;
+    el.addEventListener('change', function () { state[c[1]] = el.checked; render(); });
+  });
+
+  function setCaption(t) { var el = document.getElementById('caption'); el.value = t; state.caption = t; render(); }
+
+  // caption bank
+  var catEl = document.getElementById('cats'), bankEl = document.getElementById('bank'), curCat = 'Payouts';
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function fillBank(list) {
+    bankEl.innerHTML = '';
+    list.forEach(function (item) {
+      var isCta = typeof item === 'object', t = isCta ? item.cta : item;
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = (isCta ? 'CTA: ' : '') + t.replace(/\*/g, '');
+      b.addEventListener('click', function () {
+        if (isCta) { ctaIn.value = t; state.cta = t; render(); } else setCaption(t);
+      });
+      bankEl.appendChild(b);
+    });
+  }
+  Object.keys(BANK).forEach(function (k) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = k;
+    b.setAttribute('aria-pressed', String(k === curCat));
+    b.addEventListener('click', function () {
+      curCat = k; catEl.querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      fillBank(BANK[k]);
+    });
+    catEl.appendChild(b);
+  });
+  fillBank(BANK[curCat]);
+  document.getElementById('shuffle').addEventListener('click', function () { fillBank(shuffle(BANK[curCat])); });
+
+  // CTA chips
+  var ctaChips = document.getElementById('ctaChips'), ctaIn = document.getElementById('cta');
+  CTAS.forEach(function (c, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = c[0];
+    b.setAttribute('aria-pressed', String(i === 0));
+    b.addEventListener('click', function () {
+      ctaChips.querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      ctaIn.value = c[1]; state.cta = c[1]; render();
+    });
+    ctaChips.appendChild(b);
+  });
+
+  // photos
+  var thumbs = document.getElementById('thumbs');
+  function drawThumbs() {
+    thumbs.innerHTML = '';
+    state.photos.forEach(function (img, i) {
+      var d = document.createElement('div'); d.className = 'thumb';
+      var im = document.createElement('img'); im.src = img._thumb || img.src; im.alt = 'Photo ' + (i + 1);
+      var x = document.createElement('button'); x.type = 'button'; x.setAttribute('aria-label', 'Remove photo ' + (i + 1)); x.textContent = '×';
+      x.addEventListener('click', function () { state.photos.splice(i, 1); drawThumbs(); render(); });
+      d.appendChild(im); d.appendChild(x);
+      if (img._sample) { var t = document.createElement('span'); t.className = 'tag'; t.textContent = 'EXAMPLE'; d.appendChild(t); }
+      thumbs.appendChild(d);
+    });
+    document.getElementById('photoCount').textContent = state.photos.length + ' / 4';
+  }
+  document.getElementById('photoIn').addEventListener('change', function (e) {
+    var files = Array.prototype.slice.call(e.target.files || []);
+    state.photos = state.photos.filter(function (p) { return !p._sample; });
+    Promise.all(files.map(fileToImg)).then(function (imgs) {
+      state.photos = state.photos.concat(imgs).slice(0, 4);
+      drawThumbs(); render();
+    }).catch(function () { document.getElementById('saveNote').textContent = "One of those photos couldn't be opened. Try a JPG or PNG."; });
+    e.target.value = '';
+  });
+  var bgClear = document.getElementById('bgClear');
+  document.getElementById('bgIn').addEventListener('change', function (e) {
+    var f = e.target.files && e.target.files[0]; if (!f) return;
+    fileToImg(f).then(function (img) { state.bg = img; bgClear.hidden = false; render(); });
+    e.target.value = '';
+  });
+  bgClear.addEventListener('click', function () { state.bg = null; bgClear.hidden = true; render(); });
+
+  // ---------- save
+  var note = document.getElementById('saveNote'), modal = document.getElementById('modal');
+  function stamp() { var d = new Date(), z = function (n) { return String(n).padStart(2, '0'); }; return d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + '-' + z(d.getHours()) + z(d.getMinutes()); }
+  function showModal() {
+    document.getElementById('modalImg').src = cv.toDataURL('image/png');
+    modal.hidden = false;
+  }
+  document.getElementById('modalClose').addEventListener('click', function () { modal.hidden = true; });
+  var downloadsP = (window.claude && window.claude.use) ? window.claude.use('downloads') : Promise.resolve(null);
+  document.getElementById('saveBtn').addEventListener('click', function () {
+    render(); note.textContent = '';
+    downloadsP.then(function (dl) {
+      if (!dl) { showModal(); return; }
+      cv.toBlob(function (blob) {
+        dl.save({ filename: 'bnb-story-' + stamp() + '.png', data: blob })
+          .then(function () { note.textContent = 'Saved. Post it from your camera roll or files.'; })
+          .catch(function (e) {
+            if (e && e.code === 'declined') { note.textContent = 'Not saved.'; return; }
+            if (e && e.code === 'rate_limited') { note.textContent = 'A save is already open. Finish that one first.'; return; }
+            showModal();
+          });
+      }, 'image/png');
+    });
+  });
+
+  // ---------- Claude-written captions
+  var aiBox = document.getElementById('aiBox'), aiBtn = document.getElementById('aiBtn'), aiStop = document.getElementById('aiStop'), aiStatus = document.getElementById('aiStatus');
+  var sampleP = (window.claude && window.claude.use) ? window.claude.use('sample') : Promise.resolve(null);
+  sampleP.then(function (sample) {
+    if (!sample) return;
+    aiBox.hidden = false;
+    var ctl;
+    aiStop.addEventListener('click', function () { if (ctl) ctl.abort(); });
+    aiBtn.addEventListener('click', function () {
+      var happened = document.getElementById('aiNote').value.trim();
+      var prompt = [
+        'You write Instagram story captions for Gene (@bnbgene). He day trades NQ/MNQ futures at the New York open only (marks previous session highs and lows, waits for a liquidity sweep, enters on a 1-minute FVG or break of structure, targets opposing liquidity, then walks away).',
+        'He runs the BNBProfits Discord ($75/month: daily bias, weekly live calls, Q&A) and 1:1 mentorship ($750-$1,500). His Tradeify code is BNB.',
+        'Voice: casual, short, direct, confident, sounds like a real person, common words. Not corny, not corporate, no hashtags, no motivational cliches, no guarantees of profit. At most one emoji per caption.',
+        'Topic: ' + curCat + '.',
+        happened ? 'What happened today: ' + happened : 'No details given, keep it general.',
+        'Return JSON only: {"captions": [6 captions, each under 10 words], "ctas": [3 call-to-action lines under 9 words; wrap the single key word in *asterisks*, e.g. "Tap my ( *DISCORD* ) highlight to join"]}'
+      ].join('\n');
+      ctl = new AbortController();
+      aiBtn.disabled = true; aiStop.hidden = false; aiStatus.textContent = 'Writing…';
+      sample.json(prompt, { signal: ctl.signal, modelTier: 'quick' }).then(function (out) {
+        var caps = (out && out.captions) || [], ctas = (out && out.ctas) || [];
+        fillBank(caps.concat(ctas.map(function (c) { return { cta: c }; })));
+        aiStatus.textContent = 'Tap one to use it.';
+      }).catch(function (e) {
+        var c = e && e.code;
+        aiStatus.textContent = c === 'cancelled' ? 'Stopped.' : c === 'not_granted' ? 'Claude captions are off for this page.' : c === 'rate_limited' ? 'Too many requests. Give it a minute.' : "Couldn't write captions right now. Try again.";
+        if (c === 'not_granted') aiBox.hidden = true;
+      }).then(function () { aiBtn.disabled = false; aiStop.hidden = true; });
+    });
+  });
+
+  // ---------- boot
+  var fontsReady = (document.fonts && document.fonts.load) ? Promise.all([document.fonts.load(CAP_FONT(80)), document.fonts.load(CTA_FONT(40))]).catch(function () {}) : Promise.resolve();
+  Promise.all([loadImg(LOGO_SRC), loadImg(SAMPLE_SRC), fontsReady]).then(function (r) {
+    state.logo = r[0];
+    r[1]._sample = true; state.photos = [r[1]];
+    drawThumbs(); render();
+  }).catch(function () { render(); });
+  render();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(render);
+})();
+</script>
