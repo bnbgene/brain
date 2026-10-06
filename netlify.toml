@@ -1,0 +1,4 @@
+# Netlify serves the BNBProfits site from the bnbprofits/ folder on this branch.
+[build]
+  base = "bnbprofits"
+  publish = "."
