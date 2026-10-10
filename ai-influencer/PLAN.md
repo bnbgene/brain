@@ -29,7 +29,8 @@ Finish line: first real dollars earned, shown with a payout screenshot.
 - Track net profit (revenue minus tools/credits/fees), not just gross revenue.
 
 ## Decisions log
-- (empty)
+- 2026-10-10: Model B (Fanvue subscription). Tool budget: user handling subscriptions. Time: 1–2 hrs/day OK.
+- 2026-10-10: Niche shortlist sent (truck girl, strong gym girl, country/fishing girl, +7 more). Waiting on pick.
 
 ## Metrics log
 | Date | Posts | Views | Followers | Link clicks | Subs/sales | Revenue | Spend |
