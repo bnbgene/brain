@@ -223,6 +223,27 @@ textarea.field{resize:vertical;min-height:70px}
 .draft pre{white-space:pre-wrap;font:inherit;margin:6px 0 10px}
 .confirm{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:var(--danger-soft);border-radius:8px;padding:8px 10px;font-size:14px}
 
+.ask textarea{width:100%;min-height:84px}
+.ask .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-top:8px}
+.ask .ideas{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ask .ideas button{border:1px solid var(--line);background:var(--surface-2);border-radius:99px;padding:4px 11px;font-size:13px;color:var(--muted)}
+.ask .ideas button:hover{color:var(--ink);border-color:var(--faint)}
+.reqs{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.reqs li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.reqs .top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:0;justify-content:flex-start}
+.reqs .txt{margin:6px 0 0;white-space:pre-wrap}
+.reqs .res{margin:8px 0 0;padding:8px 12px;border-left:3px solid var(--accent);background:var(--surface-2);border-radius:0 8px 8px 0;white-space:pre-wrap;font-size:14px}
+.reqs .sm{color:var(--muted);font-size:13px}
+.paste{background:var(--surface);border:1px solid var(--accent);border-radius:12px;padding:16px;margin-bottom:14px}
+.paste h2{font-size:18px;font-weight:600;margin-bottom:4px}
+.paste p.sub{margin:0 0 10px;color:var(--muted);font-size:14px}
+.paste textarea{width:100%;min-height:160px;font-family:var(--mono);font-size:13px}
+.paste .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.paste details{margin-top:8px;font-size:13.5px;color:var(--muted)}
+.paste details pre{white-space:pre-wrap;background:var(--surface-2);border-radius:8px;padding:10px;font:12.5px/1.5 var(--mono);color:var(--ink);margin:6px 0 0}
+.paste ul.pv{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:14px}
+.paste ul.pv li{display:flex;gap:8px;align-items:baseline}
+.paste ul.pv .tg{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:99px;white-space:nowrap}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;z-index:40;max-width:calc(100% - 32px)}
 @media (prefers-reduced-motion:no-preference){.drawer{animation:slide .18s ease-out}@keyframes slide{from{transform:translateX(24px);opacity:.6}}}
 </style>
@@ -245,6 +266,7 @@ textarea.field{resize:vertical;min-height:70px}
     <button class="tab" role="tab" data-tab="today" aria-selected="true">Today<span class="count" id="c-today">0</span></button>
     <button class="tab" role="tab" data-tab="leads" aria-selected="false">Leads<span class="count" id="c-leads">0</span></button>
     <button class="tab" role="tab" data-tab="clients" aria-selected="false">Clients<span class="count" id="c-clients">0</span></button>
+    <button class="tab" role="tab" data-tab="ask" aria-selected="false">Ask Claude<span class="count" id="c-ask">0</span></button>
     <button class="tab" role="tab" data-tab="scripts" aria-selected="false">Scripts &amp; setup</button>
   </nav>
 
@@ -286,12 +308,57 @@ textarea.field{resize:vertical;min-height:70px}
         <option value="new">Sort: newest</option>
         <option value="name">Sort: name</option>
       </select>
+      <button class="btn" id="paste-open">Paste leads</button>
       <button class="btn primary" id="add-lead">+ Add lead</button>
+    </div>
+    <div class="paste" id="paste-box" hidden>
+      <h2>Paste leads</h2>
+      <p class="sub">Paste a list of leads, from Claude in Chrome or anywhere else. Leads already in the desk are skipped. You'll see a preview before anything is saved.</p>
+      <textarea class="field" id="paste-text" aria-label="Leads to paste" placeholder="Name: Glen's Mobile Detailing&#10;Type: Mobile auto detailing&#10;City: San Leandro&#10;Phone: (510) 555-0100&#10;Link: https://www.facebook.com/groups/...&#10;Why: Posted asking how to get more customers&#10;&#10;Name: Next business..."></textarea>
+      <div class="row">
+        <button class="btn primary" id="paste-check" type="button">Check leads</button>
+        <button class="btn" id="paste-close" type="button">Close</button>
+      </div>
+      <details><summary>What format works?</summary>
+        <pre>One block per lead, with a blank line between leads:
+
+Name: Business name (required)
+Owner: Person's name
+Type: Mobile auto detailing
+City: Oakland
+Phone: (510) 555-0100
+Email: only if they posted it publicly
+Link: where you found them (post or page)
+Booking: their Booksy/Square link
+Why: what makes them a warm lead
+Notes: anything else
+
+A JSON list like [{"name": "...", "phone": "...", "why": "..."}] also works.</pre>
+      </details>
+      <div id="paste-out"></div>
     </div>
     <div class="list" id="list"></div>
   </section>
 
   <section class="view" id="v-clients" hidden></section>
+
+  <section class="view" id="v-ask" hidden>
+    <div class="card ask">
+      <h3>Ask Claude</h3>
+      <p class="sub" style="margin:0 0 10px;color:var(--muted);font-size:14px">Write what you want done with the leads. Claude checks this list regularly, does the work in this desk, and writes back here.</p>
+      <form id="ask-form">
+        <textarea class="field" id="ask-text" maxlength="1500" placeholder="e.g. Build sample sites for everyone marked Interested" aria-label="Request for Claude" required></textarea>
+        <div class="row"><span class="sm" id="ask-note" style="color:var(--muted);font-size:13px"></span><button class="btn primary" id="ask-go" type="submit">Send to Claude</button></div>
+      </form>
+      <div class="ideas" id="ask-ideas">
+        <button type="button">Find 20 fence builders in Mesa, AZ</button>
+        <button type="button">Build my requested sample sites</button>
+        <button type="button">Find emails for my New leads</button>
+        <button type="button">Who should I call first tomorrow, and why?</button>
+      </div>
+    </div>
+    <ul class="reqs" id="reqs"></ul>
+  </section>
 
   <section class="view" id="v-scripts" hidden>
     <div class="card guide">
@@ -314,6 +381,7 @@ textarea.field{resize:vertical;min-height:70px}
           <li>If anyone says don't call again, stop and mark them Not interested.</li>
         </ul>
       </details>
+      <div class="actions" id="guide-acts" style="margin:0 0 12px"></div>
       <nav class="guide-nav" id="guide-nav" aria-label="Jump to"></nav>
       <div id="guide-body"></div>
     </div>
@@ -346,6 +414,13 @@ textarea.field{resize:vertical;min-height:70px}
             <li>Read every draft before you send it.</li>
           </ul>
         </div>
+        <div class="card" id="import-card">
+          <h3>Import leads</h3>
+          <p style="color:var(--muted);margin-top:0">Bring in leads from a lead file. Leads already here are kept. If the file has a newer version of a lead, that lead is updated.</p>
+          <label class="drop" for="imp-input"><b>Choose a lead file</b><span>The .json file Claude gave you</span></label>
+          <input type="file" id="imp-input" accept=".json,application/json" hidden>
+          <div id="imp-out" style="margin-top:10px"></div>
+        </div>
         <div class="card">
           <h3>Working with Claude</h3>
           <p style="margin:0 0 8px">This desk shares its data with Claude. In a chat you can say:</p>
@@ -372,7 +447,7 @@ textarea.field{resize:vertical;min-height:70px}
     <form id="lead-form" class="form-grid">
       <label class="f full">Business name<input class="field" id="l-name" required></label>
       <label class="f">Owner<input class="field" id="l-owner"></label>
-      <label class="f">Type of business<input class="field" id="l-category" list="cat-list" placeholder="e.g. Mobile detailing"></label>
+      <label class="f">Type of business<input class="field" id="l-category" list="cat-list" placeholder="e.g. Fence builder"></label>
       <label class="f">City<input class="field" id="l-city" list="city-list"></label>
       <label class="f">Stage
         <select class="field" id="l-stage"></select>
@@ -413,10 +488,34 @@ textarea.field{resize:vertical;min-height:70px}
 <datalist id="cat-list"></datalist>
 <datalist id="city-list"></datalist>
 <datalist id="type-list">
-  <option value="Any"><option value="Mobile auto detailing"><option value="Pressure washing"><option value="House cleaning"><option value="Pool cleaning">
-  <option value="Landscaping"><option value="Handyman"><option value="Mobile mechanic"><option value="Barbershop"><option value="Nail salon">
-  <option value="Food truck"><option value="Restaurant"><option value="Painter"><option value="Roofing"><option value="Plumber"><option value="Electrician">
-  <option value="Pest control"><option value="Moving company"><option value="Tree service"><option value="Dog grooming"><option value="Personal trainer">
+  <option value="Any">
+  <option value="Fence builder">
+  <option value="Concrete contractor">
+  <option value="Masonry">
+  <option value="Pavers / hardscaping">
+  <option value="Gutter cleaning">
+  <option value="Tree trimming">
+  <option value="Sprinkler repair">
+  <option value="Pool repair">
+  <option value="Appliance repair">
+  <option value="Small engine repair">
+  <option value="Mobile welding">
+  <option value="Upholstery repair">
+  <option value="Carpet cleaning">
+  <option value="Tile and grout cleaning">
+  <option value="Window cleaning">
+  <option value="Dryer vent cleaning">
+  <option value="Chimney sweep">
+  <option value="Septic pumping">
+  <option value="Mobile notary">
+  <option value="Alterations / tailoring">
+  <option value="Piano tuning">
+  <option value="Mobile auto detailing">
+  <option value="Pressure washing">
+  <option value="Handyman">
+  <option value="Junk removal">
+  <option value="Mobile mechanic">
+  <option value="House cleaning">
 </datalist>
 <div class="toast" id="toast" hidden></div>
 
@@ -746,6 +845,8 @@ function renderGuide(){
   if(guideLeadId&&!leads.some(l=>l.id===guideLeadId))guideLeadId='';
   sel.innerHTML='<option value="">No one picked (show blanks)</option>'+active.map(l=>`<option value="${esc(l.id)}" ${l.id===guideLeadId?'selected':''}>${esc(l.name)}${l.city?' · '+esc(l.city):''}</option>`).join('');
   if(guideLeadId&&!active.some(l=>l.id===guideLeadId)){const l=leads.find(x=>x.id===guideLeadId);sel.insertAdjacentHTML('beforeend',`<option value="${esc(l.id)}" selected>${esc(l.name)}</option>`)}
+  const gl=leads.find(x=>x.id===guideLeadId);
+  $('guide-acts').innerHTML=gl?`${gl.phone?`<span class="phone" style="align-self:center">${esc(gl.phone)}</span>`:''}<span class="pill s-${esc(gl.stage)}" style="align-self:center">${esc(stageLabel(gl.stage))}</span><button class="btn small" data-q="noanswer" data-id="${esc(gl.id)}">Didn't answer</button><button class="btn small" data-q="interested" data-id="${esc(gl.id)}">Interested</button>${gl.stage==='lost'?'':`<button class="btn small" data-q="lost" data-id="${esc(gl.id)}">Not interested</button>`}`:'';
   const v=guideVals();
   const openState={};document.querySelectorAll('#guide-body details').forEach(d=>openState[d.dataset.k]=d.open);
   $('guide-nav').innerHTML=GUIDE.map((g,i)=>`<a href="#g${i}" data-gjump="g${i}">${esc(g.g)}</a>`).join('');
@@ -895,6 +996,7 @@ function renderDrawerExtras(){
   const src=safeUrl(l.sourceUrl), smp=safeUrl(l.sampleUrl);
   let q='';
   if(l.id){
+    if(l.stage!=='won') q+=`<h4>Call result</h4><div class="actions" style="margin-bottom:14px"><button class="btn small" data-q="noanswer" data-id="${esc(l.id)}">Didn't answer</button><button class="btn small" data-q="interested" data-id="${esc(l.id)}">Interested</button>${l.stage==='lost'?'':`<button class="btn small" data-q="lost" data-id="${esc(l.id)}">Not interested</button>`}</div>`;
     q+=`<h4>Quick actions</h4><div class="actions">`;
     if(l.stage!=='won') q+=`<button class="btn small primary" id="d-guide">Call guide</button>`;
     if(l.phone) q+=`<button class="btn small" data-copy="${esc(l.phone)}">Copy phone</button>`;
@@ -1136,6 +1238,160 @@ async function startSearch(ev){
   $('find-go').disabled=false;
 }
 
+
+/* ---------- import leads ---------- */
+let impPlan=null;
+const IMP_KEYS=new Set([...FIELDS,'region','country','zip','createdAt','updatedAt','lastContact','history','source','searchId','sampleRequested','wonAt','onboarding']);
+function normKey(l){return ((l.name||'').toLowerCase().replace(/[^a-z0-9]/g,''))+'|'+String(l.phone||'').replace(/\D/g,'').slice(-10)}
+function cleanLead(x){
+  const o={};
+  for(const k of Object.keys(x)){
+    if(!IMP_KEYS.has(k))continue;
+    const v=x[k];
+    if(k==='history'){if(Array.isArray(v))o.history=v.filter(h=>h&&typeof h==='object').slice(-40).map(h=>({d:String(h.d||'').slice(0,10),t:String(h.t||'').slice(0,500)}));continue}
+    if(k==='onboarding'){if(v&&typeof v==='object'&&!Array.isArray(v)){const ob={};for(const s of ONBOARD)if(typeof v[s.k]==='string')ob[s.k]=v[s.k].slice(0,10);o.onboarding=ob}continue}
+    if(k==='sampleRequested'){o[k]=!!v;continue}
+    if(typeof v==='number'&&isFinite(v))o[k]=v;
+    else if(typeof v==='string')o[k]=v.slice(0,4000);
+  }
+  if(!STAGES.some(s=>s.id===o.stage))o.stage='new';
+  return o;
+}
+async function readImport(file){
+  const out=$('imp-out'); impPlan=null;
+  let data;
+  try{data=JSON.parse(await file.text())}catch(_){out.innerHTML='<p style="color:var(--danger);margin:0">That file isn’t a lead file.</p>';return}
+  const list=Array.isArray(data)?data:(data&&Array.isArray(data.leads)?data.leads:null);
+  if(!list||!list.length){out.innerHTML='<p style="color:var(--danger);margin:0">No leads found in that file.</p>';return}
+  const byId=new Map(leads.map(l=>[l.id,l])), byKey=new Map(leads.map(l=>[normKey(l),l]));
+  const plan={add:[],upd:[],same:0};
+  for(const raw of list.slice(0,2000)){
+    if(!raw||typeof raw!=='object'||!raw.name)continue;
+    const id=/^[A-Za-z0-9_\-.~:@+]{1,200}$/.test(raw.id||'')?raw.id:null;
+    const l=cleanLead(raw);
+    const ex=(id&&byId.get(id))||byKey.get(normKey(l));
+    if(!ex){plan.add.push({id,l});byKey.set(normKey(l),l);continue}
+    if((l.updatedAt||'')>(ex.updatedAt||''))plan.upd.push({id:ex.id,l});else plan.same++;
+  }
+  impPlan=plan;
+  out.innerHTML=`<p style="margin:0 0 8px"><b class="num">${plan.add.length}</b> new lead${plan.add.length===1?'':'s'} · <b class="num">${plan.upd.length}</b> to update with newer info · <b class="num">${plan.same}</b> already up to date</p>
+    ${plan.add.length||plan.upd.length?'<div class="actions"><button class="btn small primary" id="imp-go">Import</button><button class="btn small" id="imp-cancel">Cancel</button></div>':'<p style="margin:0;color:var(--muted)">Nothing to import.</p>'}`;
+}
+async function runImport(){
+  const plan=impPlan; if(!plan||!db)return; impPlan=null;
+  const out=$('imp-out'); const total=plan.add.length+plan.upd.length; let done=0,failed=0;
+  for(const x of plan.add){
+    out.innerHTML=`<p style="margin:0">Importing ${done+failed+1} of ${total}…</p>`;
+    try{const ref=x.id?db.collection('leads').doc(x.id):db.collection('leads').doc();
+      const h=(x.l.history||[]).concat([{d:today(),t:'Imported from lead file'}]).slice(-40);
+      await ref.set({...x.l,history:h,createdAt:x.l.createdAt||new Date().toISOString(),updatedAt:x.l.updatedAt||new Date().toISOString()});done++}catch(e){failed++;if(e&&e.code==='quota_exceeded')break}
+  }
+  for(const x of plan.upd){
+    out.innerHTML=`<p style="margin:0">Importing ${done+failed+1} of ${total}…</p>`;
+    try{await db.collection('leads').doc(x.id).update(x.l);done++}catch(e){failed++;if(e&&e.code==='quota_exceeded')break}
+  }
+  out.innerHTML=`<p style="margin:0">Imported ${done} lead${done===1?'':'s'}${failed?`. ${failed} didn’t save. Choose the file again to retry them.`:'.'}</p>`;
+  toast(failed?'Import finished with some errors':'Import finished');
+}
+
+
+/* ---------- paste leads ---------- */
+let pastePlan=null;
+const PASTE_KEYS={name:'name',business:'name','business name':'name',company:'name',owner:'owner',contact:'owner','owner name':'owner',type:'category',category:'category','business type':'category','type of business':'category',service:'category',city:'city',town:'city',location:'city',area:'city',state:'region',region:'region',zip:'zip',country:'country',phone:'phone',number:'phone','phone number':'phone',email:'email',link:'sourceUrl',url:'sourceUrl',source:'sourceUrl',post:'sourceUrl','post link':'sourceUrl',facebook:'sourceUrl',page:'sourceUrl','where we found them':'sourceUrl',sourceurl:'sourceUrl',booking:'bookingUrl','booking page':'bookingUrl','booking link':'bookingUrl',bookingurl:'bookingUrl',why:'why',reason:'why','why warm':'why',"why they're a good lead":'why',notes:'notes',note:'notes'};
+function nameKey(n){return String(n||'').toLowerCase().replace(/\b(llc|inc|ltd|co|the)\b/g,'').replace(/&/g,'and').replace(/[^a-z0-9]/g,'')}
+function parsePasted(text){
+  const t=text.trim(); if(!t)return [];
+  if(/^[\[{]/.test(t)){
+    try{const d=JSON.parse(t);const list=Array.isArray(d)?d:(d&&Array.isArray(d.leads)?d.leads:[d]);
+      return list.filter(x=>x&&typeof x==='object').map(x=>{const o={};for(const k of Object.keys(x)){const m=PASTE_KEYS[k.toLowerCase().trim()]||(FIELDS.includes(k)?k:null);if(m&&x[k]!=null&&typeof x[k]!=='object')o[m]=String(x[k])}return o});
+    }catch(_){}
+  }
+  const out=[];
+  for(const block of t.split(/\n\s*\n+/)){
+    const o={};let last=null;
+    for(let line of block.split('\n')){
+      line=line.replace(/^\s*(?:[-*•]|\d+[.)])\s*/,'').replace(/\*\*/g,'').trim(); if(!line)continue;
+      const m=line.match(/^([A-Za-z' ]{2,30}?)\s*[:\-–]\s+(.*)$/)||line.match(/^([A-Za-z' ]{2,30}?):(.*)$/);
+      const key=m&&PASTE_KEYS[m[1].toLowerCase().trim()];
+      if(key){o[key]=o[key]?o[key]+' '+m[2].trim():m[2].trim();last=key}
+      else if(!o.name&&!last){o.name=line}
+      else if(last){o[last]+=' '+line}
+    }
+    if(o.name)out.push(o);
+  }
+  return out;
+}
+function checkPaste(){
+  const out=$('paste-out'); pastePlan=null;
+  const raw=parsePasted($('paste-text').value);
+  if(!raw.length){out.innerHTML='<p style="color:var(--danger);margin:10px 0 0">Couldn’t find any leads. Each lead needs at least a "Name:" line.</p>';return}
+  const byName=new Map(leads.map(l=>[nameKey(l.name),l]));
+  const byPhone=new Map(leads.filter(l=>String(l.phone||'').replace(/\D/g,'').length>=7).map(l=>[String(l.phone).replace(/\D/g,'').slice(-10),l]));
+  const add=[],dup=[];
+  for(const x of raw.slice(0,200)){
+    const l=cleanLead({...x,stage:'new'});
+    for(const k of ['sourceUrl','bookingUrl']) if(l[k]&&!safeUrl(l[k])) {l.notes=((l.notes||'')+' '+l[k]).trim();l[k]=''}
+    const ph=String(l.phone||'').replace(/\D/g,'').slice(-10);
+    const ex=byName.get(nameKey(l.name))||(ph.length>=7&&byPhone.get(ph));
+    if(ex){dup.push({l,ex});continue}
+    add.push(l);byName.set(nameKey(l.name),l);if(ph.length>=7)byPhone.set(ph,l);
+  }
+  pastePlan=add;
+  out.innerHTML=`<ul class="pv">${add.map(l=>`<li><span class="tg st-done">New</span><span><b>${esc(l.name)}</b>${l.category||l.city?' · '+esc([l.category,l.city].filter(Boolean).join(' · ')):''}${l.why?' <span style="color:var(--muted)">— '+esc(l.why)+'</span>':''}</span></li>`).join('')}${dup.map(d=>`<li><span class="tg st-queued">Skip</span><span><b>${esc(d.l.name)}</b> <span style="color:var(--muted)">already in the desk${d.ex.name&&nameKey(d.ex.name)!==nameKey(d.l.name)?' as '+esc(d.ex.name):''}</span></span></li>`).join('')}</ul>
+    <div class="row">${add.length?`<button class="btn primary" id="paste-go" type="button">Add ${add.length} lead${add.length===1?'':'s'}</button>`:'<span style="color:var(--muted)">Nothing new to add.</span>'}</div>`;
+}
+async function runPaste(){
+  const plan=pastePlan; if(!plan||!plan.length||!db)return; pastePlan=null;
+  const out=$('paste-out'); const now=new Date().toISOString(); let done=0,failed=0;
+  for(const l of plan){
+    out.innerHTML=`<p style="margin:10px 0 0">Adding ${done+failed+1} of ${plan.length}…</p>`;
+    try{await db.collection('leads').doc().set({...l,stage:'new',followUp:'',sampleUrl:'',sampleRequested:false,source:'Pasted list',createdAt:now,updatedAt:now,history:[{d:today(),t:'Added from a pasted list'}]});done++}
+    catch(e){failed++;if(e&&e.code==='quota_exceeded')break}
+  }
+  out.innerHTML=`<p style="margin:10px 0 0">Added ${done} lead${done===1?'':'s'}${failed?`. ${failed} didn’t save. Click Check leads to try them again.`:'. They’re at the top of New leads to call.'}</p>`;
+  if(!failed)$('paste-text').value='';
+  toast(failed?'Some leads didn’t save':`Added ${done} lead${done===1?'':'s'}`);
+}
+
+/* ---------- ask claude ---------- */
+let requests=[], reqCfg={};
+function renderRequests(){
+  const el=$('reqs'); if(!el)return;
+  const open=requests.filter(r=>r.status==='queued'||r.status==='working').length;
+  $('c-ask').textContent=open; $('c-ask').classList.toggle('hot',open>0);
+  const lbl={queued:'Waiting',working:'Working',done:'Done',failed:"Couldn't do it"};
+  const cls={queued:'queued',working:'running',done:'done',failed:'failed'};
+  el.innerHTML=requests.length?requests.map(r=>{
+    const st=lbl[r.status]?r.status:'queued';
+    const when=st==='done'||st==='failed'?(r.doneAt?'Finished '+ago(r.doneAt):''):'Sent '+ago(r.createdAt);
+    return `<li><div class="top"><span class="st st-${cls[st]}" style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px">${lbl[st]}</span><span class="sm">${esc(when)}</span>${st==='queued'?`<button class="btn small ghost" data-req-cancel="${esc(r.id)}" style="margin-left:auto">Cancel</button>`:''}</div>
+      <p class="txt">${esc(r.text)}</p>${r.result?`<div class="res">${esc(r.result)}</div>`:''}</li>`;
+  }).join(''):`<li class="sm" style="color:var(--muted)">No requests yet.</li>`;
+  const note=$('ask-note');
+  if(note) note.textContent=reqCfg.everyLabel?`Claude checks ${reqCfg.everyLabel}.`:'';
+}
+async function sendRequest(ev){
+  ev.preventDefault();
+  if(!db){toast('Saving isn’t available in this view.');return}
+  const text=$('ask-text').value.replace(/[\u0000-\u0008\u000b-\u001f]/g,'').trim().slice(0,1500);
+  if(!text){$('ask-text').focus();return}
+  $('ask-go').disabled=true;
+  const ref=db.collection('requests').doc();
+  try{await ref.set({text,status:'queued',createdAt:new Date().toISOString()})}
+  catch(e){toast('Couldn’t send. Try again.');$('ask-go').disabled=false;return}
+  $('ask-text').value='';
+  let started=false;
+  if(mcp&&reqCfg.trigger&&/^trig_[A-Za-z0-9]+$/.test(reqCfg.trigger)){
+    try{await mcp.callTool('Claude Code Remote','fire_trigger',{trigger_id:reqCfg.trigger,text:'Handle lead desk request id '+ref.id+'.'},{cache:false});started=true}catch(_){}
+  }
+  toast(started?'Sent. Claude is starting on it now.':'Sent. Claude will pick it up on its next check.');
+  $('ask-go').disabled=false;
+}
+async function cancelRequest(id){
+  if(!db)return;
+  try{await db.collection('requests').doc(id).delete();toast('Request cancelled')}catch(e){toast('Couldn’t cancel. Claude may have started it.')}
+}
+
 /* ---------- settings ---------- */
 async function saveSettings(ev){
   ev.preventDefault();
@@ -1153,7 +1409,7 @@ document.querySelector('.tabs').addEventListener('click',e=>{
   const b=e.target.closest('[data-tab]'); if(!b)return;
   tab=b.dataset.tab;
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t===b)));
-  for(const v of ['today','leads','clients','scripts']) $('v-'+v).hidden=v!==tab;
+  for(const v of ['today','leads','clients','ask','scripts']) $('v-'+v).hidden=v!==tab;
   try{localStorage.setItem('lead-desk-tab',tab)}catch(_){}
 });
 document.addEventListener('click',e=>{
@@ -1176,6 +1432,14 @@ document.addEventListener('click',e=>{
   else if(id==='d-reportbtn')showReportUI();
   else if(id==='r-go')writeReport();
   else if(id==='d-del-yes')doDelete();
+  else if(id==='imp-go')runImport();
+  else if(id==='paste-open'){const b=$('paste-box');b.hidden=!b.hidden;if(!b.hidden)$('paste-text').focus()}
+  else if(id==='paste-close'){$('paste-box').hidden=true;$('paste-out').innerHTML='';pastePlan=null}
+  else if(id==='paste-check'){if(!db){toast('Saving isn’t available in this view.');return}checkPaste()}
+  else if(id==='paste-go')runPaste();
+  else if(e.target.closest('[data-req-cancel]'))cancelRequest(e.target.closest('[data-req-cancel]').dataset.reqCancel);
+  else if(e.target.closest('#ask-ideas button')){$('ask-text').value=e.target.closest('#ask-ideas button').textContent;$('ask-text').focus()}
+  else if(id==='imp-cancel'){impPlan=null;$('imp-out').innerHTML=''}
   else if(id==='d-del-no')$('d-confirm').innerHTML='';
 });
 ['q','f-cat','f-city','f-email','f-book','f-sort'].forEach(id=>$(id).addEventListener('input',renderLeads));
@@ -1188,7 +1452,9 @@ $('d-note-add').onclick=addNote;
 $('d-note').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addNote()}});
 $('settings-form').addEventListener('submit',saveSettings);
 $('find-form').addEventListener('submit',startSearch);
+$('ask-form').addEventListener('submit',sendRequest);
 $('guide-lead').addEventListener('change',e=>{guideLeadId=e.target.value;renderGuide()});
+document.addEventListener('change',e=>{if(e.target.id==='imp-input'&&e.target.files.length){if(!db){toast('Saving isn’t available in this view.');e.target.value='';return}readImport(e.target.files[0]);e.target.value=''}});
 document.addEventListener('change',e=>{if(e.target.id==='ph-input'&&e.target.files.length){addPhotos(e.target.files);e.target.value=''}});
 $('d-photos').addEventListener('dragover',e=>{if(e.target.closest('#ph-drop')){e.preventDefault();e.target.closest('#ph-drop').classList.add('over')}});
 $('d-photos').addEventListener('dragleave',e=>{const d=e.target.closest('#ph-drop');if(d)d.classList.remove('over')});
@@ -1198,7 +1464,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('drawer').hidden
 
 /* ---------- boot ---------- */
 try{const t=localStorage.getItem('lead-desk-tab');if(t&&$('v-'+t)){document.querySelector(`[data-tab="${t}"]`).click()}}catch(_){}
-render();
+render();renderRequests();
 (async()=>{
   const c=window.claude;
   if(!c||!c.use){$('banner').hidden=false;$('banner').textContent='Open this page on claude.ai to load and save your leads.';return}
@@ -1211,6 +1477,8 @@ render();
   },()=>{$('banner').hidden=false;$('banner').textContent='Lost the connection to your leads. Reload the page.'});
   db.doc('settings/main').onSnapshot(s=>{settings=s.exists?{...s.data()}:{};render()},()=>{});
   db.collection('searches').orderBy('createdAt','desc').limit(8).onSnapshot(s=>{searches=s.docs.map(d=>({id:d.id,...d.data()}));renderSearches()},()=>{});
+  db.collection('requests').orderBy('createdAt','desc').limit(20).onSnapshot(s=>{requests=s.docs.map(d=>({id:d.id,...d.data()}));renderRequests()},()=>{});
+  db.doc('settings/claude').onSnapshot(s=>{reqCfg=s.exists?{...s.data()}:{};renderRequests()},()=>{});
   c.use('mcp').then(m=>{mcp=m}).catch(()=>{});
   c.use('assets').then(a=>{assets=a;if(editing)renderDrawerExtras()}).catch(()=>{});
   sample=await c.use('sample');
@@ -1218,3 +1486,4 @@ render();
 })();
 })();
 </script>
+
