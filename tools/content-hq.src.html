@@ -1,0 +1,1188 @@
+<title>BNB Content HQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,800;1,900&family=Archivo:wdth,wght@100..125,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* Layout: a phone-first daily command center. Sticky tab bar, one column of cards; Stories splits preview | controls on wide screens. Single dark look matching the BNB logo; green only means money/done. */
+  :root {
+    --bg: #0a0a0b;
+    --panel: #131315;
+    --panel-2: #1b1b1e;
+    --line: #2a2a2f;
+    --fg: #f4f4f1;
+    --muted: #a3a3a8;
+    --dim: #6d6d73;
+    --hl: #2f9bff;
+    --good: #3ddc84;
+    --warn: #f5b84a;
+    --bad: #ff5a4e;
+    --display: "Archivo", "Arial Black", sans-serif;
+    --body: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.5; padding-inline: 16px; padding-block: 0 64px; margin: 0; }
+  [hidden] { display: none !important; }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  h1, h2, h3 { margin: 0; font-family: var(--display); font-variation-settings: "wdth" 120; font-weight: 900; text-transform: uppercase; letter-spacing: -.005em; line-height: 1.05; text-wrap: balance; }
+  h1 { font-size: 1.25rem; }
+  h2 { font-size: .95rem; letter-spacing: .02em; }
+  p { margin: 0; }
+  .label { font-family: var(--mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .muted { color: var(--muted); }
+  .dim { color: var(--dim); }
+  :focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+  /* top bar + tabs */
+  .top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(10,10,11,.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); margin-inline: -16px; padding-inline: 16px; border-bottom: 1px solid var(--line); }
+  .top-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; max-width: 1100px; margin: 0 auto; }
+  .streak { display: flex; align-items: center; gap: 10px; }
+  .streak b { font-family: var(--display); font-variation-settings: "wdth" 115; font-weight: 900; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+  .tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding-block: 10px; max-width: 1100px; margin: 0 auto; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs button { flex: 0 0 auto; border: 1px solid transparent; background: transparent; color: var(--muted); font: 700 .88rem var(--body); padding: 9px 14px; border-radius: 999px; cursor: pointer; min-height: 40px; }
+  .tabs button[aria-selected="true"] { background: var(--fg); color: var(--bg); }
+  .banner { margin: 12px auto 0; max-width: 1100px; border: 1px dashed var(--warn); color: var(--warn); border-radius: 10px; padding: 10px 12px; font-size: .85rem; }
+
+  main { padding-top: 18px; }
+  .stack { display: grid; gap: 14px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+  @media (max-width: 820px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+  .card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .hook { font-family: var(--display); font-variation-settings: "wdth" 110; font-weight: 800; font-size: 1.35rem; line-height: 1.15; text-wrap: balance; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font: 500 .7rem var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+  .pill.good { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+  .pill.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+  .pill.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 45%, transparent); }
+  .pill.hl { color: var(--hl); border-color: color-mix(in srgb, var(--hl) 45%, transparent); }
+  .kv { display: grid; grid-template-columns: 92px 1fr; gap: 6px 12px; }
+  .kv dt { font: 500 .7rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); padding-top: 3px; }
+  .kv dd { margin: 0; min-width: 0; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 42px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2); color: var(--fg); font: 700 .88rem var(--body); cursor: pointer; text-decoration: none; }
+  .btn:hover { border-color: #4a4a50; }
+  .btn.primary { background: var(--fg); color: var(--bg); border-color: var(--fg); font-family: var(--display); font-variation-settings: "wdth" 112; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; }
+  .btn.small { min-height: 34px; padding: 0 10px; font-size: .8rem; }
+  .btn[disabled] { opacity: .45; cursor: default; }
+  .checks { display: flex; flex-wrap: wrap; gap: 8px; }
+  .check { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--bg); border-radius: 10px; padding: 0 12px; min-height: 42px; cursor: pointer; font-weight: 700; font-size: .88rem; user-select: none; }
+  .check input { width: 18px; height: 18px; accent-color: var(--good); margin: 0; }
+  .check:has(input:checked) { border-color: color-mix(in srgb, var(--good) 55%, transparent); color: var(--good); }
+  .copybox { position: relative; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 12px 12px; white-space: pre-wrap; font-size: .92rem; min-width: 0; overflow-wrap: anywhere; }
+  .copybox .btn { float: right; margin: -4px -4px 6px 8px; }
+  textarea, input[type="text"], input[type="number"], input[type="date"], select {
+    width: 100%; font: 600 .95rem var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-height: 42px;
+  }
+  textarea { min-height: 72px; resize: vertical; }
+  textarea:focus, input:focus, select:focus { outline: none; border-color: var(--fg); }
+  input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .field { display: grid; gap: 6px; min-width: 0; }
+  .field > span { font: 500 .7rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 999px; padding: 7px 12px; font: 600 .82rem var(--body); cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .empty { border: 1px dashed var(--line); border-radius: 12px; padding: 18px; color: var(--muted); text-align: center; }
+  .toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-weight: 700; font-size: .88rem; z-index: 40; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+
+  /* week strip + calendar */
+  .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .day { border: 1px solid var(--line); border-radius: 10px; padding: 8px 4px; text-align: center; display: grid; gap: 4px; background: var(--bg); }
+  .day b { font: 700 .95rem var(--mono); font-variant-numeric: tabular-nums; }
+  .day span { font: 500 .62rem var(--mono); letter-spacing: .08em; color: var(--dim); text-transform: uppercase; }
+  .day.done { border-color: color-mix(in srgb, var(--good) 60%, transparent); }
+  .day.done b { color: var(--good); }
+  .day.today { outline: 2px solid var(--fg); outline-offset: 1px; }
+  .day.miss b { color: var(--dim); }
+  .progress { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
+  .progress i { display: block; height: 100%; background: var(--good); border-radius: 999px; transition: width .3s ease; }
+
+  /* tracker */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; min-width: 640px; }
+  th, td { text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font: 500 .66rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); font-weight: 500; background: var(--panel-2); position: sticky; top: 0; }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  td .hookcell { font-weight: 700; }
+  .post { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 8px; background: var(--bg); }
+  .post .nums { display: flex; flex-wrap: wrap; gap: 4px 16px; font: 500 .8rem var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .post .nums b { color: var(--fg); font-weight: 700; }
+
+  /* photo library */
+  .lib { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+  .ph { position: relative; aspect-ratio: 3 / 4; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--bg); cursor: pointer; padding: 0; }
+  .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ph .t { position: absolute; left: 4px; bottom: 4px; right: 4px; display: flex; gap: 3px; flex-wrap: wrap; }
+  .ph .t span { font: 500 .56rem var(--mono); letter-spacing: .04em; text-transform: uppercase; background: rgba(0,0,0,.78); padding: 2px 5px; border-radius: 4px; }
+  .ph .used { position: absolute; top: 4px; right: 4px; font: 500 .56rem var(--mono); background: rgba(0,0,0,.78); color: var(--warn); padding: 2px 5px; border-radius: 4px; }
+  .ph[aria-pressed="true"] { outline: 3px solid var(--hl); outline-offset: -3px; }
+  .ph[aria-pressed="true"]::after { content: "✓"; position: absolute; top: 4px; left: 4px; width: 22px; height: 22px; border-radius: 50%; background: var(--hl); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: .8rem; }
+
+  /* stories */
+  .studio { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 20px; align-items: start; }
+  @media (max-width: 820px) { .studio { grid-template-columns: minmax(0, 1fr); } }
+  .stage { position: sticky; top: 120px; display: grid; gap: 10px; }
+  @media (max-width: 820px) { .stage { position: static; } }
+  .canvas-wrap { background: #000; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; aspect-ratio: 9 / 16; max-width: 100%; max-height: 74vh; margin: 0 auto; }
+  @media (max-width: 820px) { .canvas-wrap { width: min(100%, 340px); } }
+  canvas { width: 100%; height: 100%; display: block; }
+  .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 4px; }
+  .seg button { border: 0; background: transparent; color: var(--muted); font: 600 .84rem var(--body); padding: 9px 6px; border-radius: 7px; cursor: pointer; min-height: 38px; }
+  .seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+  .frames { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .frames button { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 10px; padding: 9px 6px; font: 700 .82rem var(--body); cursor: pointer; min-height: 42px; }
+  .frames button[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .slider { display: grid; grid-template-columns: 70px 1fr; gap: 10px; align-items: center; }
+  .slider span { font: 500 .7rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  input[type="range"] { width: 100%; accent-color: var(--fg); }
+  .toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; }
+  .toggle input { width: 20px; height: 20px; accent-color: var(--fg); }
+  .bank { display: grid; gap: 6px; max-height: 240px; overflow: auto; padding-right: 4px; }
+  .bank button, .idea { text-align: left; border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 10px; padding: 10px 12px; font: 600 .88rem var(--body); cursor: pointer; }
+  .bank button:hover { border-color: var(--fg); }
+  .thumbs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .thumb { position: relative; width: 58px; height: 76px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); background: var(--bg); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb button { position: absolute; top: 3px; right: 3px; width: 22px; height: 22px; border-radius: 50%; border: 0; background: rgba(0,0,0,.75); color: #fff; cursor: pointer; font-size: 13px; line-height: 1; }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: grid; place-items: center; padding: 20px; z-index: 30; }
+  .modal-inner { display: grid; gap: 12px; justify-items: center; max-width: 420px; }
+  .modal img { max-height: 72vh; width: auto; border-radius: 12px; }
+  .idea { display: grid; gap: 8px; cursor: default; }
+  .idea .hook { font-size: 1.05rem; }
+  @media (prefers-reduced-motion: no-preference) { .btn, .chip, .seg button, .tabs button { transition: background .12s ease, color .12s ease, border-color .12s ease; } }
+</style>
+
+<header class="top">
+  <div class="top-row">
+    <h1>BNB Content HQ</h1>
+    <div class="streak" aria-live="polite"><span class="label">Streak</span><b id="streakNum">0</b><span class="label">days</span></div>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" data-tab="today" aria-selected="true">Today</button>
+    <button role="tab" data-tab="stories" aria-selected="false">Stories</button>
+    <button role="tab" data-tab="discord" aria-selected="false">Discord</button>
+    <button role="tab" data-tab="ideas" aria-selected="false">Ideas</button>
+    <button role="tab" data-tab="tracker" aria-selected="false">Tracker</button>
+    <button role="tab" data-tab="photos" aria-selected="false">Photos</button>
+  </nav>
+</header>
+<p class="banner" id="offline" hidden>Saving isn't available in this view, so check-offs, numbers and photos won't be kept. Open the HQ from your Claude sidebar to save.</p>
+
+<main class="wrap">
+
+  <!-- TODAY -->
+  <section id="tab-today" class="stack">
+    <div class="card">
+      <div class="card-head"><p class="label" id="todayDate">Today</p><p class="label" id="weekCount">0 / 7 this week</p></div>
+      <div class="week" id="weekStrip"></div>
+      <div class="progress" aria-hidden="true"><i id="weekBar" style="width:0%"></i></div>
+    </div>
+
+    <div class="card" id="mainCard">
+      <div class="card-head"><h2>Today's video</h2><span class="pill" id="mainPillar">Pillar</span></div>
+      <p class="hook" id="mainHook">Loading…</p>
+      <dl class="kv">
+        <dt>Say</dt><dd id="mainSay"></dd>
+        <dt>Length</dt><dd id="mainLen"></dd>
+        <dt>CTA</dt><dd id="mainCta"></dd>
+      </dl>
+      <div class="copybox"><button class="btn small" type="button" data-copy="mainCaption">Copy</button><span class="label">Caption</span><br><span id="mainCaption"></span></div>
+      <div class="checks">
+        <label class="check"><input type="checkbox" data-day="filmed"> Filmed</label>
+        <label class="check"><input type="checkbox" data-day="ig"> Posted IG</label>
+        <label class="check"><input type="checkbox" data-day="tt"> Posted TikTok</label>
+      </div>
+      <div class="row"><button class="btn small" type="button" id="swapMain">Swap for another idea</button><span class="dim" id="mainSource"></span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>Bonus post</h2><span class="pill">Optional</span></div>
+      <p class="hook" id="bonusHook" style="font-size:1.05rem"></p>
+      <p class="muted" id="bonusSay"></p>
+      <div class="checks"><label class="check"><input type="checkbox" data-day="bonus"> Posted bonus</label></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="card-head"><h2>Stories</h2><span class="pill hl" id="todayRollout">Rollout</span></div>
+        <ol class="muted" id="rolloutList" style="margin:0;padding-left:20px;display:grid;gap:4px"></ol>
+        <div class="row"><button class="btn primary" type="button" id="openRollout">Make today's stories</button></div>
+        <div class="checks"><label class="check"><input type="checkbox" data-day="stories"> Stories posted</label></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Discord</h2><button class="btn small" type="button" data-goto="discord">Open messages</button></div>
+        <div class="checks">
+          <label class="check"><input type="checkbox" data-day="d_am"> Bias</label>
+          <label class="check"><input type="checkbox" data-day="d_pm"> Recap</label>
+          <label class="check"><input type="checkbox" data-day="d_eve"> Evening</label>
+        </div>
+        <p class="muted" id="discordPreview"></p>
+      </div>
+    </div>
+
+    <div class="card" id="logNudge" hidden>
+      <div class="card-head"><h2>Log your numbers</h2><span class="pill warn">48h check</span></div>
+      <p class="muted" id="logNudgeText"></p>
+      <div class="row"><button class="btn" type="button" id="logNudgeBtn">Log it in the tracker</button></div>
+    </div>
+  </section>
+
+  <!-- STORIES -->
+  <section id="tab-stories" hidden>
+    <div class="studio">
+      <div class="stage">
+        <div class="canvas-wrap"><canvas id="cv" width="1080" height="1920" aria-label="Story preview"></canvas></div>
+        <button class="btn primary" id="saveBtn" type="button">Save story</button>
+        <p class="muted" id="saveNote" style="text-align:center;min-height:1.3em;font-size:.85rem"></p>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <div class="card-head"><h2>Rollouts</h2><span class="label">4 frames → Discord</span></div>
+          <div class="chips" id="rollChips" role="group" aria-label="Rollout"></div>
+          <div class="frames" id="frames"></div>
+          <p class="muted" id="frameHint" style="font-size:.85rem">Pick a rollout, tap a frame, add the photo it asks for, then save that frame.</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Photos</h2><span class="label" id="photoCount">0 / 4</span></div>
+          <div class="thumbs" id="thumbs"></div>
+          <div class="row">
+            <button class="btn" type="button" id="pickBtn">Pick from library</button>
+            <label class="btn" for="quickUp">Upload new</label>
+            <input type="file" id="quickUp" accept="image/*" multiple>
+            <button class="btn" type="button" id="bgPickBtn">Background</button>
+            <button class="btn" type="button" id="bgClear" hidden>Clear background</button>
+          </div>
+          <div id="picker" hidden class="stack">
+            <div class="chips" id="pickTags" role="group" aria-label="Filter photos"></div>
+            <div class="lib" id="pickGrid"></div>
+            <div class="row"><button class="btn primary small" type="button" id="pickDone">Use selected</button><button class="btn small" type="button" id="pickCancel">Cancel</button><span class="dim" id="pickNote"></span></div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Layout</h2>
+          <div class="seg" id="layoutSeg" role="group" aria-label="Layout">
+            <button type="button" data-v="proof" aria-pressed="true">Proof card</button>
+            <button type="button" data-v="full" aria-pressed="false">Full photo</button>
+            <button type="button" data-v="collage" aria-pressed="false">Collage</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Caption</h2>
+          <textarea id="caption" aria-label="Caption">Another payout secured 🤝</textarea>
+          <p class="dim" style="font-size:.8rem">Wrap words in *stars* to make them <b style="color:var(--hl)">blue</b>. Press return for a new line.</p>
+          <div class="seg" id="styleSeg" role="group" aria-label="Caption style">
+            <button type="button" data-v="bold" aria-pressed="true">Bold italic</button>
+            <button type="button" data-v="box" aria-pressed="false">Black box</button>
+          </div>
+          <div class="slider"><span>Size</span><input type="range" id="size" min="48" max="130" value="84" aria-label="Caption size"></div>
+          <div class="slider"><span>Height</span><input type="range" id="posY" min="8" max="92" value="80" aria-label="Caption height"></div>
+          <div class="chips" id="cats" role="group" aria-label="Caption topic"></div>
+          <div class="bank" id="bank"></div>
+        </div>
+        <div class="card">
+          <h2>Call to action</h2>
+          <div class="chips" id="ctaChips" role="group" aria-label="Call to action"></div>
+          <input type="text" id="cta" aria-label="Call to action text" value="Tap the link to join the ( *FREE* ) Discord 💸">
+          <div class="slider"><span>Height</span><input type="range" id="ctaY" min="20" max="95" value="90" aria-label="Call to action height"></div>
+          <label class="toggle"><input type="checkbox" id="arrowOn"> Hand-drawn arrow to the CTA</label>
+          <label class="toggle"><input type="checkbox" id="logoOn" checked> BNB Profits logo</label>
+          <div class="slider"><span>Darken</span><input type="range" id="dark" min="0" max="70" value="20" aria-label="Darken photo"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DISCORD -->
+  <section id="tab-discord" class="stack" hidden>
+    <div class="card">
+      <div class="card-head"><h2>Today in the Discord</h2><span class="label" id="discordDay"></span></div>
+      <p class="muted">Fill the brackets, copy, paste. Tick each one when it's sent.</p>
+    </div>
+    <div id="discordMsgs" class="stack"></div>
+    <div class="card">
+      <h2>Weekly rhythm</h2>
+      <div class="table-wrap"><table style="min-width:0">
+        <thead><tr><th>Day</th><th>Evening message</th><th>Stories rollout</th></tr></thead>
+        <tbody id="weekRhythm"></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- IDEAS -->
+  <section id="tab-ideas" class="stack" hidden>
+    <div class="card">
+      <div class="card-head"><h2>New ideas</h2><span class="pill hl">Claude</span></div>
+      <div class="chips" id="ideaPillars" role="group" aria-label="Pillar"></div>
+      <input type="text" id="ideaNote" placeholder="Optional: what's going on? e.g. just got a payout, red day, Discord hit 300">
+      <div class="row"><button class="btn primary" type="button" id="ideaBtn">Give me 5 ideas</button><button class="btn" type="button" id="ideaStop" hidden>Stop</button><span class="muted" id="ideaStatus"></span></div>
+      <p class="dim" id="ideaOff" hidden>Claude ideas aren't available in this view. Open the HQ from your Claude sidebar.</p>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Remake a winner</h2><span class="label">10 new angles</span></div>
+      <select id="remakeSel" aria-label="Pick a winning video"></select>
+      <div class="row"><button class="btn" type="button" id="remakeBtn">Remake it</button><span class="muted" id="remakeStatus"></span></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Saved ideas</h2><span class="label" id="ideaCount">0</span></div>
+      <div class="stack" id="ideaList"></div>
+    </div>
+  </section>
+
+  <!-- TRACKER -->
+  <section id="tab-tracker" class="stack" hidden>
+    <div class="card">
+      <div class="card-head"><h2>How you're doing</h2><span class="label" id="medianLabel">Median: 5,000 views</span></div>
+      <div class="fields" id="trackStats"></div>
+    </div>
+    <div class="card" id="postForm">
+      <div class="card-head"><h2 id="formTitle">Log a post</h2><label class="btn small" for="shotIn" id="shotLabel">Fill from screenshot</label><input type="file" id="shotIn" accept="image/*" multiple></div>
+      <p class="muted" id="shotStatus" style="font-size:.85rem">Log it 48 hours after posting. Upload your Insights screenshot and Claude fills the numbers in.</p>
+      <div class="field"><span>Hook / what the video was</span><input type="text" id="p_hook" placeholder="Trading ruined my perception of money pt 2"></div>
+      <div class="fields">
+        <label class="field"><span>Date posted</span><input type="date" id="p_date"></label>
+        <label class="field"><span>Platform</span><select id="p_platform"><option>IG</option><option>TikTok</option><option>Both</option></select></label>
+        <label class="field"><span>Pillar</span><select id="p_pillar"></select></label>
+        <label class="field"><span>Length (s)</span><input type="number" id="p_len" min="0" inputmode="numeric"></label>
+        <label class="field"><span>Views</span><input type="number" id="p_views" min="0" inputmode="numeric"></label>
+        <label class="field"><span>3s hold %</span><input type="number" id="p_hold" min="0" max="100" inputmode="numeric"></label>
+        <label class="field"><span>Likes</span><input type="number" id="p_likes" min="0" inputmode="numeric"></label>
+        <label class="field"><span>Comments</span><input type="number" id="p_comments" min="0" inputmode="numeric"></label>
+        <label class="field"><span>Shares</span><input type="number" id="p_shares" min="0" inputmode="numeric"></label>
+        <label class="field"><span>Saves</span><input type="number" id="p_saves" min="0" inputmode="numeric"></label>
+        <label class="field"><span>Follows</span><input type="number" id="p_follows" min="0" inputmode="numeric"></label>
+        <label class="field"><span>Keyword DMs</span><input type="number" id="p_dms" min="0" inputmode="numeric"></label>
+      </div>
+      <div class="row"><button class="btn primary" type="button" id="p_save">Save post</button><button class="btn" type="button" id="p_cancel" hidden>Cancel edit</button><span class="muted" id="p_note"></span></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Your posts</h2><span class="label">Newest first</span></div>
+      <div class="stack" id="postRows"></div>
+    </div>
+  </section>
+
+  <!-- PHOTOS -->
+  <section id="tab-photos" class="stack" hidden>
+    <div class="card">
+      <div class="card-head"><h2>Photo library</h2><span class="label" id="libCount">0 photos</span></div>
+      <p class="muted">Upload once, use forever. Tag them so rollouts can find the right one. Claude tags new uploads for you when it can.</p>
+      <div class="row"><label class="btn primary" for="libUp">Upload photos</label><input type="file" id="libUp" accept="image/*" multiple><span class="muted" id="libStatus"></span></div>
+      <div class="chips" id="libTags" role="group" aria-label="Filter photos"></div>
+      <div class="lib" id="libGrid"></div>
+    </div>
+    <div class="card" id="phEdit" hidden>
+      <div class="card-head"><h2>Edit photo</h2><button class="btn small" type="button" id="phClose">Done</button></div>
+      <div style="display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:start">
+        <img id="phImg" alt="" style="width:110px;border-radius:10px;border:1px solid var(--line)">
+        <div class="stack">
+          <div class="chips" id="phTags" role="group" aria-label="Tags"></div>
+          <p class="dim" id="phUsed"></p>
+          <div class="row"><button class="btn small" type="button" id="phDelete">Delete photo</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-inner">
+    <img id="modalImg" alt="Your finished story">
+    <p style="text-align:center">Press and hold the image, then tap <b>Save to Photos</b>.</p>
+    <button class="btn" type="button" id="modalClose">Done</button>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  function el(tag, attrs, kids) {
+    var e = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      if (k === 'text') e.textContent = attrs[k];
+      else if (k === 'class') e.className = attrs[k];
+      else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), attrs[k]);
+      else e.setAttribute(k, attrs[k]);
+    });
+    (kids || []).forEach(function (c) { if (c) e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+    return e;
+  }
+  var toastT;
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true; }, 2200); }
+  function copy(text, btn) {
+    var done = function () { toast('Copied'); };
+    try { navigator.clipboard.writeText(text).then(done, function () { fallbackSelect(btn); }); } catch (e) { fallbackSelect(btn); }
+  }
+  function fallbackSelect(btn) {
+    var box = btn && btn.closest('.copybox'); if (!box) return;
+    var r = document.createRange(); r.selectNodeContents(box.lastElementChild || box);
+    var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); toast('Selected. Tap Copy.');
+  }
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function dkey(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function addDays(d, n) { var x = new Date(d); x.setDate(x.getDate() + n); return x; }
+  function fromKey(k) { var p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  var DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var DOW_LONG = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function nice(k) { var d = fromKey(k); return DOW[d.getDay()] + ' ' + MON[d.getMonth()] + ' ' + d.getDate(); }
+  function fmt(n) { return n == null || n === '' || isNaN(n) ? '–' : Number(n).toLocaleString('en-US'); }
+  var TODAY = dkey(new Date());
+
+  // ===================================================================
+  // CONTENT LIBRARY (from the @bnbgene Growth Playbook, filtered to Gene's rules:
+  // no quizzes, no strategy explainers, no mentee show yet, Tradeify only, free Discord)
+  // ===================================================================
+  var BRAND = 'Gene (@bnbgene), 21, trades NQ/MNQ futures full time with Tradeify (code BNB), bought his first house at 18. Brand: BNBProfits. Bio: "Just helping people make money." His Discord is FREE and 1:1 mentorship applications happen inside it. Voice: casual, short, direct, young, confident, not corny, not corporate. Never describe his strategy, setups, entries, levels or sessions in detail. No quizzes or polls. No income guarantees.';
+  var PILLARS = ['Confessions', 'Prop firm reality', 'Story', 'Lifestyle', 'Psychology', 'Hot take', 'Relatable'];
+  var CTA_KEY = { F: 'Follow for part 2', K: 'Comment BNB → free Discord (auto-DM)', '—': 'No CTA. Let it spread.' };
+  function ctaText(c) { return CTA_KEY[c] || ('Comment ' + c.replace(/^C\s*/, '') + ' (auto-DM)'); }
+  var MAIN = [
+    { p: 'Confessions', h: 'Trading ruined my perception of money. Part 2.', s: "3 things you can't do normally anymore: buy anything full price, look at a $20 bill the same, take a 9–5 seriously. End: \"and I wouldn't change it.\"", l: '20s', c: 'F', cap: 'Part 2 because y\'all related way too hard 😭 #futurestrading #daytrading' },
+    { p: 'Prop firm reality', h: 'This is why most traders never get a payout.', s: '3 reasons: oversizing on day 1, trading right up to the daily loss limit, no plan for green days.', l: '30s', c: 'C PAYOUT', cap: 'Which one are you guilty of? #propfirm #fundedtrader' },
+    { p: 'Story', h: 'I bought my first house at 18. Here\'s what trading has to do with it.', s: 'Where you were at 18, how you got the house, what trading changed after. Keep it real, no flexing.', l: '45s', c: 'F', cap: 'Still early. Follow the journey #futurestrading' },
+    { p: 'Confessions', h: 'I traded on a Friday. Never again.', s: 'Storytime of one bad Friday and the rule you made after it.', l: '30s', c: '—', cap: 'Learned that one the expensive way #tradingpsychology' },
+    { p: 'Lifestyle', h: 'What my trading actually pays for.', s: 'Rent, car, groceries B-roll. On screen: each bill next to the payout that covered it (round numbers are fine).', l: '25s', c: 'F', cap: 'Not a flex, just the math #fundedtrader' },
+    { p: 'Prop firm reality', h: "Your payout isn't really your payout.", s: 'The split + taxes on a $3K payout, simple. Say you\'re not a CPA.', l: '35s', c: 'C TAX', cap: 'Comment TAX and I\'ll send the breakdown #propfirm' },
+    { p: 'Psychology', h: 'If you keep blowing funded accounts, listen to this.', s: 'One rule: stop after one green trade for 2 weeks. Why it works.', l: '25s', c: 'F', cap: 'Try it for 2 weeks and come back' },
+    { p: 'Hot take', h: 'Most trading mentors have never gotten a payout.', s: 'Hot take, then: "ask them for a payout certificate, not a Lambo."', l: '20s', c: 'C', cap: 'Agree or nah? #daytrading' },
+    { p: 'Relatable', h: 'Me explaining to my family what I do for work.', s: 'Skit. You play both roles.', l: '15s', c: '—', cap: 'Every holiday 😭' },
+    { p: 'Story', h: "A year ago I couldn't picture this. Here's what changed.", s: '3 beats: where you were, the one thing that changed, where you are now.', l: '45s', c: 'F', cap: 'Still early. Follow the journey' },
+    { p: 'Prop firm reality', h: 'The prop firm rule that killed my first accounts.', s: 'Name the rule (trailing drawdown), show how it got you, how to beat it.', l: '30s', c: 'C RULES', cap: 'Comment RULES for my eval checklist' },
+    { p: 'Confessions', h: 'Things I stopped buying after I started trading.', s: '4 items, quick cuts, the trader logic behind each one.', l: '20s', c: 'F', cap: '#4 hurt the most' },
+    { p: 'Psychology', h: 'The one thing I check before I click buy.', s: 'One simple check. Keep it short. Your full process lives in the Discord.', l: '25s', c: 'K', cap: 'Comment BNB and I\'ll send you the free Discord' },
+    { p: 'Prop firm reality', h: "Here's how I passed my eval in __ days.", s: 'Use your real number. Daily target, max trades a day, when you stopped.', l: '35s', c: 'C EVAL', cap: 'Comment EVAL for the exact plan' },
+    { p: 'Lifestyle', h: 'Day in the life of a 21-year-old futures trader.', s: 'Wake up, session, done early, rest of the day. Fast cuts every 2–3s.', l: '45s', c: '—', cap: 'Trading is 2 hours. Discipline is the other 22' },
+    { p: 'Hot take', h: "ICT didn't make you profitable. Doing less did.", s: 'Not hating. Fewer setups, fewer trades, more payouts.', l: '25s', c: 'C', cap: 'Fight me in the comments' },
+    { p: 'Story', h: 'My mom thought trading was gambling until this happened.', s: 'Storytime that ends on a payout moment.', l: '40s', c: 'F', cap: 'She asks me for stock tips now 😭' },
+    { p: 'Prop firm reality', h: 'Nobody talks about what happens after your first payout.', s: 'Overconfidence, sizing up, giving it back. How to avoid it.', l: '30s', c: 'F', cap: 'Save this for when you get there' },
+    { p: 'Relatable', h: 'Every trader on Sunday night vs Monday at 9:31.', s: 'Skit. Calm Sunday you vs Monday open you.', l: '12s', c: '—', cap: 'Accurate?' },
+    { p: 'Confessions', h: 'Being 21 with no boss is weird.', s: 'Freedom vs pressure. Honest, not motivational.', l: '25s', c: '—', cap: 'Nobody tells you this part' },
+    { p: 'Prop firm reality', h: 'Prop firm stuff nobody tells you: the payout request.', s: 'Screen record a real payout request on Tradeify, start to bank.', l: '30s', c: 'C PAYOUT', cap: 'Comment PAYOUT for the steps' },
+    { p: 'Psychology', h: "Your strategy isn't the problem. You are.", s: 'Rules you break, not setups you lack. One example from your own trading.', l: '25s', c: 'F', cap: 'Harsh but true' },
+    { p: 'Confessions', h: 'A $50 dinner is 2 NQ points to me now.', s: 'Trader math on everyday stuff. Quick and funny.', l: '15s', c: '—', cap: 'I can\'t turn it off 😭' },
+    { p: 'Story', h: "If you're 18 and want to trade, start here.", s: 'What you\'d do first if you were starting over: learn, sim, one small eval, rules. No strategy details.', l: '30s', c: 'K', cap: 'Comment BNB for the free Discord' },
+    { p: 'Story', h: 'I almost quit trading the week before my first payout.', s: 'What was happening, what kept you going, the payout.', l: '40s', c: 'F', cap: 'Glad I didn\'t' },
+    { p: 'Lifestyle', h: "Bro's first time seeing a payout hit.", s: 'Your designer-reaction energy, but it\'s a payout landing. Yours or a member\'s.', l: '15s', c: '—', cap: '😭😭' },
+    { p: 'Confessions', h: 'I sized up after a green week. Here\'s what happened.', s: 'The mistake, the damage, the rule you made.', l: '30s', c: 'F', cap: 'Don\'t be me' },
+    { p: 'Lifestyle', h: "Cheapest luxury apartment you'll find, paid for by trading.", s: 'Your 1M-view apartment format, but the hook ties it to trading.', l: '25s', c: 'F', cap: 'My trading pays for this #fundedtrader' }
+  ];
+  var BONUS = [
+    { h: 'Things traders don\'t admit', s: 'POV list, 15–20s. "We all have 4 brokers and trust none of them."' },
+    { h: 'POV: you\'re a trader and someone says "teach me real quick"', s: 'Skit, 7–15s.' },
+    { h: 'Red day diaries', s: 'Film right after a loss. What happened, what you\'re doing next. 20–40s.' },
+    { h: 'Payout reaction', s: 'Your payout or a member\'s hitting the bank. 10–20s.' },
+    { h: 'Trader math', s: '"A $50 dinner = 2 NQ points." Face + text, 15–30s.' },
+    { h: 'Things I stopped doing after trading', s: 'List, 20–30s. "Checking my P&L during trades."' },
+    { h: 'Trading ruined my sleep schedule', s: 'Day-in-the-life angle on your best hook. 20s.' },
+    { h: 'When the market hits your stop then goes to your target', s: 'Relatable skit, 10s.' }
+  ];
+  var ROLL_BY_DOW = ['Member wins', 'Motivation', 'Trade day', 'Member wins', 'Trade day', 'Payout drop', 'Motivation'];
+  var EVENING = [
+    "🧠 Reset day. Journal your week. Here's mine:\n[3 lines]\n\nDaily bias is back tomorrow before the open.",
+    "🎯 New week. Drop ONE goal for this week below 👇 I'll check back Friday.",
+    "Real question: what's the one rule you broke today? Be honest. Nobody's judging.",
+    "🎙️ Live call [day/time]. Bring your questions. Mentorship students, stay after.",
+    "Shoutout to [@member] for [their win]. That's what consistency looks like 🔥",
+    "📅 Weekly recap: [your week in 2 lines]\nMember of the week: [@member] 🏆\n\n1:1 mentorship apps are open → #apply",
+    "Weekend = review. Go through every trade from this week. What would you do different? Drop one below 👇"
+  ];
+  function biasMsg(k) { var d = fromKey(k); return '📊 DAILY BIAS · ' + DOW[d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate() + '\n\nBias: [bullish / bearish / sitting out]\nWhat I\'m watching: [1 line]\nNews: [time or none]\n\nWhat\'s your plan today? Drop it below 👇'; }
+  var RECAP_MSG = '✅ RECAP: [W / L] [+$ / -$]\n\nWhat happened: [1 line]\nLesson: [1 line]\n\nPost yours in #wins or #journal 👇';
+
+  // ===================================================================
+  // DATA LAYER (db when available, in-memory otherwise)
+  // ===================================================================
+  var S = { db: null, days: {}, plans: {}, posts: [], ideas: [], photos: [], settings: { postsPerDay: 1, median: 5000, startDate: '2026-10-12' } };
+  var subs = [];
+  function onData() { renderAll(); }
+  function dbSet(path, data) {
+    if (!S.db) return Promise.resolve();
+    return S.db.doc(path).set(data).catch(function (e) { toast(e && e.code === 'quota_exceeded' ? 'Storage is full. Delete some old items.' : "Couldn't save. Try again."); throw e; });
+  }
+  function dbDel(path) { return S.db ? S.db.doc(path).delete().catch(function () { toast("Couldn't delete. Try again."); }) : Promise.resolve(); }
+  function listen(coll, fn) {
+    subs.push(S.db.collection(coll).onSnapshot(function (snap) {
+      var arr = snap.docs.map(function (d) { var x = Object.assign({}, d.data()); x._id = d.id; return x; });
+      fn(arr); onData();
+    }, function () {}));
+  }
+  function startDb(db) {
+    S.db = db;
+    listen('days', function (arr) { S.days = {}; arr.forEach(function (x) { S.days[x._id] = x; }); });
+    listen('plan', function (arr) { S.plans = {}; arr.forEach(function (x) { S.plans[x._id] = x; }); });
+    listen('posts', function (arr) { S.posts = arr; });
+    listen('ideas', function (arr) { S.ideas = arr; });
+    listen('photos', function (arr) { S.photos = arr; });
+    subs.push(db.doc('settings/main').onSnapshot(function (d) { if (d.exists) Object.assign(S.settings, d.data()); onData(); }, function () {}));
+  }
+
+  // ===================================================================
+  // TODAY
+  // ===================================================================
+  function dayIndex(k) { return Math.max(0, Math.round((fromKey(k) - fromKey(S.settings.startDate || '2026-10-12')) / 864e5)); }
+  function planFor(k) {
+    var day = S.days[k] || {}, saved = S.plans[k] || {};
+    var i = dayIndex(k) + (day.swap || 0);
+    var main = (saved.main && !day.swap) ? saved.main : (function (m) { return { pillar: m.p, hook: m.h, say: m.s, length: m.l, cta: m.c, caption: m.cap }; })(MAIN[i % MAIN.length]);
+    var b = BONUS[dayIndex(k) % BONUS.length];
+    var dow = fromKey(k).getDay();
+    return {
+      main: main, fromRoutine: !!(saved.main && !day.swap),
+      bonus: saved.bonus || { hook: b.h, say: b.s },
+      rollout: saved.rollout || ROLL_BY_DOW[dow],
+      note: saved.note || '',
+      discord: { am: biasMsg(k), pm: RECAP_MSG, eve: (saved.discord && saved.discord.eve) || EVENING[dow] }
+    };
+  }
+  function posted(k) { var d = S.days[k]; return !!(d && (d.ig || d.tt)); }
+  function streak() {
+    var n = 0, d = new Date();
+    if (!posted(dkey(d))) d = addDays(d, -1);
+    while (posted(dkey(d))) { n++; d = addDays(d, -1); }
+    return n;
+  }
+  function setDay(field, val) {
+    var cur = Object.assign({}, S.days[TODAY] || {}); delete cur._id;
+    cur[field] = val; cur.date = TODAY;
+    S.days[TODAY] = Object.assign({ _id: TODAY }, cur);
+    renderToday();
+    dbSet('days/' + TODAY, cur);
+  }
+  document.querySelectorAll('[data-day]').forEach(function (cb) {
+    cb.addEventListener('change', function () { setDay(cb.dataset.day, cb.checked); if (cb.checked) toast(['ig', 'tt'].indexOf(cb.dataset.day) > -1 ? 'Posted. Streak saved 🔥' : 'Done ✅'); });
+  });
+  $('swapMain').addEventListener('click', function () { setDay('swap', ((S.days[TODAY] || {}).swap || 0) + 1); });
+
+  function renderToday() {
+    var d = new Date();
+    $('todayDate').textContent = DOW_LONG[d.getDay()] + ', ' + MON[d.getMonth()] + ' ' + d.getDate();
+    var p = planFor(TODAY);
+    $('mainPillar').textContent = p.main.pillar || 'Video';
+    $('mainHook').textContent = '"' + p.main.hook + '"';
+    $('mainSay').textContent = p.main.say || '';
+    $('mainLen').textContent = p.main.length || '';
+    $('mainCta').textContent = ctaText(p.main.cta || '—');
+    $('mainCaption').textContent = p.main.caption || '';
+    $('mainSource').textContent = p.fromRoutine ? 'Picked this morning from your tracker' + (p.note ? ': ' + p.note : '') : 'From your playbook';
+    $('bonusHook').textContent = p.bonus.hook;
+    $('bonusSay').textContent = p.bonus.say;
+    $('todayRollout').textContent = p.rollout;
+    var rl = $('rolloutList'); rl.innerHTML = '';
+    (ROLLOUTS[p.rollout] || []).forEach(function (f) { rl.appendChild(el('li', { text: f.c.replace(/\*/g, '').replace(/\n/g, ' ') + ' · ' + f.tag })); });
+    $('discordPreview').textContent = 'Tonight: ' + p.discord.eve.split('\n')[0];
+    var day = S.days[TODAY] || {};
+    document.querySelectorAll('[data-day]').forEach(function (cb) { cb.checked = !!day[cb.dataset.day]; });
+    $('streakNum').textContent = streak();
+    // week strip (Mon–Sun)
+    var mon = addDays(d, -((d.getDay() + 6) % 7)), strip = $('weekStrip'); strip.innerHTML = ''; var cnt = 0;
+    for (var i = 0; i < 7; i++) {
+      var dd = addDays(mon, i), k = dkey(dd), done = posted(k); if (done) cnt++;
+      var cls = 'day' + (done ? ' done' : '') + (k === TODAY ? ' today' : '') + (!done && k < TODAY ? ' miss' : '');
+      strip.appendChild(el('div', { class: cls, title: nice(k) }, [el('span', { text: DOW[dd.getDay()] }), el('b', { text: done ? '✓' : String(dd.getDate()) })]));
+    }
+    var goal = 7;
+    $('weekCount').textContent = cnt + ' / ' + goal + ' this week';
+    $('weekBar').style.width = Math.min(100, cnt / goal * 100) + '%';
+    // 48h nudge: a posted day 2–6 days ago with no tracker row for that date
+    var nudge = null;
+    for (var j = 2; j <= 6; j++) {
+      var kk = dkey(addDays(d, -j));
+      if (posted(kk) && !S.posts.some(function (x) { return x.date === kk; })) { nudge = kk; break; }
+    }
+    $('logNudge').hidden = !nudge;
+    if (nudge) {
+      var pp = planFor(nudge);
+      $('logNudgeText').textContent = 'You posted on ' + nice(nudge) + ' ("' + pp.main.hook + '"). Log its numbers so the HQ learns what works.';
+      $('logNudgeBtn').onclick = function () { goTab('tracker'); fillForm({ date: nudge, hook: pp.main.hook, pillar: pp.main.pillar }); };
+    }
+  }
+  document.querySelectorAll('[data-copy]').forEach(function (b) { b.addEventListener('click', function () { copy($(b.dataset.copy).textContent, b); }); });
+  document.querySelectorAll('[data-goto]').forEach(function (b) { b.addEventListener('click', function () { goTab(b.dataset.goto); }); });
+  $('openRollout').addEventListener('click', function () { goTab('stories'); startRollout(planFor(TODAY).rollout); });
+
+  // ===================================================================
+  // DISCORD
+  // ===================================================================
+  function renderDiscord() {
+    var p = planFor(TODAY), d = new Date(), weekend = d.getDay() === 0 || d.getDay() === 6;
+    $('discordDay').textContent = DOW_LONG[d.getDay()];
+    var box = $('discordMsgs'); box.innerHTML = '';
+    var day = S.days[TODAY] || {};
+    var items = weekend ? [['d_eve', 'Today', p.discord.eve]] : [['d_am', 'Before the open (~9:00 ET)', p.discord.am], ['d_pm', 'After your session (~11:30 ET)', p.discord.pm], ['d_eve', 'Evening', p.discord.eve]];
+    items.forEach(function (it) {
+      var txt = el('span', { text: it[2] });
+      var cb = el('input', { type: 'checkbox' }); cb.checked = !!day[it[0]];
+      cb.addEventListener('change', function () { setDay(it[0], cb.checked); });
+      var cbtn = el('button', { class: 'btn small', type: 'button', text: 'Copy' }); cbtn.addEventListener('click', function () { copy(it[2], cbtn); });
+      box.appendChild(el('div', { class: 'card' }, [
+        el('div', { class: 'card-head' }, [el('h2', { text: it[1] }), el('label', { class: 'check' }, [cb, ' Sent'])]),
+        el('div', { class: 'copybox' }, [cbtn, txt])
+      ]));
+    });
+    var tb = $('weekRhythm'); tb.innerHTML = '';
+    [1, 2, 3, 4, 5, 6, 0].forEach(function (i) {
+      tb.appendChild(el('tr', null, [el('td', { text: DOW[i] }), el('td', { text: EVENING[i].split('\n')[0] }), el('td', { text: ROLL_BY_DOW[i] })]));
+    });
+  }
+
+  // ===================================================================
+  // TRACKER
+  // ===================================================================
+  function median(arr) { if (!arr.length) return null; var a = arr.slice().sort(function (x, y) { return x - y; }); var m = Math.floor(a.length / 2); return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2; }
+  function currentMedian() {
+    var recent = S.posts.filter(function (p) { return !p.history && p.views > 0; }).map(function (p) { return +p.views; });
+    return recent.length >= 6 ? median(recent) : (S.settings.median || 5000);
+  }
+  function decide(p, med) {
+    var v = +p.views || 0;
+    if (!v) return { t: 'Add views', c: '' };
+    var f1k = p.follows != null && p.follows !== '' ? (+p.follows / v * 1000) : null;
+    if (p.dms && +p.dms / v > 0.01) return { t: 'Buying signal: make a longer version → Discord', c: 'good' };
+    if (v >= 2 * med) return { t: 'Winner: remake within 7 days', c: 'good' };
+    if (v < med) {
+      if (p.hold != null && p.hold !== '' && +p.hold >= 60) return { t: 'Hook works, change the topic', c: 'warn' };
+      if (p.refilm) return { t: 'Second miss: kill it', c: 'bad' };
+      return { t: 'Change the hook, re-film once', c: 'warn' };
+    }
+    if (f1k != null && f1k < 1) return { t: 'Add a series name or part 2', c: 'warn' };
+    if ((+p.saves || 0) + (+p.shares || 0) > 3 * (+p.comments || 0) && (+p.saves || 0) > 0) return { t: 'Make a carousel + keyword CTA', c: 'hl' };
+    return { t: 'Solid. Keep the format', c: '' };
+  }
+  var editing = null;
+  var FIELDS = ['hook', 'date', 'platform', 'pillar', 'len', 'views', 'hold', 'likes', 'comments', 'shares', 'saves', 'follows', 'dms'];
+  PILLARS.concat(['Other']).forEach(function (p) { $('p_pillar').appendChild(el('option', { text: p })); });
+  function fillForm(p) {
+    FIELDS.forEach(function (f) { var i = $('p_' + f); if (i) i.value = p[f] == null ? '' : p[f]; });
+    if (!p.date) $('p_date').value = TODAY;
+    if (!p.platform) $('p_platform').value = 'Both';
+    if (!p.pillar || PILLARS.indexOf(p.pillar) < 0) $('p_pillar').value = p.pillar ? 'Other' : PILLARS[0];
+    $('p_hook').focus();
+  }
+  function readForm() {
+    var o = {};
+    FIELDS.forEach(function (f) { var v = $('p_' + f).value; o[f] = ['hook', 'date', 'platform', 'pillar'].indexOf(f) > -1 ? v.trim() : (v === '' ? null : Number(v)); });
+    return o;
+  }
+  $('p_date').value = TODAY; $('p_platform').value = 'Both';
+  $('p_save').addEventListener('click', function () {
+    var o = readForm();
+    if (!o.hook) { $('p_note').textContent = 'Add the hook so you know which video this is.'; return; }
+    var id = editing ? editing._id : ('p' + Date.now().toString(36));
+    if (editing && editing.history) o.history = true;
+    if (editing && editing.refilm) o.refilm = true;
+    o.updated = new Date().toISOString();
+    var local = Object.assign({ _id: id }, o);
+    S.posts = S.posts.filter(function (x) { return x._id !== id; }).concat([local]);
+    dbSet('posts/' + id, o).then(function () { toast('Saved'); });
+    editing = null; $('formTitle').textContent = 'Log a post'; $('p_cancel').hidden = true; $('p_note').textContent = '';
+    fillForm({}); $('p_hook').value = '';
+    renderTracker();
+  });
+  $('p_cancel').addEventListener('click', function () { editing = null; $('formTitle').textContent = 'Log a post'; $('p_cancel').hidden = true; fillForm({}); $('p_hook').value = ''; });
+  function renderTracker() {
+    var med = currentMedian();
+    $('medianLabel').textContent = 'Your median: ' + fmt(Math.round(med)) + ' views';
+    var mine = S.posts.filter(function (p) { return !p.history; });
+    var last30 = mine.filter(function (p) { return p.date >= dkey(addDays(new Date(), -30)); });
+    var views = last30.reduce(function (s, p) { return s + (+p.views || 0); }, 0), fol = last30.reduce(function (s, p) { return s + (+p.follows || 0); }, 0);
+    var st = $('trackStats'); st.innerHTML = '';
+    [['Posts logged (30d)', last30.length], ['Views (30d)', fmt(views)], ['Follows (30d)', fmt(fol)], ['Follows / 1K views', views ? (fol / views * 1000).toFixed(1) : '–'], ['Streak', streak() + ' days']].forEach(function (s) {
+      st.appendChild(el('div', { class: 'field' }, [el('span', { text: s[0] }), el('b', { text: String(s[1]), style: 'font:700 1.15rem var(--mono)' })]));
+    });
+    var rows = $('postRows'); rows.innerHTML = '';
+    var sorted = S.posts.slice().sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); });
+    if (!sorted.length) rows.appendChild(el('p', { class: 'empty', text: 'No posts yet. Log your first one above, 48 hours after posting.' }));
+    sorted.forEach(function (p) {
+      var dcs = decide(p, med), v = +p.views || 0;
+      var f1k = v && p.follows != null && p.follows !== '' ? (+p.follows / v * 1000).toFixed(1) : '–';
+      var edit = el('button', { class: 'btn small', type: 'button', text: 'Edit' });
+      edit.addEventListener('click', function () { editing = p; fillForm(p); $('formTitle').textContent = 'Edit post'; $('p_cancel').hidden = false; $('postForm').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+      var acts = [edit];
+      if (/change the hook/i.test(dcs.t)) {
+        var rf = el('button', { class: 'btn small', type: 'button', text: 'I re-filmed it' });
+        rf.addEventListener('click', function () { var o = Object.assign({}, p); delete o._id; o.refilm = true; p.refilm = true; dbSet('posts/' + p._id, o); renderTracker(); });
+        acts.push(rf);
+      }
+      if (dcs.c === 'good' || p.history) {
+        var rem = el('button', { class: 'btn small', type: 'button', text: 'Remake it' });
+        rem.addEventListener('click', function () { goTab('ideas'); $('remakeSel').value = p._id; doRemake(); });
+        acts.push(rem);
+      }
+      function n(label, val) { return el('span', null, [label + ' ', el('b', { text: val })]); }
+      rows.appendChild(el('div', { class: 'post' }, [
+        el('div', { class: 'card-head' }, [el('span', { class: 'label', text: (p.date ? nice(p.date) + (p.history ? ' ' + p.date.slice(0, 4) : '') : '–') + ' · ' + [p.platform, p.pillar].filter(Boolean).join(' · ') }), p.history ? el('span', { class: 'pill', text: 'From playbook' }) : null]),
+        el('p', { style: 'font-weight:700', text: p.hook }),
+        el('div', { class: 'nums' }, [n('Views', fmt(p.views)), n('Likes', fmt(p.likes)), n('Comments', fmt(p.comments)), n('Follows/1K', f1k)]),
+        el('div', { class: 'row' }, [el('span', { class: 'pill ' + dcs.c, text: dcs.t })]),
+        el('div', { class: 'row' }, acts)
+      ]));
+    });
+    // remake select
+    var sel = $('remakeSel'), keep = sel.value; sel.innerHTML = '';
+    S.posts.slice().sort(function (a, b) { return (+b.views || 0) - (+a.views || 0); }).forEach(function (p) {
+      sel.appendChild(el('option', { value: p._id, text: p.hook + ' · ' + fmt(p.views) + ' views' }));
+    });
+    if (keep) sel.value = keep;
+  }
+
+  // ===================================================================
+  // CLAUDE (sample) helpers
+  // ===================================================================
+  var samplerP = (window.claude && window.claude.use) ? window.claude.use('sample') : Promise.resolve(null);
+  var sampler = null, sampleLimits = null;
+  samplerP.then(function (s) {
+    sampler = s;
+    if (!s) { $('ideaOff').hidden = false; $('ideaBtn').disabled = true; $('remakeBtn').disabled = true; $('shotLabel').hidden = true; return; }
+    s.limits().then(function (l) { sampleLimits = l; if (!l || !l.images) $('shotLabel').hidden = true; }).catch(function () { $('shotLabel').hidden = true; });
+  });
+  function errText(e) {
+    var c = e && e.code;
+    return c === 'cancelled' ? 'Stopped.' : c === 'not_granted' ? 'Claude is turned off for this page.' : c === 'rate_limited' ? 'Too many requests. Give it a minute.' : "Couldn't reach Claude right now. Try again.";
+  }
+  function topPostsText() {
+    return S.posts.slice().sort(function (a, b) { return (+b.views || 0) - (+a.views || 0); }).slice(0, 8)
+      .map(function (p) { return '- "' + p.hook + '" ' + fmt(p.views) + ' views' + (p.follows ? ', ' + p.follows + ' follows' : ''); }).join('\n');
+  }
+  function saveIdeas(list, from) {
+    list.forEach(function (it, i) {
+      if (!it || !it.hook) return;
+      var id = 'i' + Date.now().toString(36) + i;
+      var o = { hook: String(it.hook), concept: String(it.concept || ''), pillar: String(it.pillar || ''), length: String(it.length || ''), cta: String(it.cta || ''), caption: String(it.caption || ''), from: from, created: new Date().toISOString(), used: false };
+      S.ideas.push(Object.assign({ _id: id }, o));
+      dbSet('ideas/' + id, o);
+    });
+    renderIdeas();
+  }
+
+  // ===================================================================
+  // IDEAS
+  // ===================================================================
+  var ideaPillar = 'Any';
+  ['Any'].concat(PILLARS).forEach(function (p) {
+    var b = el('button', { class: 'chip', type: 'button', text: p, 'aria-pressed': String(p === 'Any') });
+    b.addEventListener('click', function () { ideaPillar = p; $('ideaPillars').querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); });
+    $('ideaPillars').appendChild(b);
+  });
+  var IDEA_SHAPE = 'Return JSON only: {"ideas": [{"hook": "the first line he says, also on screen", "concept": "what he says/shows in 1-2 sentences", "pillar": one of ' + JSON.stringify(PILLARS) + ', "length": "e.g. 20s", "cta": "F (follow for part 2) | K (comment BNB for the free Discord) | C WORD (comment a word) | — (none)", "caption": "short caption with 1-2 real keyword hashtags like #futurestrading #propfirm"}]}';
+  var ideaCtl;
+  $('ideaStop').addEventListener('click', function () { if (ideaCtl) ideaCtl.abort(); });
+  $('ideaBtn').addEventListener('click', function () {
+    if (!sampler) return;
+    var prompt = [
+      'You are the short-form content strategist for ' + BRAND,
+      'What already worked for him (views on Instagram Reels):', topPostsText() || '(no data yet)',
+      'Proven patterns: emotion-first confession hooks ("Trading ruined my perception of money"), other people\'s wins, money you can picture (rent, payouts, taxes), face on camera first, prop firm specifics nobody explains, hot takes. Chart-only recaps and generic motivation flop.',
+      'Pillar: ' + (ideaPillar === 'Any' ? 'mix of ' + PILLARS.join(', ') : ideaPillar) + '.',
+      $('ideaNote').value.trim() ? 'What is going on in his life right now: ' + $('ideaNote').value.trim() : '',
+      'Give 5 NEW video ideas he has not done. Hooks must sound like a 21-year-old talking, under 12 words.',
+      IDEA_SHAPE
+    ].filter(Boolean).join('\n');
+    ideaCtl = new AbortController();
+    $('ideaBtn').disabled = true; $('ideaStop').hidden = false; $('ideaStatus').textContent = 'Thinking…';
+    sampler.json(prompt, { signal: ideaCtl.signal }).then(function (out) {
+      saveIdeas((out && out.ideas) || [], 'New ideas'); $('ideaStatus').textContent = 'Added to Saved ideas below.';
+    }).catch(function (e) { $('ideaStatus').textContent = errText(e); })
+      .then(function () { $('ideaBtn').disabled = false; $('ideaStop').hidden = true; });
+  });
+  function doRemake() {
+    if (!sampler) { toast('Claude ideas need the HQ open from your sidebar.'); return; }
+    var p = S.posts.find(function (x) { return x._id === $('remakeSel').value; }); if (!p) return;
+    var prompt = [
+      'You are the short-form content strategist for ' + BRAND,
+      'This video worked: "' + p.hook + '" (' + fmt(p.views) + ' views' + (p.comments ? ', ' + p.comments + ' comments' : '') + ').',
+      'First say in one line WHY it worked (the psychology). Then give 10 new videos built on the same idea. Change the hook, angle, story, length, format or perspective each time. Do not just repost it. If it was off-niche (not trading), give it a trading spin.',
+      'Return JSON only: {"why": "one line", "ideas": [10 items shaped like {"hook","concept","pillar","length","cta","caption"}]} where pillar is one of ' + JSON.stringify(PILLARS) + ' and cta is F | K | C WORD | —.'
+    ].join('\n');
+    $('remakeBtn').disabled = true; $('remakeStatus').textContent = 'Thinking…';
+    sampler.json(prompt).then(function (out) {
+      saveIdeas((out && out.ideas) || [], 'Remake of "' + p.hook + '"');
+      $('remakeStatus').textContent = out && out.why ? 'Why it worked: ' + out.why : 'Added to Saved ideas.';
+    }).catch(function (e) { $('remakeStatus').textContent = errText(e); })
+      .then(function () { $('remakeBtn').disabled = false; });
+  }
+  $('remakeBtn').addEventListener('click', doRemake);
+  function renderIdeas() {
+    var list = $('ideaList'); list.innerHTML = '';
+    var open = S.ideas.filter(function (i) { return !i.used; }).sort(function (a, b) { return (b.created || '').localeCompare(a.created || ''); });
+    $('ideaCount').textContent = open.length + ' saved';
+    if (!open.length) list.appendChild(el('p', { class: 'empty', text: 'No saved ideas yet. Tap "Give me 5 ideas" or remake a winner.' }));
+    open.forEach(function (it) {
+      var use = el('button', { class: 'btn small', type: 'button', text: 'Make it today\'s video' });
+      use.addEventListener('click', function () {
+        var plan = Object.assign({}, S.plans[TODAY] || {}); delete plan._id;
+        plan.main = { pillar: it.pillar, hook: it.hook, say: it.concept, length: it.length, cta: it.cta || '—', caption: it.caption };
+        S.plans[TODAY] = Object.assign({ _id: TODAY }, plan);
+        if ((S.days[TODAY] || {}).swap) setDay('swap', 0);
+        dbSet('plan/' + TODAY, plan);
+        markIdea(it, true); goTab('today'); toast("Set as today's video");
+      });
+      var del = el('button', { class: 'btn small', type: 'button', text: 'Dismiss' });
+      del.addEventListener('click', function () { S.ideas = S.ideas.filter(function (x) { return x._id !== it._id; }); dbDel('ideas/' + it._id); renderIdeas(); });
+      list.appendChild(el('div', { class: 'idea' }, [
+        el('div', { class: 'row' }, [el('span', { class: 'pill', text: it.pillar || 'Idea' }), it.length ? el('span', { class: 'pill', text: it.length }) : null, el('span', { class: 'dim', text: it.from || '' })]),
+        el('p', { class: 'hook', text: '"' + it.hook + '"' }),
+        el('p', { class: 'muted', text: it.concept }),
+        it.cta ? el('p', { class: 'dim', text: 'CTA: ' + ctaText(it.cta) }) : null,
+        el('div', { class: 'row' }, [use, del])
+      ]));
+    });
+  }
+  function markIdea(it, used) { var o = Object.assign({}, it); delete o._id; o.used = used; it.used = used; dbSet('ideas/' + it._id, o); renderIdeas(); }
+
+  // screenshot → numbers
+  $('shotIn').addEventListener('change', function (e) {
+    var files = Array.prototype.slice.call(e.target.files || []); e.target.value = '';
+    if (!files.length || !sampler) return;
+    var max = (sampleLimits && sampleLimits.images && sampleLimits.images.maxCount) || 1;
+    $('shotStatus').textContent = 'Reading your screenshot…';
+    sampler.json('These are Instagram or TikTok insights screenshots for ONE video. Read the numbers. Return JSON only: {"views": n|null, "likes": n|null, "comments": n|null, "shares": n|null, "saves": n|null, "follows": n|null, "hold": percent of viewers who watched past 3 seconds or skip rate inverted, n|null, "length": video length in seconds n|null, "platform": "IG"|"TikTok"|null}. Use plain numbers (1.2K = 1200). null when not shown.', { images: files.slice(0, max) })
+      .then(function (o) {
+        var map = { views: 'views', likes: 'likes', comments: 'comments', shares: 'shares', saves: 'saves', follows: 'follows', hold: 'hold', length: 'len' };
+        var n = 0; Object.keys(map).forEach(function (k) { if (o && o[k] != null && !isNaN(o[k])) { $('p_' + map[k]).value = Math.round(o[k]); n++; } });
+        if (o && o.platform) $('p_platform').value = o.platform;
+        $('shotStatus').textContent = n ? 'Filled ' + n + ' numbers. Check them, add the hook, then save.' : "Couldn't find numbers in that screenshot. Type them in.";
+      }).catch(function (err) { $('shotStatus').textContent = errText(err); });
+  });
+
+  // ===================================================================
+  // PHOTO LIBRARY
+  // ===================================================================
+  var TAGS = ['Payout', 'Trade', 'Member win', 'Lifestyle', 'You'];
+  var assets = null;
+  var assetsP = (window.claude && window.claude.use) ? window.claude.use('assets') : Promise.resolve(null);
+  assetsP.then(function (a) { assets = a; if (!a) { $('libStatus').textContent = 'Uploading needs the HQ open from your sidebar.'; } });
+  function photoUrl(p) { return '/_blob/' + p.asset; }
+  var libFilter = 'All', editingPh = null;
+  function tagChips(container, current, onPick, withAll) {
+    container.innerHTML = '';
+    (withAll ? ['All'] : []).concat(TAGS).forEach(function (t) {
+      var b = el('button', { class: 'chip', type: 'button', text: t, 'aria-pressed': String(t === current) });
+      b.addEventListener('click', function () { onPick(t); });
+      container.appendChild(b);
+    });
+  }
+  function photoTile(p, pressed, onClick) {
+    var b = el('button', { class: 'ph', type: 'button', 'aria-pressed': String(!!pressed), 'aria-label': (p.tags || []).join(', ') || 'Photo' }, [
+      el('img', { src: photoUrl(p), alt: '', loading: 'lazy' }),
+      el('div', { class: 't' }, (p.tags || []).map(function (t) { return el('span', { text: t }); })),
+      (p.used && p.used.length) ? el('span', { class: 'used', text: 'Used ' + nice(p.used[p.used.length - 1]).replace(/^\w+ /, '') }) : null
+    ]);
+    b.addEventListener('click', onClick);
+    return b;
+  }
+  function sortedPhotos(filter) {
+    return S.photos.filter(function (p) { return filter === 'All' || (p.tags || []).indexOf(filter) > -1; })
+      .sort(function (a, b) { return ((a.used || []).length - (b.used || []).length) || (b.added || '').localeCompare(a.added || ''); });
+  }
+  function renderLibrary() {
+    $('libCount').textContent = S.photos.length + ' photos';
+    tagChips($('libTags'), libFilter, function (t) { libFilter = t; renderLibrary(); }, true);
+    var g = $('libGrid'); g.innerHTML = '';
+    var list = sortedPhotos(libFilter);
+    if (!list.length) g.appendChild(el('p', { class: 'empty', text: S.photos.length ? 'No photos with this tag yet.' : 'No photos yet. Upload your payouts, trades, member wins and lifestyle shots.' }));
+    list.forEach(function (p) { g.appendChild(photoTile(p, editingPh && editingPh._id === p._id, function () { openPhoto(p); })); });
+  }
+  function openPhoto(p) {
+    editingPh = p; $('phEdit').hidden = false; $('phImg').src = photoUrl(p);
+    $('phUsed').textContent = (p.used && p.used.length) ? 'Used in stories: ' + p.used.map(nice).join(', ') : 'Not used in a story yet.';
+    $('phDelete').textContent = 'Delete photo'; $('phDelete').dataset.arm = '';
+    var box = $('phTags'); box.innerHTML = '';
+    TAGS.forEach(function (t) {
+      var on = (p.tags || []).indexOf(t) > -1;
+      var b = el('button', { class: 'chip', type: 'button', text: t, 'aria-pressed': String(on) });
+      b.addEventListener('click', function () {
+        var tags = (p.tags || []).slice(); var i = tags.indexOf(t); if (i > -1) tags.splice(i, 1); else tags.push(t);
+        p.tags = tags; savePhoto(p); openPhoto(p); renderLibrary();
+      });
+      box.appendChild(b);
+    });
+    renderLibrary();
+    $('phEdit').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function savePhoto(p) { var o = Object.assign({}, p); delete o._id; return dbSet('photos/' + p._id, o); }
+  $('phClose').addEventListener('click', function () { editingPh = null; $('phEdit').hidden = true; renderLibrary(); });
+  $('phDelete').addEventListener('click', function () {
+    var b = $('phDelete');
+    if (!b.dataset.arm) { b.dataset.arm = '1'; b.textContent = 'Tap again to delete'; return; }
+    var p = editingPh; if (!p) return;
+    S.photos = S.photos.filter(function (x) { return x._id !== p._id; });
+    dbDel('photos/' + p._id);
+    if (assets) assets.delete(p.asset).catch(function () {});
+    editingPh = null; $('phEdit').hidden = true; renderLibrary(); toast('Photo deleted');
+  });
+  function uploadPhotos(files, statusEl) {
+    if (!assets || !S.db) { statusEl.textContent = 'Uploading needs the HQ open from your sidebar.'; return Promise.resolve([]); }
+    var done = 0, made = [];
+    statusEl.textContent = 'Uploading 0 / ' + files.length + '…';
+    return files.reduce(function (chain, f) {
+      return chain.then(function () {
+        return assets.upload(f).then(function (r) {
+          var id = 'ph' + r.id.slice(0, 12);
+          var o = { asset: r.id, tags: [], added: new Date().toISOString(), used: [] };
+          S.photos.push(Object.assign({ _id: id }, o)); made.push(Object.assign({ _id: id, _file: f }, o));
+          return dbSet('photos/' + id, o);
+        }).catch(function (e) {
+          statusEl.textContent = (e && e.code === 'quota_exceeded') ? 'Photo storage is full. Delete some old photos.' : "One photo couldn't upload. Try a JPG or PNG.";
+        }).then(function () { done++; statusEl.textContent = 'Uploading ' + done + ' / ' + files.length + '…'; });
+      });
+    }, Promise.resolve()).then(function () {
+      statusEl.textContent = 'Uploaded ' + made.length + '.';
+      renderLibrary(); autoTag(made, statusEl);
+      return made;
+    });
+  }
+  function autoTag(made, statusEl) {
+    if (!sampler || !sampleLimits || !sampleLimits.images || !made.length) return;
+    var max = Math.max(1, Math.min(made.length, sampleLimits.images.maxCount || 1));
+    var batch = made.slice(0, max), rest = made.slice(max);
+    statusEl.textContent = 'Claude is tagging ' + batch.length + ' photo' + (batch.length > 1 ? 's' : '') + '…';
+    sampler.json('These are ' + batch.length + ' photos from a futures trader\'s phone, in order. Tag each with 1-2 of: ' + TAGS.join(', ') + '. Payout = payout certificate or bank deposit; Trade = P&L, chart or trading platform screenshot; Member win = someone else\'s message, Discord post, or their result; Lifestyle = places, cars, apartment, food, outfits; You = the trader himself is the subject. Return JSON only: {"tags": [["Tag", ...], ...]} with one entry per photo in order.', { images: batch.map(function (m) { return m._file; }), modelTier: 'quick' })
+      .then(function (o) {
+        (o && o.tags || []).forEach(function (t, i) {
+          var m = batch[i]; if (!m) return; var p = S.photos.find(function (x) { return x._id === m._id; }); if (!p) return;
+          p.tags = (Array.isArray(t) ? t : [t]).filter(function (x) { return TAGS.indexOf(x) > -1; });
+          savePhoto(p);
+        });
+        renderLibrary(); statusEl.textContent = 'Tagged. Tap a photo to fix a tag.';
+        if (rest.length) autoTag(rest, statusEl);
+      }).catch(function () { statusEl.textContent = 'Uploaded. Tap each photo to tag it.'; });
+  }
+  $('libUp').addEventListener('change', function (e) { var f = Array.prototype.slice.call(e.target.files || []); e.target.value = ''; if (f.length) uploadPhotos(f, $('libStatus')); });
+
+  // ===================================================================
+  // STORIES (canvas engine shared with the Story Maker)
+  // ===================================================================
+  var W = 1080, H = 1920;
+  var cv = $('cv'), ctx = cv.getContext('2d');
+  var EMOJI = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji"';
+  var CAP_FONT = function (px) { return 'italic 900 ' + px + 'px Montserrat, ' + EMOJI + ', "Arial Black", sans-serif'; };
+  var CTA_FONT = function (px) { return 'italic 800 ' + px + 'px Montserrat, ' + EMOJI + ', "Arial Black", sans-serif'; };
+  var LOGO_SRC = '__LOGO__';
+  var SAMPLE_SRC = '__PNL__';
+  var state = { layout: 'proof', style: 'bold', photos: [], bg: null, logo: null, caption: '', size: 84, posY: 80, cta: '', ctaY: 90, arrow: false, logoOn: true, dark: 20 };
+  var LAYOUT_DEFAULTS = { proof: { posY: 80, ctaY: 90 }, full: { posY: 55, ctaY: 80 }, collage: { posY: 82, ctaY: 92 } };
+  var FREE_CTA = 'Tap the link to join the ( *FREE* ) Discord 💸';
+  var BANK = {
+    'Motivation': ['Discipline > motivation', "Nobody's coming to save you", 'Every red day taught me something', 'Stay patient. The money comes.', 'Trading ruined my perception of money', 'Quiet grind. Loud results.', "You're one rule away from being consistent", 'Protect the account first'],
+    'Trades': ['Done for the day ✅', 'One trade. Done.', 'Took what the market gave me and walked away', 'Green day ✅', 'Stressful hold but we got paid 😮‍💨', 'Clean trade today 📈', 'Literally rinsed the market today'],
+    'Payouts': ['Another payout secured 🤝', '*MAX* payout secured 🤝', 'Payout day 💰', 'New money coming in daily 🔥', 'Tradeify keeps paying 💸', 'Same discipline. Different day. Paid again.'],
+    'Member wins': ['W day in the discord 🔥', 'More accounts passed today 🔥', 'From not knowing where to start to getting paid in 2 weeks', 'Built bro from the ground up 🔥', 'Helping people win has always been the goal 💯', 'First payout loading… 💰'],
+    'Discord': ['The Discord is *free*. Pull up.', 'Daily bias drops before the open', 'Live call this week 🎙️', '200+ traders and growing', 'Mentorship apps are open inside', 'Ask questions. Get real answers.'],
+    'Journey': ['Bought my first house at 18 🏠', '21 and trading full time', "A year ago I couldn't picture this", 'Started with one eval. Look at it now.', 'Just helping people make money']
+  };
+  var CTAS = [
+    ['Free Discord', FREE_CTA],
+    ['DM BNB', 'DM me ( *BNB* ) for the free Discord'],
+    ['Highlight', 'Tap my ( *DISCORD* ) highlight to join 💸'],
+    ['Mentorship', 'Mentorship apps are open in the ( *DISCORD* ) 🥂'],
+    ['Tradeify code', 'Use code ( *BNB* ) on Tradeify ⚡'],
+    ['No CTA', '']
+  ];
+  var ROLLOUTS = {
+    'Trade day': [
+      { l: 'full', s: 'bold', c: 'Another day. Same discipline.', cta: '', tag: 'You', tip: 'a morning shot: desk, coffee, charts loading' },
+      { l: 'proof', s: 'bold', c: 'Done for the day ✅', cta: '', tag: 'Trade', tip: "today's P&L screenshot" },
+      { l: 'collage', s: 'bold', c: 'W day in the discord 🔥', cta: '', tag: 'Member win', tip: '2–4 member win screenshots' },
+      { l: 'full', s: 'box', c: "Free Discord.\nMentorship apps inside.", cta: FREE_CTA, tag: 'You', tip: 'any clean shot of you' }
+    ],
+    'Payout drop': [
+      { l: 'full', s: 'bold', c: 'They said trading was gambling', cta: '', tag: 'Lifestyle', tip: 'a lifestyle shot' },
+      { l: 'proof', s: 'bold', c: 'Another payout secured 🤝', cta: '', tag: 'Payout', tip: 'the payout certificate or bank screenshot' },
+      { l: 'full', s: 'box', c: 'Bought my first house at 18.\nStill going.', cta: '', tag: 'Lifestyle', tip: 'you at the house, or a lifestyle shot' },
+      { l: 'full', s: 'bold', c: "Want to learn?\nIt's *free* to join.", cta: FREE_CTA, tag: 'You', tip: 'any clean shot of you' }
+    ],
+    'Motivation': [
+      { l: 'full', s: 'bold', c: "Nobody's coming to save you", cta: '', tag: 'Lifestyle', tip: 'a moody shot: night drive, desk, city' },
+      { l: 'full', s: 'bold', c: 'Every red day taught me something', cta: '', tag: 'You', tip: 'you at the desk' },
+      { l: 'proof', s: 'bold', c: 'Discipline > motivation', cta: '', tag: 'Trade', tip: 'a green day or payout screenshot' },
+      { l: 'full', s: 'box', c: 'Start today.\nThe Discord is *free*.', cta: FREE_CTA, tag: 'You', tip: 'any clean shot of you' }
+    ],
+    'Member wins': [
+      { l: 'collage', s: 'bold', c: "Y'all are going crazy in the discord 🔥", cta: '', tag: 'Member win', tip: '3–4 member win screenshots' },
+      { l: 'proof', s: 'bold', c: 'First payout for bro 💰', cta: '', tag: 'Member win', tip: "a member's payout screenshot" },
+      { l: 'proof', s: 'box', c: 'From not knowing where to start\nto getting paid', cta: '', tag: 'Member win', tip: 'a testimonial or DM screenshot' },
+      { l: 'full', s: 'bold', c: 'You could be next 👀', cta: 'Mentorship apps are open in the ( *DISCORD* ) 🥂', tag: 'You', tip: 'any clean shot of you' }
+    ]
+  };
+/*__ENGINE__*/
+  // ---- story controls
+  function bindSeg(id, key, after) {
+    var seg = $(id);
+    seg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      seg.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      state[key] = b.dataset.v; if (after) after(b.dataset.v); render();
+    });
+  }
+  bindSeg('layoutSeg', 'layout', function (v) { var d = LAYOUT_DEFAULTS[v]; state.posY = d.posY; state.ctaY = d.ctaY; $('posY').value = d.posY; $('ctaY').value = d.ctaY; });
+  bindSeg('styleSeg', 'style');
+  [['caption', String], ['cta', String], ['size', Number], ['posY', Number], ['ctaY', Number], ['dark', Number]].forEach(function (c) {
+    var i = $(c[0]); state[c[0]] = c[1](i.value);
+    i.addEventListener('input', function () { state[c[0]] = c[1](i.value); render(); });
+  });
+  [['arrowOn', 'arrow'], ['logoOn', 'logoOn']].forEach(function (c) { var i = $(c[0]); state[c[1]] = i.checked; i.addEventListener('change', function () { state[c[1]] = i.checked; render(); }); });
+  function setCaption(t) { $('caption').value = t; state.caption = t; render(); }
+  function pressSeg(id, v) { var b = document.querySelector('#' + id + ' button[data-v="' + v + '"]'); if (b) b.click(); }
+  var curCat = 'Motivation';
+  function fillBank(list) {
+    var bank = $('bank'); bank.innerHTML = '';
+    list.forEach(function (t) { var b = el('button', { type: 'button', text: t.replace(/\*/g, '') }); b.addEventListener('click', function () { setCaption(t); }); bank.appendChild(b); });
+  }
+  Object.keys(BANK).forEach(function (k) {
+    var b = el('button', { class: 'chip', type: 'button', text: k, 'aria-pressed': String(k === curCat) });
+    b.addEventListener('click', function () { curCat = k; $('cats').querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); fillBank(BANK[k]); });
+    $('cats').appendChild(b);
+  });
+  fillBank(BANK[curCat]);
+  CTAS.forEach(function (c, i) {
+    var b = el('button', { class: 'chip', type: 'button', text: c[0], 'aria-pressed': String(i === 0) });
+    b.addEventListener('click', function () { $('ctaChips').querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); $('cta').value = c[1]; state.cta = c[1]; render(); });
+    $('ctaChips').appendChild(b);
+  });
+  // rollouts
+  var frameTag = 'All', curRollout = null;
+  function startRollout(name) {
+    curRollout = name;
+    $('rollChips').querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', String(x.textContent === name)); });
+    var fr = $('frames'); fr.innerHTML = '';
+    ROLLOUTS[name].forEach(function (f, i) {
+      var b = el('button', { type: 'button', text: 'Frame ' + (i + 1), 'aria-pressed': 'false' });
+      b.addEventListener('click', function () {
+        fr.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+        pressSeg('layoutSeg', f.l); pressSeg('styleSeg', f.s);
+        $('cta').value = f.cta; state.cta = f.cta;
+        $('ctaChips').querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+        setCaption(f.c);
+        frameTag = f.tag;
+        $('frameHint').textContent = 'Frame ' + (i + 1) + ' of 4: add ' + f.tip + '. Tap "Pick from library" (filtered to ' + f.tag + ').';
+        autoPick(f);
+      });
+      fr.appendChild(b);
+    });
+    fr.querySelector('button').click();
+  }
+  // Fill the frame from the library: least-used photos with the frame's tag.
+  function autoPick(f) {
+    var n = f.l === 'collage' ? 4 : 1;
+    var list = sortedPhotos(f.tag).slice(0, n);
+    if (!list.length) return;
+    Promise.all(list.map(function (p) { return loadImg(photoUrl(p)).then(function (img) { img._thumb = img.src; img._pid = p._id; return img; }).catch(function () { return null; }); }))
+      .then(function (imgs) { imgs = imgs.filter(Boolean); if (imgs.length) { state.photos = imgs; drawThumbs(); render(); } });
+  }
+  Object.keys(ROLLOUTS).forEach(function (k) {
+    var b = el('button', { class: 'chip', type: 'button', text: k, 'aria-pressed': 'false' });
+    b.addEventListener('click', function () { startRollout(k); });
+    $('rollChips').appendChild(b);
+  });
+  // story photos
+  function drawThumbs() {
+    var t = $('thumbs'); t.innerHTML = '';
+    state.photos.forEach(function (img, i) {
+      var x = el('button', { type: 'button', 'aria-label': 'Remove photo ' + (i + 1), text: '×' });
+      x.addEventListener('click', function () { state.photos.splice(i, 1); drawThumbs(); render(); });
+      t.appendChild(el('div', { class: 'thumb' }, [el('img', { src: img._thumb || img.src, alt: 'Photo ' + (i + 1) }), x]));
+    });
+    $('photoCount').textContent = state.photos.length + ' / 4';
+  }
+  var pickMode = 'photos', picked = [], pickFilter = 'All';
+  function openPicker(mode) {
+    pickMode = mode; picked = []; pickFilter = mode === 'bg' ? 'Lifestyle' : frameTag;
+    if (!S.photos.some(function (p) { return pickFilter === 'All' || (p.tags || []).indexOf(pickFilter) > -1; })) pickFilter = 'All';
+    $('picker').hidden = false; renderPicker();
+  }
+  function renderPicker() {
+    tagChips($('pickTags'), pickFilter, function (t) { pickFilter = t; renderPicker(); }, true);
+    var g = $('pickGrid'); g.innerHTML = '';
+    var list = sortedPhotos(pickFilter);
+    if (!list.length) g.appendChild(el('p', { class: 'empty', text: S.photos.length ? 'No photos with this tag. Try All.' : 'Your library is empty. Upload photos in the Photos tab.' }));
+    list.forEach(function (p) {
+      g.appendChild(photoTile(p, picked.indexOf(p) > -1, function () {
+        var i = picked.indexOf(p);
+        if (i > -1) picked.splice(i, 1); else { if (pickMode === 'bg') picked = [p]; else if (picked.length < 4) picked.push(p); }
+        renderPicker();
+      }));
+    });
+    $('pickNote').textContent = pickMode === 'bg' ? 'Pick 1 background' : picked.length + ' selected (up to 4)';
+  }
+  $('pickBtn').addEventListener('click', function () { openPicker('photos'); });
+  $('bgPickBtn').addEventListener('click', function () { openPicker('bg'); });
+  $('pickCancel').addEventListener('click', function () { $('picker').hidden = true; });
+  $('pickDone').addEventListener('click', function () {
+    var sel = picked.slice(); $('picker').hidden = true; if (!sel.length) return;
+    Promise.all(sel.map(function (p) { return loadImg(photoUrl(p)).then(function (img) { img._thumb = img.src; img._pid = p._id; return img; }); })).then(function (imgs) {
+      if (pickMode === 'bg') { state.bg = imgs[0]; $('bgClear').hidden = false; }
+      else { state.photos = imgs.slice(0, 4); drawThumbs(); }
+      render();
+    }).catch(function () { toast("Couldn't load that photo."); });
+  });
+  $('bgClear').addEventListener('click', function () { state.bg = null; $('bgClear').hidden = true; render(); });
+  $('quickUp').addEventListener('change', function (e) {
+    var files = Array.prototype.slice.call(e.target.files || []); e.target.value = ''; if (!files.length) return;
+    Promise.all(files.slice(0, 4).map(function (f) { return loadImg(URL.createObjectURL(f)).then(function (img) { img._thumb = img.src; return img; }); }))
+      .then(function (imgs) { state.photos = imgs; drawThumbs(); render(); });
+    uploadPhotos(files, $('saveNote'));
+  });
+  // save
+  function stamp() { var d = new Date(); return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds()); }
+  $('modalClose').addEventListener('click', function () { $('modal').hidden = true; });
+  function markUsed() {
+    var ids = state.photos.map(function (i) { return i._pid; }).concat(state.bg && state.bg._pid ? [state.bg._pid] : []).filter(Boolean);
+    ids.forEach(function (id) {
+      var p = S.photos.find(function (x) { return x._id === id; }); if (!p) return;
+      var used = (p.used || []).slice(); if (used[used.length - 1] !== TODAY) used.push(TODAY);
+      p.used = used.slice(-12); savePhoto(p);
+    });
+  }
+  var downloadsP = (window.claude && window.claude.use) ? window.claude.use('downloads') : Promise.resolve(null);
+  $('saveBtn').addEventListener('click', function () {
+    render(); $('saveNote').textContent = '';
+    downloadsP.then(function (dl) {
+      if (!dl) { $('modalImg').src = cv.toDataURL('image/png'); $('modal').hidden = false; markUsed(); return; }
+      cv.toBlob(function (blob) {
+        dl.save({ filename: 'bnb-story-' + stamp() + '.png', data: blob })
+          .then(function () { $('saveNote').textContent = 'Saved. Post it from your camera roll.'; markUsed(); })
+          .catch(function (e) {
+            if (e && e.code === 'declined') { $('saveNote').textContent = 'Not saved.'; return; }
+            if (e && e.code === 'rate_limited') { $('saveNote').textContent = 'A save is already open. Finish that one first.'; return; }
+            $('modalImg').src = cv.toDataURL('image/png'); $('modal').hidden = false; markUsed();
+          });
+      }, 'image/png');
+    });
+  });
+
+  // ===================================================================
+  // TABS + BOOT
+  // ===================================================================
+  var TABS = ['today', 'stories', 'discord', 'ideas', 'tracker', 'photos'];
+  function goTab(t) {
+    if (TABS.indexOf(t) < 0) t = 'today';
+    document.querySelectorAll('.tabs button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.tab === t)); });
+    TABS.forEach(function (x) { $('tab-' + x).hidden = x !== t; });
+    try { localStorage.setItem('hq.tab', t); } catch (e) {}
+    window.scrollTo(0, 0);
+    if (t === 'stories') render();
+  }
+  document.querySelectorAll('.tabs button').forEach(function (b) { b.addEventListener('click', function () { goTab(b.dataset.tab); }); });
+  function renderAll() { renderToday(); renderDiscord(); renderTracker(); renderIdeas(); renderLibrary(); }
+
+  var start = (location.hash || '').slice(1);
+  if (TABS.indexOf(start) < 0) { try { start = localStorage.getItem('hq.tab') || 'today'; } catch (e) { start = 'today'; } }
+  goTab(start);
+  renderAll();
+
+  var dbP = (window.claude && window.claude.use) ? window.claude.use('db') : Promise.resolve(null);
+  dbP.then(function (db) { if (db) startDb(db); else $('offline').hidden = false; }).catch(function () { $('offline').hidden = false; });
+
+  var fontsReady = (document.fonts && document.fonts.load) ? Promise.all([document.fonts.load(CAP_FONT(80)), document.fonts.load(CTA_FONT(40))]).catch(function () {}) : Promise.resolve();
+  Promise.all([loadImg(LOGO_SRC), loadImg(SAMPLE_SRC), fontsReady]).then(function (r) {
+    state.logo = r[0]; r[1]._thumb = r[1].src; state.photos = [r[1]];
+    setCaption('Another payout secured 🤝'); drawThumbs(); render();
+  }).catch(function () { render(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { render(); });
+})();
+</script>
