@@ -215,11 +215,7 @@
       </div>
       <div class="card">
         <div class="card-head"><h2>Discord</h2><button class="btn small" type="button" data-goto="discord">Open messages</button></div>
-        <div class="checks">
-          <label class="check"><input type="checkbox" data-day="d_am"> Bias</label>
-          <label class="check"><input type="checkbox" data-day="d_pm"> Recap</label>
-          <label class="check"><input type="checkbox" data-day="d_eve"> Evening</label>
-        </div>
+        <div class="checks" id="todayDiscordChecks"></div>
         <p class="muted" id="discordPreview"></p>
       </div>
     </div>
@@ -300,13 +296,21 @@
   <section id="tab-discord" class="stack" hidden>
     <div class="card">
       <div class="card-head"><h2>Today in the Discord</h2><span class="label" id="discordDay"></span></div>
-      <p class="muted">Fill the brackets, copy, paste. Tick each one when it's sent.</p>
+      <p class="muted">Fill the brackets, copy, paste. Tick each one when it's done. Live is Mon–Fri 6:30 AM PT.</p>
+      <div class="row"><span class="label">Discord streak</span><b id="dStreak" style="font:700 1.1rem var(--mono)">0</b><span class="label">days</span></div>
     </div>
     <div id="discordMsgs" class="stack"></div>
     <div class="card">
+      <div class="card-head"><h2>This week's Learn video</h2><span class="pill" id="vidNum">Video 1 of 8</span></div>
+      <p class="hook" id="vidTopic" style="font-size:1.1rem"></p>
+      <p class="muted" id="vidHow"></p>
+      <p class="dim" style="font-size:.85rem">5–10 min screen recording with your face in the corner. Upload to YouTube as unlisted, post the link in #videos. No time? Clip the best 2–5 min of a live instead.</p>
+      <div class="checks"><label class="check"><input type="checkbox" id="vidDone"> Posted this week's video</label></div>
+    </div>
+    <div class="card">
       <h2>Weekly rhythm</h2>
       <div class="table-wrap"><table style="min-width:0">
-        <thead><tr><th>Day</th><th>Evening message</th><th>Stories rollout</th></tr></thead>
+        <thead><tr><th>Day</th><th>Discord</th><th>Stories rollout</th></tr></thead>
         <tbody id="weekRhythm"></tbody>
       </table></div>
     </div>
@@ -482,17 +486,62 @@
     { h: 'When the market hits your stop then goes to your target', s: 'Relatable skit, 10s.' }
   ];
   var ROLL_BY_DOW = ['Member wins', 'Motivation', 'Trade day', 'Member wins', 'Trade day', 'Payout drop', 'Motivation'];
+  var LIVE = '6:30 AM PT';
   var EVENING = [
-    "🧠 Reset day. Journal your week. Here's mine:\n[3 lines]\n\nDaily bias is back tomorrow before the open.",
+    '',
     "🎯 New week. Drop ONE goal for this week below 👇 I'll check back Friday.",
     "Real question: what's the one rule you broke today? Be honest. Nobody's judging.",
-    "🎙️ Live call [day/time]. Bring your questions. Mentorship students, stay after.",
+    "Who's been on every live this week? 👀 Drop a 🔥 if you're locked in. Tomorrow " + LIVE + ".",
     "Shoutout to [@member] for [their win]. That's what consistency looks like 🔥",
-    "📅 Weekly recap: [your week in 2 lines]\nMember of the week: [@member] 🏆\n\n1:1 mentorship apps are open → #apply",
-    "Weekend = review. Go through every trade from this week. What would you do different? Drop one below 👇"
+    "🏆 WINS OF THE WEEK\n\n[@member] [win]\n[@member] [win]\n[@member] [win]\n\nProud of y'all. Post yours in #💸-daily-pnl so you're on next week's list 👇",
+    ''
   ];
-  function biasMsg(k) { var d = fromKey(k); return '📊 DAILY BIAS · ' + DOW[d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate() + '\n\nBias: [bullish / bearish / sitting out]\nWhat I\'m watching: [1 line]\nNews: [time or none]\n\nWhat\'s your plan today? Drop it below 👇'; }
-  var RECAP_MSG = '✅ RECAP: [W / L] [+$ / -$]\n\nWhat happened: [1 line]\nLesson: [1 line]\n\nPost yours in #wins or #journal 👇';
+  var SAT_PROMPTS = [
+    "Weekend review 🧠 Drop your best AND worst trade of the week 👇 I'll go first: [yours]",
+    "Desk setup check 📸 Post your trading setup. Best one gets a shoutout Monday.",
+    "This or that: NQ or gold? Why? 👇",
+    "Hot take: [your take]. Agree or nah? 👇",
+    "What's one rule you're adding next week after this week's trades? 👇",
+    "Weekend plans? I'm [what you're doing]. What y'all on? 👇"
+  ];
+  var SUN_PROMPTS = [
+    "Sunday reset 🧠 Journal your week. Here's mine:\n[3 lines]",
+    "Who's locked in for tomorrow? 🔴 Live " + LIVE + ". React 🔥 if you'll be there.",
+    "What's the best trading lesson you learned this month? 👇",
+    "Real talk: what's stopping you from getting funded right now? 👇 I'll answer as many as I can."
+  ];
+  var GIVEAWAY = "🎁 MONTHLY GIVEAWAY: [prize, e.g. $100 or a free eval with code BNB]\n\nTo enter: post a win in #💸-daily-pnl or invite a friend this week.\nWinner picked [day] on the live 🔴";
+  var LEARN = [
+    { t: 'Setting up Tradovate + TradingView', h: 'Login, connecting your prop account, the TradingView add-on. The #1 question in the server.' },
+    { t: 'Which account size to buy: 50K vs 100K vs 150K', h: 'What changes with each size, and what you\'d pick starting out.' },
+    { t: 'Intraday vs end-of-day drawdown, explained simply', h: 'How each one works and how people blow accounts on it.' },
+    { t: 'How payouts work', h: 'Rules, timing, consistency, what to expect after you request one.' },
+    { t: 'NQ vs MNQ: what a point is worth', h: 'Contract sizes, tick and point value, why most people should start on MNQ.' },
+    { t: 'Risk basics: daily max loss and when to stop', h: 'Simple rules that keep the account alive.' },
+    { t: 'Overtrading and revenge trading', h: 'Why it happens and what you do instead.' },
+    { t: 'How to use this Discord + the live schedule', h: 'Where to post wins, where to ask questions, live ' + LIVE + '.' }
+  ];
+  function md(d) { return (d.getMonth() + 1) + '/' + d.getDate(); }
+  function biasMsg(k) { var d = fromKey(k); return '📊 DAILY BIAS · ' + DOW[d.getDay()] + ' ' + md(d) + '\n\nBias: [bullish / bearish / sitting out]\nWhat I\'m watching: [1 line]\nNews: [time or none]\n\nLive at ' + LIVE + ' 🔴 What\'s your plan today? 👇'; }
+  var LIVE_PING = '🔴 Live in 10. Hop in 👇 @here';
+  var RECAP_MSG = '✅ RECAP: [W / L] [+$ / -$]\n\nCalled this on live: [screenshot]\nLesson: [1 line]\n\nY\'all that missed it 👀 Same time tomorrow, ' + LIVE + '. Post your trades in #💸-daily-pnl 👇';
+  function outlookMsg(k) { var d = fromKey(k), a = addDays(d, 1), b = addDays(d, 5); return '📅 WEEK AHEAD · ' + md(a) + '–' + md(b) + '\n\nNews to watch:\n[day – event – time]\n[day – event – time]\n\nMy bias for the week: [1 line]\nLive Mon–Fri ' + LIVE + ' 🔴\n\nWhat\'s your goal this week? 👇'; }
+  function weekNo(k) { return Math.floor(dayIndex(k) / 7); }
+  // The Discord to-do list for a day: [key, title, message or null (check-only)].
+  function discordItems(k) {
+    var d = fromKey(k), dow = d.getDay(), wk = weekNo(k);
+    if (dow === 6) return [['d_wins', 'Reply to wins in #💸-daily-pnl', null], ['d_sat', 'Weekend chat', SAT_PROMPTS[wk % SAT_PROMPTS.length]]];
+    if (dow === 0) return [['d_out', 'Weekly outlook', outlookMsg(k)], ['d_sun', d.getDate() <= 7 ? 'Monthly giveaway' : 'Sunday chat', d.getDate() <= 7 ? GIVEAWAY : SUN_PROMPTS[wk % SUN_PROMPTS.length]]];
+    return [
+      ['d_am', 'Bias (~6:00 AM PT)', biasMsg(k)],
+      ['d_live', 'Live ping (6:20 AM PT)', LIVE_PING],
+      ['d_pm', 'Recap after the live', RECAP_MSG],
+      ['d_wins', 'Reply to wins in #💸-daily-pnl', null],
+      ['d_eve', dow === 5 ? 'Wins of the week' : 'Evening', EVENING[dow]]
+    ];
+  }
+  function discordDone(k) { var day = S.days[k] || {}, items = discordItems(k), n = items.filter(function (it) { return day[it[0]]; }).length; return n >= Math.min(2, items.length); }
+  function discordStreak() { var n = 0, d = new Date(); if (!discordDone(dkey(d))) d = addDays(d, -1); while (discordDone(dkey(d)) && n < 400) { n++; d = addDays(d, -1); } return n; }
 
   // ===================================================================
   // DATA LAYER (db when available, in-memory otherwise)
@@ -536,7 +585,7 @@
       bonus: saved.bonus || { hook: b.h, say: b.s },
       rollout: saved.rollout || ROLL_BY_DOW[dow],
       note: saved.note || '',
-      discord: { am: biasMsg(k), pm: RECAP_MSG, eve: (saved.discord && saved.discord.eve) || EVENING[dow] }
+      discord: discordItems(k)
     };
   }
   function posted(k) { var d = S.days[k]; return !!(d && (d.ig || d.tt)); }
@@ -574,7 +623,14 @@
     $('todayRollout').textContent = p.rollout;
     var rl = $('rolloutList'); rl.innerHTML = '';
     (ROLLOUTS[p.rollout] || []).forEach(function (f) { rl.appendChild(el('li', { text: f.c.replace(/\*/g, '').replace(/\n/g, ' ') + ' · ' + f.tag })); });
-    $('discordPreview').textContent = 'Tonight: ' + p.discord.eve.split('\n')[0];
+    var dbox = $('todayDiscordChecks'); dbox.innerHTML = ''; var dday = S.days[TODAY] || {};
+    p.discord.forEach(function (it) {
+      var cb = el('input', { type: 'checkbox' }); cb.checked = !!dday[it[0]];
+      cb.addEventListener('change', function () { setDay(it[0], cb.checked); });
+      dbox.appendChild(el('label', { class: 'check' }, [cb, ' ' + it[1].replace(/ \(.*\)$/, '').replace(' in #💸-daily-pnl', '')]));
+    });
+    var wk = weekNo(TODAY), vid = LEARN[wk % LEARN.length];
+    $('discordPreview').textContent = "This week's Learn video: " + vid.t;
     var day = S.days[TODAY] || {};
     document.querySelectorAll('[data-day]').forEach(function (cb) { cb.checked = !!day[cb.dataset.day]; });
     $('streakNum').textContent = streak();
@@ -608,25 +664,42 @@
   // ===================================================================
   // DISCORD
   // ===================================================================
+  function weekHas(field) {
+    var d = new Date(), mon = addDays(d, -((d.getDay() + 6) % 7));
+    for (var i = 0; i < 7; i++) { var k = dkey(addDays(mon, i)); if (S.days[k] && S.days[k][field]) return k; }
+    return null;
+  }
+  $('vidDone').addEventListener('change', function () {
+    var k = weekHas('vid');
+    if (!$('vidDone').checked && k && k !== TODAY) { var o = Object.assign({}, S.days[k]); delete o._id; o.vid = false; S.days[k].vid = false; dbSet('days/' + k, o); renderDiscord(); return; }
+    setDay('vid', $('vidDone').checked); renderDiscord();
+  });
   function renderDiscord() {
-    var p = planFor(TODAY), d = new Date(), weekend = d.getDay() === 0 || d.getDay() === 6;
+    var d = new Date();
     $('discordDay').textContent = DOW_LONG[d.getDay()];
+    $('dStreak').textContent = discordStreak();
     var box = $('discordMsgs'); box.innerHTML = '';
     var day = S.days[TODAY] || {};
-    var items = weekend ? [['d_eve', 'Today', p.discord.eve]] : [['d_am', 'Before the open (~9:00 ET)', p.discord.am], ['d_pm', 'After your session (~11:30 ET)', p.discord.pm], ['d_eve', 'Evening', p.discord.eve]];
-    items.forEach(function (it) {
-      var txt = el('span', { text: it[2] });
+    discordItems(TODAY).forEach(function (it) {
       var cb = el('input', { type: 'checkbox' }); cb.checked = !!day[it[0]];
-      cb.addEventListener('change', function () { setDay(it[0], cb.checked); });
-      var cbtn = el('button', { class: 'btn small', type: 'button', text: 'Copy' }); cbtn.addEventListener('click', function () { copy(it[2], cbtn); });
-      box.appendChild(el('div', { class: 'card' }, [
-        el('div', { class: 'card-head' }, [el('h2', { text: it[1] }), el('label', { class: 'check' }, [cb, ' Sent'])]),
-        el('div', { class: 'copybox' }, [cbtn, txt])
-      ]));
+      cb.addEventListener('change', function () { setDay(it[0], cb.checked); renderDiscord(); });
+      var kids = [el('div', { class: 'card-head' }, [el('h2', { text: it[1] }), el('label', { class: 'check' }, [cb, it[2] ? ' Sent' : ' Done'])])];
+      if (it[2]) {
+        var cbtn = el('button', { class: 'btn small', type: 'button', text: 'Copy' }); cbtn.addEventListener('click', function () { copy(it[2], cbtn); });
+        kids.push(el('div', { class: 'copybox' }, [cbtn, el('span', { text: it[2] })]));
+      } else {
+        kids.push(el('p', { class: 'muted', text: 'React and reply to every P&L and payout post. Call people out by name. People post more when you notice them.' }));
+      }
+      box.appendChild(el('div', { class: 'card' }, kids));
     });
+    var wk = weekNo(TODAY), vid = LEARN[wk % LEARN.length];
+    $('vidNum').textContent = 'Video ' + (wk % LEARN.length + 1) + ' of ' + LEARN.length;
+    $('vidTopic').textContent = vid.t; $('vidHow').textContent = vid.h;
+    $('vidDone').checked = !!weekHas('vid');
     var tb = $('weekRhythm'); tb.innerHTML = '';
+    var RHY = { 1: 'Bias · live ping · recap · goals thread', 2: 'Bias · live ping · recap · "rule you broke?"', 3: 'Bias · live ping · recap · "who\'s locked in?"', 4: 'Bias · live ping · recap · member shoutout', 5: 'Bias · live ping · recap · Wins of the Week', 6: 'Reply to wins · weekend chat prompt', 0: 'Weekly outlook · Sunday chat (1st Sunday: giveaway)' };
     [1, 2, 3, 4, 5, 6, 0].forEach(function (i) {
-      tb.appendChild(el('tr', null, [el('td', { text: DOW[i] }), el('td', { text: EVENING[i].split('\n')[0] }), el('td', { text: ROLL_BY_DOW[i] })]));
+      tb.appendChild(el('tr', null, [el('td', { text: DOW[i] }), el('td', { text: RHY[i] }), el('td', { text: ROLL_BY_DOW[i] })]));
     });
   }
 
