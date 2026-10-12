@@ -65,6 +65,9 @@
   .chip { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 999px; padding: 8px 12px; font: 600 .85rem var(--body); cursor: pointer; text-align: left; }
   .chip:hover { border-color: #4a4a50; }
   .chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .frames { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .frames button { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 10px; padding: 10px 6px; font: 700 .85rem var(--body); cursor: pointer; min-height: 44px; }
+  .frames button[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
   .bank { display: grid; gap: 6px; max-height: 260px; overflow: auto; padding-right: 4px; }
   .bank button { text-align: left; border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 10px; padding: 10px 12px; font: 600 .9rem var(--body); cursor: pointer; }
   .bank button:hover { border-color: var(--fg); }
@@ -103,6 +106,13 @@
         <button type="button" data-v="collage" aria-pressed="false">Collage</button>
       </div>
       <p class="hint" id="layoutHint">Best for P&amp;L and payout screenshots. Your screenshot sits on a card with the logo up top.</p>
+    </section>
+
+    <section class="card">
+      <h2>Rollouts <span class="label">4 frames → Discord</span></h2>
+      <div class="chips" id="rollChips" role="group" aria-label="Rollout"></div>
+      <div class="frames" id="frames"></div>
+      <p class="hint" id="frameHint">Pick a rollout, then tap each frame. It sets the layout, caption and CTA. Add the photo it asks for, then save that frame.</p>
     </section>
 
     <section class="card">
@@ -148,7 +158,7 @@
     <section class="card">
       <h2>Call to action</h2>
       <div class="chips" id="ctaChips" role="group" aria-label="Call to action"></div>
-      <input type="text" id="cta" aria-label="Call to action text" value="Link in bio to join ( *BNBPROFITS* ) 💸">
+      <input type="text" id="cta" aria-label="Call to action text" value="Tap the link to join the ( *FREE* ) Discord 💸">
       <div class="slider"><span>Height</span><input type="range" id="ctaY" min="20" max="95" value="90" aria-label="Call to action height"></div>
       <label class="toggle"><input type="checkbox" id="arrowOn"> Hand-drawn arrow to the CTA</label>
     </section>
@@ -193,21 +203,49 @@
   };
 
   var BANK = {
-    'Payouts': ['Another payout secured 🤝', '*MAX* payout secured 🤝', 'Prop firms keep paying 💸', 'Same setup. Different day. Paid again.', 'New money coming in daily 🔥', 'Payout day 💰'],
-    'Trade recap': ['Literally rinsed the market today', 'One trade. Done for the day.', 'Took what the market gave me and walked away', 'NY open did its thing 📈', 'Swept the lows, ran the highs 🎯', 'Green before 10am ✅'],
+    'Motivation': ['Discipline > motivation', "Nobody's coming to save you", 'Every red day taught me something', 'Stay patient. The money comes.', 'Trading ruined my perception of money', 'Quiet grind. Loud results.', "You're one rule away from being consistent", 'Protect the account first'],
+    'Trades': ['Done for the day ✅', 'One trade. Done.', 'Took what the market gave me and walked away', 'Green day ✅', 'Stressful hold but we got paid 😮‍💨', 'Clean trade today 📈', 'Literally rinsed the market today'],
+    'Payouts': ['Another payout secured 🤝', '*MAX* payout secured 🤝', 'Payout day 💰', 'New money coming in daily 🔥', 'Tradeify keeps paying 💸', 'Same discipline. Different day. Paid again.'],
     'Member wins': ['W day in the discord 🔥', 'More accounts passed today 🔥', 'From not knowing where to start to getting paid in 2 weeks', 'Built bro from the ground up 🔥', 'Helping people win has always been the goal 💯', 'First payout loading… 💰'],
-    'Discord': ['Daily bias drops before the open', 'Live call this week. Pull up.', '200+ traders and still growing', 'We eat together in here 🍽️', 'Ask questions. Get real answers.'],
-    '1:1': ['1:1 spots open this week', 'Stop guessing. Start trading with an *edge*.', 'Discipline + execution = payouts', "I'll show you exactly how I trade", 'Limited 1:1 spots. Apply in bio.'],
-    'Mindset': ['Take what you can get and walk away', 'No sweep, no trade', 'Overtrading is how you give it back', "The goal isn't more trades. It's the right ones.", 'Protect the account first']
+    'Discord': ['The Discord is *free*. Pull up.', 'Daily bias drops before the open', 'Live call this week 🎙️', '200+ traders and growing', 'Mentorship apps are open inside', 'Ask questions. Get real answers.'],
+    'Journey': ['Bought my first house at 18 🏠', '21 and trading full time', "A year ago I couldn't picture this", 'Started with one eval. Look at it now.', 'Just helping people make money']
   };
+  var FREE_CTA = 'Tap the link to join the ( *FREE* ) Discord 💸';
   var CTAS = [
-    ['Join Discord', 'Link in bio to join ( *BNBPROFITS* ) 💸'],
+    ['Free Discord', FREE_CTA],
+    ['DM BNB', 'DM me ( *BNB* ) for the free Discord'],
     ['Highlight', 'Tap my ( *DISCORD* ) highlight to join 💸'],
-    ['Apply 1:1', 'Link in bio to apply for ( *1:1* ) 🥂'],
+    ['Mentorship', 'Mentorship apps are open in the ( *DISCORD* ) 🥂'],
     ['Tradeify code', 'Use code ( *BNB* ) on Tradeify ⚡'],
-    ['DM me', 'DM me ( *"1:1"* ) to get started'],
     ['No CTA', '']
   ];
+  // Story rollouts: 4 frames posted back to back, ending on the Discord.
+  var ROLLOUTS = {
+    'Trade day': [
+      { l: 'full', s: 'bold', c: 'Another day. Same discipline.', cta: '', tip: 'A morning shot: your desk, coffee, charts loading' },
+      { l: 'proof', s: 'bold', c: 'Done for the day ✅', cta: '', tip: "Today's P&L screenshot" },
+      { l: 'collage', s: 'bold', c: 'W day in the discord 🔥', cta: '', tip: '2–4 member win screenshots' },
+      { l: 'full', s: 'box', c: "Free Discord.\nMentorship apps inside.", cta: FREE_CTA, tip: 'Any clean shot of you' }
+    ],
+    'Payout drop': [
+      { l: 'full', s: 'bold', c: 'They said trading was gambling', cta: '', tip: 'A lifestyle shot of you' },
+      { l: 'proof', s: 'bold', c: 'Another payout secured 🤝', cta: '', tip: 'The payout certificate or bank screenshot' },
+      { l: 'full', s: 'box', c: 'Bought my first house at 18.\nStill going.', cta: '', tip: 'You at the house, or a lifestyle shot' },
+      { l: 'full', s: 'bold', c: "Want to learn?\nIt's *free* to join.", cta: FREE_CTA, tip: 'Any clean shot of you' }
+    ],
+    'Motivation': [
+      { l: 'full', s: 'bold', c: "Nobody's coming to save you", cta: '', tip: 'A moody shot: night drive, desk, city' },
+      { l: 'full', s: 'bold', c: 'Every red day taught me something', cta: '', tip: 'You at the desk' },
+      { l: 'proof', s: 'bold', c: 'Discipline > motivation', cta: '', tip: 'A green day or payout screenshot' },
+      { l: 'full', s: 'box', c: 'Start today.\nThe Discord is *free*.', cta: FREE_CTA, tip: 'Any clean shot of you' }
+    ],
+    'Member wins': [
+      { l: 'collage', s: 'bold', c: "Y'all are going crazy in the discord 🔥", cta: '', tip: '3–4 member win screenshots' },
+      { l: 'proof', s: 'bold', c: 'First payout for bro 💰', cta: '', tip: "A member's payout screenshot" },
+      { l: 'proof', s: 'box', c: 'From not knowing where to start\nto getting paid', cta: '', tip: 'A testimonial or DM screenshot' },
+      { l: 'full', s: 'bold', c: 'You could be next 👀', cta: 'Mentorship apps are open in the ( *DISCORD* ) 🥂', tip: 'Any clean shot of you' }
+    ]
+  };
 
   // ---------- images
   function loadImg(src) {
@@ -403,7 +441,7 @@
   function setCaption(t) { var el = document.getElementById('caption'); el.value = t; state.caption = t; render(); }
 
   // caption bank
-  var catEl = document.getElementById('cats'), bankEl = document.getElementById('bank'), curCat = 'Payouts';
+  var catEl = document.getElementById('cats'), bankEl = document.getElementById('bank'), curCat = 'Motivation';
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function fillBank(list) {
     bankEl.innerHTML = '';
@@ -438,6 +476,36 @@
       ctaIn.value = c[1]; state.cta = c[1]; render();
     });
     ctaChips.appendChild(b);
+  });
+
+  // rollouts
+  var rollChips = document.getElementById('rollChips'), framesEl = document.getElementById('frames'), frameHint = document.getElementById('frameHint');
+  function pressSeg(id, v) { var b = document.querySelector('#' + id + ' button[data-v="' + v + '"]'); if (b) b.click(); }
+  function showRollout(name) {
+    framesEl.innerHTML = '';
+    ROLLOUTS[name].forEach(function (f, i) {
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = 'Frame ' + (i + 1);
+      b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', function () {
+        framesEl.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+        pressSeg('layoutSeg', f.l); pressSeg('styleSeg', f.s);
+        ctaIn.value = f.cta; state.cta = f.cta;
+        ctaChips.querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+        setCaption(f.c);
+        frameHint.textContent = 'Frame ' + (i + 1) + ' of ' + ROLLOUTS[name].length + ': add ' + f.tip.charAt(0).toLowerCase() + f.tip.slice(1) + '.';
+      });
+      framesEl.appendChild(b);
+    });
+  }
+  Object.keys(ROLLOUTS).forEach(function (k) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = k;
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', function () {
+      rollChips.querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      showRollout(k);
+      framesEl.querySelector('button').click();
+    });
+    rollChips.appendChild(b);
   });
 
   // photos
@@ -508,8 +576,9 @@
     aiBtn.addEventListener('click', function () {
       var happened = document.getElementById('aiNote').value.trim();
       var prompt = [
-        'You write Instagram story captions for Gene (@bnbgene). He day trades NQ/MNQ futures at the New York open only (marks previous session highs and lows, waits for a liquidity sweep, enters on a 1-minute FVG or break of structure, targets opposing liquidity, then walks away).',
-        'He runs the BNBProfits Discord ($75/month: daily bias, weekly live calls, Q&A) and 1:1 mentorship ($750-$1,500). His Tradeify code is BNB.',
+        'You write Instagram story captions for Gene (@bnbgene). He is 21, trades NQ/MNQ futures full time with Tradeify (his code is BNB), and bought his first house at 18.',
+        'He runs the BNBProfits Discord. It is FREE to join, and his 1:1 mentorship applications happen inside it. His stories are motivation rollouts, his trades and payouts, member wins, and pushing people into the free Discord.',
+        'Never describe his trading strategy, setups, entries, levels or sessions. No quizzes or polls.',
         'Voice: casual, short, direct, confident, sounds like a real person, common words. Not corny, not corporate, no hashtags, no motivational cliches, no guarantees of profit. At most one emoji per caption.',
         'Topic: ' + curCat + '.',
         happened ? 'What happened today: ' + happened : 'No details given, keep it general.',
