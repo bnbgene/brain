@@ -133,7 +133,7 @@
   .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 4px; }
   .seg button { border: 0; background: transparent; color: var(--muted); font: 600 .84rem var(--body); padding: 9px 6px; border-radius: 7px; cursor: pointer; min-height: 38px; }
   .seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
-  .frames { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .frames { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 6px; }
   .frames button { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 10px; padding: 9px 6px; font: 700 .82rem var(--body); cursor: pointer; min-height: 42px; }
   .frames button[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
   .slider { display: grid; grid-template-columns: 70px 1fr; gap: 10px; align-items: center; }
@@ -190,6 +190,8 @@
         <dt>Length</dt><dd id="mainLen"></dd>
         <dt>CTA</dt><dd id="mainCta"></dd>
       </dl>
+      <div class="copybox"><button class="btn small" type="button" data-copy="mainScript">Copy</button><span class="label">Script · word for word</span><br><span id="mainScript"></span></div>
+      <div class="row"><button class="btn small" type="button" id="mainWrite">Write my script</button><span class="dim" id="mainWriteNote"></span></div>
       <div class="copybox"><button class="btn small" type="button" data-copy="mainCaption">Copy</button><span class="label">Caption</span><br><span id="mainCaption"></span></div>
       <div class="checks">
         <label class="check"><input type="checkbox" data-day="filmed"> Filmed</label>
@@ -203,6 +205,8 @@
       <div class="card-head"><h2>Bonus post</h2><span class="pill">Optional</span></div>
       <p class="hook" id="bonusHook" style="font-size:1.05rem"></p>
       <p class="muted" id="bonusSay"></p>
+      <div class="copybox"><button class="btn small" type="button" data-copy="bonusScript">Copy</button><span class="label">Script · word for word</span><br><span id="bonusScript"></span></div>
+      <div class="row"><button class="btn small" type="button" id="bonusWrite">Write my script</button><span class="dim" id="bonusWriteNote"></span></div>
       <div class="checks"><label class="check"><input type="checkbox" data-day="bonus"> Posted bonus</label></div>
     </div>
 
@@ -264,6 +268,7 @@
             <button type="button" data-v="proof" aria-pressed="true">Proof card</button>
             <button type="button" data-v="full" aria-pressed="false">Full photo</button>
             <button type="button" data-v="collage" aria-pressed="false">Collage</button>
+            <button type="button" data-v="text" aria-pressed="false">Text only</button>
           </div>
         </div>
         <div class="card">
@@ -485,32 +490,32 @@
     { h: 'Trading ruined my sleep schedule', s: 'Day-in-the-life angle on your best hook. 20s.' },
     { h: 'When the market hits your stop then goes to your target', s: 'Relatable skit, 10s.' }
   ];
-  var ROLL_BY_DOW = ['Member wins', 'Motivation', 'Trade day', 'Member wins', 'Trade day', 'Payout drop', 'Motivation'];
+  var ROLL_BY_DOW = ['Proof run', 'Motivation', 'Trade day', 'Member wins', 'Trade day', 'Payout drop', 'Motivation'];
   var LIVE = '6:30 AM PT';
   var EVENING = [
     '',
     "🎯 New week. Drop ONE goal for this week below 👇 I'll check back Friday.",
     "Real question: what's the one rule you broke today? Be honest. Nobody's judging.",
     "Who's been on every live this week? 👀 Drop a 🔥 if you're locked in. Tomorrow " + LIVE + ".",
-    "Shoutout to [@member] for [their win]. That's what consistency looks like 🔥",
-    "🏆 WINS OF THE WEEK\n\n[@member] [win]\n[@member] [win]\n[@member] [win]\n\nProud of y'all. Post yours in #💸-daily-pnl so you're on next week's list 👇",
+    "Shoutout to everybody who posted a green day this week 🔥 That's what consistency looks like. Keep stacking.",
+    "🏆 WINS OF THE WEEK\n\n[tag 3 people from #💸-daily-pnl and their win]\n\nProud of y'all. Post yours in #💸-daily-pnl so you're on next week's list 👇",
     ''
   ];
   var SAT_PROMPTS = [
-    "Weekend review 🧠 Drop your best AND worst trade of the week 👇 I'll go first: [yours]",
+    "Weekend review 🧠 Drop your best AND worst trade of the week 👇 Screenshots welcome.",
     "Desk setup check 📸 Post your trading setup. Best one gets a shoutout Monday.",
     "This or that: NQ or gold? Why? 👇",
-    "Hot take: [your take]. Agree or nah? 👇",
+    "Hot take: most people don't need a new strategy. They need to stop trading after their first green trade. Agree or nah? 👇",
     "What's one rule you're adding next week after this week's trades? 👇",
-    "Weekend plans? I'm [what you're doing]. What y'all on? 👇"
+    "What's everybody doing this weekend? Unplugging or still studying charts? 👇"
   ];
   var SUN_PROMPTS = [
-    "Sunday reset 🧠 Journal your week. Here's mine:\n[3 lines]",
+    "Sunday reset 🧠 Go back through your trades from this week. Write down 1 thing you did right and 1 thing you'll fix. Drop yours below 👇",
     "Who's locked in for tomorrow? 🔴 Live " + LIVE + ". React 🔥 if you'll be there.",
     "What's the best trading lesson you learned this month? 👇",
-    "Real talk: what's stopping you from getting funded right now? 👇 I'll answer as many as I can."
+    "Real talk: what's stopping you from getting funded right now? 👇 I'll answer as many as I can on the live this week."
   ];
-  var GIVEAWAY = "🎁 MONTHLY GIVEAWAY: [prize, e.g. $100 or a free eval with code BNB]\n\nTo enter: post a win in #💸-daily-pnl or invite a friend this week.\nWinner picked [day] on the live 🔴";
+  var GIVEAWAY = "🎁 MONTHLY GIVEAWAY: $100\n\nTo enter: post a win in #💸-daily-pnl this week or invite a friend to the server.\nWinner picked Friday on the live 🔴";
   var LEARN = [
     { t: 'Setting up Tradovate + TradingView', h: 'Login, connecting your prop account, the TradingView add-on. The #1 question in the server.' },
     { t: 'Which account size to buy: 50K vs 100K vs 150K', h: 'What changes with each size, and what you\'d pick starting out.' },
@@ -522,22 +527,23 @@
     { t: 'How to use this Discord + the live schedule', h: 'Where to post wins, where to ask questions, live ' + LIVE + '.' }
   ];
   function md(d) { return (d.getMonth() + 1) + '/' + d.getDate(); }
-  function biasMsg(k) { var d = fromKey(k); return '📊 DAILY BIAS · ' + DOW[d.getDay()] + ' ' + md(d) + '\n\nBias: [bullish / bearish / sitting out]\nWhat I\'m watching: [1 line]\nNews: [time or none]\n\nLive at ' + LIVE + ' 🔴 What\'s your plan today? 👇'; }
+  function savedDiscord(k) { return (S.plans[k] && S.plans[k].discord) || {}; }
+  function biasMsg(k) { var d = fromKey(k), news = savedDiscord(k).news; return '📊 DAILY BIAS · ' + DOW[d.getDay()] + ' ' + md(d) + '\n\nBias: [your call: bullish / bearish / sitting out]\nWhat I\'m watching: [1 line]\nNews: ' + (news || '[check the calendar]') + '\n\nLive at ' + LIVE + ' 🔴 What\'s your plan today? 👇'; }
   var LIVE_PING = '🔴 Live in 10. Hop in 👇 @here';
   var RECAP_MSG = '✅ RECAP: [W / L] [+$ / -$]\n\nCalled this on live: [screenshot]\nLesson: [1 line]\n\nY\'all that missed it 👀 Same time tomorrow, ' + LIVE + '. Post your trades in #💸-daily-pnl 👇';
-  function outlookMsg(k) { var d = fromKey(k), a = addDays(d, 1), b = addDays(d, 5); return '📅 WEEK AHEAD · ' + md(a) + '–' + md(b) + '\n\nNews to watch:\n[day – event – time]\n[day – event – time]\n\nMy bias for the week: [1 line]\nLive Mon–Fri ' + LIVE + ' 🔴\n\nWhat\'s your goal this week? 👇'; }
+  function outlookMsg(k) { if (savedDiscord(k).outlook) return savedDiscord(k).outlook; var d = fromKey(k), a = addDays(d, 1), b = addDays(d, 5); return '📅 WEEK AHEAD · ' + md(a) + '–' + md(b) + '\n\nNews to watch:\n[day – event – time]\n[day – event – time]\n\nMy bias for the week: [1 line]\nLive Mon–Fri ' + LIVE + ' 🔴\n\nWhat\'s your goal this week? 👇'; }
   function weekNo(k) { return Math.floor(dayIndex(k) / 7); }
   // The Discord to-do list for a day: [key, title, message or null (check-only)].
   function discordItems(k) {
-    var d = fromKey(k), dow = d.getDay(), wk = weekNo(k);
-    if (dow === 6) return [['d_wins', 'Reply to wins in #💸-daily-pnl', null], ['d_sat', 'Weekend chat', SAT_PROMPTS[wk % SAT_PROMPTS.length]]];
-    if (dow === 0) return [['d_out', 'Weekly outlook', outlookMsg(k)], ['d_sun', d.getDate() <= 7 ? 'Monthly giveaway' : 'Sunday chat', d.getDate() <= 7 ? GIVEAWAY : SUN_PROMPTS[wk % SUN_PROMPTS.length]]];
+    var d = fromKey(k), dow = d.getDay(), wk = weekNo(k), sd = savedDiscord(k);
+    if (dow === 6) return [['d_wins', 'Reply to wins in #💸-daily-pnl', null], ['d_sat', 'Weekend chat', sd.chat || SAT_PROMPTS[wk % SAT_PROMPTS.length]]];
+    if (dow === 0) return [['d_out', 'Weekly outlook', outlookMsg(k)], ['d_sun', d.getDate() <= 7 ? 'Monthly giveaway' : 'Sunday chat', d.getDate() <= 7 ? GIVEAWAY : (sd.chat || SUN_PROMPTS[wk % SUN_PROMPTS.length])]];
     return [
       ['d_am', 'Bias (~6:00 AM PT)', biasMsg(k)],
       ['d_live', 'Live ping (6:20 AM PT)', LIVE_PING],
       ['d_pm', 'Recap after the live', RECAP_MSG],
       ['d_wins', 'Reply to wins in #💸-daily-pnl', null],
-      ['d_eve', dow === 5 ? 'Wins of the week' : 'Evening', EVENING[dow]]
+      ['d_eve', dow === 5 ? 'Wins of the week' : 'Evening', (dow !== 5 && sd.eve) || EVENING[dow]]
     ];
   }
   function discordDone(k) { var day = S.days[k] || {}, items = discordItems(k), n = items.filter(function (it) { return day[it[0]]; }).length; return n >= Math.min(2, items.length); }
@@ -606,6 +612,34 @@
     cb.addEventListener('change', function () { setDay(cb.dataset.day, cb.checked); if (cb.checked) toast(['ig', 'tt'].indexOf(cb.dataset.day) > -1 ? 'Posted. Streak saved 🔥' : 'Done ✅'); });
   });
   $('swapMain').addEventListener('click', function () { setDay('swap', ((S.days[TODAY] || {}).swap || 0) + 1); });
+  function scriptPrompt(v, kind) {
+    return [
+      'Write the word-for-word script for a short vertical video (Instagram Reel + TikTok) for ' + BRAND,
+      'Video: "' + v.hook + '". Idea: ' + (v.say || '') + '. Target length: ' + (v.length || '20–30s') + ' (about 2.5 spoken words per second).',
+      kind === 'main' ? 'Ending CTA: ' + ctaText(v.cta || '—') + (v.cta === 'K' ? ' (say: "comment BNB and I\'ll send you the free Discord")' : '') : 'Keep it light and fast. No CTA unless it fits naturally.',
+      'Format, plain text only, no markdown, no headings:',
+      'Line 1: ON SCREEN: <the hook text, exactly as it shows on screen>',
+      'Then the spoken lines, one short line each, exactly how he would say it (casual, young, confident, a little funny, not corny, not salesy).',
+      'Put filming directions in [square brackets] on their own line, e.g. [cut to P&L screenshot], [B-roll: driving]. Face on camera for the first line.',
+      'The first spoken line IS the hook. No "yo what\'s up", no intro. Never describe his strategy, setups, entries or levels.'
+    ].join('\n');
+  }
+  function writeScript(kind) {
+    var btn = $(kind + 'Write'), note = $(kind + 'WriteNote');
+    if (!sampler) { note.textContent = 'Script writing needs the HQ open from your Claude sidebar.'; return; }
+    var p = planFor(TODAY), v = kind === 'main' ? p.main : p.bonus;
+    btn.disabled = true; note.textContent = 'Writing… (10–30s)';
+    sampler(scriptPrompt(v, kind), { onText: function (u) { $(kind + 'Script').textContent = u.text; } }).then(function (r) {
+      var plan = Object.assign({}, S.plans[TODAY] || {}); delete plan._id;
+      var nv = Object.assign({}, v); delete nv.script; nv.script = r.text.trim();
+      plan[kind] = nv;
+      S.plans[TODAY] = Object.assign({ _id: TODAY }, plan);
+      if (kind === 'main' && (S.days[TODAY] || {}).swap) setDay('swap', 0);
+      dbSet('plan/' + TODAY, plan); note.textContent = 'Saved.'; renderToday();
+    }).catch(function (e) { note.textContent = errText(e); renderToday(); }).then(function () { btn.disabled = false; });
+  }
+  $('mainWrite').addEventListener('click', function () { writeScript('main'); });
+  $('bonusWrite').addEventListener('click', function () { writeScript('bonus'); });
 
   function renderToday() {
     var d = new Date();
@@ -617,12 +651,16 @@
     $('mainLen').textContent = p.main.length || '';
     $('mainCta').textContent = ctaText(p.main.cta || '—');
     $('mainCaption').textContent = p.main.caption || '';
+    $('mainScript').textContent = p.main.script || 'No script yet. Your morning routine writes one every day, or tap "Write my script".';
+    $('mainWrite').textContent = p.main.script ? 'Rewrite script' : 'Write my script';
+    $('bonusScript').textContent = p.bonus.script || 'No script yet. Tap "Write my script".';
+    $('bonusWrite').textContent = p.bonus.script ? 'Rewrite script' : 'Write my script';
     $('mainSource').textContent = p.fromRoutine ? 'Picked this morning from your tracker' + (p.note ? ': ' + p.note : '') : 'From your playbook';
     $('bonusHook').textContent = p.bonus.hook;
     $('bonusSay').textContent = p.bonus.say;
     $('todayRollout').textContent = p.rollout;
     var rl = $('rolloutList'); rl.innerHTML = '';
-    (ROLLOUTS[p.rollout] || []).forEach(function (f) { rl.appendChild(el('li', { text: f.c.replace(/\*/g, '').replace(/\n/g, ' ') + ' · ' + f.tag })); });
+    (ROLLOUTS[p.rollout] || []).forEach(function (f) { rl.appendChild(el('li', { text: f.c.replace(/\*/g, '').replace(/\n/g, ' ') + ' · ' + (f.l === 'text' ? 'text only' : f.tag) })); });
     var dbox = $('todayDiscordChecks'); dbox.innerHTML = ''; var dday = S.days[TODAY] || {};
     p.discord.forEach(function (it) {
       var cb = el('input', { type: 'checkbox' }); cb.checked = !!dday[it[0]];
@@ -1038,7 +1076,7 @@
   var LOGO_SRC = '__LOGO__';
   var SAMPLE_SRC = '__PNL__';
   var state = { layout: 'proof', style: 'bold', photos: [], bg: null, logo: null, caption: '', size: 84, posY: 80, cta: '', ctaY: 90, arrow: false, logoOn: true, dark: 20 };
-  var LAYOUT_DEFAULTS = { proof: { posY: 80, ctaY: 90 }, full: { posY: 55, ctaY: 80 }, collage: { posY: 82, ctaY: 92 } };
+  var LAYOUT_DEFAULTS = { proof: { posY: 80, ctaY: 90 }, full: { posY: 55, ctaY: 80 }, collage: { posY: 82, ctaY: 92 }, text: { posY: 46, ctaY: 62 } };
   var FREE_CTA = 'Tap the link to join the ( *FREE* ) Discord 💸';
   var BANK = {
     'Motivation': ['Discipline > motivation', "Nobody's coming to save you", 'Every red day taught me something', 'Stay patient. The money comes.', 'Trading ruined my perception of money', 'Quiet grind. Loud results.', "You're one rule away from being consistent", 'Protect the account first'],
@@ -1080,6 +1118,14 @@
       { l: 'proof', s: 'bold', c: 'First payout for bro 💰', cta: '', tag: 'Member win', tip: "a member's payout screenshot" },
       { l: 'proof', s: 'box', c: 'From not knowing where to start\nto getting paid', cta: '', tag: 'Member win', tip: 'a testimonial or DM screenshot' },
       { l: 'full', s: 'bold', c: 'You could be next 👀', cta: 'Mentorship apps are open in the ( *DISCORD* ) 🥂', tag: 'You', tip: 'any clean shot of you' }
+    ],
+    'Proof run': [
+      { l: 'full', s: 'bold', c: 'daily non negotiable 🔒', cta: '', tag: 'You', tip: 'a gym, car or desk shot' },
+      { l: 'proof', s: 'box', c: "he joined the discord struggling.\nnow he's requesting *payouts*.", cta: '', tag: 'Member win', tip: "a member's win or payout screenshot" },
+      { l: 'proof', s: 'box', c: 'different person. new result.', cta: '', tag: 'Member win', tip: "a DIFFERENT member's win" },
+      { l: 'collage', s: 'box', c: 'not one lucky guy.\nthis is the *room*.', cta: '', tag: 'Member win', tip: '3–4 more member wins' },
+      { l: 'text', s: 'bold', c: "this was never about the cars.\nit's about never stressing\nover money again.", cta: '', tag: 'You', tip: 'nothing, it is text only' },
+      { l: 'text', s: 'bold', c: 'the discord is *free*.', cta: '( *JOIN HERE* ) 👆', tag: 'You', tip: 'an Instagram link sticker to discord.gg/mvtFk6wAR, placed above "JOIN HERE"' }
     ]
   };
 /*__ENGINE__*/
@@ -1132,8 +1178,8 @@
         $('ctaChips').querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
         setCaption(f.c);
         frameTag = f.tag;
-        $('frameHint').textContent = 'Frame ' + (i + 1) + ' of 4: add ' + f.tip + '. Tap "Pick from library" (filtered to ' + f.tag + ').';
-        autoPick(f);
+        $('frameHint').textContent = f.l === 'text' ? 'Frame ' + (i + 1) + ' of ' + ROLLOUTS[name].length + ': ' + (f.cta ? 'after saving, add ' + f.tip + '.' : 'text only, just save it.') : 'Frame ' + (i + 1) + ' of ' + ROLLOUTS[name].length + ': add ' + f.tip + '. Tap "Pick from library" (filtered to ' + f.tag + ').';
+        if (f.l !== 'text') autoPick(f);
       });
       fr.appendChild(b);
     });

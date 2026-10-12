@@ -104,6 +104,7 @@
         <button type="button" data-v="proof" aria-pressed="true">Proof card</button>
         <button type="button" data-v="full" aria-pressed="false">Full photo</button>
         <button type="button" data-v="collage" aria-pressed="false">Collage</button>
+        <button type="button" data-v="text" aria-pressed="false">Text only</button>
       </div>
       <p class="hint" id="layoutHint">Best for P&amp;L and payout screenshots. Your screenshot sits on a card with the logo up top.</p>
     </section>
@@ -199,7 +200,8 @@
   var LAYOUT_DEFAULTS = {
     proof:   { posY: 80, ctaY: 90, hint: 'Best for P&L and payout screenshots. Your screenshot sits on a card with the logo up top.' },
     full:    { posY: 55, ctaY: 80, hint: 'Your photo fills the whole story. Good for setup, lifestyle and on-the-chart shots.' },
-    collage: { posY: 82, ctaY: 92, hint: 'Up to 4 photos scattered on top. Stack payouts or member wins.' }
+    collage: { posY: 82, ctaY: 92, hint: 'Up to 4 photos scattered on top. Stack payouts or member wins.' },
+    text: { posY: 46, ctaY: 62, hint: 'Plain black with white text. For the message frames between your proof.' }
   };
 
   var BANK = {
@@ -259,10 +261,11 @@
     lines.forEach(function (ln) {
       var words = [], on = false;
       ln.split(/\s+/).filter(Boolean).forEach(function (w) {
-        var starts = w.charAt(0) === '*', ends = w.length > 1 && w.charAt(w.length - 1) === '*';
+        // A closing star may be followed by punctuation: *free*. or *DISCORD*!
+        var starts = w.charAt(0) === '*', ends = w.length > 1 && /\*[.,!?:;)"']*$/.test(w);
         if (w === '*') { on = !on; return; }
         if (starts) on = true;
-        words.push({ t: w.replace(/^\*|\*$/g, ''), hl: on || (starts && ends) });
+        words.push({ t: w.replace(/^\*/, '').replace(/\*([.,!?:;)"']*)$/, '$1'), hl: on || (starts && ends) });
         if (ends || (starts && ends)) on = false;
       });
       out.push(words);
@@ -397,6 +400,9 @@
       backdrop(state.bg, Math.max(45, state.dark + 35), 24);
       drawLogo(120, 300);
       if (p[0]) card(p[0], W / 2, 830, 920, 1000, -1.5, false);
+    } else if (L === 'text') {
+      ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+      drawLogo(1690, 170);
     } else {
       backdrop(state.bg, Math.max(35, state.dark + 25), 0);
       var spots = COLLAGE[Math.min(4, Math.max(1, p.length))] || [];
