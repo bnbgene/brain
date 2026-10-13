@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<style>body{margin:0}</style>
+<title>M.V.P Tree Service Concept</title>
+<meta name="description" content="Local arborist company in Antioch and the East Bay. Licensed and insured tree trimming, tree removal and palm tree care.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --navy:#0F2233; --navy-2:#173149; --gold:#F2B33D; --gold-deep:#D9962A; --leaf:#3E8E5A;
+  --bg:#F5F3EE; --paper:#FFFFFF; --line:#E0DBD0; --ink:#13202B; --muted:#5A6672;
+  --display:"Anton", Impact, "Arial Narrow", sans-serif;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:17px/1.6 var(--body);overflow-x:hidden}
+a{color:inherit}
+svg{display:block;max-width:100%}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:20px}
+.sample-note{position:sticky;top:0;z-index:30;background:#FFD27A;color:#2A1D00;font-size:13px;font-weight:700;text-align:center;padding:7px 16px;line-height:1.4}
+h1,h2,h3{margin:0;line-height:1.05}
+h1,h2{font-family:var(--display);font-weight:400;letter-spacing:.01em;text-transform:uppercase}
+.eyebrow{font:700 13px/1 var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--leaf)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 16px var(--body);padding:14px 22px;border-radius:10px;text-decoration:none;border:2px solid transparent}
+.btn svg{width:18px;height:18px}
+.btn-gold{background:var(--gold);color:#241700}
+.btn-gold:hover{background:#F6C25E}
+.btn-line{border-color:#FFFFFF55;color:#fff}
+.btn-line:hover{border-color:#fff}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:hover{background:var(--navy-2)}
+
+header{position:sticky;top:33px;z-index:20;background:var(--navy);color:#fff;border-bottom:1px solid #FFFFFF14}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;height:68px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.badge{width:42px;height:42px;border-radius:50%;background:var(--gold);color:var(--navy);display:grid;place-items:center;font:400 15px var(--display);letter-spacing:.02em}
+.brand b{font:400 22px var(--display);letter-spacing:.03em;text-transform:uppercase}
+.nav ul{display:flex;gap:24px;list-style:none;margin:0;padding:0;font-weight:600;font-size:15px}
+.nav ul a{text-decoration:none;color:#C9D3DC}
+.nav ul a:hover{color:#fff}
+@media (max-width:860px){.nav ul{display:none}}
+@media (max-width:440px){.nav .call span{display:none}.nav .call{padding:12px}}
+
+.hero{background:radial-gradient(700px 420px at 80% 30%,#1E4262 0%,transparent 65%),var(--navy);color:#fff;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;padding-block:72px 84px}
+.hero .eyebrow{color:var(--gold)}
+.hero h1{font-size:clamp(46px,7.4vw,92px);margin:16px 0 18px}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p.lead{font-size:20px;color:#D2DCE5;max-width:30em;margin:0 0 28px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.chip{display:inline-flex;align-items:center;gap:8px;background:#FFFFFF12;border:1px solid #FFFFFF26;border-radius:999px;padding:8px 14px;font-size:15px;font-weight:600}
+.chip b{color:var(--gold)}
+.art{max-width:420px;justify-self:center;width:100%}
+@media (max-width:900px){.hero-grid{grid-template-columns:1fr;padding-block:48px 56px}.art{max-width:340px}}
+
+.strip{background:var(--gold);color:#241700}
+.strip .wrap{display:grid;grid-template-columns:repeat(3,1fr)}
+.strip div{padding:20px 16px;border-right:1px solid #24170022;font-weight:600;font-size:16px;display:flex;align-items:center;gap:10px}
+.strip div:last-child{border-right:0}
+.strip svg{width:22px;height:22px;flex:none}
+@media (max-width:760px){.strip .wrap{grid-template-columns:1fr}.strip div{border-right:0;border-bottom:1px solid #24170022}.strip div:last-child{border-bottom:0}}
+
+section{padding:84px 0}
+.head{max-width:680px;margin-bottom:36px}
+.head h2{font-size:clamp(34px,4.6vw,52px);margin:12px 0 12px;color:var(--navy)}
+.head p{color:var(--muted);margin:0}
+
+.svc{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--gold)}
+.card .num{font:400 30px var(--display);color:var(--gold-deep)}
+.card h3{font-size:21px;margin:6px 0 8px}
+.card p{margin:0;color:var(--muted);font-size:16.5px}
+.ask{margin-top:22px;background:var(--navy);color:#fff;border-radius:16px;padding:24px 26px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+.ask p{margin:0;font-size:18px;font-weight:600}
+@media (max-width:860px){.svc{grid-template-columns:1fr}}
+
+.why{background:var(--paper);border-block:1px solid var(--line)}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.why-grid h3{font-size:20px;margin:12px 0 6px}
+.why-grid p{margin:0;color:var(--muted)}
+.ic{width:52px;height:52px;border-radius:14px;background:#E8F1EA;color:var(--leaf);display:grid;place-items:center}
+.ic svg{width:28px;height:28px}
+.big{font:400 64px/1 var(--display);color:var(--navy)}
+@media (max-width:860px){.why-grid{grid-template-columns:1fr}}
+
+.contact-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:36px;align-items:start}
+.contact-grid>*{min-width:0}
+.info{background:var(--navy);color:#fff;border-radius:18px;padding:28px}
+.info h3{font-size:22px;margin-bottom:12px}
+.line{display:flex;gap:14px;padding:13px 0;border-top:1px solid #FFFFFF1F}
+.line:first-of-type{border-top:0}
+.line svg{width:22px;height:22px;flex:none;color:var(--gold);margin-top:3px}
+.line>div{min-width:0}
+.line b{display:block;overflow-wrap:anywhere}
+.line span{color:#B9C5D0;font-size:15.5px}
+form.est{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:28px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+form.est h3{grid-column:1/-1;font-size:24px}
+form.est p.sub{grid-column:1/-1;margin:-6px 0 4px;color:var(--muted);font-size:15.5px}
+form.est label{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:15px}
+form.est .full{grid-column:1/-1}
+form.est input,form.est select,form.est textarea{font:inherit;font-size:16px;padding:12px;border:1px solid var(--line);border-radius:10px;background:#FAF9F6;color:var(--ink);width:100%}
+form.est textarea{min-height:100px;resize:vertical}
+@media (max-width:860px){.contact-grid{grid-template-columns:1fr}}
+@media (max-width:520px){form.est{grid-template-columns:1fr;padding:22px}.info{padding:22px}}
+
+footer{background:#0A1824;color:#AEBBC7;padding:34px 0 44px;font-size:15px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
+footer b{color:#fff}
+
+.callbar{display:none}
+@media (max-width:700px){
+  .callbar{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:25;gap:8px}
+  .callbar a{flex:1;box-shadow:0 10px 24px #0004}
+  body{padding-bottom:80px}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 20c0-9 6-15 15-15 0 9-6 15-15 15zM5 20l8-8"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 22s7-6.1 7-12a7 7 0 0 0-14 0c0 5.9 7 12 7 12z"/><circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-thumb" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 10v11H4V10zM7 10l4-7c1.7 0 2.8 1.3 2.5 3L13 10h6a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 17.6 21H7"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.6A8 8 0 1 1 21 12z"/></symbol>
+</svg>
+
+<div class="sample-note">Website concept prepared for M.V.P Tree Service. Not their official site. Buttons are for preview only.</div>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top"><span class="badge">MVP</span><b>M.V.P Tree Service</b></a>
+    <ul>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#why">Why MVP</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a class="btn btn-gold call" href="#contact"><svg><use href="#i-phone"/></svg><span>(925) 727-5937</span></a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" style="padding:0">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">Local arborist · East Bay</div>
+        <h1>The <em>MVP</em> of tree work.</h1>
+        <p class="lead">A local arborist company that's fully licensed and insured. Tree trimming, removals and palm tree care around Antioch and the East Bay.</p>
+        <div class="ctas">
+          <a class="btn btn-gold" href="#contact">Get an estimate</a>
+          <a class="btn btn-line" href="#contact"><svg><use href="#i-phone"/></svg>Call (925) 727-5937</a>
+        </div>
+        <div class="chips">
+          <span class="chip"><b>100%</b> recommend on Facebook</span>
+          <span class="chip">Licensed &amp; insured</span>
+        </div>
+      </div>
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 420 380">
+          <circle cx="215" cy="175" r="150" fill="#FFFFFF" opacity=".05"/>
+          <rect x="0" y="330" width="420" height="50" fill="#0A1824"/>
+          <!-- oak -->
+          <rect x="128" y="200" width="22" height="135" rx="6" fill="#8A5A2B"/>
+          <circle cx="139" cy="150" r="68" fill="#3E8E5A"/>
+          <circle cx="92" cy="190" r="44" fill="#347A4C"/>
+          <circle cx="186" cy="186" r="46" fill="#4C9E68"/>
+          <circle cx="140" cy="100" r="40" fill="#58AE74"/>
+          <!-- palm -->
+          <path d="M300 335 C304 270 300 210 312 150" stroke="#9C6B3A" stroke-width="12" fill="none" stroke-linecap="round"/>
+          <g fill="#4C9E68">
+            <path d="M312 150 C280 120 250 125 228 142 C258 140 284 146 312 150z"/>
+            <path d="M312 150 C300 112 276 96 252 96 C278 110 296 128 312 150z"/>
+            <path d="M312 150 C326 110 352 98 378 104 C352 114 332 130 312 150z"/>
+            <path d="M312 150 C346 132 374 138 394 158 C366 150 340 150 312 150z"/>
+            <path d="M312 150 C316 116 312 92 298 72 C318 86 324 116 312 150z"/>
+          </g>
+          <!-- trophy star -->
+          <g transform="translate(330 250)">
+            <circle r="34" fill="#F2B33D"/>
+            <path d="M0 -18 5.3 -5.6 18.8 -5.6 7.8 2.6 12 15.6 0 7.6 -12 15.6 -7.8 2.6 -18.8 -5.6 -5.3 -5.6z" fill="#0F2233"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="strip">
+    <div class="wrap">
+      <div><svg><use href="#i-shield"/></svg>Fully licensed &amp; insured</div>
+      <div><svg><use href="#i-leaf"/></svg>Local arborist company</div>
+      <div><svg><use href="#i-thumb"/></svg>Every Facebook reviewer recommends us</div>
+    </div>
+  </div>
+
+  <section id="services">
+    <div class="wrap">
+      <div class="head">
+        <div class="eyebrow">What we do</div>
+        <h2>Tree care, start to finish.</h2>
+        <p>From a quick trim to taking a whole tree down.</p>
+      </div>
+      <div class="svc">
+        <div class="card"><div class="num">01</div><h3>Tree trimming &amp; pruning</h3><p>Shaping, thinning and cutting back limbs to keep trees healthy and clear of your roof, fence and lines.</p></div>
+        <div class="card"><div class="num">02</div><h3>Tree removal</h3><p>Dead, damaged or unwanted trees taken down safely.</p></div>
+        <div class="card"><div class="num">03</div><h3>Palm tree care</h3><p>Palm trimming and upkeep to keep palms looking clean and healthy.</p></div>
+      </div>
+      <div class="ask">
+        <p>Not sure what your tree needs? Ask the arborist.</p>
+        <a class="btn btn-gold" href="#contact"><svg><use href="#i-phone"/></svg>Call (925) 727-5937</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="why" class="why">
+    <div class="wrap">
+      <div class="head">
+        <div class="eyebrow">Why MVP</div>
+        <h2>Who you want up the tree.</h2>
+      </div>
+      <div class="why-grid">
+        <div><div class="ic"><svg><use href="#i-shield"/></svg></div><h3>Licensed &amp; insured</h3><p>Tree work is risky. We're fully licensed and insured, so your home is covered.</p></div>
+        <div><div class="ic"><svg><use href="#i-leaf"/></svg></div><h3>Real arborist know-how</h3><p>We look at the health of the tree, not just where to cut, so it grows back right.</p></div>
+        <div><div class="big">100%</div><h3>Recommended</h3><p>Every customer who reviewed us on Facebook recommends M.V.P Tree Service.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap contact-grid">
+      <div>
+        <div class="head" style="margin-bottom:24px">
+          <div class="eyebrow">Estimates</div>
+          <h2>Tell us about your tree.</h2>
+          <p>Send a few details, or just call. Photos of the tree help us give you a price.</p>
+        </div>
+        <div class="info">
+          <h3>Reach us</h3>
+          <div class="line"><svg><use href="#i-phone"/></svg><div><b>(925) 727-5937</b><span>Call for an estimate</span></div></div>
+          <div class="line"><svg><use href="#i-chat"/></svg><div><b>Facebook: @MVPTreeService</b><span>Message us any time</span></div></div>
+          <div class="line"><svg><use href="#i-pin"/></svg><div><b>Antioch &amp; the East Bay</b><span>Ask if we cover your area</span></div></div>
+        </div>
+      </div>
+      <form class="est" onsubmit="return false">
+        <h3>Request an estimate</h3>
+        <p class="sub">Preview only. This form isn't connected yet.</p>
+        <label>Name<input type="text" autocomplete="off"></label>
+        <label>Phone<input type="tel" autocomplete="off"></label>
+        <label>City<input type="text" autocomplete="off" placeholder="e.g. Antioch"></label>
+        <label>What do you need?<select><option>Tree trimming</option><option>Tree removal</option><option>Palm tree care</option><option>Not sure</option></select></label>
+        <label class="full">Tell us about it<textarea placeholder="e.g. Palm out front needs trimming, about 25 ft"></textarea></label>
+        <div class="full"><button class="btn btn-navy" type="button" style="width:100%">Send request</button></div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span><b>M.V.P Tree Service</b> · Local arborist · East Bay, CA</span>
+    <span>(925) 727-5937</span>
+    <span>© 2026</span>
+  </div>
+</footer>
+
+<div class="callbar">
+  <a class="btn btn-navy" href="#contact"><svg><use href="#i-phone"/></svg>Call now</a>
+  <a class="btn btn-gold" href="#contact">Estimate</a>
+</div>
+</body>
+</html>
