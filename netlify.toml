@@ -1,6 +1,13 @@
 # Netlify site "bnb-samples": publishes every concept site in samples/.
 # samples/<slug>/index.html is served at https://<site>.netlify.app/<slug>/
 # Rebuild pages with: python3 tools/build_samples.py
+#
+# New samples start in drafts/<slug>/ (never published). The owner reviews a
+# private preview first; only after they approve does
+# python3 tools/publish_sample.py <slug> move it into samples/.
 [build]
   publish = "samples"
   command = ""
+  # Skip the deploy (and its credits) unless something published changed.
+  # Exit code 0 = nothing changed in these paths = don't deploy.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- samples/ netlify.toml"
