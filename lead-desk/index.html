@@ -426,7 +426,7 @@ A JSON list like [{"name": "...", "phone": "...", "why": "..."}] also works.</pr
           <p style="margin:0 0 8px">This desk shares its data with Claude. In a chat you can say:</p>
           <ul style="padding-left:18px;margin:0">
             <li>"Find 20 more leads in Scottsdale and add them to my lead desk."</li>
-            <li>"Build my requested sample sites." You get a private preview first. Nothing goes on Netlify until you tap <b>Looks good, publish</b>.</li>
+            <li>"Build my requested sample sites." Claude puts it on your free GitHub samples site and adds the link to the lead.</li>
             <li>"Who should I call today?"</li>
           </ul>
         </div>
@@ -1017,7 +1017,7 @@ function renderDrawerExtras(){
     const bk=safeUrl(l.bookingUrl); if(bk) q+=`<a class="btn small" href="${esc(bk)}" target="_blank" rel="noopener">${esc(bookingName(l)==='a booking page'?'Booking page':bookingName(l))} ↗</a>`;
     if(smp) q+=`<a class="btn small" href="${esc(smp)}" target="_blank" rel="noopener">${/\.(png|jpe?g|webp)(\?|$)/i.test(smp)?'See sample (picture)':'Open sample site'} ↗</a>`;
     const pv=safeUrl(l.previewUrl);
-    if(pv) q+=`<a class="btn small" href="${esc(pv)}" target="_blank" rel="noopener">Open preview ↗</a>`;
+    if(pv&&!smp) q+=`<a class="btn small" href="${esc(pv)}" target="_blank" rel="noopener">Open preview ↗</a>`;
     if(pv&&!smp) q+=`<button class="btn small primary" data-publish="${esc(l.id)}" ${l.publishAsked?'disabled':''}>${l.publishAsked?'Publishing…':'Looks good, publish'}</button>`;
     if(!smp&&!pv) q+=`<button class="btn small" id="d-reqsample" ${l.sampleRequested?'disabled':''}>${l.sampleRequested?'Sample site requested':'Build sample site'}</button>`;
     if(sample && l.stage!=='won') q+=`<button class="btn small" id="d-draft">Draft email</button>`;

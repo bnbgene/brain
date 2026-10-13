@@ -1,6 +1,7 @@
-# GitHub Pages test
+# Sample sites (GitHub Pages)
 
-A copy of one sample (Sandoval's Concrete) to compare free GitHub Pages hosting
-with Netlify. Served at https://bnbgene.github.io/brain/sandoval-concrete/ once
-Pages is turned on (Settings → Pages → Deploy from a branch →
-claude/clever-shannon-qbaqz7, folder /docs). Netlify ignores this folder.
+Free hosting for BNB sample sites. docs/<slug>/index.html is served at
+https://bnbgene.github.io/brain/<slug>/ about a minute after a push.
+Build a new one with: python3 tools/publish_sample.py <slug> --github
+Rebuild after editing a concept.html: python3 tools/build_samples.py --root docs
+samples/ is the older Netlify site; changing it costs Netlify credits.
