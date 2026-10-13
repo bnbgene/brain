@@ -8,7 +8,9 @@ Run it after adding or editing any concept.html:  python3 tools/build_samples.py
 """
 import pathlib, re, sys
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent / "samples"
+# --root docs builds the GitHub Pages copies in docs/ instead of samples/.
+_sub = sys.argv[sys.argv.index("--root") + 1] if "--root" in sys.argv else "samples"
+ROOT = pathlib.Path(__file__).resolve().parent.parent / _sub
 HEAD = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width,initial-scale=1">\n'
         '<meta name="robots" content="noindex,nofollow">\n<style>body{margin:0}</style>\n')
