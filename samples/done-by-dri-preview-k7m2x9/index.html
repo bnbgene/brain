@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<style>body{margin:0}</style>
+<title>Done By Dri Test Preview</title>
+<meta name="description" content="Done By Dri: the versatile hairstylist in Atlanta, GA and the Bay Area, CA. Knotless braids, feed-ins, quick weaves and men's styles. $20 deposit to book.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --cream:#F8F3ED; --sand:#EDE4D9; --paper:#FFFDFA; --line:#E2D6C8;
+  --ink:#33261E; --muted:#7A6A5D; --espresso:#2E2119; --rose:#C27A8A; --rose-soft:#F3E3E5; --gold:#B8956A;
+  --display:"Cormorant Garamond", Georgia, serif;
+  --body:"Jost", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font:17px/1.65 var(--body);overflow-x:hidden}
+a{color:inherit}
+img{display:block;max-width:100%}
+.wrap{max-width:1140px;margin:0 auto;padding-inline:20px}
+.sample-note{position:sticky;top:0;z-index:30;background:#FFD27A;color:#2A1D00;font-size:13px;font-weight:600;text-align:center;padding:7px 16px;line-height:1.4}
+h1,h2,h3{font-family:var(--display);font-weight:500;margin:0;line-height:1.05;letter-spacing:-.01em}
+.eyebrow{font:500 12.5px/1 var(--body);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:500 15.5px var(--body);letter-spacing:.04em;padding:14px 26px;border-radius:999px;text-decoration:none;border:1.5px solid transparent}
+.btn-dark{background:var(--espresso);color:#F8F3ED}
+.btn-dark:hover{background:#463227}
+.btn-line{border-color:var(--ink);color:var(--ink)}
+.btn-line:hover{background:var(--ink);color:var(--cream)}
+.btn-rose{background:var(--rose);color:#fff}
+
+header{position:sticky;top:31px;z-index:20;background:#F8F3EDEE;backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;height:72px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.logo{width:48px;height:48px;border-radius:50%;overflow:hidden;flex:none;box-shadow:0 0 0 1px var(--line)}
+.logo img{width:100%;height:100%;object-fit:cover}
+.brand b{font:600 24px var(--display);letter-spacing:.02em}
+.nav ul{display:flex;gap:26px;list-style:none;margin:0;padding:0;font-size:15px}
+.nav ul a{text-decoration:none;color:var(--muted)}
+.nav ul a:hover{color:var(--ink)}
+@media (max-width:900px){.nav ul{display:none}}
+@media (max-width:420px){.nav .btn{padding:11px 16px;font-size:14px}}
+
+.hero{padding:64px 0 76px}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center}
+.hero h1{font-size:clamp(46px,6.6vw,84px);margin:18px 0 20px}
+.hero h1 em{font-style:italic;color:var(--rose)}
+.hero p.lead{font-size:19px;color:var(--muted);max-width:28em;margin:0 0 30px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.note{display:flex;align-items:center;gap:10px;margin-top:26px;font-size:15px;color:var(--muted)}
+.note b{color:var(--ink);font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--rose);flex:none}
+.collage{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ph{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:1/1;background:var(--sand)}
+.ph img{width:100%;height:100%;object-fit:cover;object-position:top}
+.collage .tall{grid-row:span 2;aspect-ratio:auto}
+.seal{position:absolute;left:-18px;bottom:-22px;width:110px;height:110px;border-radius:50%;overflow:hidden;box-shadow:0 14px 34px #33261E33,0 0 0 6px var(--cream)}
+.seal img{width:100%;height:100%;object-fit:cover}
+@media (max-width:900px){.hero{padding:40px 0 60px}.hero-grid{grid-template-columns:1fr;gap:40px}.seal{left:auto;right:-6px;width:90px;height:90px}}
+
+.cities{background:var(--espresso);color:#F3EAE0}
+.cities .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 36px;padding-block:18px;text-align:center}
+.cities span{font:500 22px var(--display);letter-spacing:.06em}
+.cities i{font-style:normal;color:var(--gold)}
+
+section{padding:88px 0}
+.head{max-width:640px;margin-bottom:38px}
+.head h2{font-size:clamp(36px,4.8vw,56px);margin:14px 0 12px}
+.head p{color:var(--muted);margin:0}
+.center{text-align:center;margin-inline:auto}
+
+.meet-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:52px;align-items:center}
+.polaroid{background:#fff;padding:14px 14px 18px;border-radius:6px;box-shadow:0 18px 40px #33261E26;transform:rotate(-2deg);max-width:380px;width:100%;justify-self:center}
+.polaroid img{width:100%;aspect-ratio:1/1;object-fit:cover;object-position:top;border-radius:2px}
+.polaroid p{margin:12px 4px 0;font:italic 500 19px/1.3 var(--display);text-align:center;color:var(--muted)}
+.meet h2{font-size:clamp(36px,4.6vw,54px);margin:14px 0 6px}
+.meet .role{font:500 14px var(--body);letter-spacing:.18em;text-transform:uppercase;color:var(--rose);margin-bottom:18px}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+.fact{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.fact b{display:block;font:600 14px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.fact span{font-size:16px}
+@media (max-width:860px){.meet-grid{grid-template-columns:1fr;gap:36px}.facts{grid-template-columns:1fr}}
+
+.menu-bg{background:var(--paper);border-block:1px solid var(--line)}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+.tabs a{font-size:15px;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:7px 16px;color:var(--muted);background:var(--cream)}
+.tabs a:hover{color:var(--ink);border-color:var(--gold)}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.menu>*{min-width:0}
+.cat{background:var(--cream);border:1px solid var(--line);border-radius:24px;padding:28px}
+.cat h3{font-size:32px;margin-bottom:6px}
+.item{display:grid;grid-template-columns:1fr auto;gap:2px 16px;padding:14px 0;border-top:1px solid var(--line)}
+.cat h3+.item,.txt .sub+.item,.col>.item:first-child{border-top:0}
+.item .n{font-weight:500;font-size:17px}
+.item .p{font:600 22px var(--display);color:var(--espresso)}
+.item .t{grid-column:1/-1;color:var(--muted);font-size:14.5px}
+.item .t em{font-style:normal;color:var(--rose)}
+.feat{grid-column:1/-1;display:grid;grid-template-columns:1fr 1.4fr;background:var(--espresso);color:#F3EAE0;border-radius:24px;overflow:hidden}
+.feat .ph{border-radius:0;aspect-ratio:auto;min-height:280px}
+.feat .txt{padding:32px}
+.feat h3{font-size:36px;margin-bottom:6px}
+.feat .sub{color:#D6C7B8;margin:0 0 6px;font-size:15px}
+.feat .item{border-color:#FFFFFF1F}
+.feat .item .p{color:#F3EAE0}
+.feat .item .t{color:#BBA996}
+.feat .item .t em{color:#E7A9B6}
+.mens{grid-column:1/-1}
+.mens .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 26px}
+@media (max-width:900px){.menu{grid-template-columns:1fr}.feat{grid-template-columns:1fr}.feat .ph{min-height:0;aspect-ratio:4/3}.mens .cols{grid-template-columns:1fr}.mens .col+.col>.item:first-child{border-top:1px solid var(--line)}}
+@media (max-width:520px){.cat,.feat .txt{padding:22px}}
+
+.gallery{background:var(--sand)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:700px){.grid{grid-template-columns:1fr 1fr;gap:10px}}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;counter-reset:s}
+.step{background:var(--cream);border:1px solid var(--line);border-radius:22px;padding:28px}
+.step::before{counter-increment:s;content:"0" counter(s);font:500 44px/1 var(--display);color:var(--gold)}
+.step h3{font-size:26px;margin:12px 0 8px}
+.step p{margin:0;color:var(--muted);font-size:16px}
+@media (max-width:860px){.steps{grid-template-columns:1fr}}
+.pol-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:40px}
+.pol-grid>*{min-width:0}
+.box{background:var(--cream);border:1px solid var(--line);border-radius:24px;padding:28px}
+.box h3{font-size:30px;margin-bottom:12px}
+.pol{padding:12px 0;border-top:1px solid var(--line)}
+.box h3+.pol{border-top:0}
+.pol b{display:block;font-weight:600;font-size:16px}
+.pol span{color:var(--muted);font-size:15px}
+.prep{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.prep li{display:flex;gap:12px;align-items:flex-start;font-size:16px}
+.prep li::before{content:"✓";flex:none;width:26px;height:26px;border-radius:50%;background:var(--rose-soft);color:var(--rose);display:grid;place-items:center;font-weight:600;font-size:14px}
+@media (max-width:860px){.pol-grid{grid-template-columns:1fr}}
+@media (max-width:520px){.box{padding:22px}}
+
+.faq{max-width:780px;margin:0 auto}
+.faq details{background:var(--paper);border:1px solid var(--line);border-radius:16px;margin-bottom:10px}
+.faq summary{cursor:pointer;list-style:none;padding:18px 22px;font-weight:500;font-size:17px;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--gold);font-size:22px;line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq details p{margin:0;padding:0 22px 18px;color:var(--muted)}
+
+.cta{background:var(--espresso);color:#F3EAE0;text-align:center}
+.cta h2{font-size:clamp(38px,5vw,60px);margin:14px 0 14px}
+.cta p{color:#D6C7B8;max-width:32em;margin:0 auto 28px}
+.cta .btn-line{border-color:#F3EAE0;color:#F3EAE0}
+.cta .btn-line:hover{background:#F3EAE0;color:var(--espresso)}
+.cta .ctas{justify-content:center}
+.contact{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 28px;margin-top:28px;font-size:15.5px;color:#D6C7B8}
+.contact span{overflow-wrap:anywhere}
+.contact b{color:#F3EAE0;font-weight:500}
+
+footer{background:#241A13;color:#BBA996;padding:30px 0 40px;font-size:14.5px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
+footer b{color:#F3EAE0;font-family:var(--display);font-size:18px;font-weight:600}
+
+.bookbar{display:none}
+@media (max-width:700px){
+  .bookbar{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:25}
+  .bookbar a{flex:1;box-shadow:0 10px 26px #2E211955}
+  body{padding-bottom:80px}
+}
+.contact a{text-decoration:none;overflow-wrap:anywhere}
+.contact a:hover b{text-decoration:underline}
+.cat-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+.cat-head h3{margin:0!important}
+.book-pill{padding:8px 18px;font-size:14px;background:var(--espresso);color:#F8F3ED}
+.feat .book-pill{background:var(--rose);color:#fff}
+dialog.book{border:0;padding:0;width:min(760px,100vw);max-width:100vw;height:min(92vh,980px);max-height:100vh;border-radius:22px;background:var(--cream);box-shadow:0 30px 80px #0006}
+dialog.book::backdrop{background:#1B130ECC}
+.book-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--paper)}
+.book-top b{font:600 22px var(--display)}
+.book-x{border:1px solid var(--line);background:var(--cream);border-radius:999px;padding:8px 16px;font:500 14px var(--body);cursor:pointer;color:var(--ink)}
+.book-frame{width:100%;height:calc(100% - 64px);border:0;display:block;background:#fff}
+@media (max-width:700px){dialog.book{width:100vw;height:100dvh;border-radius:0}}
+</style>
+</head>
+<body>
+<div class="sample-note">Private test preview for Done By Dri. Not her official site. Buttons are live: booking uses her real calendar, so stop before the final confirm.</div>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top"><span class="logo"><img src="img/logo.png" alt="Done By Dri logo"></span><b>Done By Dri</b></a>
+    <ul>
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#meet">Meet Dri</a></li>
+      <li><a href="#book">Booking</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="btn btn-dark" href="#booking" data-book>Book now</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">The versatile hairstylist · Atlanta &amp; Bay Area</div>
+        <h1>Braids done <em>beautifully</em>, wherever you are.</h1>
+        <p class="lead">Knotless braids, feed-ins, quick weaves and men's styles by Dri, in Atlanta, GA and the Bay Area, CA. Pick your style and lock in your spot with a $20 deposit.</p>
+        <div class="ctas">
+          <a class="btn btn-dark" href="#booking" data-book>Book your appointment</a>
+          <a class="btn btn-line" href="#menu">See the menu</a>
+        </div>
+        <div class="note"><span class="dot" aria-hidden="true"></span><span><b>Mon–Sat, 8:00am–6:30pm</b> · $20 deposit to book</span></div>
+      </div>
+      <div class="collage">
+        <div class="ph tall"><img src="img/w3.png" alt="Long braids with soft curls"></div>
+        <div class="ph"><img src="img/w1.png" alt="Copper knotless braids with curly ends"></div>
+        <div class="ph"><img src="img/w2.png" alt="Long dark braids with curls"></div>
+        <div class="seal" aria-hidden="true"><img src="img/logo.png" alt=""></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cities"><div class="wrap"><span>Atlanta, GA</span><i>✦</i><span>Bay Area, CA</span></div></div>
+
+  <section id="menu" class="menu-bg">
+    <div class="wrap">
+      <div class="head">
+        <div class="eyebrow">The menu</div>
+        <h2>Services &amp; prices</h2>
+        <p>Times may vary based on length and size. Have a certain look in mind? Send a picture ahead of time so Dri can bring it to life.</p>
+      </div>
+      <nav class="tabs" aria-label="Menu sections"><a href="#knotless">Knotless Braids</a><a href="#feedins">Feed-Ins</a><a href="#weaves">Quick Weaves</a><a href="#mens">Men's Styles</a></nav>
+      <div class="menu">
+        <div class="feat" id="knotless">
+          <div class="ph"><img src="img/w1.png" alt="Knotless braids with curly ends"></div>
+          <div class="txt">
+            <div class="cat-head"><h3>Knotless Braids</h3><a class="btn book-pill" href="#booking" data-book>Book</a></div>
+            <p class="sub">Lightweight, natural-looking braids in every size.</p>
+            <div class="item"><span class="n">Jumbo Knotless</span><span class="p">$130</span><span class="t">About 2 hours</span></div>
+            <div class="item"><span class="n">Large Knotless</span><span class="p">$165</span><span class="t">About 3 hrs 15 min</span></div>
+            <div class="item"><span class="n">Medium Knotless</span><span class="p">$200</span><span class="t">About 5 hours</span></div>
+            <div class="item"><span class="n">Smedium Knotless</span><span class="p">$250</span><span class="t">About 6 hrs 20 min · a mix of small and medium · <em>morning appointments only</em></span></div>
+            <div class="item"><span class="n">Small Knotless</span><span class="p">$310</span><span class="t">About 8 hrs 20 min</span></div>
+          </div>
+        </div>
+        <div class="cat" id="feedins">
+          <div class="cat-head"><h3>Feed-Ins</h3><a class="btn book-pill" href="#booking" data-book>Book</a></div>
+          <div class="item"><span class="n">5 Feed-Ins</span><span class="p">$115</span><span class="t">About 2 hrs 30 min</span></div>
+          <div class="item"><span class="n">6 Feed-Ins</span><span class="p">$115</span><span class="t">About 2 hrs 30 min</span></div>
+          <div class="item"><span class="n">10 Feed-Ins</span><span class="p">$120</span><span class="t">About 3 hours</span></div>
+          <div class="item"><span class="n">Creative Straight Backs</span><span class="p">$185</span><span class="t">About 5 hrs 20 min · send your inspo picture in advance</span></div>
+        </div>
+        <div class="cat" id="weaves">
+          <div class="cat-head"><h3>Quick Weaves</h3><a class="btn book-pill" href="#booking" data-book>Book</a></div>
+          <div class="item"><span class="n">Middle Part</span><span class="p">$100</span><span class="t">About 2 hrs 30 min</span></div>
+          <div class="item"><span class="n">Side Part</span><span class="p">$100</span><span class="t">About 2 hrs 30 min</span></div>
+          <div class="item"><span class="n">Flip-Over</span><span class="p">$100</span><span class="t">About 2 hrs 10 min</span></div>
+          <div class="item"><span class="n">French Braids with Weave</span><span class="p">$140</span><span class="t">About 4 hrs 10 min</span></div>
+        </div>
+        <div class="cat mens" id="mens">
+          <div class="cat-head"><h3>Men's Styles</h3><a class="btn book-pill" href="#booking" data-book>Book</a></div>
+          <div class="cols">
+            <div class="col">
+              <div class="item"><span class="n">Men's Straight Backs</span><span class="p">$65</span><span class="t">About 2 hrs 10 min · price varies with how many braids</span></div>
+              <div class="item"><span class="n">Men's Freestyle</span><span class="p">$70</span><span class="t">About 3 hours · any freestyle style of Dri's choice</span></div>
+            </div>
+            <div class="col">
+              <div class="item"><span class="n">Men's Twist</span><span class="p">$75</span><span class="t">About 3 hours</span></div>
+              <div class="item"><span class="n">Men's Singles</span><span class="p">$75</span><span class="t">About 3 hours</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="work" class="gallery">
+    <div class="wrap">
+      <div class="head center">
+        <div class="eyebrow">Recent work</div>
+        <h2>Done by Dri</h2>
+      </div>
+      <div class="grid">
+        <div class="ph"><img src="img/w1.png" alt="Copper knotless braids" loading="lazy"></div>
+        <div class="ph"><img src="img/w2.png" alt="Long dark braids with curls" loading="lazy"></div>
+        <div class="ph"><img src="img/w3.png" alt="Braids with soft curls" loading="lazy"></div>
+        <div class="ph"><img src="img/w5.png" alt="Close-up of clean braid parts" loading="lazy"></div>
+        <div class="ph"><img src="img/w4.png" alt="Curly braided style" loading="lazy"></div>
+        <div class="ph"><img src="img/w6.png" alt="Knotless braids in Atlanta" loading="lazy"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="meet">
+    <div class="wrap meet-grid">
+      <div class="polaroid"><img src="img/dri.png" alt="Driana Renae, the hairstylist behind Done By Dri"><p>Hi, thank you for trusting me with your hair care. See you soon! ♡</p></div>
+      <div class="meet">
+        <div class="eyebrow">Meet your stylist</div>
+        <h2>Driana Renae</h2>
+        <div class="role">The hairstylist</div>
+        <p style="margin:0;color:var(--muted)">Braids, feed-ins, quick weaves and men's styles, all in one chair. Dri works in both Atlanta and the Bay Area, so you can book her in either city.</p>
+        <div class="facts">
+          <div class="fact"><b>Hours</b><span>Mon–Sat, 8:00am–6:30pm<br>Sunday unavailable</span></div>
+          <div class="fact"><b>Locations</b><span>Atlanta, GA<br>Bay Area, CA</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="book" class="menu-bg">
+    <div class="wrap">
+      <div class="head center">
+        <div class="eyebrow">How to book</div>
+        <h2>Three easy steps</h2>
+        <p>Booking your appointment confirms you've read and agreed to the policies below.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><h3>Pick your service</h3><p>Choose from the menu. For a custom look, send your inspo picture in advance.</p></div>
+        <div class="step"><h3>Choose your date</h3><p>Pick an open spot in Atlanta or the Bay Area, Monday to Saturday.</p></div>
+        <div class="step"><h3>Send your deposit</h3><p>A $20 non-refundable deposit by Zelle secures your appointment.</p></div>
+      </div>
+      <div class="pol-grid">
+        <div class="box">
+          <h3>Booking policies</h3>
+          <div class="pol"><b>Payments</b><span>A $20 non-refundable deposit is required to secure your appointment, sent by Zelle.</span></div>
+          <div class="pol"><b>Cancellations &amp; no-shows</b><span>Same-day cancellations and no-call, no-shows are permanently banned from booking. If Dri cancels, your deposit is returned. If you cancel, the deposit isn't refunded.</span></div>
+          <div class="pol"><b>Grace period &amp; late fee</b><span>You get a 15-minute grace period. After that, the appointment is cancelled, or you can agree to a $15 late fee to continue.</span></div>
+          <div class="pol"><b>Squeeze-in fee</b><span>Holidays, after-hours and last-minute squeeze-ins add $40 to the service price.</span></div>
+        </div>
+        <div class="box">
+          <h3>Appointment prep</h3>
+          <ul class="prep">
+            <li>Arrive with your hair freshly washed and blown out.</li>
+            <li>Hair should be free of tangles, oils and other products.</li>
+            <li>All hair must be at least 4 inches long all around.</li>
+            <li>Freshly cut hair and blunt cuts are not recommended.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="head center">
+        <div class="eyebrow">Good to know</div>
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="faq">
+        <details open><summary>How long will my hair last?</summary><p>Your braids should last at least 2–3 weeks, and with proper care they'll likely last longer.</p></details>
+        <details><summary>How do I take care of my braids?</summary><p>When you go to sleep, wrap your hair with a silk scarf and bonnet.</p></details>
+        <details><summary>Do you prefer a specific type of hair?</summary><p>Yes. For all extension braided styles, Dri prefers Xpressions braiding hair. Buy the 52-inch pack (3 sections of hair included). Reach out if you need help with how many packs to buy or checking you have the right brand.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="wrap">
+      <div class="eyebrow">Ready for your next look?</div>
+      <h2>Let's get you booked.</h2>
+      <p>Pick your service and send your $20 deposit to lock in your spot.</p>
+      <div class="ctas">
+        <a class="btn btn-rose" href="#booking" data-book>Book your appointment</a>
+        <a class="btn btn-line" href="https://www.instagram.com/donebydri/" target="_blank" rel="noopener">@donebydri on Instagram</a>
+      </div>
+      <div class="contact"><a href="https://www.instagram.com/donebydri/" target="_blank" rel="noopener"><b>Instagram</b> @donebydri</a><a href="sms:+15109636030"><b>Text</b> (510) 963-6030</a><a href="mailto:drianaclayy@gmail.com"><b>Email</b> drianaclayy@gmail.com</a></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span><b>Done By Dri</b> · The versatile hairstylist</span>
+    <span>Atlanta, GA · Bay Area, CA · @donebydri</span>
+    <span>© 2026</span>
+  </div>
+</footer>
+
+<div class="bookbar"><a class="btn btn-dark" href="#booking" data-book>Book your appointment</a></div>
+
+<dialog class="book" id="booking" aria-label="Book an appointment">
+  <div class="book-top"><b>Book with Dri</b><span style="display:flex;gap:10px;align-items:center"><a href="https://donebydri.as.me/schedule.php" target="_blank" rel="noopener" style="font-size:13px;color:var(--muted)">Calendar blank? Open it</a><button class="book-x" type="button" data-close autofocus>Close</button></span></div>
+  <iframe class="book-frame" title="Done By Dri booking calendar" data-src="https://donebydri.as.me/schedule.php" loading="lazy"></iframe>
+</dialog>
+<script>
+(function(){
+  var d=document.getElementById('booking'),f=d.querySelector('iframe');
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-book]');
+    if(b){e.preventDefault();if(!f.src)f.src=f.dataset.src;if(d.showModal)d.showModal();else d.setAttribute('open','');return}
+    if(e.target.closest('[data-close]')||e.target===d){d.close?d.close():d.removeAttribute('open')}
+  });
+})();
+</script>
+</body>
+</html>
