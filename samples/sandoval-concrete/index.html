@@ -133,6 +133,13 @@ footer b{color:#fff}
   .callbar a{flex:1;box-shadow:0 10px 24px #0005}
   body{padding-bottom:80px}
 }
+.work{background:var(--paper)}
+.gal{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.gal figure{margin:0;position:relative;border-radius:8px;overflow:hidden;background:var(--stone);aspect-ratio:1/1}
+.gal figure.big{grid-column:span 2;aspect-ratio:auto}
+.gal img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.gal figcaption{position:absolute;left:10px;bottom:10px;background:#1C1F22E6;color:#fff;font-size:13px;font-weight:700;padding:5px 10px;border-radius:4px}
+@media (max-width:760px){.gal{grid-template-columns:1fr 1fr;gap:8px}.gal figure.big{aspect-ratio:2/1}}
 </style>
 </head>
 <body>
@@ -149,12 +156,13 @@ footer b{color:#fff}
   <symbol id="i-wrench" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.7 6.3a4 4 0 0 0 5 5L21 13l-8 8a2.8 2.8 0 0 1-4-4l8-8-1.3-1.3a4 4 0 0 0-5-5"/></symbol>
 </svg>
 
-<div class="sample-note">Website concept prepared for Sandoval's Concrete Specialist. Not their official site. Buttons are for preview only.</div>
+<div class="sample-note">Website redesign concept prepared for Sandoval's Concrete Specialist. Not their official site. Buttons are for preview only.</div>
 
 <header>
   <div class="wrap nav">
-    <a class="brand" href="#top"><span class="mark">S</span><span><b>Sandoval's Concrete</b><small>Specialist · Phoenix, AZ</small></span></a>
+    <a class="brand" href="#top"><span class="mark" style="font-size:19px">SCS</span><span><b>Sandoval's Concrete</b><small>Specialist · Phoenix, AZ</small></span></a>
     <ul>
+      <li><a href="#work">Our work</a></li>
       <li><a href="#services">Services</a></li>
       <li><a href="#why">Why us</a></li>
       <li><a href="#estimate">Free estimate</a></li>
@@ -169,7 +177,7 @@ footer b{color:#fff}
       <div>
         <div class="eyebrow">Concrete contractor · Phoenix &amp; across Arizona</div>
         <h1>Concrete done right. <span>Built to last.</span></h1>
-        <p class="lead">Driveways, patios, slabs, walkways and foundations for Arizona homes. Licensed, bonded and insured, with free estimates on every job.</p>
+        <p class="lead">Father &amp; son owned. Driveways, patios, slabs, foundations and more for homes and businesses across Arizona. Licensed, bonded and insured, with free estimates on every job.</p>
         <div class="ctas">
           <a class="btn btn-orange" href="#estimate">Get a free estimate</a>
           <a class="btn btn-ghost" href="#estimate"><svg><use href="#i-phone"/></svg>(623) 432-4570</a>
@@ -180,6 +188,7 @@ footer b{color:#fff}
         <ul>
           <li><svg><use href="#i-check"/></svg>Licensed, bonded &amp; insured</li>
           <li><svg><use href="#i-check"/></svg>Free estimates</li>
+          <li><svg><use href="#i-check"/></svg>Residential &amp; commercial</li>
           <li><svg><use href="#i-check"/></svg>5.0 rating on Yelp</li>
           <li><svg><use href="#i-check"/></svg>Serving Phoenix &amp; across Arizona</li>
         </ul>
@@ -189,20 +198,39 @@ footer b{color:#fff}
 
   <div class="stripe"><div class="wrap"><span>Driveways</span><span>Patios</span><span>Slabs</span><span>Walkways</span><span>Foundations</span></div></div>
 
+  <section id="work" class="work">
+    <div class="wrap">
+      <div class="head">
+        <div class="eyebrow">Recent pours</div>
+        <h2>Real jobs. Real concrete.</h2>
+        <p>A few recent projects around the Valley, from backyard slabs to a commercial lot.</p>
+      </div>
+      <div class="gal">
+        <figure class="big"><img src="img/p7.jpg" alt="Large commercial concrete pour in front of a building"><figcaption>Commercial pour</figcaption></figure>
+        <figure><img src="img/p2.jpg" alt="Fresh driveway pour with safety cones"><figcaption>Driveway</figcaption></figure>
+        <figure><img src="img/p1.jpg" alt="Finished broom-finish concrete slab in a desert yard"><figcaption>Backyard slab</figcaption></figure>
+        <figure><img src="img/p6.jpg" alt="Rebar grid set inside forms before a pour"><figcaption>Rebar set for the pour</figcaption></figure>
+        <figure><img src="img/p4.jpg" alt="Long finished concrete slab beside a house"><figcaption>Side-yard slab</figcaption></figure>
+        <figure><img src="img/p5.jpg" alt="Finished concrete pad in a backyard"><figcaption>Concrete pad</figcaption></figure>
+        <figure><img src="img/p3.jpg" alt="Slab with control joints next to a patio"><figcaption>Patio slab</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
   <section id="services">
     <div class="wrap">
       <div class="head">
         <div class="eyebrow">What we pour</div>
-        <h2>Concrete for every part of your property.</h2>
-        <p>New installs and repairs, done to last through Arizona heat.</p>
+        <h2>Residential &amp; commercial concrete.</h2>
+        <p>From a single generator pad to a full commercial lot, done to last through Arizona heat.</p>
       </div>
       <div class="svc">
-        <div class="card"><div class="ic"><svg><use href="#i-road"/></svg></div><h3>Driveways</h3><p>New driveways and replacements that handle daily traffic and the summer sun.</p></div>
-        <div class="card"><div class="ic"><svg><use href="#i-patio"/></svg></div><h3>Patios</h3><p>Backyard patios for shade, grilling and getting more out of your outdoor space.</p></div>
-        <div class="card"><div class="ic"><svg><use href="#i-slab"/></svg></div><h3>Slabs</h3><p>Level, solid slabs for sheds, garages, RV pads and more.</p></div>
-        <div class="card"><div class="ic"><svg><use href="#i-walk"/></svg></div><h3>Walkways</h3><p>Clean paths from the driveway to the door, the side yard and the backyard.</p></div>
-        <div class="card"><div class="ic"><svg><use href="#i-found"/></svg></div><h3>Foundations</h3><p>Foundation construction for new builds and structures.</p></div>
-        <div class="card"><div class="ic"><svg><use href="#i-wrench"/></svg></div><h3>Foundation repair</h3><p>Fixing foundation problems before they turn into bigger, costlier ones.</p></div>
+        <div class="card"><div class="ic"><svg><use href="#i-road"/></svg></div><h3>Driveways &amp; extensions</h3><p>New driveways, replacements and extra parking space that hold up to daily traffic and the summer sun.</p></div>
+        <div class="card"><div class="ic"><svg><use href="#i-patio"/></svg></div><h3>Patios &amp; walkways</h3><p>Backyard patios and clean paths around the house to get more out of your outdoor space.</p></div>
+        <div class="card"><div class="ic"><svg><use href="#i-found"/></svg></div><h3>Slabs &amp; foundations</h3><p>Solid, level slabs and foundations, including floors for houses.</p></div>
+        <div class="card"><div class="ic"><svg><use href="#i-walk"/></svg></div><h3>Sidewalks &amp; steps</h3><p>Sidewalks and steps for homes and apartment properties.</p></div>
+        <div class="card"><div class="ic"><svg><use href="#i-slab"/></svg></div><h3>Pads &amp; generator slabs</h3><p>Concrete pads for generators, equipment, sheds and more.</p></div>
+        <div class="card"><div class="ic"><svg><use href="#i-wrench"/></svg></div><h3>Gazebos &amp; more</h3><p>Gazebo bases and other custom concrete work. Ask about your project.</p></div>
       </div>
     </div>
   </section>
@@ -216,7 +244,7 @@ footer b{color:#fff}
       </div>
       <div class="why-grid">
         <div class="why-card"><div class="big">ROC #353202</div><h3>Licensed with the state</h3><p>Look us up with the Arizona Registrar of Contractors before you hire. That's how it should be.</p></div>
-        <div class="why-card"><div class="big">Bonded</div><h3>Bonded &amp; insured</h3><p>Bonded and insured, for your peace of mind on every job.</p></div>
+        <div class="why-card"><div class="big">Father &amp; son</div><h3>A family business</h3><p>We take pride in quality concrete work and treat every job like it matters. Bonded and insured, too.</p></div>
         <div class="why-card"><div class="big">$0</div><h3>Free estimates</h3><p>Know the price before anything starts. Call and tell us about your project.</p></div>
       </div>
     </div>
@@ -257,7 +285,7 @@ footer b{color:#fff}
         <label>Name<input type="text" autocomplete="off"></label>
         <label>Phone<input type="tel" autocomplete="off"></label>
         <label>City<input type="text" autocomplete="off" placeholder="e.g. Phoenix"></label>
-        <label>Project<select><option>Driveway</option><option>Patio</option><option>Slab</option><option>Walkway</option><option>Foundation</option><option>Foundation repair</option><option>Something else</option></select></label>
+        <label>Project<select><option>Driveway</option><option>Patio</option><option>Slab</option><option>Walkway</option><option>Slab / foundation</option><option>Sidewalk / steps</option><option>Generator pad</option><option>Commercial project</option><option>Something else</option></select></label>
         <label class="full">Tell us about it<textarea placeholder="e.g. Extend the back patio about 12 x 20 ft"></textarea></label>
         <div class="full"><button class="btn btn-dark" type="button" style="width:100%">Send request</button></div>
       </form>
