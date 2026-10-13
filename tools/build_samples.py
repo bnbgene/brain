@@ -15,7 +15,7 @@ HEAD = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
 
 def build(concept: pathlib.Path) -> None:
     src = concept.read_text(encoding="utf-8")
-    if "Not their official site" not in src:
+    if not re.search(r"Not (their|her|his) official site", src):
         sys.exit(f"{concept}: missing the concept banner, refusing to publish")
     m = re.search(r"</style>", src)
     head, body = (src[: m.end()], src[m.end():]) if m else ("", src)
