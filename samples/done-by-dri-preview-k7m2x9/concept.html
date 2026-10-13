@@ -87,8 +87,8 @@ section{padding:88px 0}
 .menu>*{min-width:0}
 .cat{background:var(--cream);border:1px solid var(--line);border-radius:24px;padding:28px}
 .cat h3{font-size:32px;margin-bottom:6px}
-.item{display:grid;grid-template-columns:1fr auto;gap:2px 16px;padding:14px 0;border-top:1px solid var(--line)}
-.cat h3+.item,.txt .sub+.item,.col>.item:first-child{border-top:0}
+.item{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:2px 14px;padding:14px 0;border-top:1px solid var(--line)}
+.cat h3+.item,.cat-head+.item,.txt .sub+.item,.col>.item:first-child{border-top:0}
 .item .n{font-weight:500;font-size:17px}
 .item .p{font:600 22px var(--display);color:var(--espresso)}
 .item .t{grid-column:1/-1;color:var(--muted);font-size:14.5px}
@@ -163,8 +163,14 @@ footer b{color:#F3EAE0;font-family:var(--display);font-size:18px;font-weight:600
 .contact a:hover b{text-decoration:underline}
 .cat-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
 .cat-head h3{margin:0!important}
+.item .n{order:1}.item .p{order:2}.item .book-item{order:3}.item .t{order:4}
+.book-item{padding:6px 14px;font-size:13.5px;background:var(--espresso);color:#F8F3ED}
+.feat .book-item{background:var(--rose);color:#fff}
 .book-pill{padding:8px 18px;font-size:14px;background:var(--espresso);color:#F8F3ED}
-.feat .book-pill{background:var(--rose);color:#fff}
+.feat .item .n{order:1}.item .p{order:2}.item .book-item{order:3}.item .t{order:4}
+.book-item{padding:6px 14px;font-size:13.5px;background:var(--espresso);color:#F8F3ED}
+.feat .book-item{background:var(--rose);color:#fff}
+.book-pill{background:var(--rose);color:#fff}
 dialog.book{border:0;padding:0;width:min(760px,100vw);max-width:100vw;height:min(92vh,980px);max-height:100vh;border-radius:22px;background:var(--cream);box-shadow:0 30px 80px #0006}
 dialog.book::backdrop{background:#1B130ECC}
 .book-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--paper)}
@@ -186,7 +192,7 @@ dialog.book::backdrop{background:#1B130ECC}
       <li><a href="#book">Booking</a></li>
       <li><a href="#faq">FAQ</a></li>
     </ul>
-    <a class="btn btn-dark" href="#booking" data-book>Book now</a>
+    <a class="btn btn-dark" href="#menu" data-pick>Book now</a>
   </div>
 </header>
 
@@ -198,7 +204,7 @@ dialog.book::backdrop{background:#1B130ECC}
         <h1>Braids done <em>beautifully</em>, wherever you are.</h1>
         <p class="lead">Knotless braids, feed-ins, quick weaves and men's styles by Dri, in Atlanta, GA and the Bay Area, CA. Pick your style and lock in your spot with a $20 deposit.</p>
         <div class="ctas">
-          <a class="btn btn-dark" href="#booking" data-book>Book your appointment</a>
+          <a class="btn btn-dark" href="#menu" data-pick>Book your appointment</a>
           <a class="btn btn-line" href="#menu">See the menu</a>
         </div>
         <div class="note"><span class="dot" aria-hidden="true"></span><span><b>Mon–Sat, 8:00am–6:30pm</b> · $20 deposit to book</span></div>
@@ -221,44 +227,45 @@ dialog.book::backdrop{background:#1B130ECC}
         <h2>Services &amp; prices</h2>
         <p>Times may vary based on length and size. Have a certain look in mind? Send a picture ahead of time so Dri can bring it to life.</p>
       </div>
+      <p id="pick-hint" hidden style="margin:-14px 0 18px;padding:10px 16px;border-radius:12px;background:var(--rose-soft);color:var(--ink);font-size:15.5px">Tap <b>Book</b> next to the style you want to pick your date and time.</p>
       <nav class="tabs" aria-label="Menu sections"><a href="#knotless">Knotless Braids</a><a href="#feedins">Feed-Ins</a><a href="#weaves">Quick Weaves</a><a href="#mens">Men's Styles</a></nav>
       <div class="menu">
         <div class="feat" id="knotless">
           <div class="ph"><img src="img/w1.png" alt="Knotless braids with curly ends"></div>
           <div class="txt">
-            <div class="cat-head"><h3>Knotless Braids</h3><a class="btn book-pill" href="#booking" data-book>Book</a></div>
+            <div class="cat-head"><h3>Knotless Braids</h3></div>
             <p class="sub">Lightweight, natural-looking braids in every size.</p>
-            <div class="item"><span class="n">Jumbo Knotless</span><span class="p">$130</span><span class="t">About 2 hours</span></div>
-            <div class="item"><span class="n">Large Knotless</span><span class="p">$165</span><span class="t">About 3 hrs 15 min</span></div>
-            <div class="item"><span class="n">Medium Knotless</span><span class="p">$200</span><span class="t">About 5 hours</span></div>
-            <div class="item"><span class="n">Smedium Knotless</span><span class="p">$250</span><span class="t">About 6 hrs 20 min · a mix of small and medium · <em>morning appointments only</em></span></div>
-            <div class="item"><span class="n">Small Knotless</span><span class="p">$310</span><span class="t">About 8 hrs 20 min</span></div>
+            <div class="item"><span class="n">Jumbo Knotless</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/35956303/calendar/7074053" data-svc="Jumbo Knotless">Book</a><span class="p">$130</span><span class="t">About 2 hours</span></div>
+            <div class="item"><span class="n">Large Knotless</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/35956289/calendar/7074053" data-svc="Large Knotless">Book</a><span class="p">$165</span><span class="t">About 3 hrs 15 min</span></div>
+            <div class="item"><span class="n">Medium Knotless</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/35956177/calendar/7074053" data-svc="Medium Knotless">Book</a><span class="p">$200</span><span class="t">About 5 hours</span></div>
+            <div class="item"><span class="n">Smedium Knotless</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/57971279/calendar/7074053" data-svc="Smedium Knotless">Book</a><span class="p">$250</span><span class="t">About 6 hrs 20 min · a mix of small and medium · <em>morning appointments only</em></span></div>
+            <div class="item"><span class="n">Small Knotless</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/69764566/calendar/7074053" data-svc="Small Knotless">Book</a><span class="p">$310</span><span class="t">About 8 hrs 20 min</span></div>
           </div>
         </div>
         <div class="cat" id="feedins">
-          <div class="cat-head"><h3>Feed-Ins</h3><a class="btn book-pill" href="#booking" data-book>Book</a></div>
-          <div class="item"><span class="n">5 Feed-Ins</span><span class="p">$115</span><span class="t">About 2 hrs 30 min</span></div>
-          <div class="item"><span class="n">6 Feed-Ins</span><span class="p">$115</span><span class="t">About 2 hrs 30 min</span></div>
-          <div class="item"><span class="n">10 Feed-Ins</span><span class="p">$120</span><span class="t">About 3 hours</span></div>
-          <div class="item"><span class="n">Creative Straight Backs</span><span class="p">$185</span><span class="t">About 5 hrs 20 min · send your inspo picture in advance</span></div>
+          <div class="cat-head"><h3>Feed-Ins</h3></div>
+          <div class="item"><span class="n">5 Feed-Ins</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/57970892/calendar/7074053" data-svc="5 Feed-Ins">Book</a><span class="p">$115</span><span class="t">About 2 hrs 30 min</span></div>
+          <div class="item"><span class="n">6 Feed-Ins</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/57970905/calendar/7074053" data-svc="6 Feed-Ins">Book</a><span class="p">$115</span><span class="t">About 2 hrs 30 min</span></div>
+          <div class="item"><span class="n">10 Feed-Ins</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/57970928/calendar/7074053" data-svc="10 Feed-Ins">Book</a><span class="p">$120</span><span class="t">About 3 hours</span></div>
+          <div class="item"><span class="n">Creative Straight Backs</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/57971380/calendar/7074053" data-svc="Creative Straight Backs">Book</a><span class="p">$185</span><span class="t">About 5 hrs 20 min · send your inspo picture in advance</span></div>
         </div>
         <div class="cat" id="weaves">
-          <div class="cat-head"><h3>Quick Weaves</h3><a class="btn book-pill" href="#booking" data-book>Book</a></div>
-          <div class="item"><span class="n">Middle Part</span><span class="p">$100</span><span class="t">About 2 hrs 30 min</span></div>
-          <div class="item"><span class="n">Side Part</span><span class="p">$100</span><span class="t">About 2 hrs 30 min</span></div>
-          <div class="item"><span class="n">Flip-Over</span><span class="p">$100</span><span class="t">About 2 hrs 10 min</span></div>
-          <div class="item"><span class="n">French Braids with Weave</span><span class="p">$140</span><span class="t">About 4 hrs 10 min</span></div>
+          <div class="cat-head"><h3>Quick Weaves</h3></div>
+          <div class="item"><span class="n">Middle Part</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/70843103/calendar/7074053" data-svc="Middle Part">Book</a><span class="p">$100</span><span class="t">About 2 hrs 30 min</span></div>
+          <div class="item"><span class="n">Side Part</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/70843152/calendar/7074053" data-svc="Side Part">Book</a><span class="p">$100</span><span class="t">About 2 hrs 30 min</span></div>
+          <div class="item"><span class="n">Flip-Over</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/71398820/calendar/7074053" data-svc="Flip-Over">Book</a><span class="p">$100</span><span class="t">About 2 hrs 10 min</span></div>
+          <div class="item"><span class="n">French Braids with Weave</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/70843177/calendar/7074053" data-svc="French Braids with Weave">Book</a><span class="p">$140</span><span class="t">About 4 hrs 10 min</span></div>
         </div>
         <div class="cat mens" id="mens">
-          <div class="cat-head"><h3>Men's Styles</h3><a class="btn book-pill" href="#booking" data-book>Book</a></div>
+          <div class="cat-head"><h3>Men's Styles</h3></div>
           <div class="cols">
             <div class="col">
-              <div class="item"><span class="n">Men's Straight Backs</span><span class="p">$65</span><span class="t">About 2 hrs 10 min · price varies with how many braids</span></div>
-              <div class="item"><span class="n">Men's Freestyle</span><span class="p">$70</span><span class="t">About 3 hours · any freestyle style of Dri's choice</span></div>
+              <div class="item"><span class="n">Men's Straight Backs</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/57971330/calendar/7074053" data-svc="Men's Straight Backs">Book</a><span class="p">$65</span><span class="t">About 2 hrs 10 min · price varies with how many braids</span></div>
+              <div class="item"><span class="n">Men's Freestyle</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/57971079/calendar/7074053" data-svc="Men's Freestyle">Book</a><span class="p">$70</span><span class="t">About 3 hours · any freestyle style of Dri's choice</span></div>
             </div>
             <div class="col">
-              <div class="item"><span class="n">Men's Twist</span><span class="p">$75</span><span class="t">About 3 hours</span></div>
-              <div class="item"><span class="n">Men's Singles</span><span class="p">$75</span><span class="t">About 3 hours</span></div>
+              <div class="item"><span class="n">Men's Twist</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/57971059/calendar/7074053" data-svc="Men's Twist">Book</a><span class="p">$75</span><span class="t">About 3 hours</span></div>
+              <div class="item"><span class="n">Men's Singles</span><a class="btn book-item" href="#booking" data-book="https://donebydri.as.me/schedule/c69173eb/appointment/57971085/calendar/7074053" data-svc="Men's Singles">Book</a><span class="p">$75</span><span class="t">About 3 hours</span></div>
             </div>
           </div>
         </div>
@@ -352,7 +359,7 @@ dialog.book::backdrop{background:#1B130ECC}
       <h2>Let's get you booked.</h2>
       <p>Pick your service and send your $20 deposit to lock in your spot.</p>
       <div class="ctas">
-        <a class="btn btn-rose" href="#booking" data-book>Book your appointment</a>
+        <a class="btn btn-rose" href="#menu" data-pick>Book your appointment</a>
         <a class="btn btn-line" href="https://www.instagram.com/donebydri/" target="_blank" rel="noopener">@donebydri on Instagram</a>
       </div>
       <div class="contact"><a href="https://www.instagram.com/donebydri/" target="_blank" rel="noopener"><b>Instagram</b> @donebydri</a><a href="sms:+15109636030"><b>Text</b> (510) 963-6030</a><a href="mailto:drianaclayy@gmail.com"><b>Email</b> drianaclayy@gmail.com</a></div>
@@ -368,18 +375,20 @@ dialog.book::backdrop{background:#1B130ECC}
   </div>
 </footer>
 
-<div class="bookbar"><a class="btn btn-dark" href="#booking" data-book>Book your appointment</a></div>
+<div class="bookbar"><a class="btn btn-dark" href="#menu" data-pick>Book your appointment</a></div>
 
 <dialog class="book" id="booking" aria-label="Book an appointment">
-  <div class="book-top"><b>Book with Dri</b><span style="display:flex;gap:10px;align-items:center"><a href="https://donebydri.as.me/schedule.php" target="_blank" rel="noopener" style="font-size:13px;color:var(--muted)">Calendar blank? Open it</a><button class="book-x" type="button" data-close autofocus>Close</button></span></div>
-  <iframe class="book-frame" title="Done By Dri booking calendar" data-src="https://donebydri.as.me/schedule.php" loading="lazy"></iframe>
+  <div class="book-top"><b id="book-title">Book with Dri</b><span style="display:flex;gap:10px;align-items:center"><a id="book-alt" href="#" target="_blank" rel="noopener" style="font-size:13px;color:var(--muted)">Calendar blank? Open it</a><button class="book-x" type="button" data-close autofocus>Close</button></span></div>
+  <iframe class="book-frame" title="Done By Dri booking calendar" loading="lazy"></iframe>
 </dialog>
 <script>
 (function(){
-  var d=document.getElementById('booking'),f=d.querySelector('iframe');
+  var d=document.getElementById('booking'),f=d.querySelector('iframe'),t=document.getElementById('book-title'),alt=document.getElementById('book-alt');
   document.addEventListener('click',function(e){
     var b=e.target.closest('[data-book]');
-    if(b){e.preventDefault();if(!f.src)f.src=f.dataset.src;if(d.showModal)d.showModal();else d.setAttribute('open','');return}
+    if(b){e.preventDefault();var u=b.getAttribute('data-book');if(f.getAttribute('src')!==u)f.src=u;alt.href=u;t.textContent=b.getAttribute('data-svc')||'Book with Dri';if(d.showModal)d.showModal();else d.setAttribute('open','');return}
+    var pk=e.target.closest('[data-pick]');
+    if(pk){e.preventDefault();var m=document.getElementById('menu');m.scrollIntoView({behavior:'smooth'});var h=document.getElementById('pick-hint');h.hidden=false;return}
     if(e.target.closest('[data-close]')||e.target===d){d.close?d.close():d.removeAttribute('open')}
   });
 })();
