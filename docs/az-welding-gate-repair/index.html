@@ -73,7 +73,7 @@ section.block{padding-block:76px}
 .head h2{font-size:clamp(32px,5vw,46px);margin-top:10px}
 .head p{color:var(--muted);margin:12px 0 0}
 
-.services{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
+.services{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
 .svc{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:24px;position:relative;overflow:hidden}
 .svc::after{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--spark);transform:scaleY(0);transform-origin:top;transition:transform .25s}
 .svc:hover::after{transform:scaleY(1)}
@@ -91,11 +91,11 @@ section.block{padding-block:76px}
 .step p{margin:0;color:#FFFFFFAA;font-size:15.5px}
 @media (max-width:760px){.steps{grid-template-columns:1fr}}
 
-.work{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.tile{aspect-ratio:4/3;border-radius:12px;background:repeating-linear-gradient(135deg,#E9E4DB 0 14px,#E2DCD1 14px 28px);border:2px dashed #CFC7B9;display:grid;place-items:center;text-align:center;color:#7A7266;font-weight:600;font-size:14px;padding:16px}
-.tile svg{width:34px;height:34px;margin:0 auto 8px;color:#A79E90}
-.tile.big{grid-column:span 2;grid-row:span 2;aspect-ratio:auto}
-@media (max-width:640px){.work{grid-template-columns:1fr 1fr}.tile.big{grid-column:span 2;grid-row:auto;aspect-ratio:16/10}}
+.work{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:760px){.work{grid-template-columns:1fr 1fr}}
+.work figure{margin:0;position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--steel)}
+.work img{display:block;width:100%;height:100%;object-fit:cover}
+.work figcaption{position:absolute;left:0;right:0;bottom:0;padding:24px 12px 10px;font:600 14px var(--body);color:#fff;background:linear-gradient(transparent,#000C)}
 
 .why{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
 .why div{border-top:3px solid var(--spark);padding-top:16px}
@@ -152,9 +152,9 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
   <section class="hero">
     <div class="wrap grid">
       <div>
-        <span class="eyebrow">Glendale, Arizona</span>
+        <span class="eyebrow">Glendale, AZ · Licensed &amp; insured</span>
         <h1>Gates fixed.<br>Fences <em>built strong.</em></h1>
-        <p class="lead">Welding, gate repair, fences and installs from a local Glendale welder. Call or text Jorge and get it handled.</p>
+        <p class="lead">Custom gates, railings, decks, fences and welding repairs. Built tough in Arizona. Call or text Jorge and get it handled.</p>
         <div class="ctas">
           <a class="btn btn-spark" href="#contact">Get a quote</a>
           <a class="btn btn-line" href="#services">See services</a>
@@ -196,7 +196,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
 
   <div class="strip">
     <ul class="wrap">
-      <li>Gate repair</li><li>Fences</li><li>Installs</li><li>Welding</li><li>Handyman</li>
+      <li>Custom gates</li><li>Railings</li><li>Decks</li><li>Fences</li><li>Stairs</li><li>Welding repairs</li>
     </ul>
   </div>
 
@@ -210,28 +210,33 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
       <div class="services">
         <div class="svc">
           <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M7 21v-9M12 21v-10M17 21v-9M3 15h18"/></svg></div>
+          <h3>Custom gates</h3>
+          <p>Gates built to fit your home, from arched iron entries to wood-look and slat-style driveway gates.</p>
+        </div>
+        <div class="svc">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></div>
           <h3>Gate repair</h3>
           <p>Sagging, dragging or broken gates fixed and welded back into shape.</p>
         </div>
         <div class="svc">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V6l2-3 2 3v15M10 21V6l2-3 2 3v15M16 21V6l2-3 2 3v15M2 10h20M2 17h20"/></svg></div>
-          <h3>Fences</h3>
-          <p>Fence repair and new fence work.</p>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M5 20V10M19 20V10M3 10h18M9 10v10M14 10v10"/></svg></div>
+          <h3>Railings &amp; stairs</h3>
+          <p>Metal railings and stairs for decks, porches and walkways.</p>
         </div>
         <div class="svc">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg></div>
-          <h3>Installs</h3>
-          <p>New gates and fences installed and set solid.</p>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20M4 12v8M20 12v8M12 12v8M6 8h12l2 4H4z"/></svg></div>
+          <h3>Decks</h3>
+          <p>Decks with metal railings and stairs.</p>
+        </div>
+        <div class="svc">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V6l2-3 2 3v15M10 21V6l2-3 2 3v15M16 21V6l2-3 2 3v15M2 10h20M2 17h20"/></svg></div>
+          <h3>Fences</h3>
+          <p>Fence work and repairs.</p>
         </div>
         <div class="svc">
           <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div>
-          <h3>Welding</h3>
+          <h3>Welding repairs</h3>
           <p>Metal repairs and welding jobs, big or small.</p>
-        </div>
-        <div class="svc">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></div>
-          <h3>Handyman</h3>
-          <p>Ask about other repair jobs around the property.</p>
         </div>
       </div>
     </div>
@@ -257,14 +262,13 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
       <div class="head">
         <span class="eyebrow">Our work</span>
         <h2>Recent jobs</h2>
-        <p>Photos of finished gates and fences go here, so customers can see the work before they call.</p>
+        <p>Real gates, railings and decks by AZ Welding.</p>
       </div>
       <div class="work">
-        <div class="tile big"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 17-5-5-8 7"/></svg>Your best gate or fence photo</div></div>
-        <div class="tile"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 17-5-5-8 7"/></svg>Before &amp; after</div></div>
-        <div class="tile"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 17-5-5-8 7"/></svg>Welding work</div></div>
-        <div class="tile"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 17-5-5-8 7"/></svg>New install</div></div>
-        <div class="tile"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 17-5-5-8 7"/></svg>Fence job</div></div>
+        <figure><img src="img/arch-gate.jpg" alt="Arched wrought iron gate with a wood panel door" loading="lazy"><figcaption>Arched iron entry gate</figcaption></figure>
+        <figure><img src="img/double-gate.jpg" alt="Double gate with wood-look panels in a metal frame" loading="lazy"><figcaption>Wood-look double gate</figcaption></figure>
+        <figure><img src="img/slat-gate.jpg" alt="Black horizontal slat gate" loading="lazy"><figcaption>Black slat gate</figcaption></figure>
+        <figure><img src="img/deck.jpg" alt="Deck with metal railing and stairs" loading="lazy"><figcaption>Deck, railing &amp; stairs</figcaption></figure>
       </div>
     </div>
   </section>
@@ -273,7 +277,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
     <div class="wrap">
       <div class="why">
         <div><h3>Local to Glendale</h3><p>Based right here in Glendale, Arizona.</p></div>
-        <div><h3>Talk to the owner</h3><p>Every job goes through Jorge, start to finish.</p></div>
+        <div><h3>Licensed &amp; insured</h3><p>Licensed and insured. Built tough in Arizona.</p></div>
         <div><h3>One call, many jobs</h3><p>Gates, fences, installs and welding, all from the same person.</p></div>
       </div>
     </div>
@@ -287,6 +291,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
         <p>Call or text Jorge, or send the form and he'll get back to you.</p>
         <a class="big-phone" href="#contact">(602) 697-4195</a>
         <ul class="facts">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6z"/></svg>Licensed &amp; insured</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>Glendale, Arizona</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Owner: Jorge Manuel Jauregui</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Calls and texts welcome</li>
