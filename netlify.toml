@@ -1,0 +1,6 @@
+# Netlify site "bnb-samples": publishes every concept site in samples/.
+# samples/<slug>/index.html is served at https://<site>.netlify.app/<slug>/
+# Rebuild pages with: python3 tools/build_samples.py
+[build]
+  publish = "samples"
+  command = ""

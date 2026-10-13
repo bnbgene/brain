@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<style>body{margin:0}</style>
+<title>AZ Handyman Services</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: sturdy workshop look, big condensed headline, service tiles, family-owned statement */
+:root{--bg:#fbf7f0;--fg:#2a2118;--muted:#6a5d4f;--rust:#c2571a;--ink:#2a2118;--card:#ffffff;--line:#e3d9c9;--onrust:#ffffff;--banner:#1d1d1d;
+--display:'Barlow Condensed',Impact,sans-serif;--body:'Barlow',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1511;--fg:#f3ece1;--muted:#b3a794;--rust:#e0772f;--ink:#f3ece1;--card:#241d17;--line:#3b3228;--onrust:#1a1511;--banner:#000;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1a1511;--fg:#f3ece1;--muted:#b3a794;--rust:#e0772f;--ink:#f3ece1;--card:#241d17;--line:#3b3228;--onrust:#1a1511;--banner:#000;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);line-height:1.6;font-size:16px}
+.banner{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--banner);color:#fff;text-align:center;padding:.6rem 1rem;font-size:.85rem;font-weight:500}
+.wrap{max-width:62rem;margin:0 auto;padding-inline:1rem}
+nav{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem 1.5rem;padding-block:1.1rem;align-items:center}
+nav b{font-family:var(--display);font-size:1.7rem;letter-spacing:.02em;text-transform:uppercase}
+nav div{display:flex;gap:1.2rem;font-size:.92rem;font-weight:500}
+a{color:inherit}
+.hero{border-top:6px solid var(--rust);padding-block:3rem 3.5rem}
+.hero .wrap{display:grid;gap:1.2rem}
+h1{font-family:var(--display);font-size:clamp(3rem,13vw,6.5rem);line-height:.92;text-transform:uppercase;margin:0;text-wrap:balance}
+h1 em{font-style:normal;color:var(--rust)}
+.hero p{max-width:36rem;margin:0;color:var(--muted);font-size:1.1rem}
+.btns{display:flex;flex-wrap:wrap;gap:.8rem}
+.btn{display:inline-block;padding:.8rem 1.4rem;font-weight:600;text-decoration:none;border:2px solid var(--ink)}
+.btn.fill{background:var(--rust);border-color:var(--rust);color:var(--onrust)}
+section{padding-block:3rem}
+h2{font-family:var(--display);font-size:2.4rem;text-transform:uppercase;margin:0 0 1.2rem;line-height:1}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:1rem}
+.tile{background:var(--card);border:1px solid var(--line);padding:1.2rem}
+.tile b{display:block;font-family:var(--display);font-size:1.6rem;text-transform:uppercase}
+.tile span{color:var(--muted);font-size:.95rem}
+.band{background:var(--ink);color:var(--bg)}
+.band .wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1.5rem;align-items:center}
+.band .big{font-family:var(--display);font-size:clamp(2.6rem,9vw,4.5rem);line-height:1;color:var(--rust)}
+.band p{margin:0}
+footer{padding-block:1.5rem;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="banner">Website concept prepared for AZ Handyman Services LLC. Not their official site. Buttons are for preview only.</div>
+<nav class="wrap"><b>AZ Handyman Services</b><div><a href="#services">Services</a><a href="#why">Why us</a><a href="#contact">Contact</a></div></nav>
+<header class="hero"><div class="wrap">
+<h1>Family-owned.<br><em>East Valley</em> fixed.</h1>
+<p>AZ Handyman Services is a family owned and operated handyman business that takes care of the East Valley's home repair needs, based in San Tan Valley.</p>
+<div class="btns"><a class="btn fill" href="#contact">Get a free quote</a><a class="btn" href="#services">What we fix</a></div>
+</div></header>
+<section id="services"><div class="wrap"><h2>Handyman help for the East Valley</h2><div class="tiles"><div class="tile"><b>Family owned</b><span>Family owned and operated.</span></div><div class="tile"><b>Local</b><span>Based in San Tan Valley and serving the whole East Valley.</span></div></div><p style="color:var(--muted);margin-top:1rem;font-size:.9rem">Service list to be added once confirmed with the owner.</p></div></section>
+<section class="band" id="why"><div class="wrap">
+<div class="big">100%</div>
+<p>of Facebook reviewers recommend AZ Handyman Services, from 15 reviews.</p>
+</div></section>
+<section id="contact"><div class="wrap"><h2>Ask for a quote</h2>
+<p style="max-width:34rem">Serving San Tan Valley and the East Valley. Phone: (520) 406-0811</p>
+<a class="btn fill" href="#contact">Request a quote</a></div></section>
+<footer><div class="wrap">Website concept prepared for AZ Handyman Services LLC. Not their official site.</div></footer>
+</body>
+</html>

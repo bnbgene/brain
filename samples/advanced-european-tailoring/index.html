@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<style>body{margin:0}</style>
+<title>Advanced European Tailoring</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Work+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: quiet atelier page, single column with a ruled services list and a tape-measure hours strip */
+:root{--bg:#f6f3ee;--fg:#1f2430;--muted:#5b6070;--navy:#1b2a49;--thread:#a8322d;--card:#ffffff;--line:#d9d3c8;--onnavy:#f6f3ee;
+--display:'Cormorant Garamond',Georgia,serif;--body:'Work Sans',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171f;--fg:#ece8e0;--muted:#a3a8b5;--navy:#2a3f6b;--thread:#e0716b;--card:#1c212c;--line:#323848;--onnavy:#f6f3ee;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14171f;--fg:#ece8e0;--muted:#a3a8b5;--navy:#2a3f6b;--thread:#e0716b;--card:#1c212c;--line:#323848;--onnavy:#f6f3ee;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);line-height:1.6;font-size:16px}
+*{box-sizing:border-box}
+.banner{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--thread);color:#fff;text-align:center;padding:.6rem 1rem;font-size:.85rem;font-weight:500}
+.wrap{max-width:62rem;margin:0 auto;padding-inline:1rem}
+nav{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;justify-content:space-between;align-items:baseline;padding-block:1.2rem}
+nav b{font-family:var(--display);font-size:1.4rem;font-weight:600}
+nav div{display:flex;gap:1.2rem;font-size:.9rem}
+a{color:inherit}
+.hero{background:var(--navy);color:var(--onnavy);padding-block:3.5rem}
+.hero .wrap{display:grid;gap:1.2rem}
+.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:.75rem;opacity:.8}
+h1{font-family:var(--display);font-weight:500;font-size:clamp(2.4rem,8vw,4.4rem);line-height:1.05;margin:0;text-wrap:balance}
+.hero p{max-width:34rem;margin:0;opacity:.92}
+.btns{display:flex;flex-wrap:wrap;gap:.8rem}
+.btn{display:inline-block;padding:.75rem 1.3rem;border:1.5px solid currentColor;text-decoration:none;font-weight:600;font-size:.95rem}
+.btn.fill{background:var(--onnavy);color:#1b2a49;border-color:var(--onnavy)}
+section{padding-block:3rem}
+h2{font-family:var(--display);font-size:2rem;font-weight:600;margin:0 0 1.2rem}
+.svc{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:0 2.5rem}
+.svc li{padding:.9rem 0;border-top:1px solid var(--line)}
+.svc b{display:block;font-family:var(--display);font-size:1.3rem}
+.svc span{color:var(--muted);font-size:.92rem}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:2rem}
+.two>*{min-width:0}
+.box{background:var(--card);border:1px solid var(--line);padding:1.4rem}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:.45rem 0;border-bottom:1px dashed var(--line)}
+td:last-child{text-align:right}
+.rev{font-family:var(--display);font-size:1.5rem;line-height:1.3}
+footer{border-top:1px solid var(--line);padding-block:1.5rem;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="banner">Website concept prepared for Advanced European Tailoring. Not their official site. Buttons are for preview only.</div>
+<nav class="wrap"><b>Advanced European Tailoring</b><div><a href="#services">Services</a><a href="#hours">Hours</a><a href="#visit">Visit</a></div></nav>
+<header class="hero"><div class="wrap">
+<span class="eyebrow">Berkeley, California · Adeline Street</span>
+<h1>Tailoring and alterations, done right.</h1>
+<p>Ladies' and men's garment tailoring, suit alterations and leather repair at our Adeline Street shop.</p>
+<div class="btns"><a class="btn fill" href="#visit">Request an alteration</a><a class="btn" href="#services">See services</a></div>
+</div></header>
+<section id="services"><div class="wrap"><h2>What we do</h2>
+<ul class="svc">
+<li><b>Ladies' &amp; men's alterations</b><span>Hems, sleeves, waists and fit adjustments for everyday clothing.</span></li>
+<li><b>Men's suit alterations</b><span>Shoulder take-in, body take-in, shortening sleeves and other major suit work.</span></li>
+<li><b>Leather garments</b><span>Alteration, refurbishing, new lining and new zippers.</span></li>
+<li><b>Custom tailoring</b><span>All types of tailoring and alteration work involved in garments.</span></li>
+</ul></div></section>
+<section><div class="wrap two">
+<div><h2>Neighbors trust us</h2><p class="rev">Over 260 reviews on Yelp for our work on Adeline Street.</p></div>
+<div class="box" id="hours"><h2 style="font-size:1.5rem">Hours</h2><table>
+<tr><td>Monday – Thursday</td><td>9:00 am – 5:00 pm</td></tr>
+<tr><td>Friday</td><td>9:00 am – 1:00 pm</td></tr>
+<tr><td>Saturday – Sunday</td><td>Closed</td></tr></table></div>
+</div></section>
+<section id="visit"><div class="wrap two">
+<div><h2>Visit the shop</h2><p>2808 Adeline St #4<br>Berkeley, CA 94703</p><p>Phone: (510) 843-3881</p></div>
+<div class="box"><h2 style="font-size:1.5rem">Ask about your garment</h2><p style="color:var(--muted);margin-top:0">Tell us what needs fixing. This button is for preview only.</p><a class="btn" style="background:var(--navy);color:var(--onnavy);border-color:var(--navy)" href="#visit">Send a request</a></div>
+</div></section>
+<footer><div class="wrap">Website concept prepared for Advanced European Tailoring. Not their official site.</div></footer>
+</body>
+</html>
