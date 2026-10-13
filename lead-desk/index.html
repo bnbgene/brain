@@ -426,7 +426,7 @@ A JSON list like [{"name": "...", "phone": "...", "why": "..."}] also works.</pr
           <p style="margin:0 0 8px">This desk shares its data with Claude. In a chat you can say:</p>
           <ul style="padding-left:18px;margin:0">
             <li>"Find 20 more leads in Scottsdale and add them to my lead desk."</li>
-            <li>"Build my requested sample sites."</li>
+            <li>"Build my requested sample sites." You get a private preview first. Nothing goes on Netlify until you tap <b>Looks good, publish</b>.</li>
             <li>"Who should I call today?"</li>
           </ul>
         </div>
@@ -556,9 +556,10 @@ async function copy(text){try{await navigator.clipboard.writeText(text);toast('C
 /* ---------- derived lists ---------- */
 function todayBuckets(){
   const t=today();
-  const due=[],fresh=[],req=[];
+  const due=[],fresh=[],req=[],review=[];
   for(const l of leads){
-    if(l.sampleRequested && !l.sampleUrl && l.stage!=='lost') req.push(l);
+    if(l.sampleRequested && !l.sampleUrl && !l.previewUrl && l.stage!=='lost') req.push(l);
+    if(safeUrl(l.previewUrl) && !l.sampleUrl && l.stage!=='lost') review.push(l);
     if(!ACTIVE.includes(l.stage)) continue;
     if(l.followUp && l.followUp<=t){due.push({l,why:l.followUp<t?'Follow-up was due '+fmtDate(l.followUp):'Follow-up due today'});continue}
     if(l.stage==='sample' && daysAgo(l.lastContact)>=3 && !l.followUp){due.push({l,why:'Sample sent '+daysAgo(l.lastContact)+' days ago with no reply'});continue}
@@ -566,7 +567,7 @@ function todayBuckets(){
   }
   due.sort((a,b)=>(a.l.followUp||'').localeCompare(b.l.followUp||''));
   fresh.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
-  return {due,fresh,req};
+  return {due,fresh,req,review};
 }
 
 /* ---------- render ---------- */
@@ -598,6 +599,12 @@ function taskRow(l,cls,why,acts){
     <div class="acts">${acts}</div>
   </div>`;
 }
+function previewActs(l){
+  const pv=safeUrl(l.previewUrl); if(!pv)return '';
+  return `<a class="btn small" href="${esc(pv)}" target="_blank" rel="noopener">Open preview ↗</a>`+
+    (l.sampleUrl?'':`<button class="btn small primary" data-publish="${esc(l.id)}" ${l.publishAsked?'disabled':''}>${l.publishAsked?'Publishing…':'Looks good, publish'}</button>`)+
+    `<button class="btn small ghost" data-open="${esc(l.id)}">Open</button>`;
+}
 function renderToday(b){
   const v=$('v-today');
   if(!leads.length){v.innerHTML=`<div class="empty">No leads yet. Tap <b>Leads → + Add lead</b>, or ask Claude to find some for you.</div>`;return}
@@ -612,6 +619,11 @@ function renderToday(b){
   h+=`<div class="group"><div class="group-head"><h2>New leads to call</h2><p>${b.fresh.length>10?'Top 10 of '+b.fresh.length:b.fresh.length+' ready'}</p></div>`;
   h+=b.fresh.length?b.fresh.slice(0,10).map(l=>taskRow(l,'fresh',l.why,callActs(esc(l.id)))).join(''):`<div class="empty">No new leads. Ask Claude: "Find 20 more leads and add them to my lead desk."</div>`;
   h+=`</div>`;
+  if(b.review.length){
+    h+=`<div class="group"><div class="group-head"><h2>Samples waiting for your OK</h2><p>Not on Netlify yet. Look first, then publish.</p></div>`;
+    h+=b.review.map(l=>taskRow(l,'req',l.publishAsked?'Publish requested. Claude is putting it online.':'Draft ready. Ask Claude for changes, or publish it.',previewActs(l))).join('');
+    h+=`</div>`;
+  }
   if(b.req.length){
     h+=`<div class="group"><div class="group-head"><h2>Sample sites requested</h2><p>Tell Claude "build my requested sample sites"</p></div>`;
     h+=b.req.map(l=>taskRow(l,'req','Waiting for Claude to build the sample',`<button class="btn small ghost" data-open="${esc(l.id)}">Open</button>`)).join('');
@@ -639,6 +651,7 @@ function leadWhen(l,t){
   else if(l.createdAt) parts.push('Added '+esc(fmtDate(String(l.createdAt).slice(0,10))));
   if(Array.isArray(l.photos)&&l.photos.length) parts.push(l.photos.length+' photo'+(l.photos.length===1?'':'s'));
   if(safeUrl(l.sampleUrl)) parts.push('Sample built');
+  else if(safeUrl(l.previewUrl)) parts.push('Draft ready for your OK');
   return parts.join(' · ');
 }
 function renderLeads(){
@@ -1003,7 +1016,10 @@ function renderDrawerExtras(){
     if(src) q+=`<a class="btn small" href="${esc(src)}" target="_blank" rel="noopener">Where we found them ↗</a>`;
     const bk=safeUrl(l.bookingUrl); if(bk) q+=`<a class="btn small" href="${esc(bk)}" target="_blank" rel="noopener">${esc(bookingName(l)==='a booking page'?'Booking page':bookingName(l))} ↗</a>`;
     if(smp) q+=`<a class="btn small" href="${esc(smp)}" target="_blank" rel="noopener">${/\.(png|jpe?g|webp)(\?|$)/i.test(smp)?'See sample (picture)':'Open sample site'} ↗</a>`;
-    if(!smp) q+=`<button class="btn small" id="d-reqsample" ${l.sampleRequested?'disabled':''}>${l.sampleRequested?'Sample site requested':'Build sample site'}</button>`;
+    const pv=safeUrl(l.previewUrl);
+    if(pv) q+=`<a class="btn small" href="${esc(pv)}" target="_blank" rel="noopener">Open preview ↗</a>`;
+    if(pv&&!smp) q+=`<button class="btn small primary" data-publish="${esc(l.id)}" ${l.publishAsked?'disabled':''}>${l.publishAsked?'Publishing…':'Looks good, publish'}</button>`;
+    if(!smp&&!pv) q+=`<button class="btn small" id="d-reqsample" ${l.sampleRequested?'disabled':''}>${l.sampleRequested?'Sample site requested':'Build sample site'}</button>`;
     if(sample && l.stage!=='won') q+=`<button class="btn small" id="d-draft">Draft email</button>`;
     if(l.stage==='won') q+=`<button class="btn small" id="d-reportbtn">${sample?'Write monthly report':'Monthly report'}</button>`;
     q+=`</div>`;
@@ -1387,6 +1403,19 @@ async function sendRequest(ev){
   toast(started?'Sent. Claude is starting on it now.':'Sent. Claude will pick it up on its next check.');
   $('ask-go').disabled=false;
 }
+async function publishSample(id){
+  const l=leads.find(x=>x.id===id); if(!l||!db||l.publishAsked)return;
+  const ref=db.collection('requests').doc();
+  try{
+    await ref.set({text:`Publish the ${l.name} sample (lead id ${l.id}). I looked at the preview and it's good.`,status:'queued',createdAt:new Date().toISOString()});
+    await write(l.id,{publishAsked:true,history:withHistory(l,'Approved the sample. Asked Claude to publish it.'),updatedAt:new Date().toISOString()},false);
+  }catch(e){toast('Couldn’t send. Try again.');return}
+  let started=false;
+  if(mcp&&reqCfg.trigger&&/^trig_[A-Za-z0-9]+$/.test(reqCfg.trigger)){
+    try{await mcp.callTool('Claude Code Remote','fire_trigger',{trigger_id:reqCfg.trigger,text:'Handle lead desk request id '+ref.id+'.'},{cache:false});started=true}catch(_){}
+  }
+  toast(started?'Publishing now. The link shows on the lead in a few minutes.':'Sent. Claude will publish it on its next check.');
+}
 async function cancelRequest(id){
   if(!db)return;
   try{await db.collection('requests').doc(id).delete();toast('Request cancelled')}catch(e){toast('Couldn’t cancel. Claude may have started it.')}
@@ -1420,6 +1449,7 @@ document.addEventListener('click',e=>{
   const q=e.target.closest('[data-q]'); if(q){quick(q.dataset.id,q.dataset.q);return}
   const o=e.target.closest('[data-open]'); if(o){const l=leads.find(x=>x.id===o.dataset.open);if(l)openDrawer(l);return}
   const s=e.target.closest('[data-stage]'); if(s){stageFilter=s.dataset.stage;renderLeads();return}
+  const pb=e.target.closest('[data-publish]'); if(pb){publishSample(pb.dataset.publish);return}
   const d=e.target.closest('[data-draft]'); if(d){draftEmail(d.dataset.draft);return}
   const id=e.target.id;
   const pl=e.target.closest('[data-ph-logo]'); if(pl){setLogo(pl.dataset.phLogo);return}
