@@ -2,6 +2,7 @@
 // (the "submission-created" event). For the 1:1 mentorship application it
 // posts the answers to Discord through the webhook in DISCORD_WEBHOOK_URL,
 // set under Site configuration → Environment variables (never in code).
+// Changing that variable only takes effect after the next deploy.
 
 const FIELDS = [
   ['name', 'name'],
