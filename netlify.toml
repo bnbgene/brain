@@ -2,3 +2,7 @@
 [build]
   base = "bnbprofits"
   publish = "."
+
+# submission-created.js posts each 1:1 application to Discord.
+[functions]
+  directory = "netlify/functions"
