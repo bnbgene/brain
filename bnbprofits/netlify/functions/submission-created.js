@@ -29,7 +29,7 @@ function clean(value, max) {
 
 exports.handler = async (event) => {
   const url = process.env.DISCORD_WEBHOOK_URL;
-  if (!url) return { statusCode: 200, body: 'DISCORD_WEBHOOK_URL not set' };
+  if (!url) { console.log('discord: DISCORD_WEBHOOK_URL is not set'); return { statusCode: 200, body: 'DISCORD_WEBHOOK_URL not set' }; }
 
   let payload = {};
   try { payload = JSON.parse(event.body || '{}').payload || {}; } catch (e) { return { statusCode: 400, body: 'bad payload' }; }
@@ -45,14 +45,22 @@ exports.handler = async (event) => {
   let content = head + '\n' + lines.join('\n') + notes;
   if (content.length > 1990) content = content.slice(0, 1989) + '…';
 
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      username: 'New Applicant',
-      content,
-      allowed_mentions: { parse: tier === 'HOT' ? ['everyone'] : [] },
-    }),
-  });
+  let res;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: 'New Applicant',
+        content,
+        allowed_mentions: { parse: tier === 'HOT' ? ['everyone'] : [] },
+      }),
+    });
+  } catch (e) {
+    console.log('discord: request failed', String(e));
+    return { statusCode: 200, body: 'discord request failed' };
+  }
+  const detail = res.ok ? '' : (await res.text()).slice(0, 300);
+  console.log('discord:', res.status, detail || 'sent');
   return { statusCode: 200, body: res.ok ? 'sent' : 'discord error ' + res.status };
 };
