@@ -8,9 +8,10 @@ Start here. This is the front page of your brain.
 | [[AI Characters]] | 🟡 Kasey Mae designed. Next: accounts + first videos | "AI CHARACTERS" |
 | [[BNB Profits]] | 🟢 Site live, daily content running | "BNB PROFITS" |
 | [[Web Design]] | 🟢 Building sample sites for local businesses | "WEBSITE DESIGN" |
+| [[Airbnb]] | 🟡 New: video walkthroughs + websites for Airbnb hosts | "AIRBNB" |
 
 ## The one thing to remember
-Keep working in your 3 chats like normal. When you want your notes updated, open the **"Obsidian integration overview"** chat and say:
+Keep working in your chats like normal. New chats get added here automatically. When you want your notes updated, open the **"Obsidian integration overview"** chat and say:
 > **Update my brain.**
 
 It also updates itself automatically every morning around 7am (Phoenix time).
