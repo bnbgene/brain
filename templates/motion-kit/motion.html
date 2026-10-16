@@ -27,6 +27,7 @@
 @keyframes mk-tw{0%,100%{transform:scale(.6) rotate(0);opacity:.4}50%{transform:scale(1.25) rotate(45deg);opacity:1}}
 /* scrolling strip */
 .strip{overflow:hidden}
+.stripe{overflow:hidden}.stripe .wrap.mk-marquee{display:flex;flex-wrap:nowrap;width:max-content;max-width:none;gap:0 40px;animation:mk-marquee 26s linear infinite}
 .strip ul.mk-marquee{flex-wrap:nowrap;justify-content:flex-start;width:max-content;max-width:none;gap:0 44px;padding-inline:22px;animation:mk-marquee 28s linear infinite}
 .strip ul.mk-marquee li{white-space:nowrap}
 .strip:hover ul.mk-marquee{animation-play-state:paused}
@@ -53,8 +54,8 @@
 .ba-hint{font:600 13px system-ui;color:var(--muted,#56657A);margin:8px 4px 0}
 .ba.nudge{animation:mk-nudge 1.6s ease-in-out 1}
 /* job photos zoom */
-.jobs figure img,.work figure img{transition:transform .6s cubic-bezier(.2,.7,.2,1)}
-.jobs figure:hover img,.work figure:hover img{transform:scale(1.07)}
+.gal img,.jobs figure img,.work figure img{transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.gal figure:hover img,.jobs figure:hover img,.work figure:hover img{transform:scale(1.07)}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   .js [data-reveal],.js .hero :is(.grid,.hero-grid)>div:not(.stage3d)>*{opacity:1!important;transform:none!important}
@@ -64,11 +65,13 @@
 (function(){
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.documentElement.classList.add('js');
+  // background work clip: show it only once it really plays (the photo slideshow stays underneath)
+  document.querySelectorAll('.hero-video').forEach(function(v){v.addEventListener('playing',function(){v.classList.add('playing')});var pr=v.play&&v.play();if(pr&&pr.catch)pr.catch(function(){})});
   // keep the sticky header just under the concept banner (the banner wraps to 3 lines on phones)
   var note=document.querySelector('.sample-note'),hdr=document.querySelector('header');
   if(note&&hdr){var fit=function(){hdr.style.top=note.offsetHeight+'px'};fit();addEventListener('resize',fit)}
   // reveal on scroll
-  var sel='.card,.why-card,.gal figure,.contact-grid>*,.menu-card,.shot,.panel,.follow .box,.crew figure,.head,.svc,.step,.pair,.ba-card,.jobs figure,.work figure,.work .tile,.why>div,.contact .grid>*,.feature>*,.stack>*';
+  var sel='.quote,.community>*,.portrait,.card,.why-card,.gal figure,.contact-grid>*,.menu-card,.shot,.panel,.follow .box,.crew figure,.head,.svc,.step,.pair,.ba-card,.jobs figure,.work figure,.work .tile,.why>div,.contact .grid>*,.feature>*,.stack>*';
   document.querySelectorAll(sel).forEach(function(el){
     el.setAttribute('data-reveal','');
     var i=Array.prototype.indexOf.call(el.parentElement.children,el);
@@ -79,7 +82,7 @@
     document.querySelectorAll('[data-reveal]').forEach(function(el){io.observe(el)});
   }else document.querySelectorAll('[data-reveal]').forEach(function(el){el.classList.add('in')});
   // scrolling strip
-  document.querySelectorAll('.strip ul').forEach(function(ul){
+  document.querySelectorAll('.strip ul,.stripe .wrap').forEach(function(ul){
     if(reduce)return; ul.innerHTML+=ul.innerHTML; ul.classList.add('mk-marquee');
   });
   // count-up
