@@ -38,3 +38,8 @@ On your phone: install the Obsidian app. Syncing a phone takes more setup, so ju
 - **Branch**: a separate copy of the repo. Each of your chats works on its own branch so they don't step on each other.
 - **Commit / push / pull**: save a snapshot / upload it / download the latest.
 - **`CLAUDE.md`**: a standing instructions file Claude reads automatically.
+
+## Starting a new chat about something new
+Just start it. The next brain update (every morning, or when you say "update my brain") finds it, gives it its own project page, and adds it to Home.
+- Tip: give the chat a clear name (like "AI CHARACTERS") so its project page gets a good name.
+- Only **Claude Code** chats (the ones that work on your `brain` repo, like your other three) can be seen. Regular claude.ai chats can't be read, so for one of those, paste a summary into this chat or into `00 Inbox/`.
