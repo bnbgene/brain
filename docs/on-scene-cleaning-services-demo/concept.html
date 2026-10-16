@@ -152,6 +152,10 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
 .crew figcaption{position:absolute;left:0;right:0;bottom:0;padding:40px 18px 16px;color:#fff;font:700 18px var(--display);background:linear-gradient(transparent,#0B2342E6)}
 .crew figcaption small{display:block;font:600 12px var(--body);color:#FFFFFFAA;margin-top:4px}
 .crew .tall{grid-row:span 2;min-height:420px}
+.hero-photo{position:absolute;inset:-4%;z-index:-4;background-size:cover;background-position:center 30%;animation:mk-kb 22s ease-in-out infinite alternate}
+@keyframes mk-kb{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.14) translate(-3%,-2%)}}
+.hero-video{opacity:0;transition:opacity 1.2s}.hero-video.playing{opacity:1}
+@media (prefers-reduced-motion:reduce){.hero-photo{animation:none}}
 </style>
 
 <div class="sample-note">Website concept prepared for On Scene Cleaning Services LLC. Not their official site. Buttons are for preview only.</div>
@@ -174,7 +178,9 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
 
 <main id="top">
   <section class="hero has-video">
-    <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="https://images.pexels.com/photos/7464406/pexels-photo-7464406.jpeg?auto=compress&cs=tinysrgb&w=1600" aria-hidden="true">
+    <div class="hero-photo" style="background-image:url('https://images.pexels.com/photos/7464406/pexels-photo-7464406.jpeg?auto=compress&cs=tinysrgb&w=1600')"></div>
+    <video class="hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+      <source src="https://www.pexels.com/download/video/6170600/" type="video/mp4">
       <source src="https://videos.pexels.com/video-files/6170600/6170600-hd_1920_1080_25fps.mp4" type="video/mp4">
       <source src="https://videos.pexels.com/video-files/6170600/6170600-hd_1280_720_25fps.mp4" type="video/mp4">
       <source src="https://videos.pexels.com/video-files/6170600/6170600-uhd_2560_1440_25fps.mp4" type="video/mp4">
@@ -448,6 +454,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
 (function(){
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.documentElement.classList.add('js');
+  document.querySelectorAll('.hero-video').forEach(function(v){v.addEventListener('playing',function(){v.classList.add('playing')});var tr=v.play&&v.play();if(tr&&tr.catch)tr.catch(function(){})});
   if(reduce){document.querySelectorAll('.hero-video').forEach(function(v){v.removeAttribute('autoplay');v.pause()})}
   // keep the sticky header just under the concept banner (the banner wraps to 3 lines on phones)
   var note=document.querySelector('.sample-note'),hdr=document.querySelector('header');
