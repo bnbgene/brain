@@ -13,6 +13,8 @@ Start here. This is the front page of your brain.
 Keep working in your 3 chats like normal. When you want your notes updated, open the **"Obsidian integration overview"** chat and say:
 > **Update my brain.**
 
+It also updates itself automatically every morning around 7am (Phoenix time).
+
 More detail: [[How This Works]]
 
 ## Quick links
