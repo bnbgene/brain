@@ -1,25 +1,32 @@
 # Instructions for Claude
 
-This repo is an Obsidian vault: my "second brain." It's shared by every Claude session I run.
-Read this file first, then `Home.md`.
+This repo is an Obsidian vault: the owner's "second brain." Read this file first, then `Home.md`.
+The owner is not technical. Keep replies short, plain-English, and do the work for them.
 
-## My projects
-| Project | Main note | Notes |
-|---|---|---|
-| AI Characters | `Projects/AI Characters/AI Characters.md` | Has its own cloud session |
-| BNB Profits | `Projects/BNB Profits/BNB Profits.md` | Has its own cloud session |
-| Web Design | `Projects/Web Design/Web Design.md` | Has its own cloud session. `index.html` at the repo root is the C&S Construction site draft |
+## Projects and where their work lives
+Each project has its own Claude chat, which works on its own git branch of this repo.
+The vault notes live on the default branch.
 
-## How to work in this vault
-1. **Before starting work on a project**, read that project's main note and its latest `Session Log` entries.
-2. **At the end of a work session** (or when I say "save to brain"):
-   - Add a dated entry to that project's `Session Log.md` (newest at the top) using `Templates/Session Log Entry.md`.
-   - Update the project's main note: **Status**, **Next Steps**, and **Key Decisions** if anything changed.
-3. Put loose ideas or anything that doesn't fit yet into `00 Inbox/`.
-4. Commit with a short, clear message and push.
+| Project | Main note | Chat title | Branch with the project's files |
+|---|---|---|---|
+| AI Characters | `Projects/AI Characters/AI Characters.md` | AI CHARACTERS | `claude/confident-johnson-dpw2es` (`ai-influencer/`) |
+| BNB Profits | `Projects/BNB Profits/BNB Profits.md` | BNB PROFITS | `claude/vigilant-ritchie-sli5xu` |
+| Web Design | `Projects/Web Design/Web Design.md` | WEBSITE DESIGN | `claude/clever-shannon-qbaqz7` (also serves GitHub Pages from `docs/`) |
 
-## Style
-- I'm new to AI tools. Explain things in plain language, no jargon without a quick explanation.
-- Keep notes short and scannable: headings, bullets, checkboxes.
+Do NOT merge those project branches into the vault branch. They hold live sites (Netlify, GitHub Pages). Only read them.
+
+## "Update my brain"
+When the owner says this (or "sync", "save to brain"):
+1. `git fetch` and read new commits on each project branch since the last Session Log entry.
+2. If the cloud-session tools are available, read the recent transcript of each project chat (titles above) for decisions and to-dos that aren't in commits.
+3. For each project: add a dated entry at the top of `Session Log.md`, update **Status**, **Key Decisions**, **Next Steps** and links in the main note, and update the table in `Home.md`.
+4. Sort anything in `00 Inbox/` into the right project.
+5. Commit and push. Tell the owner in 2–4 lines what changed.
+
+## When working inside a project chat
+If you're one of the project chats and the owner says "save to brain": write a dated summary to `00 Inbox/<Project> <date>.md` on your branch and tell the owner to say "update my brain" in the brain chat. That chat will file it.
+
+## Style for notes
+- Short and scannable: headings, bullets, checkboxes.
 - Link related notes with `[[Note Name]]`.
-- Never delete my notes. If something looks outdated, mark it as outdated instead.
+- Never delete the owner's notes. If something is outdated, mark it outdated.

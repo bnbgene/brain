@@ -1,43 +1,40 @@
 # How This Works
 
 ## The big idea
-Each Claude chat or cloud session starts out **knowing nothing** about your other sessions.
-Your AI Characters session doesn't know what your Web Design session did.
+Each Claude chat **can't see your other chats**. Your AI Characters chat doesn't know what your Web Design chat did.
 
-This vault fixes that. It's **one shared notebook** that every session can read and write.
-- The notebook lives on **GitHub** (repo `bnbgene/brain`), so every cloud session can reach it.
-- **Obsidian** shows you the same notebook on your computer or phone, nicely formatted.
+This vault is **one notebook that sums up all of them**, so you (and Claude) can see everything in one place.
 
 ```
- AI Characters session ─┐
- BNB Profits session   ─┼──►  GitHub: bnbgene/brain  ◄──►  Obsidian (you)
- Web Design session    ─┘        (the shared brain)
+ AI CHARACTERS chat ─┐
+ BNB PROFITS chat   ─┼──►  "Obsidian integration overview" chat  ──►  your notes (this vault)
+ WEBSITE DESIGN chat ─┘     reads all 3 and updates the notes          view them in Obsidian
 ```
 
-## What you say to Claude
-**At the start of a session** (in any of your 3 sessions):
-> Add the repo bnbgene/brain and read CLAUDE.md and my notes for [project name].
+## What you actually do
+1. **Keep working in your 3 chats exactly like you do now.** Nothing to change there.
+2. Whenever you want your notes caught up, go to the **"Obsidian integration overview"** chat and say:
+   > **Update my brain.**
+3. Open Obsidian to see where everything stands.
 
-**At the end of a session:**
-> Save what we did today to my brain.
+Other things you can ask there:
+- "What's the status of all my projects?"
+- "What do I need to do this week?"
+- "What did we decide about the Discord?"
 
-Claude writes a short log entry, updates the project's status and next steps, and pushes it to GitHub.
+## Setting up Obsidian on your computer (one time, about 10 minutes)
+1. Download **Obsidian** from obsidian.md (free).
+2. Download **GitHub Desktop** from desktop.github.com (free) and sign in with your GitHub account.
+3. In GitHub Desktop: **File → Clone repository** → pick `bnbgene/brain` → Clone.
+4. In Obsidian: **Open folder as vault** → pick that `brain` folder.
+5. To get the newest notes later: in GitHub Desktop, click **Fetch origin**, then **Pull**.
+   (Optional, automatic: in Obsidian, Settings → Community plugins → Browse → **Obsidian Git** → Install → Enable.)
 
-**Anytime:**
-> What's the status of all my projects?
-> What did we decide about X?
-
-## Setting up Obsidian on your side (one time)
-1. Download Obsidian from obsidian.md (free).
-2. Get this repo onto your computer. The easiest way is **GitHub Desktop** (desktop.github.com): sign in, then *Clone* `bnbgene/brain`.
-3. In Obsidian: **Open folder as vault** → pick the `brain` folder.
-4. Optional, keeps it synced automatically: Settings → Community plugins → Browse → install **Obsidian Git** → enable it. It pulls Claude's updates and pushes your edits.
-   Without it, press *Fetch/Pull* in GitHub Desktop to get Claude's latest notes.
+On your phone: install the Obsidian app. Syncing a phone takes more setup, so just ask Claude when you want it.
 
 ## Words you'll hear
 - **Vault**: the folder of notes.
-- **Repo (repository)**: a folder stored on GitHub with its full history.
-- **Commit / push**: save a snapshot / upload it to GitHub.
-- **Pull**: download the latest version.
-- **Branch**: a separate draft copy of the repo. Claude often works on a branch; merging it puts the changes into the main copy.
+- **Repo**: a folder stored on GitHub with its full history.
+- **Branch**: a separate copy of the repo. Each of your chats works on its own branch so they don't step on each other.
+- **Commit / push / pull**: save a snapshot / upload it / download the latest.
 - **`CLAUDE.md`**: a standing instructions file Claude reads automatically.

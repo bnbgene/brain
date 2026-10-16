@@ -3,3 +3,14 @@
 Newest entries at the top. Back to [[BNB Profits]].
 
 ---
+## 2026-10-16
+**Did:** 24 controversial / relatable / business video ideas added to Content HQ.
+
+## 2026-10-15
+**Did:** Apply 1:1 story rollout. 1:1 applications now post to Discord (needs a Netlify redeploy for the webhook).
+
+## 2026-10-12
+**Did:** Built Content HQ (daily posting center). Story Maker got 4-frame rollouts. Site now points to the free Discord.
+
+## 2026-10-06
+**Did:** Built the BNBProfits landing page + mentorship application + Story Maker. Hid strategy and price.
