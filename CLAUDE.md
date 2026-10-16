@@ -11,6 +11,7 @@ The vault notes live on the default branch.
 |---|---|---|---|
 | AI Characters | `Projects/AI Characters/AI Characters.md` | AI CHARACTERS | `claude/confident-johnson-dpw2es` (`ai-influencer/`) |
 | BNB Profits | `Projects/BNB Profits/BNB Profits.md` | BNB PROFITS | `claude/vigilant-ritchie-sli5xu` |
+| Listing Videos | `Projects/Listing Videos/Listing Videos.md` | (brain chat) | `tools/listing-video/` on `claude/charming-cori-om30sj` |
 | Web Design | `Projects/Web Design/Web Design.md` | WEBSITE DESIGN | `claude/clever-shannon-qbaqz7` (also serves GitHub Pages from `docs/`) |
 
 Do NOT merge those project branches into the vault branch. They hold live sites (Netlify, GitHub Pages). Only read them.

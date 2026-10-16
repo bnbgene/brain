@@ -7,6 +7,7 @@ Start here. This is the front page of your brain.
 |---|---|---|
 | [[AI Characters]] | 🟡 Kasey Mae designed. Next: accounts + first videos | "AI CHARACTERS" |
 | [[BNB Profits]] | 🟢 Site live, daily content running | "BNB PROFITS" |
+| [[Listing Videos]] | 🟡 Idea + first sample video/site done | (brain chat) |
 | [[Web Design]] | 🟢 Building sample sites for local businesses | "WEBSITE DESIGN" |
 
 ## The one thing to remember
