@@ -19,4 +19,5 @@ Wrap the hero drawing in a stage and load the module (files live in docs/assets/
 `<div class="truck stage3d" data-truck='{"cab":"#4DB8FF","box":"#F4F7FB","trim":"#0B2342","label":"ON SCENE","sub":"Junk removal + cleaning"}'><svg>...fallback drawing...</svg></div>`
 plus the `.stage3d` CSS from the demo page and `<script type="module" src="../assets/truck3d.js"></script>`.
 The truck drives in with dust, brakes, idles, turns with pointer/scroll, and drives off and back when tapped.
+Add "crew":true to data-truck for animated workers: rear doors open and a crew carries a couch and boxes from a junk pile into the truck (junk removal, moving, hauling).
 Falls back to the drawing without WebGL or with reduced motion.

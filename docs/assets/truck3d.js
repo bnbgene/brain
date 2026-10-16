@@ -49,7 +49,13 @@ function buildTruck(o) {
     const p = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 1.75), new THREE.MeshStandardMaterial({ map: lbl, roughness: .4 }));
     p.position.set(-1.05, 1.95, side * 1.081); if (side < 0) p.rotation.y = Math.PI; p.receiveShadow = true; body.add(p);
   });
-  add(new THREE.BoxGeometry(.06, 2.0, 1.9), trimMat, -2.92, 1.92, 0); // rear door seam frame
+  add(new THREE.BoxGeometry(.04, 2.0, 1.95), dark, -2.9, 1.92, 0); // dark cargo opening
+  const doors = [1, -1].map(side => {
+    const hinge = new THREE.Group(); hinge.position.set(-2.93, 1.92, side * 1.03); body.add(hinge);
+    const d = new THREE.Mesh(rb(.06, 2.05, 1.0, .03), boxMat); d.position.set(-.03, 0, -side * .5); d.castShadow = true; hinge.add(d);
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(.05, 1.6, .05), trimMat); bar.position.set(-.07, 0, -side * .85); hinge.add(bar);
+    hinge.userData.side = side; return hinge;
+  });
 
   // cab
   add(rb(1.75, 1.15, 2.0, .16), cabMat, 1.75, 1.2, 0);
@@ -76,7 +82,91 @@ function buildTruck(o) {
     for (let i = 0; i < 3; i++) { const b = new THREE.Mesh(boltG, dark); b.rotation.x = Math.PI / 2; b.rotation.y = i * Math.PI / 3; w.add(b); }
     truck.add(w); wheels.push(w);
   });
-  return { truck, body, wheels };
+  return { truck, body, wheels, doors };
+}
+
+
+// low-poly workers who carry a couch and boxes from a junk pile into the truck
+function person(shirt, skin, pants) {
+  const g = new THREE.Group(), m = c => new THREE.MeshStandardMaterial({ color: c, roughness: .7 });
+  const part = (geo, mat, x, y, z, parent = g) => { const s = new THREE.Mesh(geo, mat); s.position.set(x, y, z); s.castShadow = true; parent.add(s); return s; };
+  const shirtM = m(shirt), skinM = m(skin), pantsM = m(pants), shoeM = m('#1d1d1d');
+  part(new RoundedBoxGeometry(.46, .62, .3, 3, .1), shirtM, 0, 1.28, 0);
+  part(new THREE.SphereGeometry(.16, 18, 14), skinM, 0, 1.78, 0);
+  const cap = part(new THREE.SphereGeometry(.165, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2), shirtM, 0, 1.8, 0);
+  part(new THREE.BoxGeometry(.2, .03, .16), shirtM, .14, 1.82, 0);
+  const limb = (len, r, mat) => { const piv = new THREE.Group(); const l = new THREE.Mesh(new THREE.CapsuleGeometry(r, len, 4, 10), mat); l.position.y = -len / 2 - r * .5; l.castShadow = true; piv.add(l); return piv; };
+  const legs = [-.11, .11].map(z => { const L = limb(.62, .085, pantsM); L.position.set(0, .98, z); g.add(L); const shoe = new THREE.Mesh(new THREE.BoxGeometry(.24, .09, .12), shoeM); shoe.position.set(.05, -.86, 0); L.add(shoe); return L; });
+  const arms = [-.29, .29].map(z => { const A = limb(.46, .07, shirtM); A.position.set(0, 1.52, z); const hand = new THREE.Mesh(new THREE.SphereGeometry(.075, 10, 8), skinM); hand.position.y = -.66; A.add(hand); g.add(A); return A; });
+  g.userData = { legs, arms }; return g;
+}
+function buildCrew(world, o) {
+  const P = new THREE.Vector3(-5.3, 0, 2.0);           // junk pile
+  const mk = c => new THREE.MeshStandardMaterial({ color: c, roughness: .7 });
+  const pile = new THREE.Group(); world.add(pile);
+  [[0, .3, 0, .6, .6, .6, '#b08a5a'], [.55, .22, .45, .45, .45, .45, '#c79f6d'], [-.4, .2, .6, .4, .4, .4, '#a07c4f'], [.1, .78, .15, .42, .36, .42, '#d2ad7c']].forEach(([x, y, z, w, h, d, c]) => {
+    const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mk(c)); b.position.set(P.x + x, y, P.z + z); b.castShadow = true; b.receiveShadow = true; pile.add(b);
+  });
+  const lamp = new THREE.Mesh(new THREE.CylinderGeometry(.04, .04, 1.1, 8), mk('#555')); lamp.position.set(P.x - .7, .55, P.z - .2); lamp.rotation.z = .5; pile.add(lamp);
+  // couch carried by two
+  const couch = new THREE.Group(); const cm = mk('#5f7f74');
+  [[0, 0, 0, 1.7, .32, .72], [0, .32, -.28, 1.7, .5, .18], [-.8, .2, 0, .14, .36, .72], [.8, .2, 0, .14, .36, .72]].forEach(([x, y, z, w, h, d]) => { const b = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 3, .06), cm); b.position.set(x, y, z); b.castShadow = true; couch.add(b); });
+  world.add(couch);
+  const box = new THREE.Mesh(new THREE.BoxGeometry(.5, .42, .45), mk('#c79f6d')); box.castShadow = true; world.add(box);
+  const a = person(o.cab, '#8d5a3b', '#2b3442'), b = person(o.cab, '#e0b48f', '#2b3442'), c = person(o.trim, '#5b3a26', '#3b3f46');
+  world.add(a, b, c);
+  const smooth = t => t * t * (3 - 2 * t);
+  function walker(p, t, from, to, carry) {
+    // t in [0,1] along a leg of the trip; carry = arms forward
+    const pos = from.clone().lerp(to, smooth(t)); p.position.copy(pos);
+    const dir = to.clone().sub(from); p.rotation.y = Math.atan2(-dir.z, dir.x);
+    const sw = Math.sin(t * Math.PI * 2 * Math.max(2, from.distanceTo(to) / .9)) * .55;
+    p.userData.legs[0].rotation.z = sw; p.userData.legs[1].rotation.z = -sw;
+    p.position.y = Math.abs(Math.cos(t * Math.PI * 2 * Math.max(2, from.distanceTo(to) / .9))) * .04;
+    p.userData.arms.forEach((ar, i) => { ar.rotation.z = carry ? 1.25 : (i ? sw : -sw) * .8; });
+  }
+  function stand(p, carry) { p.userData.legs.forEach(l => l.rotation.z *= .8); p.userData.arms.forEach(ar => ar.rotation.z = carry ? 1.25 : ar.rotation.z * .85); p.position.y = 0; }
+  const T = 9;                                          // seconds per round trip
+  return {
+    update(time, dt, working, park) {
+      const D = new THREE.Vector3(park - 3.55, 0, .25);  // spot behind the open doors
+      if (!working) {                                    // waiting by the pile until the truck parks
+        [[a, 0, .9], [b, 0, -.9], [c, 1.4, 0]].forEach(([p, dx, dz]) => { p.position.set(P.x + 1.4 + dx, 0, P.z + dz); p.rotation.y = 0; stand(p, false); });
+        couch.visible = false; box.visible = false; return;
+      }
+      // couch team
+      const k = (time % T) / T, half = 1.7 / 2;
+      const along = (from, to) => to.clone().sub(from).normalize();
+      const start = P.clone().add(new THREE.Vector3(1.2, 0, 0)), end = D.clone();
+      let mid, carry = true, phaseT;
+      if (k < .42) { phaseT = k / .42; mid = start.clone().lerp(end, smooth(phaseT)); }
+      else if (k < .52) { phaseT = (k - .42) / .1; mid = end.clone(); }
+      else if (k < .94) { phaseT = (k - .52) / .42; mid = end.clone().lerp(start, smooth(phaseT)); carry = false; }
+      else { phaseT = 0; mid = start.clone(); }
+      const dir = k < .42 || k >= .94 ? along(start, end) : along(end, start);
+      const perp = new THREE.Vector3(-dir.z, 0, dir.x);
+      const front = mid.clone().add(dir.clone().multiplyScalar(half)), back = mid.clone().sub(dir.clone().multiplyScalar(half));
+      const going = k < .42, returning = k >= .52 && k < .94;
+      if (going || returning) {
+        const lt = going ? k / .42 : (k - .52) / .42, from = going ? start : end, to = going ? end : start;
+        walker(a, lt, from.clone().add(dir.clone().multiplyScalar(half)), to.clone().add(dir.clone().multiplyScalar(half)), going);
+        walker(b, lt, from.clone().sub(dir.clone().multiplyScalar(half)), to.clone().sub(dir.clone().multiplyScalar(half)), going);
+      } else { a.position.copy(front); b.position.copy(back); stand(a, k < .52); stand(b, k < .52); }
+      couch.visible = k < .5 || k >= .94;
+      if (couch.visible) {
+        const cm2 = a.position.clone().add(b.position).multiplyScalar(.5);
+        const lift = k < .42 ? .95 : k < .5 ? .95 + (k - .42) / .08 * .5 : .95;
+        couch.position.set(cm2.x, lift, cm2.z); couch.rotation.y = Math.atan2(-dir.z, dir.x);
+        if (k >= .42 && k < .5) couch.position.add(dir.clone().multiplyScalar((k - .42) / .08 * 1.4));
+      }
+      // box carrier, offset in time and path
+      const k2 = ((time + T * .45) % (T * .7)) / (T * .7);
+      const s2 = P.clone().add(new THREE.Vector3(.4, 0, -1.0)), e2 = D.clone().add(new THREE.Vector3(.2, 0, -1.05));
+      if (k2 < .45) walker(c, k2 / .45, s2, e2, true); else if (k2 < .55) { c.position.copy(e2); stand(c, true); } else if (k2 < .95) walker(c, (k2 - .55) / .4, e2, s2, false); else { c.position.copy(s2); stand(c, false); }
+      box.visible = k2 < .53 || k2 > .97;
+      if (box.visible) { const fwd = new THREE.Vector3(Math.cos(c.rotation.y), 0, -Math.sin(c.rotation.y)); box.position.copy(c.position).add(fwd.multiplyScalar(.42)).setY(1.15); box.rotation.y = c.rotation.y; }
+    }
+  };
 }
 
 function mount(stage) {
@@ -99,13 +189,15 @@ function mount(stage) {
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(60, 30), new THREE.ShadowMaterial({ opacity: .35 }));
   ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
 
-  const { truck, body, wheels } = buildTruck(o);
-  scene.add(truck);
+  const { truck, body, wheels, doors } = buildTruck(o);
+  const world = new THREE.Group(); scene.add(world); world.add(truck);
+  const PARK = o.crew ? 1.3 : 0;
+  const crew = o.crew ? buildCrew(world, o) : null;
 
   // dust puffs
   const dustM = new THREE.MeshStandardMaterial({ color: '#d9cbb3', transparent: true, opacity: .0, roughness: 1 });
   const dustG = new THREE.SphereGeometry(.22, 10, 8), puffs = [];
-  for (let i = 0; i < 26; i++) { const m = new THREE.Mesh(dustG, dustM.clone()); m.visible = false; scene.add(m); puffs.push({ m, life: 0 }); }
+  for (let i = 0; i < 26; i++) { const m = new THREE.Mesh(dustG, dustM.clone()); m.visible = false; world.add(m); puffs.push({ m, life: 0 }); }
   let nextPuff = 0;
   function puff(x, z) { const p = puffs[nextPuff++ % puffs.length]; p.m.position.set(x, .25, z + (Math.random() - .5) * .3); p.m.scale.setScalar(.6); p.life = 1; p.m.visible = true; p.vy = .4 + Math.random() * .4; p.vx = -.6 - Math.random() * .8; }
 
@@ -113,15 +205,16 @@ function mount(stage) {
     const r = cv.getBoundingClientRect(), w = r.width || stage.clientWidth, h = r.height || stage.clientHeight || w * .7;
     renderer.setSize(w, h, false); cam.aspect = w / h;
     const narrow = w / h < 1.15; cam.fov = narrow ? 36 : 30;
-    cam.position.set(narrow ? 5.6 : 6.6, narrow ? 3.4 : 3.1, narrow ? 10.5 : 9.2);
-    cam.lookAt(.1, 1.25, 0); cam.updateProjectionMatrix();
+    if (o.crew) { cam.fov = narrow ? 40 : 30; cam.position.set(narrow ? 3.4 : 4.7, narrow ? 4.4 : 3.5, narrow ? 15.8 : 11.4); cam.lookAt(narrow ? -.8 : -.55, 1.05, .6); }
+    else { cam.position.set(narrow ? 5.6 : 6.6, narrow ? 3.4 : 3.1, narrow ? 10.5 : 9.2); cam.lookAt(.1, 1.25, 0); }
+    cam.updateProjectionMatrix();
   }
   resize(); addEventListener('resize', resize);
 
   // state
   const START = -16, DUR = 2.6;
   let t0 = performance.now(), phase = 'in', x = START, lastX = START, wheelRot = 0, pitch = 0, pitchV = 0, bounce = 0, bounceV = 0;
-  let px = 0, py = 0, tx = 0, ty = 0, visible = true, first = true;
+  let idleAt = 0, px = 0, py = 0, tx = 0, ty = 0, visible = true, first = true;
   const ease = t => 1 - Math.pow(1 - t, 3);
   stage.addEventListener('pointermove', e => { const r = stage.getBoundingClientRect(); tx = ((e.clientX - r.left) / r.width - .5); ty = ((e.clientY - r.top) / r.height - .5); });
   stage.addEventListener('pointerleave', () => { tx = 0; ty = 0; });
@@ -133,7 +226,7 @@ function mount(stage) {
     if (!visible) return;
     const dt = Math.min(.05, (now - prev) / 1000); prev = now;
     const t = (now - t0) / 1000;
-    if (phase === 'in') { const k = Math.min(1, t / DUR); x = START + (0 - START) * ease(k); if (k >= 1) { phase = 'idle'; pitchV -= .9; bounceV -= .5; } }
+    if (phase === 'in') { const k = Math.min(1, t / DUR); x = START + (PARK - START) * ease(k); if (k >= 1) { phase = 'idle'; idleAt = now; pitchV -= .9; bounceV -= .5; } }
     else if (phase === 'out') { x += (6 + t * 22) * dt; if (x > 18) { phase = 'in'; t0 = now; x = START; lastX = START; } }
     const speed = (x - lastX) / Math.max(dt, 1e-3); lastX = x;
     wheelRot -= (speed * dt) / .5;
@@ -150,7 +243,11 @@ function mount(stage) {
     // look-around: pointer + scroll
     px += (tx - px) * .06; py += (ty - py) * .06;
     const sc = Math.min(1, scrollY / 600);
-    truck.rotation.y = px * .5 - .12 + sc * .35 + (phase === 'idle' ? Math.sin(now * .0006) * .05 : 0);
+    world.rotation.y = px * (o.crew ? .3 : .5) - .12 + sc * (o.crew ? .2 : .35) + (phase === 'idle' ? Math.sin(now * .0006) * .04 : 0);
+    // rear doors swing open while parked, crew works
+    const open = phase === 'idle' ? Math.min(1, (now - idleAt) / 900) : Math.max(0, (doors[0].userData.o || 0) - dt * 3);
+    doors.forEach(d => { d.userData.o = open; d.rotation.y = -d.userData.side * ease(open) * 1.9; });
+    if (crew) crew.update(now / 1000, dt, phase === 'idle' && now - idleAt > 700, PARK);
     scene.rotation.x = py * .06;
     renderer.render(scene, cam);
     if (first) { first = false; stage.classList.add('is-3d'); }
