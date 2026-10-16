@@ -11,6 +11,8 @@ Gene (@bnbgene) trades NQ futures full time. BNBProfits is the trading brand:
 - Proof on the site: prop firm payouts (Lucid, Topstep, Tradeify), P&L screenshots, student wins
 
 ## Tools Claude built
+- [[BNBProfits Website]] · [[Content HQ]] · [[Story Maker]]
+
 | Tool | What it does | Link |
 |---|---|---|
 | **BNBProfits Live Site** | The website (hosted on Netlify from `bnbprofits/`) | [open](https://claude.ai/artifact/17qXa2HNwCycWZtHUWNKHn) |

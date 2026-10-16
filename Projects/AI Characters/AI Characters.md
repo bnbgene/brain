@@ -7,7 +7,7 @@
 ## Goal
 Build an AI influencer business. **Finish line:** first real dollars earned, shown with a payout screenshot.
 
-## The character: Kasey Mae
+## The character: [[Kasey Mae]]
 - 5'0" country girl (26, clearly adult) from rural Texas with a lifted matte-black diesel truck ("Big Bertha") who out-fishes the guys
 - Hook: *"Short girl, big problems."* Her height struggles sell gear.
 - Dog: Moose (chocolate lab)
