@@ -447,7 +447,7 @@
   // no quizzes, no strategy explainers, no mentee show yet, Tradeify only, free Discord)
   // ===================================================================
   var BRAND = 'Gene (@bnbgene), 21, trades NQ/MNQ futures full time with Tradeify (code BNB), bought his first house at 18. Brand: BNBProfits. Bio: "Just helping people make money." His Discord is FREE and 1:1 mentorship applications happen inside it. Voice: casual, short, direct, young, confident, not corny, not corporate. Never describe his strategy, setups, entries, levels or sessions in detail. No quizzes or polls. No income guarantees.';
-  var PILLARS = ['Confessions', 'Prop firm reality', 'Story', 'Lifestyle', 'Psychology', 'Hot take', 'Relatable'];
+  var PILLARS = ['Confessions', 'Prop firm reality', 'Story', 'Lifestyle', 'Psychology', 'Hot take', 'Relatable', 'Business', 'Life lessons'];
   var CTA_KEY = { F: 'Follow for part 2', K: 'Comment BNB → free Discord (auto-DM)', '—': 'No CTA. Let it spread.' };
   function ctaText(c) { return CTA_KEY[c] || ('Comment ' + c.replace(/^C\s*/, '') + ' (auto-DM)'); }
   var MAIN = [
@@ -480,6 +480,34 @@
     { p: 'Confessions', h: 'I sized up after a green week. Here\'s what happened.', s: 'The mistake, the damage, the rule you made.', l: '30s', c: 'F', cap: 'Don\'t be me' },
     { p: 'Lifestyle', h: 'What one payout covers for me every month', s: 'Your apartment-video energy, but just talking: what a payout actually covers (rent, bills, the house) in rough numbers.', l: '25s', c: 'F', cap: 'My trading pays for this #fundedtrader' }
   ];
+  // Controversial / relatable / business pack, mixed into the rotation every other day.
+  var MAIN_HOT = [
+    {"p": "Hot take", "h": "LARPing on the internet is out of control", "s": "Rented Lambos, demo account P&Ls, borrowed houses. Talk about how much of what people see online is fake and how to tell what's real (ask for payouts, not cars).", "l": "30s", "c": "C", "cap": "be honest, how many have you fallen for? #daytrading #hottake"},
+    {"p": "Hot take", "h": "Half the trading gurus you follow trade demo accounts", "s": "Why fake P&Ls are everywhere and the one thing to ask for before you trust anybody: a payout certificate.", "l": "25s", "c": "C", "cap": "agree or nah? #futurestrading"},
+    {"p": "Hot take", "h": "If you need to rent a Lambo to sell a course, you don't trade for a living", "s": "Hot take on flex marketing. Real traders show payouts, not rentals.", "l": "20s", "c": "C", "cap": "say it louder for the people in the back #trading"},
+    {"p": "Hot take", "h": "Stop posting your wins if you won't post your losses", "s": "Why only showing green days is lying by leaving stuff out, and why showing your red days builds more trust.", "l": "25s", "c": "C", "cap": "post the red days too #tradingpsychology"},
+    {"p": "Hot take", "h": "Signal groups are the biggest trap in trading", "s": "Copying someone's calls teaches you nothing, and the second they're wrong you're lost. Learn to read it yourself.", "l": "25s", "c": "K", "cap": "learn it, don't copy it #daytrading"},
+    {"p": "Hot take", "h": "Day trading isn't gambling. The way most people do it is.", "s": "No plan, no risk limit, revenge trading, that's gambling. Rules and patience is a business.", "l": "25s", "c": "C", "cap": "which one are you? #futurestrading"},
+    {"p": "Hot take", "h": "Most people don't want to be rich. They want to look rich.", "s": "Spending on stuff to look successful vs quietly building. What you chose at 18.", "l": "25s", "c": "C", "cap": "be honest #money #mindset"},
+    {"p": "Business", "h": "A 9 to 5 is riskier than people think", "s": "One boss decides if you eat. Contrast with building skills and income you control. Not hating on jobs, just the 'safe' myth.", "l": "30s", "c": "C", "cap": "agree or nah? #business #mindset"},
+    {"p": "Business", "h": "I bought a house at 18 instead of a car. Here's why.", "s": "Why you picked an asset over a flex, and what people said back then vs now.", "l": "35s", "c": "F", "cap": "best decision I ever made #money"},
+    {"p": "Business", "h": "Most 'rich' 20-year-olds online are in debt", "s": "Financed cars, credit cards, rented everything. Why that's the real LARP.", "l": "25s", "c": "C", "cap": "say less #money #hottake"},
+    {"p": "Business", "h": "Side hustles are overrated. Pick one thing and go all in.", "s": "Doing 5 things halfway vs 1 thing all the way. How focusing on trading changed things for you.", "l": "25s", "c": "F", "cap": "one thing, all in #business"},
+    {"p": "Business", "h": "Your parents' money advice might be outdated", "s": "Respectfully: 'get a good job and save' isn't the whole game anymore. What you'd tell your younger self instead.", "l": "30s", "c": "C", "cap": "respectfully 😭 #money"},
+    {"p": "Business", "h": "College was a worse investment than my first eval", "s": "Controversial take, explained honestly: what you got out of learning a skill vs a classroom. Not saying nobody should go.", "l": "30s", "c": "C", "cap": "fight me in the comments #hottake"},
+    {"p": "Relatable", "h": "The fastest way to lose friends is to start winning", "s": "How some people act different when you start doing well, and why you keep going anyway.", "l": "25s", "c": "—", "cap": "real ones stay #mindset"},
+    {"p": "Relatable", "h": "Being 21 with money makes people act weird", "s": "Family, friends and strangers suddenly asking for stuff or doubting you. Keep it light and honest.", "l": "25s", "c": "—", "cap": "it's weird bro 😭"},
+    {"p": "Relatable", "h": "Nobody talks about how lonely it gets when you're building something", "s": "Saying no to plans, people not understanding, and why it's worth it.", "l": "30s", "c": "F", "cap": "for anyone in that phase right now"},
+    {"p": "Relatable", "h": "Your friends won't support you until you're already winning", "s": "Why you shouldn't wait for support to start, and how it changes once you win.", "l": "20s", "c": "—", "cap": "build anyway"},
+    {"p": "Relatable", "h": "Unpopular opinion: don't tell your family you trade until you're profitable", "s": "Why outside opinions mess with you early on. Funny and honest.", "l": "20s", "c": "C", "cap": "who else learned this the hard way 😭"},
+    {"p": "Life lessons", "h": "Your life is just consolidating right now", "s": "Bad times in trading terms: consolidation, a dip before the breakout, a low before a higher high. Hold on.", "l": "30s", "c": "—", "cap": "consolidation before expansion 📈 #mindset"},
+    {"p": "Life lessons", "h": "If you can't handle a red day, you can't handle a business", "s": "Losses are part of anything worth doing. How red days trained your patience.", "l": "25s", "c": "F", "cap": "red days build you #tradingpsychology"},
+    {"p": "Life lessons", "h": "Discipline is doing the boring stuff when nobody's watching", "s": "The unsexy routine behind the results: early mornings, rules, walking away.", "l": "20s", "c": "—", "cap": "boring works #discipline"},
+    {"p": "Life lessons", "h": "Your circle is either making you money or costing you money", "s": "How the people around you affect your habits, your spending and your focus.", "l": "25s", "c": "C", "cap": "audit your circle #mindset"},
+    {"p": "Life lessons", "h": "Instagram made everybody think they should be rich by 25", "s": "The pressure from comparing your chapter 1 to someone's highlight reel, and why slow is fine.", "l": "25s", "c": "—", "cap": "slow is still progress"},
+    {"p": "Psychology", "h": "A mentor can't help you if you won't follow rules", "s": "Why people buy courses and stay broke: they don't do what they're told. Honest, not salesy.", "l": "25s", "c": "C", "cap": "real talk #tradingpsychology"}
+  ];
+  MAIN = (function (a, b) { var out = []; for (var i = 0; i < Math.max(a.length, b.length); i++) { if (b[i]) out.push(b[i]); if (a[i]) out.push(a[i]); } return out; })(MAIN, MAIN_HOT);
   var BONUS = [
     { h: "Things traders don't admit", s: 'Talk through 3 quick ones. "We all have 4 brokers and trust none of them." 15–20s.' },
     { h: 'When people ask me to "just teach them real quick"', s: 'Quick honest rant to camera. 15s.' },
@@ -890,7 +918,7 @@
       'You are the short-form content strategist for ' + BRAND,
       'What already worked for him (views on Instagram Reels):', topPostsText() || '(no data yet)',
       'Proven patterns: emotion-first confession hooks ("Trading ruined my perception of money"), other people\'s wins, money you can picture (rent, payouts, taxes), face on camera first, prop firm specifics nobody explains, hot takes. Chart-only recaps and generic motivation flop.',
-      'Pillar: ' + (ideaPillar === 'Any' ? 'mix of ' + PILLARS.join(', ') : ideaPillar) + '.',
+      'Pillar: ' + (ideaPillar === 'Any' ? 'mix of ' + PILLARS.join(', ') : ideaPillar) + '. Topics can go beyond trading (lifestyle, money, business, friends, LARPing/fake gurus online, growing up at 21) as long as they would pull in young guys who could become traders. Lean controversial, relatable and comment-worthy, never hateful or targeting a named person.',
       $('ideaNote').value.trim() ? 'What is going on in his life right now: ' + $('ideaNote').value.trim() : '',
       'Give 5 NEW video ideas he has not done. Hooks must sound like a 21-year-old talking, under 12 words.',
       'Every idea is a one-take talking video of him to the camera: no skits, no B-roll, no editing, no screen recordings.',
