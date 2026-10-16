@@ -28,6 +28,9 @@ When the owner says this (or "sync", "save to brain"):
 ## When working inside a project chat
 If you're one of the project chats and the owner says "save to brain": write a dated summary to `00 Inbox/<Project> <date>.md` on your branch and tell the owner to say "update my brain" in the brain chat. That chat will file it.
 
+## Tools get their own notes
+Every tool, artifact or site a project chat builds gets its own note in that project's folder (e.g. `Projects/BNB Profits/Content HQ.md`) with an "Open it" link, what it does, and recent changes. Link it from the project's main note.
+
 ## Style for notes
 - Short and scannable: headings, bullets, checkboxes.
 - Link related notes with `[[Note Name]]`.

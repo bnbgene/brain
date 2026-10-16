@@ -12,6 +12,8 @@ BNB web design + ads for local (mostly Phoenix-area) businesses. Process:
 4. Send the link to the business owner
 
 ## Tools
+- [[BNB Lead Desk]] · [[Sample Sites]] · [[After the Close]]
+
 | Tool | Link |
 |---|---|
 | **BNB Lead Desk** (lead tracker; someone else edits it too) | [open](https://claude.ai/artifact/HNxTexwdUEPjHzWPoRvPq3) |
