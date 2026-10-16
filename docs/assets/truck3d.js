@@ -43,13 +43,36 @@ function buildTruck(o) {
 
   // chassis + cargo box
   add(new THREE.BoxGeometry(5.7, .32, 1.7), dark, -.15, .62, 0);
-  const cargo = add(rb(3.7, 2.25, 2.15, .1), boxMat, -1.05, 1.92, 0);
-  const lbl = labelTexture(o);
-  [1, -1].forEach(side => {
-    const p = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 1.75), new THREE.MeshStandardMaterial({ map: lbl, roughness: .4 }));
-    p.position.set(-1.05, 1.95, side * 1.081); if (side < 0) p.rotation.y = Math.PI; p.receiveShadow = true; body.add(p);
-  });
-  add(new THREE.BoxGeometry(.06, 2.0, 1.9), trimMat, -2.92, 1.92, 0); // rear door seam frame
+  let drum = null;
+  if (o.mixer) {
+    // cement mixer: tilted, striped drum that spins, plus chute, water tank and ladder
+    const prof = [];
+    [[.0, -1.95], [.45, -1.9], [.95, -1.55], [1.12, -.9], [1.15, 0], [1.08, .7], [.8, 1.45], [.42, 1.9], [.38, 2.05]].forEach(([r, y]) => prof.push(new THREE.Vector2(r, y)));
+    const dc = document.createElement('canvas'); dc.width = 1024; dc.height = 512; const dg = dc.getContext('2d');
+    dg.fillStyle = o.box; dg.fillRect(0, 0, 1024, 512);
+    dg.fillStyle = o.cab; for (let i = -6; i < 14; i++) { dg.beginPath(); dg.moveTo(i * 110, 0); dg.lineTo(i * 110 + 46, 0); dg.lineTo(i * 110 + 46 + 260, 512); dg.lineTo(i * 110 + 260, 512); dg.fill(); }
+    dg.fillStyle = o.trim; dg.fillRect(0, 214, 1024, 84);
+    dg.fillStyle = '#fff'; dg.font = '900 56px Inter, Arial Black, sans-serif'; dg.textBaseline = 'middle';
+    for (let k = 0; k < 2; k++) dg.fillText(o.label, 40 + k * 512, 258, 440);
+    const dt = new THREE.CanvasTexture(dc); dt.colorSpace = THREE.SRGBColorSpace; dt.anisotropy = 4;
+    const drumG = new THREE.LatheGeometry(prof, 48);
+    const tilt = new THREE.Group(); tilt.position.set(-1.05, 2.05, 0); tilt.rotation.z = Math.PI / 2 - .2; body.add(tilt);
+    drum = new THREE.Group(); tilt.add(drum);   // spins around the drum's own axis
+    const dm = new THREE.Mesh(drumG, new THREE.MeshStandardMaterial({ map: dt, roughness: .35, metalness: .2 })); dm.castShadow = true; drum.add(dm);
+    add(new THREE.BoxGeometry(2.9, .5, 1.3), dark, -1.0, 1.0, 0);                       // drum cradle
+    add(new THREE.CylinderGeometry(.22, .22, 1.2, 16), mat('#C8D4E2', { metalness: .7, roughness: .3 }), .25, 1.75, .78).rotation.z = Math.PI / 2; // water tank
+    const chute = add(new THREE.BoxGeometry(.9, .08, .34), trimMat, -3.2, 1.65, 0); chute.rotation.z = .55;
+    add(new THREE.BoxGeometry(.5, .5, .5), trimMat, -2.85, 2.55, 0);                   // hopper
+    for (let i = 0; i < 6; i++) add(new THREE.BoxGeometry(.05, .05, .42), dark, -2.6, .95 + i * .3, -.95); // ladder rungs
+  } else {
+    const cargo = add(rb(3.7, 2.25, 2.15, .1), boxMat, -1.05, 1.92, 0);
+    const lbl = labelTexture(o);
+    [1, -1].forEach(side => {
+      const p = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 1.75), new THREE.MeshStandardMaterial({ map: lbl, roughness: .4 }));
+      p.position.set(-1.05, 1.95, side * 1.081); if (side < 0) p.rotation.y = Math.PI; p.receiveShadow = true; body.add(p);
+    });
+    add(new THREE.BoxGeometry(.06, 2.0, 1.9), trimMat, -2.92, 1.92, 0); // rear door seam frame
+  }
 
   // cab
   add(rb(1.75, 1.15, 2.0, .16), cabMat, 1.75, 1.2, 0);
@@ -76,7 +99,7 @@ function buildTruck(o) {
     for (let i = 0; i < 3; i++) { const b = new THREE.Mesh(boltG, dark); b.rotation.x = Math.PI / 2; b.rotation.y = i * Math.PI / 3; w.add(b); }
     truck.add(w); wheels.push(w);
   });
-  return { truck, body, wheels };
+  return { truck, body, wheels, drum };
 }
 
 function mount(stage) {
@@ -99,7 +122,7 @@ function mount(stage) {
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(60, 30), new THREE.ShadowMaterial({ opacity: .35 }));
   ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
 
-  const { truck, body, wheels } = buildTruck(o);
+  const { truck, body, wheels, drum } = buildTruck(o);
   scene.add(truck);
 
   // dust puffs
@@ -138,6 +161,7 @@ function mount(stage) {
     const speed = (x - lastX) / Math.max(dt, 1e-3); lastX = x;
     wheelRot -= (speed * dt) / .5;
     wheels.forEach(w => { w.rotation.z = wheelRot; });
+    if (drum) drum.rotation.y += dt * (1.2 + Math.min(4, Math.abs(speed) * .3));
     // suspension: braking pitch + bounce springs
     const accel = phase === 'in' ? -speed * .004 : 0;
     pitchV += (-pitch * 60 - pitchV * 7 + accel * 10) * dt; pitch += pitchV * dt;

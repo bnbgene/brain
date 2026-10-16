@@ -24,3 +24,4 @@ Falls back to the drawing without WebGL or with reduced motion.
 ## 3D planet (food / nightlife / fun brands)
 `<div class="stage3d" data-planet='{"color":"#5CF08E","ring":"#FF5DB8","cards":["img/p3.jpg","img/p5.jpg"]}'>...fallback...</div>`
 + `<script type="module" src="../assets/planet3d.js"></script>`. A glowing planet with a ring; the listed photos orbit it. Tap to spin. Demo: docs/freestyllez/
+Add "mixer":true to data-truck for a cement mixer with a spinning striped drum (concrete / construction). Escape apostrophes in labels as &#39;.
