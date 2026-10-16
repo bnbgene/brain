@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v higgsfield >/dev/null 2>&1 || npm i -g @higgsfield/cli >/dev/null 2>&1 || true"
+          }
+        ]
+      }
+    ]
+  }
+}
