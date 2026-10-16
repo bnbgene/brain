@@ -71,7 +71,7 @@
   var note=document.querySelector('.sample-note'),hdr=document.querySelector('header');
   if(note&&hdr){var fit=function(){hdr.style.top=note.offsetHeight+'px'};fit();addEventListener('resize',fit)}
   // reveal on scroll
-  var sel='.quote,.community>*,.portrait,.card,.why-card,.gal figure,.contact-grid>*,.menu-card,.shot,.panel,.follow .box,.crew figure,.head,.svc,.step,.pair,.ba-card,.jobs figure,.work figure,.work .tile,.why>div,.contact .grid>*,.feature>*,.stack>*';
+  var sel='.quote,.community>*,.card,.why-card,.gal figure,.contact-grid>*,.menu-card,.shot,.panel,.follow .box,.crew figure,.head,.svc,.step,.pair,.ba-card,.jobs figure,.work figure,.work .tile,.why>div,.contact .grid>*,.feature>*,.stack>*';
   document.querySelectorAll(sel).forEach(function(el){
     el.setAttribute('data-reveal','');
     var i=Array.prototype.indexOf.call(el.parentElement.children,el);
