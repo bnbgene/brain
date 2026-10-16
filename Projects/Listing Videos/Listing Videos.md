@@ -17,7 +17,7 @@ Help Airbnb hosts get more bookings. Most listings only have photos. We turn the
 ## How it works (no visit needed)
 1. Grab the photos from their public listing.
 2. Put them in walkthrough order: front of house → door → living → kitchen → bedrooms → baths → backyard → night shot.
-3. Slow zoom/pan on each photo, smooth fades, room labels, end card with rating + "Book your stay".
+3. AI depth on each photo so the camera walks into each room, with a slight walking sway and a push through to the next room, room labels, end card with rating + "Book your stay".
 4. Add music (royalty-free) and send.
 
 ## Where the video goes
@@ -28,7 +28,7 @@ Help Airbnb hosts get more bookings. Most listings only have photos. We turn the
 ## Sample (done 2026-10-16)
 - Listing used: "Desert Oasis" in Scottsdale (4 bed, sleeps 10, 4.98★, 58 photos, no video)
 - Sample website: [open](https://claude.ai/artifact/ARwRs8Gqzfz1PHCboFvVUH) (marked as a mockup)
-- Video maker script: `tools/listing-video/make.py`
+- Video maker: `tools/listing-video/walk.py` (walking camera, v2). Old slideshow version: `make.py` (outdated)
 
 ## How to find hosts
 - Search Airbnb in Phoenix/Scottsdale for homes with 4.8★+ and no video. Message hosts through Facebook groups for STR owners, or find them on Instagram.
@@ -36,6 +36,7 @@ Help Airbnb hosts get more bookings. Most listings only have photos. We turn the
 - Property managers with 10+ homes = bigger deals.
 
 ## Key Decisions
+- 2026-10-16: Video must feel like someone walking through the house, not a slideshow. Uses AI depth on each photo so the camera moves into the room, plus walk-through transitions.
 - 2026-10-16: Started the idea. Lead with a free sample video as the pitch.
 
 ## Next Steps
