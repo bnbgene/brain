@@ -1,0 +1,112 @@
+<!-- BNB motion kit v1: paste at the very end of a sample's concept.html. Works with the standard sample markup
+     (.hero, .strip, .head, .svc, .step, .why, .work/.jobs, .contact). Extra hooks:
+     .ba (before/after drag slider), [data-count] (count-up number), .drive-in / .float / .twinkle (hero SVG parts).
+     Respects "reduce motion" settings; without JavaScript everything simply shows. -->
+<style>
+/* scroll reveal */
+.js [data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.js [data-reveal].in{opacity:1;transform:none}
+/* hero entrance */
+.js .hero .grid>div>*{opacity:0;transform:translateY(18px);animation:mk-up .8s cubic-bezier(.2,.7,.2,1) forwards}
+.js .hero .grid>div>*:nth-child(2){animation-delay:.12s}.js .hero .grid>div>*:nth-child(3){animation-delay:.24s}
+.js .hero .grid>div>*:nth-child(4){animation-delay:.36s}.js .hero .grid>div>*:nth-child(5){animation-delay:.48s}
+@keyframes mk-up{to{opacity:1;transform:none}}
+/* hero glow blobs */
+.hero{position:relative;isolation:isolate}
+.hero::before,.hero::after{content:"";position:absolute;z-index:-1;width:520px;height:520px;border-radius:50%;filter:blur(70px);opacity:.35;pointer-events:none}
+.hero::before{background:var(--lime,#4DB8FF);top:-200px;right:-120px;animation:mk-drift 14s ease-in-out infinite alternate}
+.hero::after{background:#ffffff;opacity:.08;bottom:-260px;left:-160px;animation:mk-drift 18s ease-in-out infinite alternate-reverse}
+@keyframes mk-drift{to{transform:translate(-80px,60px) scale(1.15)}}
+/* hero art */
+.drive-in{animation:mk-drive 1.4s cubic-bezier(.2,.8,.2,1) both .2s}
+@keyframes mk-drive{from{transform:translateX(-120px);opacity:0}to{transform:none;opacity:1}}
+.float{animation:mk-float 4s ease-in-out infinite 1.6s}
+@keyframes mk-float{50%{transform:translateY(-8px)}}
+.twinkle>*{transform-box:fill-box;transform-origin:center;animation:mk-tw 2.4s ease-in-out infinite}
+.twinkle>*:nth-child(2){animation-delay:.8s}.twinkle>*:nth-child(3){animation-delay:1.6s}
+@keyframes mk-tw{0%,100%{transform:scale(.6) rotate(0);opacity:.4}50%{transform:scale(1.25) rotate(45deg);opacity:1}}
+/* scrolling strip */
+.strip{overflow:hidden}
+.strip ul.mk-marquee{flex-wrap:nowrap;justify-content:flex-start;width:max-content;max-width:none;gap:0 44px;padding-inline:22px;animation:mk-marquee 28s linear infinite}
+.strip ul.mk-marquee li{white-space:nowrap}
+.strip:hover ul.mk-marquee{animation-play-state:paused}
+@keyframes mk-marquee{to{transform:translateX(-50%)}}
+/* cards: lift + tilt */
+.svc,.step,.why>div{transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s}
+.svc:hover,.why>div:hover{box-shadow:0 18px 40px #0D1B2C22}
+/* buttons */
+.btn{position:relative;overflow:hidden;transition:transform .2s,background .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn:not(.btn-line)::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,#ffffff66 50%,transparent 70%);transform:translateX(-120%);animation:mk-shine 4.5s ease-in-out infinite 2s}
+@keyframes mk-shine{0%,70%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+.mobile-call{animation:mk-pulse 2.6s ease-in-out infinite 3s}
+@keyframes mk-pulse{0%,100%{box-shadow:0 10px 30px #0006,0 0 0 0 color-mix(in srgb,var(--lime,#4DB8FF) 60%,transparent)}50%{box-shadow:0 10px 30px #0006,0 0 0 10px transparent}}
+/* before / after slider */
+.ba{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;user-select:none;touch-action:pan-y;--pos:50%;background:#E3EAF3}
+.ba img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.ba .ba-before{clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
+.ba input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:ew-resize;z-index:3}
+.ba .ba-line{position:absolute;top:0;bottom:0;left:var(--pos);width:3px;margin-left:-1.5px;background:#fff;box-shadow:0 0 12px #0008;z-index:2;pointer-events:none}
+.ba .ba-line::after{content:"⟷";position:absolute;top:50%;left:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:#fff;color:#0D1B2C;display:grid;place-items:center;font:700 20px/1 system-ui;box-shadow:0 6px 18px #0006}
+.ba .tag{position:absolute;top:10px;z-index:2;font:800 12px/1 system-ui;letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:99px;background:#0D1B2CCC;color:#fff}
+.ba .tag.l{left:10px;right:auto}.ba .tag.r{left:auto;right:10px;background:var(--lime,#4DB8FF);color:#06182E}
+.ba-hint{font:600 13px system-ui;color:var(--muted,#56657A);margin:8px 4px 0}
+.ba.nudge{animation:mk-nudge 1.6s ease-in-out 1}
+/* job photos zoom */
+.jobs figure img,.work figure img{transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.jobs figure:hover img,.work figure:hover img{transform:scale(1.07)}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js [data-reveal],.js .hero .grid>div>*{opacity:1!important;transform:none!important}
+}
+</style>
+<script>
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.documentElement.classList.add('js');
+  // keep the sticky header just under the concept banner (the banner wraps to 3 lines on phones)
+  var note=document.querySelector('.sample-note'),hdr=document.querySelector('header');
+  if(note&&hdr){var fit=function(){hdr.style.top=note.offsetHeight+'px'};fit();addEventListener('resize',fit)}
+  // reveal on scroll
+  var sel='.head,.svc,.step,.pair,.ba-card,.jobs figure,.work figure,.work .tile,.why>div,.contact .grid>*,.feature>*,.stack>*';
+  document.querySelectorAll(sel).forEach(function(el){
+    el.setAttribute('data-reveal','');
+    var i=Array.prototype.indexOf.call(el.parentElement.children,el);
+    el.style.setProperty('--d',Math.min(i,5)*0.09+'s');
+  });
+  if('IntersectionObserver' in window&&!reduce){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('[data-reveal]').forEach(function(el){io.observe(el)});
+  }else document.querySelectorAll('[data-reveal]').forEach(function(el){el.classList.add('in')});
+  // scrolling strip
+  document.querySelectorAll('.strip ul').forEach(function(ul){
+    if(reduce)return; ul.innerHTML+=ul.innerHTML; ul.classList.add('mk-marquee');
+  });
+  // count-up
+  document.querySelectorAll('[data-count]').forEach(function(el){
+    var end=parseFloat(el.dataset.count),suf=el.dataset.suffix||'';
+    if(reduce){el.textContent=end+suf;return}
+    var o=new IntersectionObserver(function(es){if(!es[0].isIntersecting)return;o.disconnect();var t0=performance.now();
+      (function step(t){var p=Math.min(1,(t-t0)/1400);el.textContent=Math.round(end*(1-Math.pow(1-p,3)))+suf;if(p<1)requestAnimationFrame(step)})(t0)});
+    o.observe(el);
+  });
+  // tilt on desktop
+  if(!reduce&&matchMedia('(hover:hover)').matches){
+    document.querySelectorAll('.svc,.why>div').forEach(function(c){
+      c.addEventListener('mousemove',function(e){var r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+        c.style.transform='perspective(800px) rotateX('+(-y*6)+'deg) rotateY('+(x*6)+'deg) translateY(-4px)'});
+      c.addEventListener('mouseleave',function(){c.style.transform=''});
+    });
+  }
+  // before/after sliders
+  document.querySelectorAll('.ba').forEach(function(ba){
+    var inp=ba.querySelector('input');
+    function set(v){ba.style.setProperty('--pos',v+'%')}
+    inp.addEventListener('input',function(){set(inp.value)});
+    if(reduce)return;
+    var shown=false,o=new IntersectionObserver(function(es){if(!es[0].isIntersecting||shown)return;shown=true;o.disconnect();
+      var t0=performance.now();(function s(t){var p=Math.min(1,(t-t0)/1800),v=50+Math.sin(p*Math.PI*2)*28;set(v);inp.value=v;if(p<1)requestAnimationFrame(s);else{set(50);inp.value=50}})(t0)},{threshold:.6});
+    o.observe(ba);
+  });
+})();
+</script>
