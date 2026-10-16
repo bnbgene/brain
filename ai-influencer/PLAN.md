@@ -12,7 +12,7 @@ Finish line: first real dollars earned, shown with a payout screenshot.
 ## Phases
 | # | Phase | Done when | Status |
 |---|-------|-----------|--------|
-| 0 | Decide model, niche, budget | Model A/B picked, niche hook written in one sentence, monthly budget set | ⬜ |
+| 0 | Decide model, niche, budget | Model A/B picked, niche hook written in one sentence, monthly budget set | ✅ |
 | 1 | Character bible + master reference | Bible filled in, 1 master image + 6–8 angle references saved | ⬜ |
 | 2 | Production pipeline | 3 usable videos made, cost per usable video known | ⬜ |
 | 3 | Accounts + warm-up | IG + TikTok created, AI label on, 5–7 days of niche engagement | ⬜ |
@@ -30,7 +30,8 @@ Finish line: first real dollars earned, shown with a payout screenshot.
 
 ## Decisions log
 - 2026-10-10: Model B (Fanvue subscription). Tool budget: user handling subscriptions. Time: 1–2 hrs/day OK.
-- 2026-10-10: Niche shortlist sent (truck girl, strong gym girl, country/fishing girl, +7 more). Waiting on pick.
+- 2026-10-10: Niche shortlist sent (truck girl, strong gym girl, country/fishing girl, +7 more).
+- 2026-10-16: Character locked in on paper: **Kasey Mae**, 5'0 country girl + lifted truck + fishing. Two funnels: Fanvue (FANVUE_FUNNEL.md) + dropshipping truck gear (ECOM_PLAN.md). Next: user generates master image (PROMPTS.md) and does SETUP_CHECKLIST.md.
 
 ## Metrics log
 | Date | Posts | Views | Followers | Link clicks | Subs/sales | Revenue | Spend |
