@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<style>body{margin:0}</style>
+<title>ro.tinyfits Concept</title>
+<meta name="description" content="ro.tinyfits: high quality kids pieces and vintage finds. Bay Area, shipping worldwide. Pre-orders for any size.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --ink:#121212; --ink-2:#1E1E1E; --ink-3:#2A2A2A; --rule:#3A3A3A;
+  --cream:#F6F1E7; --paper:#FFFFFF; --line:#E6DFD2; --muted:#6B665E;
+  --red:#E23B2E; --red-2:#FF5A4C; --sage:#8FA98A; --blue:#2F5BEA;
+  --lime:#E23B2E;
+  --display:"Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
+  --body:"DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font:17px/1.6 var(--body);overflow-x:hidden}
+a{color:inherit}
+svg{display:block;max-width:100%}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:20px}
+.sample-note{position:sticky;top:0;z-index:30;background:#FFD27A;color:#2A1D00;font-size:13px;font-weight:700;text-align:center;padding:7px 16px;line-height:1.4}
+h1,h2,h3{margin:0;line-height:1;font-family:var(--display);font-weight:800;letter-spacing:-.03em}
+.eyebrow{font:700 13px/1 var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 16px var(--body);padding:14px 22px;border-radius:999px;text-decoration:none;border:2px solid transparent;white-space:nowrap;cursor:pointer}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:var(--red-2)}
+.btn-line{border-color:#FFFFFF66;color:#fff}.btn-line:hover{border-color:#fff}
+.btn-ink{background:var(--ink);color:#fff}
+
+header{position:sticky;top:33px;z-index:20;background:var(--ink);color:#fff;border-bottom:1px solid #FFFFFF14}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;height:66px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand .mark{width:40px;height:40px;border-radius:50%;background:var(--red);display:grid;place-items:center;font:800 15px var(--display);color:#fff;letter-spacing:-.04em}
+.brand b{font:800 22px/1 var(--display);letter-spacing:-.03em}
+.nav ul{display:flex;gap:24px;list-style:none;margin:0;padding:0}
+.nav ul a{text-decoration:none;font-weight:600;font-size:15px;color:#FFFFFFCC;white-space:nowrap}
+.nav ul a:hover{color:#fff}
+.nav .btn{padding:10px 16px;font-size:15px}
+@media (max-width:900px){.nav ul{display:none}}
+
+/* hero */
+.hero{position:relative;isolation:isolate;overflow:hidden;background:var(--ink);color:#fff;padding-block:58px 70px}
+.hero-slides{position:absolute;inset:0;z-index:-3;overflow:hidden}
+.hero-slides img{position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover;opacity:0;filter:blur(5px) saturate(1.1);animation:hs-fade 18s infinite,hs-kb 18s infinite}
+.hero-slides img:nth-child(2){animation-delay:6s}.hero-slides img:nth-child(3){animation-delay:12s}
+@keyframes hs-fade{0%,100%{opacity:0}5%,33%{opacity:1}38%{opacity:0}}
+@keyframes hs-kb{0%{transform:scale(1)}40%,100%{transform:scale(1.12) translate(-2%,-1%)}}
+.hero-shade{position:absolute;inset:0;z-index:-2;background:linear-gradient(90deg,#121212F5 0%,#121212E0 45%,#121212A0 75%,#12121280 100%),linear-gradient(0deg,#121212 0%,transparent 40%)}
+.hero .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center}
+.hero h1{font-size:clamp(52px,8vw,100px);margin:14px 0 18px}
+.hero h1 em{font-style:normal;color:var(--red-2)}
+.hero p.lead{font-size:19px;color:#FFFFFFCC;max-width:34ch;margin:0 0 28px}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chips span{font:600 14px var(--body);padding:7px 13px;border-radius:99px;background:#FFFFFF14;border:1px solid #FFFFFF26}
+@media (max-width:860px){.hero .grid{grid-template-columns:1fr}.rack{order:-1}.hero{padding-block:30px 56px}}
+
+.rack{position:relative;width:min(100%,470px);aspect-ratio:1;justify-self:center}
+.pol{position:absolute;margin:0;background:#fff;padding:10px 10px 34px;border-radius:6px;box-shadow:0 26px 60px #000c;animation:pol-in 1s cubic-bezier(.2,.8,.2,1) both,pol-sway 7s ease-in-out infinite}
+.pol img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border-radius:3px}
+.pol figcaption{position:absolute;left:0;right:0;bottom:8px;text-align:center;font:700 13px var(--display);color:var(--ink)}
+.pol.a{width:56%;left:22%;top:6%;--r:-3deg;animation-delay:.2s,1.2s;z-index:2}
+.pol.b{width:42%;left:0;top:44%;--r:-9deg;animation-delay:.45s,2s}
+.pol.c{width:42%;right:0;top:40%;--r:8deg;animation-delay:.7s,2.8s}
+@keyframes pol-in{from{opacity:0;transform:translateY(60px) rotate(calc(var(--r) * 3)) scale(.9)}to{transform:rotate(var(--r))}}
+@keyframes pol-sway{0%,100%{transform:rotate(var(--r)) translateY(0)}50%{transform:rotate(calc(var(--r) * -.4)) translateY(-8px)}}
+.float-card{position:absolute;z-index:3;background:#fff;color:var(--ink);border-radius:16px;padding:10px 14px;box-shadow:0 18px 40px #0008;display:grid;gap:1px;animation:fc-in .8s cubic-bezier(.2,.8,.2,1) both,fc-float 5s ease-in-out infinite}
+.float-card b{font:800 16px var(--display)}
+.float-card span{font:600 12.5px var(--body);color:var(--muted)}
+.fc1{left:-3%;top:0;animation-delay:1s,1.8s}
+.fc2{right:-3%;top:18%;background:var(--red);animation-delay:1.25s,2.5s}.fc2 b,.fc2 span{color:#fff}
+.fc3{left:24%;bottom:-2%;animation-delay:1.5s,3.2s}
+@keyframes fc-in{from{opacity:0;transform:translateY(20px) scale(.9)}}
+@keyframes fc-float{50%{transform:translateY(-8px)}}
+
+.strip{background:var(--red);color:#fff}
+.strip ul{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 34px;list-style:none;margin:0;padding:14px 0;font:800 15px var(--display);letter-spacing:.02em;text-transform:uppercase}
+.strip li{display:flex;align-items:center;gap:10px}
+.strip li::before{content:"✦";font-size:13px}
+
+section.block{padding-block:78px}
+.head{max-width:660px;margin-bottom:30px}
+.head h2{font-size:clamp(36px,5.6vw,60px);margin-top:10px}
+.head p{color:var(--muted);margin:12px 0 0}
+
+.sizes{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:26px}
+.sizes button{font:800 18px var(--display);padding:12px 22px;border-radius:99px;border:2px solid var(--ink);background:transparent;cursor:pointer;transition:.2s}
+.sizes button:hover{background:var(--ink);color:#fff;transform:translateY(-2px)}
+.sizes button.alt{border-color:var(--red);color:var(--red)}
+.sizes button.alt:hover{background:var(--red);color:#fff}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-weight:600;color:var(--muted);font-size:14.5px;margin:-10px 0 24px}
+
+.grid-shop{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media (max-width:980px){.grid-shop{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:640px){.grid-shop{grid-template-columns:repeat(2,1fr);gap:10px}}
+.item{background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:transform .3s,box-shadow .3s}
+.item:hover{transform:translateY(-4px);box-shadow:0 18px 40px #12121222}
+.item figure{margin:0;aspect-ratio:1;overflow:hidden;background:#EEE8DC}
+.item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s}
+.item:hover img{transform:scale(1.07)}
+.item .info{padding:12px 14px 14px;display:grid;gap:8px;flex:1}
+.item h3{font:700 16px/1.25 var(--display);letter-spacing:-.01em}
+.item .tag{font:700 12px var(--body);color:var(--sage);text-transform:uppercase;letter-spacing:.08em}
+.item button{margin-top:auto;font:700 14px var(--body);padding:9px 12px;border-radius:99px;border:0;background:var(--ink);color:#fff;cursor:pointer}
+.item button:hover{background:var(--red)}
+
+.dark{background:var(--ink);color:#fff}
+.dark .head p{color:#FFFFFFAA}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;counter-reset:s}
+.step{background:var(--ink-2);border:1px solid var(--rule);border-radius:20px;padding:26px}
+.step::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--red);color:#fff;font:800 21px var(--display);margin-bottom:14px}
+.step h3{font-size:24px;margin-bottom:6px}
+.step p{margin:0;color:#FFFFFFAA;font-size:15.5px}
+@media (max-width:760px){.steps{grid-template-columns:1fr}}
+
+.po-wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:30px;align-items:start}
+@media (max-width:860px){.po-wrap{grid-template-columns:1fr}}
+.po{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:24px;display:grid;gap:14px;box-shadow:0 20px 50px #12121214}
+.po h3{font-size:26px}
+.po label{display:grid;gap:6px;font-size:14px;font-weight:600;color:var(--muted)}
+.po input,.po select,.po textarea{font:inherit;color:var(--ink);background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:12px;width:100%;min-width:0}
+.po textarea{min-height:80px;resize:vertical}
+.po .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:480px){.po .row{grid-template-columns:1fr}}
+.po small{color:var(--muted);font-size:12.5px}
+.po.flash{animation:flash 1s}
+@keyframes flash{0%{box-shadow:0 0 0 0 #E23B2E99}100%{box-shadow:0 0 0 18px #E23B2E00}}
+.perks{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:14px}
+.perks li{display:flex;gap:12px;align-items:flex-start;font-weight:600}
+.perks i{font-style:normal;width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;flex:none}
+
+.follow{background:linear-gradient(120deg,var(--red),#B5241A);color:#fff;border-radius:28px;padding:44px;display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;overflow:hidden;position:relative}
+.follow h2{font-size:clamp(34px,5vw,54px)}
+.follow p{color:#FFFFFFDD;margin:12px 0 22px}
+.follow .handle{font:800 clamp(26px,4vw,40px) var(--display)}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;transform:rotate(4deg)}
+.mini img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:3px solid #fff}
+@media (max-width:760px){.follow{grid-template-columns:1fr;padding:30px}}
+
+.done{position:fixed;inset:0;z-index:60;background:#121212CC;display:grid;place-items:center;padding:20px}
+.done[hidden]{display:none}
+.done .box{background:#fff;border-radius:22px;padding:28px;max-width:420px;text-align:center}
+.done .big{font-size:46px}.done .muted{color:var(--muted);font-size:13px}
+
+footer{background:#0A0A0A;color:#FFFFFF80;font-size:14px;padding-block:26px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
+.mobile-cta{display:none}
+@media (max-width:640px){.mobile-cta{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:25;box-shadow:0 10px 30px #0006}footer{padding-bottom:90px}}
+@media (prefers-reduced-motion:reduce){.hero-slides img{animation:none}.hero-slides img:first-child{opacity:1}.pol,.float-card{animation:none}}
+</style>
+</head>
+<body>
+<div class="sample-note">Website concept prepared for ro.tinyfits. Not their official site. Buttons are for preview only.</div>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top"><span class="mark">ro</span><b>tinyfits</b></a>
+    <ul>
+      <li><a href="#shop">Shop</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#preorder">Pre-order</a></li>
+      <li><a href="#follow">Instagram</a></li>
+    </ul>
+    <a class="btn btn-red" href="#preorder">Pre-order a size</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="hero-slides" aria-hidden="true"><img src="img/p02.jpg" alt=""><img src="img/p08.jpg" alt=""><img src="img/p01.jpg" alt=""></div>
+    <div class="hero-shade"></div>
+    <div class="wrap grid">
+      <div>
+        <span class="eyebrow">Kids clothing · Bay Area</span>
+        <h1>Tiny fits. <em>Big style.</em></h1>
+        <p class="lead">High quality kids pieces and vintage finds, from toddler to tween. Bay Area based, shipping worldwide.</p>
+        <div class="ctas">
+          <a class="btn btn-red" href="#shop">Shop on-hand stock</a>
+          <a class="btn btn-line" href="#preorder">Pre-order your size</a>
+        </div>
+        <div class="chips"><span>Sizes 2T – 13Y</span><span>Vintage finds</span><span>Ships worldwide 🌎</span></div>
+      </div>
+      <div class="rack" aria-label="Featured pieces">
+        <figure class="pol a"><img src="img/p01.jpg" alt="Plaid shirt and shorts set"><figcaption>Plaid set</figcaption></figure>
+        <figure class="pol b"><img src="img/p04.jpg" alt="Red graphic tee"><figcaption>Red graphic tee</figcaption></figure>
+        <figure class="pol c"><img src="img/p02.jpg" alt="Blue puffer jacket"><figcaption>Blue puffer</figcaption></figure>
+        <div class="float-card fc1"><b>Ships worldwide 🌎</b><span>From the Bay Area</span></div>
+        <div class="float-card fc2"><b>Not your size?</b><span>Ask about pre-order</span></div>
+        <div class="float-card fc3"><b>On-hand stock</b><span>Updated in IG highlights</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="strip">
+    <ul class="wrap"><li>2T</li><li>5T</li><li>6T</li><li>8 – 13Y</li><li>Vintage finds</li><li>Pre-orders open</li><li>Shipping worldwide</li></ul>
+  </div>
+
+  <section class="block" id="shop">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow">Shop</span>
+        <h2>Fresh fits, ready to ship</h2>
+        <p>Pick a size to ask what's on hand, or tap any piece to request it.</p>
+      </div>
+      <div class="sizes" id="sizes">
+        <button type="button" data-size="2T">2T</button>
+        <button type="button" data-size="5T">5T</button>
+        <button type="button" data-size="6T">6T</button>
+        <button type="button" data-size="8–13Y">8 – 13Y</button>
+        <button type="button" class="alt" data-size="">Other size? Pre-order</button>
+      </div>
+      <div class="legend"><span>✅ = available</span><span>❌ = sold</span><span>Stock moves fast. Ask before you buy.</span></div>
+      <div class="grid-shop">
+        <div class="item"><figure><img src="img/p01.jpg" alt="Plaid shirt and shorts set" loading="lazy"></figure><div class="info"><span class="tag">Set</span><h3>Plaid shirt &amp; shorts set</h3><button type="button" data-item="Plaid shirt &amp; shorts set">Ask about this</button></div></div>
+        <div class="item"><figure><img src="img/p02.jpg" alt="Blue puffer jacket" loading="lazy"></figure><div class="info"><span class="tag">Outerwear</span><h3>Blue puffer jacket</h3><button type="button" data-item="Blue puffer jacket">Ask about this</button></div></div>
+        <div class="item"><figure><img src="img/p03.jpg" alt="White logo tee with monogram shorts" loading="lazy"></figure><div class="info"><span class="tag">Set</span><h3>Logo tee &amp; monogram shorts</h3><button type="button" data-item="Logo tee &amp; monogram shorts">Ask about this</button></div></div>
+        <div class="item"><figure><img src="img/p04.jpg" alt="Red graphic tee" loading="lazy"></figure><div class="info"><span class="tag">Tee</span><h3>Red graphic tee</h3><button type="button" data-item="Red graphic tee">Ask about this</button></div></div>
+        <div class="item"><figure><img src="img/p05.jpg" alt="Red tee with a horse graphic" loading="lazy"></figure><div class="info"><span class="tag">Tee</span><h3>Red horse graphic tee</h3><button type="button" data-item="Red horse graphic tee">Ask about this</button></div></div>
+        <div class="item"><figure><img src="img/p06.jpg" alt="Navy hooded windbreaker" loading="lazy"></figure><div class="info"><span class="tag">Outerwear</span><h3>Navy hooded windbreaker</h3><button type="button" data-item="Navy hooded windbreaker">Ask about this</button></div></div>
+        <div class="item"><figure><img src="img/p07.jpg" alt="White logo tee with cargo denim" loading="lazy"></figure><div class="info"><span class="tag">Set</span><h3>Logo tee &amp; cargo denim</h3><button type="button" data-item="Logo tee &amp; cargo denim">Ask about this</button></div></div>
+        <div class="item"><figure><img src="img/p08.jpg" alt="Tan hoodie and jogger set" loading="lazy"></figure><div class="info"><span class="tag">Set</span><h3>Tan hoodie &amp; jogger set</h3><button type="button" data-item="Tan hoodie &amp; jogger set">Ask about this</button></div></div>
+        <div class="item"><figure><img src="img/p09.jpg" alt="Kids low-top sneakers" loading="lazy"></figure><div class="info"><span class="tag">Shoes</span><h3>Kids low-top sneakers</h3><button type="button" data-item="Kids low-top sneakers">Ask about this</button></div></div>
+        <div class="item"><figure><img src="img/p10.jpg" alt="Red tee with cartoon characters" loading="lazy"></figure><div class="info"><span class="tag">Tee</span><h3>Red character tee</h3><button type="button" data-item="Red character tee">Ask about this</button></div></div>
+        <div class="item"><figure><img src="img/p11.jpg" alt="Navy dress with patterned trim" loading="lazy"></figure><div class="info"><span class="tag">Dress</span><h3>Navy dress</h3><button type="button" data-item="Navy dress">Ask about this</button></div></div>
+        <div class="item" style="background:var(--ink);color:#fff;border-color:var(--ink)"><div class="info" style="justify-content:center;text-align:center;padding:26px"><span class="tag" style="color:var(--red-2)">Can't find it?</span><h3 style="font-size:24px">Ask for any piece in your size</h3><button type="button" data-item="" style="background:var(--red)">Pre-order</button></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block dark" id="how">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow">How it works</span>
+        <h2>From the rack to your door</h2>
+        <p>Simple, personal and fast.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><h3>Pick your fit</h3><p>Browse what's on hand, sorted by size.</p></div>
+        <div class="step"><h3>Ask for your size</h3><p>Not in stock in your size? Ask about a pre-order. Most pieces can be found in the size you need.</p></div>
+        <div class="step"><h3>We ship it</h3><p>Packed up and shipped from the Bay Area, worldwide.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="preorder">
+    <div class="wrap po-wrap">
+      <div class="head">
+        <span class="eyebrow">Pre-order</span>
+        <h2>Your size, on request</h2>
+        <p>If something isn't available in your size, ask for a pre-order. It can likely be found in the size you need.</p>
+        <ul class="perks">
+          <li><i>👕</i><span>Sizes from toddler (2T) up to 13Y</span></li>
+          <li><i>🌎</i><span>Shipping worldwide from the Bay Area</span></li>
+          <li><i>✅</i><span>Get an answer before you pay for anything</span></li>
+        </ul>
+      </div>
+      <form class="po" id="po" onsubmit="return false">
+        <h3>Request a pre-order</h3>
+        <label>Which piece?<input id="po-item" placeholder="e.g. Blue puffer jacket, or describe what you want"></label>
+        <div class="row">
+          <label>Size<select id="po-size"><option>2T</option><option>3T</option><option>4T</option><option>5T</option><option>6T</option><option>7Y</option><option>8Y</option><option>10Y</option><option>12Y</option><option>13Y</option></select></label>
+          <label>Quantity<select><option>1</option><option>2</option><option>3</option></select></label>
+        </div>
+        <div class="row">
+          <label>Your name<input id="po-name" placeholder="Your name"></label>
+          <label>Instagram or phone<input placeholder="@yourhandle"></label>
+        </div>
+        <label>Ship to (city, country)<input placeholder="e.g. Oakland, USA"></label>
+        <label>Notes<textarea placeholder="Gift? Need it by a date? Tell us."></textarea></label>
+        <button class="btn btn-red" type="button" id="po-go">Send pre-order request</button>
+        <small>Preview only. In the live version, requests go straight to ro.tinyfits.</small>
+      </form>
+    </div>
+  </section>
+
+  <section class="block" id="follow" style="padding-top:0">
+    <div class="wrap">
+      <div class="follow">
+        <div>
+          <span class="eyebrow" style="color:#FFE1DD">New drops</span>
+          <h2>See what just landed.</h2>
+          <p>On-hand stock is updated in the highlights, sorted by size. Follow so you don't miss your size.</p>
+          <div class="handle">@ro.tinyfits</div>
+        </div>
+        <div class="mini"><img src="img/p05.jpg" alt=""><img src="img/p09.jpg" alt=""><img src="img/p11.jpg" alt=""><img src="img/p03.jpg" alt=""><img src="img/p10.jpg" alt=""><img src="img/p06.jpg" alt=""></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="done" id="done" hidden><div class="box"><div class="big">📦</div><h3>Request sent!</h3><p id="done-sum"></p><p class="muted">This is a preview. No real request was sent.</p><button class="btn btn-ink" type="button" id="done-close">Got it</button></div></div>
+
+<footer>
+  <div class="wrap">
+    <span>© ro.tinyfits · Kids clothing · Bay Area · Shipping worldwide</span>
+    <span>@ro.tinyfits</span>
+  </div>
+</footer>
+
+<a class="btn btn-red mobile-cta" href="#preorder">Pre-order your size</a>
+
+<script>
+(function(){
+  var po=document.getElementById('po'),item=document.getElementById('po-item'),size=document.getElementById('po-size');
+  function go(){po.scrollIntoView({behavior:'smooth',block:'center'});po.classList.remove('flash');void po.offsetWidth;po.classList.add('flash')}
+  document.querySelectorAll('[data-item]').forEach(function(b){b.addEventListener('click',function(){if(b.dataset.item)item.value=b.dataset.item;go();setTimeout(function(){item.focus({preventScroll:true})},500)})});
+  document.querySelectorAll('#sizes [data-size]').forEach(function(b){b.addEventListener('click',function(){var s=b.dataset.size;if(s){var m=s==='8–13Y'?'8Y':s;[].forEach.call(size.options,function(o,i){if(o.text===m)size.selectedIndex=i});item.value=item.value||'What do you have on hand in '+s+'?'}go()})});
+  document.getElementById('po-go').onclick=function(){var n=document.getElementById('po-name').value.trim();document.getElementById('done-sum').textContent=(n?n+', your':'Your')+' request for '+(item.value||'a piece')+' in size '+size.value+' was sent. ro.tinyfits will get back to you.';document.getElementById('done').hidden=false};
+  document.getElementById('done-close').onclick=function(){document.getElementById('done').hidden=true};
+})();
+</script>
+<!-- BNB motion kit v1: paste at the very end of a sample's concept.html. Works with the standard sample markup
+     (.hero, .strip, .head, .svc, .step, .why, .work/.jobs, .contact). Extra hooks:
+     .ba (before/after drag slider), [data-count] (count-up number), .drive-in / .float / .twinkle (hero SVG parts).
+     Respects "reduce motion" settings; without JavaScript everything simply shows. -->
+<style>
+/* scroll reveal */
+.js [data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.js [data-reveal].in{opacity:1;transform:none}
+/* hero entrance */
+.js .hero :is(.grid,.hero-grid)>div:not(.stage3d)>*{opacity:0;transform:translateY(18px);animation:mk-up .8s cubic-bezier(.2,.7,.2,1) forwards}
+.js .hero :is(.grid,.hero-grid)>div:not(.stage3d)>*:nth-child(2){animation-delay:.12s}.js .hero :is(.grid,.hero-grid)>div:not(.stage3d)>*:nth-child(3){animation-delay:.24s}
+.js .hero :is(.grid,.hero-grid)>div:not(.stage3d)>*:nth-child(4){animation-delay:.36s}.js .hero :is(.grid,.hero-grid)>div:not(.stage3d)>*:nth-child(5){animation-delay:.48s}
+@keyframes mk-up{to{opacity:1;transform:none}}
+/* hero glow blobs */
+.hero{position:relative;isolation:isolate}
+.hero::before,.hero::after{content:"";position:absolute;z-index:-1;width:520px;height:520px;border-radius:50%;filter:blur(70px);opacity:.35;pointer-events:none}
+.hero::before{background:var(--lime,#4DB8FF);top:-200px;right:-120px;animation:mk-drift 14s ease-in-out infinite alternate}
+.hero::after{background:#ffffff;opacity:.08;bottom:-260px;left:-160px;animation:mk-drift 18s ease-in-out infinite alternate-reverse}
+@keyframes mk-drift{to{transform:translate(-80px,60px) scale(1.15)}}
+/* hero art */
+.drive-in{animation:mk-drive 1.4s cubic-bezier(.2,.8,.2,1) both .2s}
+@keyframes mk-drive{from{transform:translateX(-120px);opacity:0}to{transform:none;opacity:1}}
+.float{animation:mk-float 4s ease-in-out infinite 1.6s}
+@keyframes mk-float{50%{transform:translateY(-8px)}}
+.twinkle>*{transform-box:fill-box;transform-origin:center;animation:mk-tw 2.4s ease-in-out infinite}
+.twinkle>*:nth-child(2){animation-delay:.8s}.twinkle>*:nth-child(3){animation-delay:1.6s}
+@keyframes mk-tw{0%,100%{transform:scale(.6) rotate(0);opacity:.4}50%{transform:scale(1.25) rotate(45deg);opacity:1}}
+/* scrolling strip */
+.strip{overflow:hidden}
+.stripe{overflow:hidden}.stripe .wrap.mk-marquee{display:flex;flex-wrap:nowrap;width:max-content;max-width:none;gap:0 40px;animation:mk-marquee 26s linear infinite}
+.strip ul.mk-marquee{flex-wrap:nowrap;justify-content:flex-start;width:max-content;max-width:none;gap:0 44px;padding-inline:22px;animation:mk-marquee 28s linear infinite}
+.strip ul.mk-marquee li{white-space:nowrap}
+.strip:hover ul.mk-marquee{animation-play-state:paused}
+@keyframes mk-marquee{to{transform:translateX(-50%)}}
+/* cards: lift + tilt */
+.svc,.step,.why>div{transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s}
+.svc:hover,.why>div:hover{box-shadow:0 18px 40px #0D1B2C22}
+/* buttons */
+.btn{position:relative;overflow:hidden;transition:transform .2s,background .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn:not(.btn-line)::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,#ffffff66 50%,transparent 70%);transform:translateX(-120%);animation:mk-shine 4.5s ease-in-out infinite 2s}
+@keyframes mk-shine{0%,70%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+.mobile-call{animation:mk-pulse 2.6s ease-in-out infinite 3s}
+@keyframes mk-pulse{0%,100%{box-shadow:0 10px 30px #0006,0 0 0 0 color-mix(in srgb,var(--lime,#4DB8FF) 60%,transparent)}50%{box-shadow:0 10px 30px #0006,0 0 0 10px transparent}}
+/* before / after slider */
+.ba{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;user-select:none;touch-action:pan-y;--pos:50%;background:#E3EAF3}
+.ba img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.ba .ba-before{clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
+.ba input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:ew-resize;z-index:3}
+.ba .ba-line{position:absolute;top:0;bottom:0;left:var(--pos);width:3px;margin-left:-1.5px;background:#fff;box-shadow:0 0 12px #0008;z-index:2;pointer-events:none}
+.ba .ba-line::after{content:"⟷";position:absolute;top:50%;left:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:#fff;color:#0D1B2C;display:grid;place-items:center;font:700 20px/1 system-ui;box-shadow:0 6px 18px #0006}
+.ba .tag{position:absolute;top:10px;z-index:2;font:800 12px/1 system-ui;letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:99px;background:#0D1B2CCC;color:#fff}
+.ba .tag.l{left:10px;right:auto}.ba .tag.r{left:auto;right:10px;background:var(--lime,#4DB8FF);color:#06182E}
+.ba-hint{font:600 13px system-ui;color:var(--muted,#56657A);margin:8px 4px 0}
+.ba.nudge{animation:mk-nudge 1.6s ease-in-out 1}
+/* job photos zoom */
+.gal img,.jobs figure img,.work figure img{transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.gal figure:hover img,.jobs figure:hover img,.work figure:hover img{transform:scale(1.07)}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js [data-reveal],.js .hero :is(.grid,.hero-grid)>div:not(.stage3d)>*{opacity:1!important;transform:none!important}
+}
+</style>
+<script>
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.documentElement.classList.add('js');
+  // background work clip: show it only once it really plays (the photo slideshow stays underneath)
+  document.querySelectorAll('.hero-video').forEach(function(v){v.addEventListener('playing',function(){v.classList.add('playing')});var pr=v.play&&v.play();if(pr&&pr.catch)pr.catch(function(){})});
+  // keep the sticky header just under the concept banner (the banner wraps to 3 lines on phones)
+  var note=document.querySelector('.sample-note'),hdr=document.querySelector('header');
+  if(note&&hdr){var fit=function(){hdr.style.top=note.offsetHeight+'px'};fit();addEventListener('resize',fit)}
+  // reveal on scroll
+  var sel='.item,.po,.follow,.quote,.community>*,.card,.why-card,.gal figure,.contact-grid>*,.menu-card,.shot,.panel,.follow .box,.crew figure,.head,.svc,.step,.pair,.ba-card,.jobs figure,.work figure,.work .tile,.why>div,.contact .grid>*,.feature>*,.stack>*';
+  document.querySelectorAll(sel).forEach(function(el){
+    el.setAttribute('data-reveal','');
+    var i=Array.prototype.indexOf.call(el.parentElement.children,el);
+    el.style.setProperty('--d',Math.min(i,5)*0.09+'s');
+  });
+  if('IntersectionObserver' in window&&!reduce){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('[data-reveal]').forEach(function(el){io.observe(el)});
+  }else document.querySelectorAll('[data-reveal]').forEach(function(el){el.classList.add('in')});
+  // scrolling strip
+  document.querySelectorAll('.strip ul,.stripe .wrap').forEach(function(ul){
+    if(reduce)return; ul.innerHTML+=ul.innerHTML; ul.classList.add('mk-marquee');
+  });
+  // count-up
+  document.querySelectorAll('[data-count]').forEach(function(el){
+    var end=parseFloat(el.dataset.count),suf=el.dataset.suffix||'';
+    if(reduce){el.textContent=end+suf;return}
+    var o=new IntersectionObserver(function(es){if(!es[0].isIntersecting)return;o.disconnect();var t0=performance.now();
+      (function step(t){var p=Math.min(1,(t-t0)/1400);el.textContent=Math.round(end*(1-Math.pow(1-p,3)))+suf;if(p<1)requestAnimationFrame(step)})(t0)});
+    o.observe(el);
+  });
+  // tilt on desktop
+  if(!reduce&&matchMedia('(hover:hover)').matches){
+    document.querySelectorAll('.svc,.why>div').forEach(function(c){
+      c.addEventListener('mousemove',function(e){var r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+        c.style.transform='perspective(800px) rotateX('+(-y*6)+'deg) rotateY('+(x*6)+'deg) translateY(-4px)'});
+      c.addEventListener('mouseleave',function(){c.style.transform=''});
+    });
+  }
+  // before/after sliders
+  document.querySelectorAll('.ba').forEach(function(ba){
+    var inp=ba.querySelector('input');
+    function set(v){ba.style.setProperty('--pos',v+'%')}
+    inp.addEventListener('input',function(){set(inp.value)});
+    if(reduce)return;
+    var shown=false,o=new IntersectionObserver(function(es){if(!es[0].isIntersecting||shown)return;shown=true;o.disconnect();
+      var t0=performance.now();(function s(t){var p=Math.min(1,(t-t0)/1800),v=50+Math.sin(p*Math.PI*2)*28;set(v);inp.value=v;if(p<1)requestAnimationFrame(s);else{set(50);inp.value=50}})(t0)},{threshold:.6});
+    o.observe(ba);
+  });
+})();
+</script>
+</body>
+</html>
