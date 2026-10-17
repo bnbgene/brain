@@ -1,6 +1,6 @@
 # Airbnb (Listing Videos)
 
-**Status:** 🟡 Offer planned + first sample video and booking site done
+**Status:** 🟡 Offer planned. Sample upgraded to a 52-sec "walking through the house" video
 **Chat:** "AIRBNB" · **Files live on branch:** `claude/charming-cori-om30sj`
 **Log:** [[Airbnb/Session Log|Session Log]] · **Related:** [[Web Design]] (same website skills)
 
@@ -17,7 +17,7 @@ Most Airbnb listings only have photos. Turn a host's photos into a smooth **vide
 ## How it works (no visit needed)
 1. Grab the photos from their public listing.
 2. Put them in walkthrough order: front → door → living → kitchen → bedrooms → baths → backyard → night shot.
-3. Slow zoom/pan on each photo, fades, room labels, end card with rating + "Book your stay".
+3. AI depth on each photo so the camera walks into each room (slight walking sway, push through to the next room), room labels, end card with rating + "Book your stay".
 4. Add royalty-free music and send.
 
 ## Where the video goes
@@ -34,6 +34,7 @@ Most Airbnb listings only have photos. Turn a host's photos into a smooth **vide
 - Property managers with 10+ homes = bigger deals.
 
 ## Key Decisions
+- 2026-10-16: Video must feel like walking through the house, not a slideshow.
 - 2026-10-16: Lead with a free sample video as the pitch.
 
 ## Next Steps
