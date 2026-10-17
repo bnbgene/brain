@@ -8,7 +8,7 @@ Start here. This is the front page of your brain.
 | [[AI Characters]] | 🟡 Kasey Mae designed. Next: accounts + first videos | "AI CHARACTERS" |
 | [[BNB Profits]] | 🟢 Site live, daily content running | "BNB PROFITS" |
 | [[Web Design]] | 🟢 Building sample sites for local businesses | "WEBSITE DESIGN" |
-| [[Airbnb]] | 🟡 Offer planned, first sample video + site done | "AIRBNB" |
+| [[Airbnb]] | 🟡 Sample upgraded to a walk-through video; next: DM real hosts | "AIRBNB" |
 
 ## The one thing to remember
 Keep working in your chats like normal. New chats get added here automatically. When you want your notes updated, open the **"Obsidian integration overview"** chat and say:
