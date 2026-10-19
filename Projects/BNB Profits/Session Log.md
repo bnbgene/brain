@@ -3,6 +3,9 @@
 Newest entries at the top. Back to [[BNB Profits]].
 
 ---
+## 2026-10-18
+**Did:** Wrote a ~30-second talking-head script about leaving the Bay Area, with caption, hooks and alternate openers (in the BNB PROFITS chat).
+
 ## 2026-10-16
 **Did:** 24 controversial / relatable / business video ideas added to Content HQ.
 
