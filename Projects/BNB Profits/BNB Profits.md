@@ -29,6 +29,7 @@ Gene (@bnbgene) trades NQ futures full time. BNBProfits is the trading brand:
 ## Next Steps
 - [ ] Confirm 1:1 applications are arriving in Discord (redeploy on Netlify if not)
 - [ ] Post daily from Content HQ
+- [ ] Send Damond the 1:1 mentorship text (drafted in the BNB PROFITS chat); follow up with price + payment link if he's ready
 
 ## Files
 - [Website source](https://github.com/bnbgene/brain/blob/claude/vigilant-ritchie-sli5xu/bnbprofits/index.html)
