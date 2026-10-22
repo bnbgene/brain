@@ -3,6 +3,9 @@
 Newest entries at the top. Back to [[BNB Profits]].
 
 ---
+## 2026-10-21
+**Did:** Drafted a short text to Damond pitching the paid 1:1 mentorship. Price and payment link only go out if he says he's ready.
+
 ## 2026-10-18
 **Did:** Wrote a ~30-second talking-head script about leaving the Bay Area, with caption, hooks and alternate openers (in the BNB PROFITS chat).
 
