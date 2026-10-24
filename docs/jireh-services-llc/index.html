@@ -14,12 +14,12 @@
 <style>
 :root{
   color-scheme:light;
-  --char:#1A1D2E; --char-2:color-mix(in srgb,#1A1D2E 86%,#fff); --concrete:#EEF2F5; --stone:color-mix(in srgb,#EEF2F5 88%,#1A1D2E); --paper:#FFFFFF; --line:color-mix(in srgb,#EEF2F5 80%,#1A1D2E);
-  --ink:#1A1D2E; --muted:color-mix(in srgb,#1A1D2E 62%,#fff); --orange:#2FB7F0; --orange-deep:color-mix(in srgb,#2FB7F0 82%,#000); --soft:color-mix(in srgb,#2FB7F0 14%,#fff);
-  --on-acc:#04202C;
+  --char:#0D0D0E; --char-2:color-mix(in srgb,#0D0D0E 86%,#fff); --concrete:#F4F0EA; --stone:color-mix(in srgb,#F4F0EA 88%,#0D0D0E); --paper:#FFFFFF; --line:color-mix(in srgb,#F4F0EA 80%,#0D0D0E);
+  --ink:#0D0D0E; --muted:color-mix(in srgb,#0D0D0E 62%,#fff); --orange:#F28C1B; --orange-deep:color-mix(in srgb,#F28C1B 82%,#000); --soft:color-mix(in srgb,#F28C1B 14%,#fff);
+  --on-acc:#1A0E00;
   --display:"Archivo Black", Impact, sans-serif;
   --body:"Archivo", system-ui, sans-serif;
-  --lime:#2FB7F0;
+  --lime:#F28C1B;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -161,6 +161,16 @@ footer b{color:#fff}
   body{padding-bottom:80px}
 }
 @media (prefers-reduced-motion:reduce){.hero-slides img{animation:none;opacity:0}.hero-slides img:first-child{opacity:1}.portrait,.portrait img,.float-card,.radar::before,.radar b{animation:none}}
+.nav ul{gap:20px}.nav ul a,.nav .btn,.brand b{white-space:nowrap}
+@media (max-width:1180px){.nav ul{display:none}}
+.mark{width:46px;height:46px;border-radius:50%;box-shadow:0 0 0 2px var(--orange)}
+.logo-art{background:#000!important;aspect-ratio:1!important}
+.logo-art img{object-fit:contain!important}
+.work{background:var(--char);color:#fff}.work .head h2{color:#fff}.work .head p{color:#ffffffb0}
+.ba-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.ba-card{margin:0}.ba-card figcaption{font-weight:800;margin-top:10px}
+.work .ba-hint{color:#ffffff90}
+@media (max-width:860px){.ba-grid{grid-template-columns:1fr;max-width:460px}}
 .loads{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:760px}
 .load{font:inherit;text-align:left;cursor:pointer;background:var(--concrete);border:2px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:4px;color:var(--ink);transition:border-color .25s,transform .25s}
 .load.on{border-color:var(--orange);background:var(--soft);transform:translateY(-4px)}
@@ -208,9 +218,10 @@ footer b{color:#fff}
 
 <header>
   <div class="wrap nav">
-    <a class="brand" href="#top"><span class="mark">JS</span><span><b>Jireh Services</b><small>Hauling &amp; dump trailers</small></span></a>
+    <a class="brand" href="#top"><img class="mark" src="img/logo.jpg" alt="Jireh Services logo" style="object-fit:cover;padding:0;background:#000"><span><b>Jireh Services</b><small>Hauling &amp; dump trailers</small></span></a>
     <ul>
       <li><a href="#services">Services</a></li>
+      <li><a href="#work">Our work</a></li>
       <li><a href="#prices">Prices</a></li>
       <li><a href="#why">Why us</a></li>
       <li><a href="#area">Service area</a></li>
@@ -242,7 +253,7 @@ footer b{color:#fff}
         <div class="lic-row"><span>Free estimates</span><span>Zelle · Venmo · Cash</span><span>Labor + disposal included</span></div>
       </div>
       <div class="person">
-        <figure class="portrait"><img src="https://images.pexels.com/photos/7464406/pexels-photo-7464406.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=900" alt="Worker on the job" onerror="this.onerror=null;this.parentNode.classList.add('noimg');this.remove()"><span class="mono" aria-hidden="true">JS</span><span class="ex">Example photo</span></figure>
+<figure class="portrait logo-art"><img src="img/logo.jpg" alt="Jireh Services Junk Removal logo: lion, pickup truck, dump trailer and skid steer"></figure>
         <div class="float-card fc1"><b>Full trailer $750</b><span>Labor + disposal included</span></div>
         <div class="float-card fc2"><b>Half trailer $400</b><span>Labor + disposal included</span></div>
         <div class="float-card fc3"><b>SF to San Jose</b><span>Free estimates</span></div>
@@ -250,14 +261,14 @@ footer b{color:#fff}
     </div>
   </section>
 
-  <div class="stripe"><div class="wrap"><span>Junk removal</span><span>Dirt hauling</span><span>Dump trailer rental</span><span>SF to San Jose</span><span>Zelle · Venmo · Cash</span></div></div>
+  <div class="stripe"><div class="wrap"><span>Junk removal</span><span>Dirt hauling</span><span>Dump trailer rental</span><span>SF to San Jose</span><span>Residential &amp; commercial</span><span>Zelle · Venmo · Cash</span></div></div>
 
   <section id="services">
     <div class="wrap">
       <div class="head">
         <div class="eyebrow">What we do</div>
         <h2>Haul it, dump it, done.</h2>
-        <p>Three ways to get rid of it.</p>
+        <p>Residential and commercial. Three ways to get rid of it.</p>
       </div>
       <div class="svc">
         <div class="card"><div class="ic"><svg><use href="#i-box"/></svg></div><h3>Junk removal</h3><p>We load and haul away junk, furniture and debris.</p></div>
@@ -267,6 +278,21 @@ footer b{color:#fff}
     </div>
   </section>
 
+  <section id="work" class="work">
+    <div class="wrap">
+      <div class="head">
+        <div class="eyebrow">Real jobs</div>
+        <h2>Before &amp; after.</h2>
+        <p>Recent cleanouts by Jireh Services. Drag the slider to compare.</p>
+      </div>
+      <div class="ba-grid">
+        <figure class="ba-card"><div class="ba"><img src="img/patio-after.jpg" alt="The same patio cleared and washed"><img class="ba-before" src="img/patio-before.jpg" alt="Patio covered in broken concrete and debris"><span class="tag l">Before</span><span class="tag r">After</span><span class="ba-line"></span><input type="range" min="0" max="100" value="50" aria-label="Drag to compare before and after"></div><figcaption>Patio debris removal</figcaption></figure>
+        <figure class="ba-card"><div class="ba"><img src="img/garage1-after.jpg" alt="The same garage cleared out"><img class="ba-before" src="img/garage1-before.jpg" alt="Garage full of boxes and furniture"><span class="tag l">Before</span><span class="tag r">After</span><span class="ba-line"></span><input type="range" min="0" max="100" value="50" aria-label="Drag to compare before and after"></div><figcaption>Garage cleanout</figcaption></figure>
+        <figure class="ba-card"><div class="ba"><img src="img/garage2-after.jpg" alt="The same garage empty and clean"><img class="ba-before" src="img/garage2-before.jpg" alt="Garage with piles of cardboard and junk"><span class="tag l">Before</span><span class="tag r">After</span><span class="ba-line"></span><input type="range" min="0" max="100" value="50" aria-label="Drag to compare before and after"></div><figcaption>Garage cleanout</figcaption></figure>
+      </div>
+      <p class="ba-hint">Photos from Jireh Services' Facebook page.</p>
+    </div>
+  </section>
   <section id="prices" style="background:var(--paper)">
     <div class="wrap">
       <div class="head">
