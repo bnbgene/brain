@@ -17,11 +17,11 @@ Clients send W-2 photos through **TaxesToGo**, but TaxSlayer Pro doesn't fill in
 - 2026-10-24: Fill types like a person (Tab between boxes). No TaxSlayer/TaxesToGo logins.
 - 2026-10-24: Box order per tax software is a settings file (TaxSlayer Pro first, Drake etc. later).
 - 2026-10-24: Privacy: nothing saved, only last 4 of SSN read by default, no client info in logs, key in Windows Credential Manager.
-- 2026-10-24: Code lives in a private repo, never public.
+- 2026-10-24: Code lives in a private repo, never public. Real sample W-2s are never saved in the repo.
 
 ## Next Steps
 - [ ] Sister: screenshot of TaxSlayer Pro's W-2 entry screen (to fix the box order)
-- [ ] Sister: a sample W-2 PDF with fake numbers or the SSN blacked out
+- [x] Sample W-2 photo received 2026-10-24 (caregiver W-2, 4 copies on one page, box 12 code II, box 1 = $0)
 - [ ] Office: make an Anthropic account at console.anthropic.com, add ~$20 credit, create an API key
 - [ ] Fix TaxSlayer box order from the screenshot, test on a practice return
 - [ ] Install on the office PC (see setup guide in the repo: `docs/SETUP.md`)

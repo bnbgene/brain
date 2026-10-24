@@ -17,4 +17,5 @@
 - Windows may warn "protected your PC" on install (not code-signed yet): More info → Run anyway.
 
 ## Changes
+- 2026-10-24 (later): Handles caregiver W-2s (box 12 code II, box 1 = $0); $0.00 boxes left blank on Fill.
 - 2026-10-24: v0.1.0 built: read, check screen, Fill, folder watching, settings, installer.
