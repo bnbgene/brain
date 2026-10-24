@@ -1,0 +1,36 @@
+# W-2 Helper (sister's tax office)
+
+**Status:** 🟢 Fill works on E Tax (v0.2.2, practice return, all boxes filled). Next: API key + AI-read test with a real W-2.
+**Chat:** "TAX HELPER SOFTWARE" (started in "W-2 upload to tax filing system") · **Code:** private repo `bnbgene/w2-helper` (branch `claude/sleepy-sagan-rw8tbu`)
+**Log:** [[W-2 Helper/Session Log|Session Log]]
+
+## Goal
+Clients send W-2 photos through **TaxesToGo**, but TaxSlayer Pro doesn't fill in the numbers, so preparers type every box. W-2 Helper reads the W-2 with AI, shows the numbers to check, and types them into TaxSlayer Pro's W-2 screen with one click. One office first, built so more offices can use it later.
+
+## Tools
+- [[W-2 Helper App]]: the Windows app (installer, how it works, recent changes)
+- Web demo: https://claude.ai/artifact/WdWrcdWsuvSeFwS3pRwfCX
+
+## Key Decisions
+- 2026-10-24: Windows desktop app next to TaxSlayer Pro Desktop. Clients keep using TaxesToGo.
+- 2026-10-24: AI = Claude API (Claude Opus 5.5). About 5–10¢ per W-2. Each office uses its own Anthropic account and key.
+- 2026-10-24: Fill types like a person (Tab between boxes). No TaxSlayer/TaxesToGo logins.
+- 2026-10-24: The office's W-2 screen is a website (E Tax, etax.cloudtaxoffice.com), not TaxSlayer Pro Desktop. Fill works there too (types into Chrome).
+- 2026-10-24: Fill uses a small Chrome add-on that fills E Tax boxes by their page ids (Tab typing kept landing in the wrong boxes because E Tax's dropdowns ignore typing).
+- 2026-10-24: Box order per tax software is a settings file (TaxSlayer Pro first, Drake etc. later).
+- 2026-10-24: Privacy: nothing saved, only last 4 of SSN read by default, no client info in logs, key in Windows Credential Manager.
+- 2026-10-24: Code lives in a private repo, never public. Real sample W-2s are never saved in the repo.
+
+## Next Steps
+- [x] Screenshots of the office's W-2 screen (2026-10-24): it's the **E Tax web app** (etax.cloudtaxoffice.com) in Chrome
+- [x] Numbering test done; box order set from it
+- [x] Installed v0.2.2 + Chrome add-on; Fill on a practice return filled every box (2026-10-24)
+- [ ] Office API key, then test **Read with AI** on a real W-2 photo/PDF
+- [ ] Ask sister: code II W-2s: amount in box 12, in "Medicaid Waiver Payment", or both? Where does "QUAL OT" go?
+- [x] Confirmed: the office enters every client in E Tax (etax.cloudtaxoffice.com)
+- [x] Sample W-2 photo received 2026-10-24 (caregiver W-2, 4 copies on one page, box 12 code II, box 1 = $0)
+- [ ] Office: make an Anthropic account at console.anthropic.com, add ~$20 credit, create an API key
+- [ ] Fix TaxSlayer box order from the screenshot, test on a practice return
+- [ ] Install on the office PC (see setup guide in the repo: `docs/SETUP.md`)
+- [ ] Add the app to the office's security plan (WISP) using `docs/SECURITY.md`
+- [ ] Pilot Jan–April; track minutes saved and mistakes caught

@@ -1,6 +1,6 @@
 # Web Design
 
-**Status:** 🟢 Active. Building free sample sites for local businesses to win them as clients.
+**Status:** 🟢 Active. 23 new Bay Area sample sites (from Facebook-group leads) added 2026-10-23. Full list: [[Sample Sites]]
 **Chat:** "WEBSITE DESIGN" · **Files live on branch:** `claude/clever-shannon-qbaqz7`
 **Log:** [[Web Design/Session Log|Session Log]]
 
@@ -30,6 +30,7 @@ BNB web design + ads for local (mostly Phoenix-area) businesses. Process:
 | A+ Pressure Washing | [link](https://bnbgene.github.io/brain/a-plus-pressure-washing-phoenix/) |
 | A-Science Termite & Pest Control | [link](https://bnbgene.github.io/brain/a-science-termite-pest-control/) |
 | Moreno Electric Co. | [link](https://bnbgene.github.io/brain/moreno-electric/) |
+| ro.tinyfits (kids clothing) | [link](https://bnbgene.github.io/brain/ro-tinyfits/) |
 | On Scene Cleaning Services | [link](https://bnbgene.github.io/brain/on-scene-cleaning-services/) · [animated demo](https://bnbgene.github.io/brain/on-scene-cleaning-services-demo/) |
 
 Older samples on Netlify (`samples/`): A Blessing Tree Service, Advanced European Tailoring, Ana's Detailed House Cleaning, AZ Handyman, Done By Dri, M.V.P Tree Service. Also a C&S Construction LLC draft (`index.html` in this repo).
@@ -40,6 +41,7 @@ Older samples on Netlify (`samples/`): A Blessing Tree Service, Advanced Europea
 - 2026-10-13: Preview first; nothing is published until you OK it.
 
 ## Next Steps
+- [ ] Send the 23 new Bay Area samples to those business owners
 - [ ] Send the latest samples to their business owners
 - [ ] Keep the Lead Desk updated
 

@@ -13,6 +13,7 @@ The vault notes live on the default branch.
 | BNB Profits | `Projects/BNB Profits/BNB Profits.md` | BNB PROFITS | `claude/vigilant-ritchie-sli5xu` |
 | Web Design | `Projects/Web Design/Web Design.md` | WEBSITE DESIGN | `claude/clever-shannon-qbaqz7` (also serves GitHub Pages from `docs/`) |
 | Airbnb | `Projects/Airbnb/Airbnb.md` | AIRBNB | `claude/charming-cori-om30sj` |
+| W-2 Helper | `Projects/W-2 Helper/W-2 Helper.md` | TAX HELPER SOFTWARE (also "W-2 upload to tax filing system") | private repo `bnbgene/w2-helper`; notes on `claude/sleepy-sagan-rw8tbu` |
 
 Do NOT merge those project branches into the vault branch. They hold live sites (Netlify, GitHub Pages). Only read them.
 
