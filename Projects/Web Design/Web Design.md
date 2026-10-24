@@ -1,6 +1,6 @@
 # Web Design
 
-**Status:** 🟢 Active. Building free sample sites for local businesses to win them as clients.
+**Status:** 🟢 Active. 23 new Bay Area sample sites (from Facebook-group leads) added 2026-10-23. Full list: [[Sample Sites]]
 **Chat:** "WEBSITE DESIGN" · **Files live on branch:** `claude/clever-shannon-qbaqz7`
 **Log:** [[Web Design/Session Log|Session Log]]
 
@@ -41,6 +41,7 @@ Older samples on Netlify (`samples/`): A Blessing Tree Service, Advanced Europea
 - 2026-10-13: Preview first; nothing is published until you OK it.
 
 ## Next Steps
+- [ ] Send the 23 new Bay Area samples to those business owners
 - [ ] Send the latest samples to their business owners
 - [ ] Keep the Lead Desk updated
 

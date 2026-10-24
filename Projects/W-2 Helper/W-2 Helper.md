@@ -1,7 +1,7 @@
 # W-2 Helper (sister's tax office)
 
 **Status:** 🟢 Fill works on E Tax (v0.2.2, practice return, all boxes filled). Next: API key + AI-read test with a real W-2.
-**Chat:** "Build W-2 Helper for sister's tax office" · **Code:** private repo `bnbgene/w2-helper` (branch `claude/sleepy-sagan-rw8tbu`)
+**Chat:** "TAX HELPER SOFTWARE" (started in "W-2 upload to tax filing system") · **Code:** private repo `bnbgene/w2-helper` (branch `claude/sleepy-sagan-rw8tbu`)
 **Log:** [[W-2 Helper/Session Log|Session Log]]
 
 ## Goal
