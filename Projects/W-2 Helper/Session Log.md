@@ -3,6 +3,10 @@
 Newest entries at the top. Back to [[W-2 Helper]].
 
 ---
+## 2026-10-24 (evening): Saw the real W-2 screen
+**Did:** Screenshots showed the office enters W-2s on a website (E Tax, etax.cloudtaxoffice.com) in Chrome. Added a draft box order for it: employer info + boxes 1–11; employee info is already filled in so it's skipped. State boxes are dropdowns, so it types "Arizona" not "AZ".
+**Next:** Numbering test on a practice return to confirm the order, then add boxes 12–20.
+
 ## 2026-10-24 (later): First sample W-2
 **Did:** Tested with the first sample photo (caregiver W-2, 4 copies on a page). Math checks pass. Taught the AI that box 12 code "II" looks like "||", and that box 1 = $0 is normal with it. Fill now leaves $0.00 boxes blank. Sample not saved anywhere.
 **Next:** Live AI test once the office has an API key.
