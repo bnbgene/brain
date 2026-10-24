@@ -3,6 +3,10 @@
 Newest entries at the top. Back to [[W-2 Helper]].
 
 ---
+## 2026-10-24 (late): Switched Fill to a Chrome add-on
+**Did:** First real test: Tab typing put values in the wrong boxes (E Tax dropdowns ignore typing, so everything shifted). Used a Claude-in-Chrome page check to get every box's id. Built a Chrome add-on that fills each box by id, picks dropdown choices, and handles box 12/14 rows. Tested end to end on a stand-in page. v0.2.0.
+**Next:** Install the add-on (Developer mode → Load unpacked), test on a practice return.
+
 ## 2026-10-24 (night): Box order set from the numbering test
 **Did:** Set Fill's order from the numbering test. Box 12 rows are only typed when used. Box 13 (checkboxes) and box 14 (dropdown) can't be reached with Tab, so the app lists them under "Do by hand" with the values. Added a reminder for code II W-2s.
 **Next:** Practice-return test of Fill. Answers on code II and QUAL OT.

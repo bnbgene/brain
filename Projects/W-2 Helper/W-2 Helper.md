@@ -16,6 +16,7 @@ Clients send W-2 photos through **TaxesToGo**, but TaxSlayer Pro doesn't fill in
 - 2026-10-24: AI = Claude API (Claude Opus 5.5). About 5–10¢ per W-2. Each office uses its own Anthropic account and key.
 - 2026-10-24: Fill types like a person (Tab between boxes). No TaxSlayer/TaxesToGo logins.
 - 2026-10-24: The office's W-2 screen is a website (E Tax, etax.cloudtaxoffice.com), not TaxSlayer Pro Desktop. Fill works there too (types into Chrome).
+- 2026-10-24: Fill uses a small Chrome add-on that fills E Tax boxes by their page ids (Tab typing kept landing in the wrong boxes because E Tax's dropdowns ignore typing).
 - 2026-10-24: Box order per tax software is a settings file (TaxSlayer Pro first, Drake etc. later).
 - 2026-10-24: Privacy: nothing saved, only last 4 of SSN read by default, no client info in logs, key in Windows Credential Manager.
 - 2026-10-24: Code lives in a private repo, never public. Real sample W-2s are never saved in the repo.
@@ -23,7 +24,7 @@ Clients send W-2 photos through **TaxesToGo**, but TaxSlayer Pro doesn't fill in
 ## Next Steps
 - [x] Screenshots of the office's W-2 screen (2026-10-24): it's the **E Tax web app** (etax.cloudtaxoffice.com) in Chrome
 - [x] Numbering test done; box order set from it
-- [ ] Try Fill on a practice return: check dropdowns (state, box 12 codes) pick the right choice
+- [ ] Install v0.2 + the Chrome add-on, test Fill on a practice return (dropdowns, box 12, box 14)
 - [ ] Ask sister: code II W-2s: amount in box 12, in "Medicaid Waiver Payment", or both? Where does "QUAL OT" go?
 - [x] Confirmed: the office enters every client in E Tax (etax.cloudtaxoffice.com)
 - [x] Sample W-2 photo received 2026-10-24 (caregiver W-2, 4 copies on one page, box 12 code II, box 1 = $0)
