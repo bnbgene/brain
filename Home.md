@@ -9,6 +9,7 @@ Start here. This is the front page of your brain.
 | [[BNB Profits]] | 🟢 Site live, daily content running | "BNB PROFITS" |
 | [[Web Design]] | 🟢 Building sample sites for local businesses | "WEBSITE DESIGN" |
 | [[Airbnb]] | 🟡 Sample upgraded to a walk-through video; next: DM real hosts | "AIRBNB" |
+| [[W-2 Helper]] | 🟢 Fill works on E Tax; next: API key + AI-read test | "Build W-2 Helper for sister's tax office" |
 
 ## The one thing to remember
 Keep working in your chats like normal. New chats get added here automatically. When you want your notes updated, open the **"Obsidian integration overview"** chat and say:
