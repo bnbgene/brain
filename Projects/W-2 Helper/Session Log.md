@@ -3,6 +3,10 @@
 Newest entries at the top. Back to [[W-2 Helper]].
 
 ---
+## 2026-10-24 (night): Box order set from the numbering test
+**Did:** Set Fill's order from the numbering test. Box 12 rows are only typed when used. Box 13 (checkboxes) and box 14 (dropdown) can't be reached with Tab, so the app lists them under "Do by hand" with the values. Added a reminder for code II W-2s.
+**Next:** Practice-return test of Fill. Answers on code II and QUAL OT.
+
 ## 2026-10-24 (evening): Saw the real W-2 screen
 **Did:** Screenshots showed the office enters W-2s on a website (E Tax, etax.cloudtaxoffice.com) in Chrome. Added a draft box order for it: employer info + boxes 1–11; employee info is already filled in so it's skipped. State boxes are dropdowns, so it types "Arizona" not "AZ".
 **Next:** Numbering test on a practice return to confirm the order, then add boxes 12–20.

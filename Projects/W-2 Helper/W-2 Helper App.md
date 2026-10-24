@@ -12,10 +12,11 @@
 5. **Next W-2** forgets everything (and can delete the file).
 
 ## Good to know
-- ⚠️ TaxSlayer's box order is a **draft** until we see a screenshot. Practice returns only until then.
+- ⚠️ Box order for E Tax is set but not yet tested with Fill. Practice returns only until it is.
 - Cost: about 5–10¢ per W-2, paid by the office's own Anthropic account.
 - Windows may warn "protected your PC" on install (not code-signed yet): More info → Run anyway.
 
 ## Changes
+- 2026-10-24 (night): Fill order set for E Tax from the numbering test; "Do by hand" list for box 13/14.
 - 2026-10-24 (later): Handles caregiver W-2s (box 12 code II, box 1 = $0); $0.00 boxes left blank on Fill.
 - 2026-10-24: v0.1.0 built: read, check screen, Fill, folder watching, settings, installer.

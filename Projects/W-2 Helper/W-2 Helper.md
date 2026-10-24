@@ -22,7 +22,9 @@ Clients send W-2 photos through **TaxesToGo**, but TaxSlayer Pro doesn't fill in
 
 ## Next Steps
 - [x] Screenshots of the office's W-2 screen (2026-10-24): it's the **E Tax web app** (etax.cloudtaxoffice.com) in Chrome
-- [ ] Numbering test on a practice return (type 1, Tab, 2, Tab…) and screenshot, to confirm the box order
+- [x] Numbering test done; box order set from it
+- [ ] Try Fill on a practice return: check dropdowns (state, box 12 codes) pick the right choice
+- [ ] Ask sister: code II W-2s: amount in box 12, in "Medicaid Waiver Payment", or both? Where does "QUAL OT" go?
 - [ ] Ask: is this website what the office uses for every client?
 - [x] Sample W-2 photo received 2026-10-24 (caregiver W-2, 4 copies on one page, box 12 code II, box 1 = $0)
 - [ ] Office: make an Anthropic account at console.anthropic.com, add ~$20 credit, create an API key
