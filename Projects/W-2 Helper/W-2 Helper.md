@@ -1,6 +1,6 @@
 # W-2 Helper (sister's tax office)
 
-**Status:** 🟡 First Windows app built (v0.1.0). Waiting on TaxSlayer screenshot, sample W-2 and API key before real use.
+**Status:** 🟢 Fill works on E Tax (v0.2.2, practice return, all boxes filled). Next: API key + AI-read test with a real W-2.
 **Chat:** "Build W-2 Helper for sister's tax office" · **Code:** private repo `bnbgene/w2-helper` (branch `claude/sleepy-sagan-rw8tbu`)
 **Log:** [[W-2 Helper/Session Log|Session Log]]
 
@@ -24,7 +24,8 @@ Clients send W-2 photos through **TaxesToGo**, but TaxSlayer Pro doesn't fill in
 ## Next Steps
 - [x] Screenshots of the office's W-2 screen (2026-10-24): it's the **E Tax web app** (etax.cloudtaxoffice.com) in Chrome
 - [x] Numbering test done; box order set from it
-- [ ] Install v0.2 + the Chrome add-on, test Fill on a practice return (dropdowns, box 12, box 14)
+- [x] Installed v0.2.2 + Chrome add-on; Fill on a practice return filled every box (2026-10-24)
+- [ ] Office API key, then test **Read with AI** on a real W-2 photo/PDF
 - [ ] Ask sister: code II W-2s: amount in box 12, in "Medicaid Waiver Payment", or both? Where does "QUAL OT" go?
 - [x] Confirmed: the office enters every client in E Tax (etax.cloudtaxoffice.com)
 - [x] Sample W-2 photo received 2026-10-24 (caregiver W-2, 4 copies on one page, box 12 code II, box 1 = $0)

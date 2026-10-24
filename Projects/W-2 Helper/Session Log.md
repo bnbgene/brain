@@ -3,6 +3,10 @@
 Newest entries at the top. Back to [[W-2 Helper]].
 
 ---
+## 2026-10-24 (night): Fill works on E Tax ✅
+**Did:** Fixed the last issues (big dollar amounts with commas, employer name being cleared by E Tax after the EIN). v0.2.2: every box filled on a practice return.
+**Next:** API key, AI-read test, answers on code II and QUAL OT, then the office install.
+
 ## 2026-10-24 (late): Switched Fill to a Chrome add-on
 **Did:** First real test: Tab typing put values in the wrong boxes (E Tax dropdowns ignore typing, so everything shifted). Used a Claude-in-Chrome page check to get every box's id. Built a Chrome add-on that fills each box by id, picks dropdown choices, and handles box 12/14 rows. Tested end to end on a stand-in page. v0.2.0.
 **Next:** Install the add-on (Developer mode → Load unpacked), test on a practice return.
