@@ -98,7 +98,7 @@
   .tag.you { background: var(--good); color: #0a0a0b; }
   .bubble { position: absolute; transform: translate(-50%, -100%); background: var(--fg); color: #0a0a0b; font-size: clamp(9px, 1.4vw, 12px); font-weight: 700; line-height: 1.25; padding: 4px 8px; border-radius: 6px; white-space: nowrap; }
   .bubble::after { content: ""; position: absolute; left: 50%; bottom: -5px; transform: translateX(-50%); border: 5px solid transparent; border-bottom: 0; border-top-color: var(--fg); }
-  .hud { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; gap: 6px; pointer-events: none; }
+  .hud { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; pointer-events: none; }
   .hud span { font-family: var(--pixel); font-size: clamp(6px, 1.2vw, 9px); background: rgba(10,10,11,.85); padding: 6px 8px; border-radius: 4px; }
   .hud .clk { color: var(--good); }
   .hud .sim { color: var(--warn); }
@@ -247,6 +247,14 @@
   .acct-grid { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: .86rem; align-items: baseline; }
   .goal-bar.danger i { background: var(--bad); }
   .imp { display: grid; gap: 6px; border-top: 1px solid var(--line); padding-top: 12px; }
+  /* full screen game */
+  .office.max { position: fixed; inset: 0; z-index: 60; border-radius: 0; border: 0; width: 100vw; height: 100vh; height: 100dvh; padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); background: #000; }
+  .office.max canvas { height: 100% !important; }
+  .fs-exit { display: none; position: absolute; top: calc(8px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); pointer-events: auto; font-family: var(--pixel); font-size: 10px; background: rgba(10,10,11,.85); color: #f4f4f1; border: 1px solid rgba(244,244,241,.5); border-radius: 4px; padding: 6px 9px; cursor: pointer; z-index: 2; }
+  .office.max .fs-exit { display: block; }
+  .office.max .hud { top: calc(8px + env(safe-area-inset-top, 0px)); left: calc(8px + env(safe-area-inset-left, 0px)); right: calc(8px + env(safe-area-inset-right, 0px)); }
+  .office.max .goal-hud { margin-top: 30px; }
+  body.game-max { overflow: hidden; }
   /* simplified layout */
   details.fold > summary { cursor: pointer; list-style: none; }
   details.fold > summary::-webkit-details-marker { display: none; }
@@ -306,6 +314,7 @@
       <div class="hud"><span class="sim" id="simTag" hidden>SIMULATION</span><button class="goal-hud" id="goalHud" type="button"></button><span class="clk" id="simClock">--:--</span></div>
       <div class="pad l dpad"><button id="padU" type="button" aria-label="Walk up">▲</button><button id="padL" type="button" aria-label="Walk left">◀</button><button id="padR" type="button" aria-label="Walk right">▶</button><button id="padD" type="button" aria-label="Walk down">▼</button></div>
       <button class="prompt" id="prompt" type="button" hidden></button>
+      <button class="fs-exit" id="fsExit" type="button" aria-label="Exit full screen">✕</button>
       <div class="dialog" id="dialog" hidden role="dialog" aria-live="polite">
         <div class="dialog-head"><span class="dialog-name" id="dName"></span><button class="close" id="dClose" type="button" aria-label="Close">X</button></div>
         <p class="dialog-text" id="dText"></p>
@@ -315,7 +324,7 @@
     <p class="notice" id="noGL" hidden>Your browser couldn’t start the island. Everything else on this page still works.</p>
     <div class="controls" id="controls">
       <p class="keys"><kbd>WASD</kbd> to walk, <kbd>E</kbd> to talk, or click anywhere. On your phone, tap or use the arrows.</p>
-      <div class="row"><button class="btn" id="simBtn" type="button">Play a trading day</button><button class="btn ghost" id="simStop" type="button" hidden>Stop</button></div>
+      <div class="row"><button class="btn ghost" id="fsBtn" type="button">⛶ Full screen</button><button class="btn" id="simBtn" type="button">Play a trading day</button><button class="btn ghost" id="simStop" type="button" hidden>Stop</button></div>
     </div>
     <details class="panel fold">
       <summary class="row between"><h2>Agent activity</h2><span class="label" id="feedLabel">Today</span></summary>
@@ -879,11 +888,26 @@
   // ---------- view ----------
   var office = $('office'), canvas2d = $('world'), V = { w: 400, h: 225, cx: 0, cy: 0 }, g2 = null;
   function resize() {
-    var w = office.clientWidth || 360, small = w < 640, cssH = small ? Math.round(w * 1.0) : Math.round(Math.min(w * .5625, 640)), h = small ? 230 : 250;
+    var big = office.classList.contains('max'), w = office.clientWidth || 360, small = w < 640;
+    var cssH = big ? (office.clientHeight || window.innerHeight) : small ? Math.round(w * 1.0) : Math.round(Math.min(w * .5625, 640));
+    var h = big ? (small ? 300 : 280) : small ? 230 : 250;
     var vw = Math.round(h * w / cssH);
     if (V.w !== vw || V.h !== h) { V.w = vw; V.h = h; canvas2d.width = vw; canvas2d.height = h; g2 = canvas2d.getContext('2d'); g2.imageSmoothingEnabled = false; }
     canvas2d.style.height = cssH + 'px';
   }
+  function enterMax() {
+    office.classList.add('max'); document.body.classList.add('game-max'); office.focus({ preventScroll: true });
+    try { var r = office.requestFullscreen ? office.requestFullscreen({ navigationUI: 'hide' }) : office.webkitRequestFullscreen ? office.webkitRequestFullscreen() : null; if (r && r.catch) r.catch(function () {}); } catch (e) {}
+    try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function () {}); } catch (e) {}
+  }
+  function exitMax() {
+    office.classList.remove('max'); document.body.classList.remove('game-max');
+    try { if (document.fullscreenElement) document.exitFullscreen(); else if (document.webkitFullscreenElement) document.webkitExitFullscreen(); } catch (e) {}
+  }
+  $('fsBtn').addEventListener('click', enterMax);
+  $('fsExit').addEventListener('click', exitMax);
+  document.addEventListener('fullscreenchange', function () { if (!document.fullscreenElement && office.classList.contains('max')) { office.classList.remove('max'); document.body.classList.remove('game-max'); } });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && office.classList.contains('max') && $('dialog').hidden) exitMax(); });
   function camera(dt) {
     var tx = player.x - V.w / 2, ty = player.y - 10 - V.h / 2;
     V.cx += (tx - V.cx) * Math.min(1, dt * 5); V.cy += (ty - V.cy) * Math.min(1, dt * 5);
