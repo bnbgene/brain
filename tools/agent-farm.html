@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=JetBrains+Mono:wght@400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
-  /* Layout: a phone-first control room. Sticky header with level/XP, tabs below. The Farm tab opens on a pixel-art office (the one playful place), everything else is plain BNB dark UI. Green only means money/done, red only means loss. */
+  /* Layout: a phone-first control room. The Farm tab is a walkable pixel office (the one playful place); the other tabs are plain BNB dark UI. Green only means money/done, red only means loss, amber means preview/warning. */
   :root {
     --bg: #0a0a0b;
     --panel: #131315;
@@ -80,17 +80,30 @@
   .btn.small { padding: 6px 10px; font-size: .7rem; }
   .btn:disabled { opacity: .45; cursor: default; }
 
-  /* office */
-  .office { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #15151a; }
-  .office canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; image-rendering: crisp-edges; }
-  .ov { position: absolute; inset: 0; pointer-events: none; }
-  .seat { position: absolute; transform: translate(-50%, 0); display: grid; justify-items: center; gap: 4px; pointer-events: auto; cursor: pointer; background: none; border: 0; padding: 0; }
-  .plate { font-family: var(--pixel); font-size: clamp(6px, 1.25vw, 9px); background: rgba(10,10,11,.85); color: var(--fg); padding: 4px 6px; border-radius: 3px; white-space: nowrap; }
-  .seat[aria-pressed="true"] .plate { background: var(--fg); color: var(--bg); }
-  .bubble { position: absolute; transform: translate(-50%, -100%); background: var(--fg); color: var(--bg); font-size: clamp(9px, 1.5vw, 12px); font-weight: 700; line-height: 1.25; padding: 5px 8px; border-radius: 6px; max-width: 30%; text-align: center; white-space: normal; }
+  /* ---------- game ---------- */
+  .office { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #15151a; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+  .office:focus-visible { outline: 2px solid var(--good); outline-offset: 2px; }
+  .office canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; image-rendering: crisp-edges; cursor: pointer; }
+  .ov { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .tag { position: absolute; transform: translate(-50%, 0); font-family: var(--pixel); font-size: clamp(6px, 1.1vw, 8px); background: rgba(10,10,11,.8); color: var(--fg); padding: 3px 5px; border-radius: 3px; white-space: nowrap; }
+  .tag.you { background: var(--good); color: #0a0a0b; }
+  .bubble { position: absolute; transform: translate(-50%, -100%); background: var(--fg); color: #0a0a0b; font-size: clamp(9px, 1.4vw, 12px); font-weight: 700; line-height: 1.25; padding: 4px 8px; border-radius: 6px; white-space: nowrap; }
   .bubble::after { content: ""; position: absolute; left: 50%; bottom: -5px; transform: translateX(-50%); border: 5px solid transparent; border-bottom: 0; border-top-color: var(--fg); }
-  .clock { position: absolute; top: 10px; right: 10px; font-family: var(--pixel); font-size: clamp(7px, 1.4vw, 10px); color: var(--good); background: rgba(10,10,11,.85); padding: 6px 8px; border-radius: 4px; }
-  .sim-tag { position: absolute; top: 10px; left: 10px; font-family: var(--pixel); font-size: clamp(6px, 1.2vw, 9px); color: var(--warn); background: rgba(10,10,11,.85); padding: 6px 8px; border-radius: 4px; }
+  .hud { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; gap: 6px; pointer-events: none; }
+  .hud span { font-family: var(--pixel); font-size: clamp(6px, 1.2vw, 9px); background: rgba(10,10,11,.85); padding: 6px 8px; border-radius: 4px; }
+  .hud .clk { color: var(--good); }
+  .hud .sim { color: var(--warn); }
+  .prompt { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); pointer-events: auto; font-family: var(--pixel); font-size: clamp(7px, 1.3vw, 10px); background: var(--fg); color: #0a0a0b; border: 0; padding: 9px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap; box-shadow: 0 0 0 3px #0a0a0b; }
+  .dialog { position: absolute; left: 8px; right: 8px; bottom: 8px; pointer-events: auto; background: rgba(10,10,11,.96); border: 3px solid var(--fg); border-radius: 6px; padding: 12px 14px; display: grid; gap: 10px; max-height: calc(100% - 16px); overflow-y: auto; box-shadow: 0 0 0 3px #0a0a0b; }
+  .dialog-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .dialog-name { font-family: var(--pixel); font-size: .62rem; color: var(--good); line-height: 1.5; }
+  .dialog-text { font-size: .92rem; line-height: 1.45; min-height: 2.9em; }
+  .dialog .row { gap: 8px; }
+  .dialog textarea { min-height: 70px; resize: vertical; }
+  .close { background: none; border: 1px solid var(--line); border-radius: 4px; color: var(--fg); cursor: pointer; font-family: var(--pixel); font-size: .55rem; padding: 6px 8px; }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+  .keys { font-size: .8rem; color: var(--muted); }
+  .keys kbd { font-family: var(--mono); font-size: .7rem; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 1px 5px; color: var(--fg); }
 
   .agents { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
   .agent { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
@@ -99,7 +112,7 @@
   .ava { width: 40px; height: 40px; border-radius: 6px; flex: none; image-rendering: pixelated; background: var(--panel-2); }
   .agent-name { font-family: var(--display); font-variation-settings: "wdth" 115; font-weight: 900; text-transform: uppercase; font-size: .9rem; }
   .agent p.job { color: var(--muted); font-size: .86rem; }
-  .meta { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; font-size: .8rem; }
+  .meta { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; font-size: .8rem; margin: 0; }
   .meta dt { font-family: var(--mono); font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); padding-top: 2px; }
   .meta dd { margin: 0; min-width: 0; }
   .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
@@ -107,11 +120,19 @@
   .seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
   .agent-lvl { font-family: var(--pixel); font-size: .5rem; color: var(--muted); }
 
-  .feed { display: grid; gap: 0; }
-  .feed-item { display: grid; grid-template-columns: 64px 1fr; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: .88rem; animation: pop .35s ease; }
+  .feed { display: grid; }
+  .feed-item { display: grid; grid-template-columns: 74px 1fr; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: .88rem; animation: pop .35s ease; }
   .feed-item:first-child { border-top: 0; }
   .feed-item time { font-family: var(--mono); font-size: .72rem; color: var(--dim); padding-top: 2px; }
   .feed-item b { font-weight: 800; }
+  .news-item { display: grid; gap: 4px; padding: 10px 0; border-top: 1px solid var(--line); }
+  .news-item:first-child { border-top: 0; }
+  .news-item .h { font-weight: 700; }
+  .news-item .s { color: var(--muted); font-size: .86rem; }
+  .imp { font-family: var(--mono); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; }
+  .imp.high { color: var(--bad); }
+  .imp.med { color: var(--warn); }
+  .imp.low { color: var(--dim); }
   @keyframes pop { from { transform: translateY(-4px); opacity: .3; } to { transform: none; opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { .feed-item { animation: none; } .xp-bar i { transition: none; } }
 
@@ -125,9 +146,10 @@
   .dc-main { display: grid; grid-template-rows: auto 1fr; min-width: 0; }
   .dc-title { padding: 12px 16px; border-bottom: 1px solid rgba(0,0,0,.3); font-weight: 800; color: #fff; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
   .dc-title span { font-weight: 400; color: #949ba4; font-size: .82rem; }
-  .dc-msgs { padding: 16px; display: grid; gap: 18px; align-content: start; overflow-y: auto; max-height: 720px; }
+  .dc-msgs { padding: 16px; display: grid; gap: 18px; align-content: start; overflow-y: auto; max-height: 760px; }
   .msg { display: grid; grid-template-columns: 40px 1fr; gap: 12px; min-width: 0; }
   .msg-ava { width: 40px; height: 40px; border-radius: 50%; background: #111; display: grid; place-items: center; font-family: var(--pixel); font-size: .5rem; color: #fff; }
+  .msg-ava.member { background: #6d4aa8; font-family: var(--body); font-size: .9rem; font-weight: 800; }
   .msg-body { min-width: 0; display: grid; gap: 4px; }
   .msg-who { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .msg-who b { color: #fff; }
@@ -135,7 +157,7 @@
   .msg-who time { font-size: .72rem; color: #949ba4; }
   .msg-text { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .93rem; line-height: 1.45; }
   .embed { background: var(--dc-embed); border-left: 4px solid var(--good); border-radius: 4px; padding: 10px 12px; display: grid; gap: 8px; max-width: 520px; }
-  .embed canvas, .embed img { width: 100%; height: auto; border-radius: 4px; display: block; }
+  .embed canvas { width: 100%; height: auto; border-radius: 4px; display: block; }
   .sample-flag { font-family: var(--mono); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--warn); }
   .dc-sched { font-size: .8rem; color: #949ba4; border-top: 1px solid rgba(0,0,0,.3); padding-top: 10px; }
 
@@ -147,7 +169,6 @@
   form.log label { display: grid; gap: 4px; font-size: .78rem; color: var(--muted); }
   form.log .wide { grid-column: 1 / -1; }
   input, select, textarea { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; min-width: 0; width: 100%; }
-  .chart-box { position: relative; }
   .chart-box canvas { width: 100%; height: 220px; display: block; }
   .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
   .cal .dow { font-family: var(--mono); font-size: .6rem; color: var(--dim); text-align: center; letter-spacing: .1em; }
@@ -174,7 +195,7 @@
 
   /* setup */
   .flow { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); counter-reset: s; }
-  .step { border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: grid; gap: 6px; background: var(--panel-2); }
+  .step { border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: grid; gap: 6px; background: var(--panel-2); align-content: start; }
   .step h3 { display: flex; gap: 8px; align-items: center; }
   .step h3::before { counter-increment: s; content: counter(s); font-family: var(--pixel); font-size: .55rem; background: var(--fg); color: var(--bg); width: 20px; height: 20px; display: grid; place-items: center; border-radius: 3px; flex: none; }
   .step p { font-size: .84rem; color: var(--muted); }
@@ -193,7 +214,7 @@
 
 <header class="top">
   <div class="top-row">
-    <div class="brand"><h1>BNB Agent Farm</h1><span class="label" id="ptClock">PT</span></div>
+    <div class="brand"><h1>BNB Agent Farm</h1><span class="label" id="azClock">MST</span></div>
     <div class="lvl">
       <span class="lvl-badge" id="lvlBadge">LVL 1</span>
       <div class="xp"><div class="xp-bar"><i id="xpFill"></i></div><span class="label" id="xpText">0 XP</span></div>
@@ -201,6 +222,7 @@
   </div>
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button class="tab" role="tab" data-tab="farm" aria-selected="true">Farm</button>
+    <button class="tab" role="tab" data-tab="news" aria-selected="false">News</button>
     <button class="tab" role="tab" data-tab="discord" aria-selected="false">Discord</button>
     <button class="tab" role="tab" data-tab="trades" aria-selected="false">Trades</button>
     <button class="tab" role="tab" data-tab="payouts" aria-selected="false">Payouts</button>
@@ -211,27 +233,41 @@
 <main class="wrap">
   <!-- FARM -->
   <section class="view" id="v-farm">
-    <div class="notice"><span class="pill wait"><i></i>Preview</span><p>The agents aren't connected to Discord yet. Tap <b>Run a trading day</b> to watch one full day play out. Your trades and payouts below are real and save.</p></div>
-    <div class="office" id="office">
-      <canvas id="room" width="320" height="200" aria-label="Pixel office with your agents at their desks"></canvas>
+    <div class="office" id="office" tabindex="0" aria-label="BNB office game. Arrow keys or WASD to walk, E to talk. Tap to walk on a phone.">
+      <canvas id="room" width="320" height="208"></canvas>
       <div class="ov" id="ov"></div>
-      <span class="clock" id="simClock">--:--</span>
-      <span class="sim-tag" id="simTag" hidden>SIMULATION</span>
+      <div class="hud"><span class="sim" id="simTag" hidden>SIMULATION</span><span class="clk" id="simClock">--:--</span></div>
+      <button class="prompt" id="prompt" type="button" hidden></button>
+      <div class="dialog" id="dialog" hidden role="dialog" aria-live="polite">
+        <div class="dialog-head"><span class="dialog-name" id="dName"></span><button class="close" id="dClose" type="button" aria-label="Close">X</button></div>
+        <p class="dialog-text" id="dText"></p>
+        <div id="dBody" style="display:grid;gap:10px"></div>
+      </div>
     </div>
-    <div class="row between">
+    <div class="controls">
+      <p class="keys">Walk with <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> or <kbd>WASD</kbd>, talk with <kbd>E</kbd>. On your phone, tap where you want to go or tap someone to talk.</p>
       <div class="row"><button class="btn" id="simBtn" type="button">Run a trading day</button><button class="btn ghost" id="simStop" type="button" hidden>Stop</button></div>
-      <span class="muted" style="font-size:.85rem" id="farmSum">6 agents · 5 post to Discord</span>
     </div>
-    <div class="agents" id="agents"></div>
+    <div class="notice"><span class="pill wait"><i></i>Preview</span><p>Agents aren't posting to Discord yet, so the office runs on its real schedule but nothing goes out. The <b>News Desk</b> is live and your <b>trades and payouts</b> save for real.</p></div>
     <div class="panel">
       <div class="row between"><h2>Agent activity</h2><span class="label" id="feedLabel">Today</span></div>
       <div class="feed" id="feed"></div>
+    </div>
+    <div class="agents" id="agents"></div>
+  </section>
+
+  <!-- NEWS -->
+  <section class="view" id="v-news" hidden>
+    <div class="panel">
+      <div class="row between"><h2>Big market news</h2><span class="label" id="newsStamp">News Desk</span></div>
+      <p class="muted" style="font-size:.88rem">The News Desk sweeps about every 2 hours, day and night: earnings drops like NVDA, NQ gaps, surprise Fed or world headlines, big moves during the session. Anything major pings your phone right away and shows up here.</p>
+      <div id="newsList"></div>
     </div>
   </section>
 
   <!-- DISCORD -->
   <section class="view" id="v-discord" hidden>
-    <div class="notice"><span class="pill wait"><i></i>Preview</span><p>This is what each agent will post. Charts and levels below are <b>sample data</b>. The recap and payout posts use your real logs once you add them.</p></div>
+    <div class="notice"><span class="pill wait"><i></i>Preview</span><p>This is what each agent will post. Charts and levels are <b>sample data</b> until the agents go live. Recap and payout posts already use your real logs.</p></div>
     <div class="dc">
       <div class="dc-side" id="dcSide"><div class="dc-server">BNBProfits</div></div>
       <div class="dc-main">
@@ -253,7 +289,7 @@
           <label>Side<select id="tSide"><option>Long</option><option>Short</option></select></label>
           <label>Contracts<input type="number" id="tQty" min="1" step="1" value="1" required></label>
           <label>P&amp;L ($)<input type="number" id="tPnl" step="0.01" placeholder="e.g. 640 or -220" required></label>
-          <label>Account<input type="text" id="tAcct" placeholder="Tradeify 50K #1" list="acctList"></label>
+          <label>Account<input type="text" id="tAcct" placeholder="50K #1" list="acctList"></label>
           <label>Followed my rules?<select id="tRules"><option value="yes">Yes</option><option value="no">No</option></select></label>
           <label class="wide">Note<input type="text" id="tNote" placeholder="What happened, in a few words"></label>
           <button class="btn wide" type="submit">Save trade</button>
@@ -291,7 +327,7 @@
         <form class="log" id="payForm">
           <label>Date<input type="date" id="pDate" required></label>
           <label>Amount ($)<input type="number" id="pAmt" min="1" step="0.01" placeholder="2500" required></label>
-          <label>Firm<input type="text" id="pFirm" value="Tradeify"></label>
+          <label>Firm<input type="text" id="pFirm" placeholder="Prop firm"></label>
           <label>Account<input type="text" id="pAcct" placeholder="50K #1" list="acctList"></label>
           <label class="wide">Post it to #payouts?<select id="pPost"><option value="yes">Yes, let Payout Hype post it</option><option value="no">No, keep it private</option></select></label>
           <button class="btn wide" type="submit">Save payout</button>
@@ -313,10 +349,10 @@
     <div class="panel">
       <h2>How the farm runs</h2>
       <div class="flow">
-        <div class="step"><h3>Clock hits</h3><p>Each agent is a scheduled Claude task, like your morning content brief. Market Desk wakes at 5:45 AM PT on weekdays.</p></div>
-        <div class="step"><h3>It does the work</h3><p>Pulls NQ data, checks the news calendar, reads your trade log and payouts from this page, then writes the post and draws the image.</p></div>
-        <div class="step"><h3>Auto or ask</h3><p>On <b>Auto-post</b> it sends straight to Discord. On <b>Ask me first</b> it parks the post in the queue below for you to approve.</p></div>
-        <div class="step"><h3>Posts to Discord</h3><p>Through a webhook for each channel, as the BNB bot. Then it checks in here, so the office and activity feed update.</p></div>
+        <div class="step"><h3>Scheduled agents</h3><p>Market Desk, News Desk, Recap Bot and the rest are scheduled Claude tasks, like your morning content brief. They wake up on time, do the work, post, and check in here.</p></div>
+        <div class="step"><h3>The 24/7 Greeter</h3><p>A real Discord bot that stays online all the time. It welcomes every new member and answers questions in #ask-gene in your voice. It runs on a small always-on server.</p></div>
+        <div class="step"><h3>Auto or ask</h3><p>On <b>Auto-post</b> an agent sends straight to Discord. On <b>Ask me first</b> it parks the post in the queue below for you to approve.</p></div>
+        <div class="step"><h3>You stay in charge</h3><p>Talk to any agent in the office to change how it posts, turn it off, or see what it would say.</p></div>
       </div>
     </div>
     <div class="grid2">
@@ -358,328 +394,614 @@
   }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function isoLocal(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
-  function nowPT() {
-    var p = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour12: false, weekday: 'short', hour: '2-digit', minute: '2-digit' }).formatToParts(new Date());
-    var o = {}; p.forEach(function (x) { o[x.type] = x.value; });
-    var dow = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(o.weekday);
-    return { dow: dow, min: (parseInt(o.hour, 10) % 24) * 60 + parseInt(o.minute, 10) };
-  }
-  function fmtMin(m) { var h = Math.floor(m / 60) % 24, mm = m % 60; return ((h % 12) || 12) + ':' + pad(mm) + (h < 12 ? ' AM' : ' PM'); }
+  var DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  // ---------- Arizona time (MST all year) ----------
+  function partsIn(tz, d) { var o = {}; new Intl.DateTimeFormat('en-US', { timeZone: tz, hour12: false, weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).formatToParts(d || new Date()).forEach(function (x) { o[x.type] = x.value; }); return o; }
+  function nowAZ() { var o = partsIn('America/Phoenix'); return { dow: DOW.indexOf(o.weekday), min: (parseInt(o.hour, 10) % 24) * 60 + parseInt(o.minute, 10), date: o.year + '-' + o.month + '-' + o.day }; }
+  // NY open (9:30 AM ET) in MST: 7:30 AM in winter, 6:30 AM in summer.
+  var OPEN = (function () { var ny = partsIn('America/New_York'), az = partsIn('America/Phoenix'); var a = (parseInt(ny.hour, 10) % 24) * 60 + +ny.minute, b = (parseInt(az.hour, 10) % 24) * 60 + +az.minute; return 570 - ((a - b + 1440) % 1440); })();
+  var CLOSE = OPEN + 390;
+  function fmtMin(m) { m = ((Math.round(m) % 1440) + 1440) % 1440; var h = Math.floor(m / 60), mm = m % 60; return ((h % 12) || 12) + ':' + pad(mm) + (h < 12 ? ' AM' : ' PM'); }
 
   // ===================================================================
   // AGENTS
   // ===================================================================
   var WEEKDAYS = [1, 2, 3, 4, 5], DAILY = [0, 1, 2, 3, 4, 5, 6];
   var AGENTS = [
-    { id: 'market', name: 'Market Desk', shirt: '#2f9bff', hair: '#1b1b1e', skin: '#c68b59', ch: 'pre-market', days: WEEKDAYS, at: 345, dur: 12,
-      job: 'Draws the NQ pre-market chart, marks the overnight high/low and yesterday’s levels, lists the red-folder news, and hypes the 6:30 live.',
+    { id: 'market', name: 'Market Desk', shirt: '#2f9bff', hair: '#1b1b1e', skin: '#c68b59', ch: 'pre-market', days: WEEKDAYS, at: OPEN - 45, dur: 12,
+      job: 'Draws the NQ pre-market chart, marks the overnight high and low plus yesterday’s high, low and close, lists the red-folder news, and calls everyone to the live.',
+      hi: 'I wake up 45 minutes before the open, pull NQ, mark the levels, check the news calendar and post it all to #pre-market. Drop your own levels here and I’ll use yours instead of mine.',
       steps: ['Pulling overnight NQ…', 'Drawing levels…', 'Checking news…', 'Posting to #pre-market'] },
-    { id: 'content', name: 'Script Writer', shirt: '#f4f4f1', hair: '#3a2a1e', skin: '#e0ac7e', ch: null, days: DAILY, at: 350, dur: 10,
-      job: 'Your existing morning brief. Picks today’s video, writes both scripts and the Discord lines in your Content HQ, then pings your phone.',
-      steps: ['Reading tracker…', 'Writing script…', 'Saving to HQ'] },
-    { id: 'recap', name: 'Recap Bot', shirt: '#3ddc84', hair: '#111', skin: '#8d5524', ch: 'recaps', days: WEEKDAYS, at: 810, dur: 12,
+    { id: 'news', name: 'News Desk', shirt: '#ff8a3d', hair: '#2a1a10', skin: '#e0ac7e', ch: 'news', days: DAILY, at: 1260, dur: 10, live: true,
+      times: [60, 240, 360, 480, 600, 720, 840, 960, 1140, 1320],
+      job: 'Watches for big market news around the clock: earnings drops like NVDA, NQ gaps, surprise Fed or world headlines, big moves during the session. Major ones ping your phone right away.',
+      hi: 'I sweep the news about every 2 hours, day and night. If something big hits, like NVIDIA tanking after earnings or a surprise Fed headline mid-session, your phone hears about it right away.',
+      steps: ['Scanning headlines…', 'Checking NQ futures…', 'Logging the news'] },
+    { id: 'content', name: 'Script Writer', shirt: '#f4f4f1', hair: '#3a2a1e', skin: '#e0ac7e', ch: null, days: DAILY, at: 350, dur: 10, live: true,
+      job: 'Your morning brief. Picks today’s video, writes both scripts and the Discord lines in your Content HQ, then pings your phone.',
+      hi: 'Every morning at 5:50 I write your talking video and a bonus take, then ping your phone. Already on the clock.',
+      steps: ['Reading your tracker…', 'Writing the script…', 'Saving to HQ'] },
+    { id: 'recap', name: 'Recap Bot', shirt: '#3ddc84', hair: '#111111', skin: '#8d5524', ch: 'recaps', days: WEEKDAYS, at: CLOSE + 15, dur: 12,
       job: 'After the close, reads the trades you logged today and posts a clean recap card: P&L, trades, and one lesson. Skips your numbers if you didn’t log.',
+      hi: 'After the close I read your journal at the terminal and post a recap card. No trades logged means I keep your numbers private.',
       steps: ['Reading your journal…', 'Making the card…', 'Posting to #recaps'] },
-    { id: 'payout', name: 'Payout Hype', shirt: '#f5b84a', hair: '#222', skin: '#c68b59', ch: 'payouts', days: DAILY, at: 960, dur: 10, onEvent: 'when you log a payout',
-      job: 'When you log a payout and say "post it", it makes the payout card and drops it in #payouts with a line that sends people to the free Discord.',
-      steps: ['New payout logged!', 'Making the card…', 'Posting to #payouts'] },
+    { id: 'payout', name: 'Payout Hype', shirt: '#f5b84a', hair: '#222222', skin: '#c68b59', ch: 'payouts', days: DAILY, at: 900, dur: 10, onEvent: 'you log a payout',
+      job: 'When you log a payout and say "post it", it makes the payout card and drops it in #payouts with a line pointing people to the free Discord.',
+      hi: 'Log a payout at the vault and I’ll make the card and post it. Every one of those is free marketing.',
+      steps: ['New payout!', 'Making the card…', 'Posting to #payouts'] },
     { id: 'hype', name: 'Hype Man', shirt: '#ff5a4e', hair: '#0d0d0d', skin: '#e0ac7e', ch: 'general', days: DAILY, at: 1140, dur: 10,
       job: 'Keeps the server alive at night: one question, hot take or this-or-that in #general. Never the same one twice in 30 days.',
+      hi: 'Seven every night I throw a question in #general so the chat never goes dead.',
       steps: ['Thinking of a question…', 'Posting to #general'] },
     { id: 'outlook', name: 'Week Ahead', shirt: '#9b7bff', hair: '#2a1a10', skin: '#8d5524', ch: 'weekly-outlook', days: [0], at: 1020, dur: 12,
       job: 'Sunday evening: the full week of news with times in ET, plus the "what’s your goal this week?" question.',
-      steps: ['Pulling the calendar…', 'Writing the week…', 'Posting to #weekly-outlook'] }
+      hi: 'Sundays at 5 I post the whole week of news so nobody gets caught by CPI.',
+      steps: ['Pulling the calendar…', 'Writing the week…', 'Posting to #weekly-outlook'] },
+    { id: 'lead', name: 'Lead Closer', shirt: '#2a2a33', hair: '#111111', skin: '#e0ac7e', ch: 'applicants', days: DAILY, at: OPEN + 100, dur: 8, onEvent: 'an application comes in',
+      job: 'The second someone applies for 1:1, it drops the lead in #applicants with the reply text ready for you to send. Never messages the person itself.',
+      hi: 'Somebody applies, I drop them in #applicants with a reply you can copy. You do the closing.',
+      steps: ['New application!', 'Writing the reply…', 'Posting to #applicants'] },
+    { id: 'greeter', name: 'Greeter', shirt: '#5865f2', hair: '#1b1b1e', skin: '#c68b59', ch: 'welcome', days: DAILY, at: 0, dur: 1440, always: true,
+      job: 'The 24/7 Discord bot. Welcomes every new member by name, and answers questions in #ask-gene in your voice. Never gives signals or financial advice.',
+      hi: 'I’m the bot that never sleeps. Once I’m hired I welcome everybody who joins and answer questions in #ask-gene all day and night.',
+      steps: ['Welcoming a new member…', 'Answering in #ask-gene…'] }
   ];
-  var S = { trades: [], payouts: [], agentCfg: {}, queue: [], db: null };
+  var A = {}; AGENTS.forEach(function (a) { A[a.id] = a; });
+  var S = { trades: [], payouts: [], agentCfg: {}, queue: [], news: [], levels: null, db: null };
+  function cfg(id) { var c = S.agentCfg[id] || {}; return { on: c.on !== false, mode: c.mode || 'approve' }; }
 
-  function cfg(id) { var c = S.agentCfg[id] || {}; return { on: c.on !== false, mode: c.mode || 'auto' }; }
+  // ===================================================================
+  // WORLD
+  // ===================================================================
+  var WW = 320, WH = 208, T = 8;
+  var DESK_COLS = [40, 120, 200, 280], DESK_ROWS = [84, 136];
+  var DESKS = [];
+  AGENTS.slice(0, 8).forEach(function (a, i) { DESKS.push({ a: a, x: DESK_COLS[i % 4], y: DESK_ROWS[Math.floor(i / 4)] }); });
+  var FRONT = { x: 236, y: 186 }; // greeter's front desk (bottom)
+  var OBST = [[0, 0, 320, 62]];
+  DESKS.forEach(function (d) { OBST.push([d.x - 20, d.y - 2, 40, 20]); });
+  OBST.push([6, 182, 52, 22]);      // couch
+  OBST.push([142, 188, 18, 20]);    // coffee
+  OBST.push([288, 176, 30, 32]);    // vault
+  OBST.push([214, 190, 44, 18]);    // front desk
+  OBST.push([4, 64, 10, 14]);       // plant
+  function blocked(x, y) {
+    if (x < 4 || x > WW - 4 || y < 64 || y > WH - 2) return true;
+    for (var i = 0; i < OBST.length; i++) { var r = OBST[i]; if (x + 3 > r[0] && x - 3 < r[0] + r[2] && y > r[1] && y - 2 < r[1] + r[3]) return true; }
+    return false;
+  }
+  var GW = WW / T, GH = Math.ceil(WH / T), GRID = [];
+  for (var gy = 0; gy < GH; gy++) { GRID.push([]); for (var gx = 0; gx < GW; gx++) GRID[gy].push(!blocked(gx * T + T / 2, gy * T + T / 2)); }
+  function cellOf(x, y) { return [Math.max(0, Math.min(GW - 1, Math.floor(x / T))), Math.max(0, Math.min(GH - 1, Math.floor(y / T)))]; }
+  function nearestOpen(c) {
+    if (GRID[c[1]][c[0]]) return c;
+    for (var r = 1; r < 8; r++) for (var dy = -r; dy <= r; dy++) for (var dx = -r; dx <= r; dx++) {
+      var x = c[0] + dx, y = c[1] + dy; if (x >= 0 && y >= 0 && x < GW && y < GH && GRID[y][x]) return [x, y];
+    }
+    return c;
+  }
+  function findPath(x0, y0, x1, y1) {
+    var s = nearestOpen(cellOf(x0, y0)), g = nearestOpen(cellOf(x1, y1));
+    var key = function (c) { return c[1] * GW + c[0]; }, prev = {}, q = [s], seen = {}; seen[key(s)] = 1;
+    while (q.length) {
+      var c = q.shift(); if (c[0] === g[0] && c[1] === g[1]) break;
+      [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (d) {
+        var n = [c[0] + d[0], c[1] + d[1]];
+        if (n[0] < 0 || n[1] < 0 || n[0] >= GW || n[1] >= GH || !GRID[n[1]][n[0]] || seen[key(n)]) return;
+        seen[key(n)] = 1; prev[key(n)] = c; q.push(n);
+      });
+    }
+    var path = [], cur = g;
+    if (!seen[key(g)]) return [];
+    while (cur && !(cur[0] === s[0] && cur[1] === s[1])) { path.unshift({ x: cur[0] * T + T / 2, y: cur[1] * T + T / 2 + 2 }); cur = prev[key(cur)]; }
+    path.push({ x: x1, y: y1 });
+    return path;
+  }
 
-  // ---------- pixel sprites ----------
-  function drawPerson(g, x, y, a, pose, t) {
-    // x,y = top-left of a 12x16 sprite (head + torso, seated)
-    var bob = pose === 'work' ? (Math.floor(t / 180) % 2) : 0;
-    if (pose === 'sleep') {
-      g.fillStyle = a.shirt; g.fillRect(x + 1, y + 8, 10, 7);
-      g.fillStyle = a.skin; g.fillRect(x + 2, y + 6, 8, 5);
-      g.fillStyle = a.hair; g.fillRect(x + 2, y + 5, 8, 2);
+  // things you can walk up to
+  var THINGS = [
+    { id: 'terminal', name: 'Trading Terminal', x: 160, y: 70 },
+    { id: 'board', name: 'Setup Board', x: 52, y: 70 },
+    { id: 'portal', name: 'Discord Portal', x: 300, y: 70 },
+    { id: 'news', name: 'News Wall', x: 238, y: 70 },
+    { id: 'vault', name: 'Payout Vault', x: 280, y: 196 },
+    { id: 'coffee', name: 'Coffee Machine', x: 151, y: 182 },
+    { id: 'couch', name: 'Couch', x: 32, y: 178 }
+  ];
+  var POIS = [{ x: 151, y: 182 }, { x: 32, y: 178 }, { x: 160, y: 70 }, { x: 238, y: 70 }, { x: 52, y: 70 }, { x: 100, y: 116 }, { x: 200, y: 168 }, { x: 80, y: 168 }, { x: 260, y: 116 }];
+
+  // ---------- people ----------
+  function Person(opts) { return Object.assign({ x: 160, y: 120, dir: 'down', path: [], moving: false, step: 0, seated: false, waitUntil: 0 }, opts); }
+  var player = Person({ x: 160, y: 122, name: 'You', shirt: '#0a0a0b', hair: '#111111', skin: '#c68b59', hoodie: true });
+  var bots = AGENTS.map(function (a, i) {
+    var d = DESKS.filter(function (x) { return x.a === a; })[0];
+    var seat = d ? { x: d.x, y: d.y - 3 } : { x: FRONT.x, y: FRONT.y - 3 };
+    return Person({ a: a, x: seat.x + (i % 2 ? 10 : -10), y: seat.y + 26, seat: seat, shirt: a.shirt, hair: a.hair, skin: a.skin, name: a.name, waitUntil: i * 900 });
+  });
+
+  function drawPerson(g, p, t) {
+    var x = Math.round(p.x), y = Math.round(p.y), walk = p.moving ? (Math.floor(p.step / 6) % 2) : 0;
+    var sleeping = p.mode === 'sleep' && p.seated;
+    // shadow
+    g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - 4, y - 1, 8, 2);
+    if (sleeping) {
+      g.fillStyle = p.shirt; g.fillRect(x - 5, y - 9, 10, 7);
+      g.fillStyle = p.hair; g.fillRect(x - 4, y - 11, 8, 3);
       return;
     }
-    g.fillStyle = a.hair; g.fillRect(x + 3, y, 6, 2);
-    g.fillStyle = a.skin; g.fillRect(x + 3, y + 2, 6, 5);
-    g.fillStyle = a.hair; g.fillRect(x + 2, y + 1, 1, 3); g.fillRect(x + 9, y + 1, 1, 3);
-    g.fillStyle = a.shirt; g.fillRect(x + 1, y + 7, 10, 8);
-    g.fillStyle = a.skin;
-    g.fillRect(x, y + 8 + bob, 2, 4); g.fillRect(x + 10, y + 9 - bob, 2, 4);
-  }
-  function drawAvatar(cv, a) {
-    var g = cv.getContext('2d'); cv.width = 14; cv.height = 16; g.imageSmoothingEnabled = false;
-    g.fillStyle = '#1b1b1e'; g.fillRect(0, 0, 14, 16);
-    drawPerson(g, 1, 1, a, 'idle', 0);
-  }
-
-  // ---------- office scene ----------
-  var room = $('room'), rg = room.getContext('2d'); rg.imageSmoothingEnabled = false;
-  var SEATS = [];
-  (function layout() {
-    var cols = [56, 160, 264], rows = [92, 150];
-    AGENTS.forEach(function (a, i) { SEATS.push({ a: a, x: cols[i % 3], y: rows[Math.floor(i / 3)] }); });
-  })();
-  var tickerPts = [];
-  for (var i = 0; i < 60; i++) tickerPts.push(0);
-  var tickerV = 0;
-
-  var sim = { on: false, min: 0, dow: 4, startReal: 0, firedFor: {} };
-  var selected = null;
-
-  function agentState(a, clock) {
-    var c = cfg(a.id);
-    if (!c.on) return { pose: 'sleep', text: 'Off', kind: 'off' };
-    var today = a.days.indexOf(clock.dow) !== -1;
-    if (a.id === 'payout' && !sim.on) return { pose: 'idle', text: 'Waiting for a payout', kind: 'wait' };
-    if (today && clock.min >= a.at && clock.min < a.at + a.dur) {
-      var k = Math.min(a.steps.length - 1, Math.floor((clock.min - a.at) / (a.dur / a.steps.length)));
-      return { pose: 'work', text: a.steps[k], kind: 'work' };
+    var typing = p.mode === 'work' && p.seated ? (Math.floor(t / 160) % 2) : 0;
+    // legs
+    g.fillStyle = '#26262e';
+    if (!p.seated) { g.fillRect(x - 3, y - 4, 2, 4 - walk); g.fillRect(x + 1, y - 4, 2, 3 + walk); }
+    // body
+    g.fillStyle = p.shirt; g.fillRect(x - 4, y - 10, 8, 7);
+    if (p.hoodie) { g.fillStyle = '#f4f4f1'; g.fillRect(x - 1, y - 8, 2, 1); }
+    // arms
+    g.fillStyle = p.skin;
+    if (p.dir === 'left' || p.dir === 'right') g.fillRect(x - 1 + (p.dir === 'left' ? -1 : 1) * walk, y - 8, 2, 4);
+    else { g.fillRect(x - 6, y - 9 + typing, 2, 4); g.fillRect(x + 4, y - 9 + (typing ? 0 : 1) * (p.seated ? 1 : 0), 2, 4); }
+    // head
+    g.fillStyle = p.skin; g.fillRect(x - 3, y - 16, 6, 6);
+    g.fillStyle = p.hair; g.fillRect(x - 3, y - 17, 6, 2);
+    if (p.dir === 'up') g.fillRect(x - 3, y - 16, 6, 4);
+    else {
+      g.fillStyle = '#0a0a0b';
+      if (p.dir === 'down') { g.fillRect(x - 2, y - 13, 1, 1); g.fillRect(x + 1, y - 13, 1, 1); }
+      else if (p.dir === 'left') g.fillRect(x - 2, y - 13, 1, 1);
+      else g.fillRect(x + 1, y - 13, 1, 1);
+      g.fillStyle = p.hair; if (p.dir === 'left') g.fillRect(x + 2, y - 16, 1, 3); if (p.dir === 'right') g.fillRect(x - 3, y - 16, 1, 3);
     }
-    if (today && clock.min >= a.at + a.dur) return { pose: 'idle', text: 'Done ✓', kind: 'done' };
-    if (clock.min < 300 || clock.min > 1320) return { pose: 'sleep', text: 'zzz', kind: 'sleep' };
-    return { pose: 'idle', text: nextRunText(a, clock), kind: 'wait' };
+    if (p.hoodie) { g.fillStyle = '#0a0a0b'; g.fillRect(x - 4, y - 17, 1, 5); g.fillRect(x + 3, y - 17, 1, 5); }
   }
-  function nextRunText(a, clock) {
-    if (a.onEvent && !sim.on) return 'Runs ' + a.onEvent;
-    for (var d = 0; d < 8; d++) {
-      var dow = (clock.dow + d) % 7;
-      if (a.days.indexOf(dow) === -1) continue;
-      if (d === 0 && clock.min >= a.at) continue;
-      var day = d === 0 ? 'Today' : d === 1 ? 'Tomorrow' : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][dow];
-      return 'Next: ' + day + ' ' + fmtMin(a.at);
-    }
-    return '';
+  function moveAlong(p, dt) {
+    if (!p.path.length) { p.moving = false; return true; }
+    var tgt = p.path[0], dx = tgt.x - p.x, dy = tgt.y - p.y, d = Math.hypot(dx, dy), sp = (p === player ? 46 : 30) * dt;
+    if (d <= sp) { p.x = tgt.x; p.y = tgt.y; p.path.shift(); }
+    else { p.x += dx / d * sp; p.y += dy / d * sp; }
+    p.moving = true; p.step++;
+    p.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+    return !p.path.length;
   }
-  function currentClock() { return sim.on ? { dow: sim.dow, min: Math.floor(sim.min) } : nowPT(); }
 
-  function drawRoom(t) {
-    var g = rg, W = 320, H = 200, clock = currentClock();
+  // ---------- schedule ----------
+  var sim = { on: false, min: 0, dow: 4, fired: {} };
+  function clock() { if (sim.on) return { dow: sim.dow, min: sim.min }; var n = nowAZ(); return { dow: n.dow, min: n.min }; }
+  function runTimes(a) { return a.times || [a.at]; }
+  function scheduleState(a, c) {
+    if (!cfg(a.id).on) return { mode: 'sleep', text: 'Off' };
+    if (a.always) return a.live ? { mode: 'work', text: a.steps[Math.floor(Date.now() / 6000) % a.steps.length] } : { mode: 'free', text: 'Not hired yet' };
+    var dur = sim.on ? Math.max(a.dur, 40) : a.dur, lead = sim.on ? 45 : 3;
+    if (a.onEvent && !sim.on) return nightOr(c, { mode: 'free', text: 'Waiting: runs when ' + a.onEvent });
+    if (a.days.indexOf(c.dow) !== -1) {
+      var ts = runTimes(a);
+      for (var i = 0; i < ts.length; i++) {
+        var start = ts[i], m = c.min, rel = ((m - start) % 1440 + 1440) % 1440;
+        if (rel < dur) { var k = Math.min(a.steps.length - 1, Math.floor(rel / (dur / a.steps.length))); return { mode: 'work', text: a.steps[k] }; }
+        if (rel > 1440 - lead) return { mode: 'go', text: 'Heading to my desk' };
+      }
+    }
+    return nightOr(c, { mode: 'free', text: nextRunText(a, c) });
+  }
+  function nightOr(c, st) { if (c.min < 300 || c.min >= 1290) return { mode: 'sleep', text: 'zzz' }; return st; }
+  function nextRunText(a, c) {
+    if (a.onEvent) return 'Runs when ' + a.onEvent;
+    var best = null;
+    for (var d = 0; d < 8 && !best; d++) {
+      var dow = (c.dow + d) % 7; if (a.days.indexOf(dow) === -1) continue;
+      runTimes(a).slice().sort(function (x, y) { return x - y; }).forEach(function (t) { if (!best && (d > 0 || t > c.min)) best = { d: d, t: t, dow: dow }; });
+    }
+    if (!best) return '';
+    return 'Next: ' + (best.d === 0 ? 'today' : best.d === 1 ? 'tomorrow' : DOW[best.dow]) + ' ' + fmtMin(best.t);
+  }
+
+  // ---------- bot brain ----------
+  function updateBot(b, dt, now) {
+    var c = clock(), st = scheduleState(b.a, c);
+    b.state = st;
+    var wantSeat = st.mode === 'work' || st.mode === 'go' || st.mode === 'sleep';
+    b.mode = st.mode === 'go' ? 'free' : st.mode;
+    if (wantSeat) {
+      var atSeat = Math.hypot(b.x - b.seat.x, b.y - b.seat.y) < 1;
+      if (!atSeat) {
+        b.seated = false;
+        if (!b.path.length || b.goal !== 'seat') { b.path = findPath(b.x, b.y, b.seat.x, b.seat.y); b.goal = 'seat'; }
+        moveAlong(b, dt);
+      } else { b.seated = true; b.moving = false; b.dir = 'down'; b.path = []; }
+      return;
+    }
+    b.seated = false;
+    if (b.path.length) { if (moveAlong(b, dt)) { b.waitUntil = now + 2500 + Math.random() * 5000; b.chat = b.goal && b.goal.say; } return; }
+    b.moving = false;
+    if (now > b.waitUntil) {
+      var p = POIS[Math.floor(Math.random() * POIS.length)];
+      var j = { x: p.x + (Math.random() * 16 - 8), y: p.y + (Math.random() * 6 - 3) };
+      if (blocked(j.x, j.y)) j = p;
+      b.path = findPath(b.x, b.y, j.x, j.y);
+      b.goal = { say: p.x === 151 ? '☕ refill' : p.x === 238 ? 'Checking headlines' : p.x === 160 ? 'NQ looking spicy' : null };
+      b.chat = null; b.waitUntil = Infinity;
+    }
+  }
+
+  // ---------- player ----------
+  var keys = {}, pendingTalk = null;
+  function playerStep(dt) {
+    var vx = (keys.right ? 1 : 0) - (keys.left ? 1 : 0), vy = (keys.down ? 1 : 0) - (keys.up ? 1 : 0);
+    if (vx || vy) {
+      player.path = []; pendingTalk = null;
+      var sp = 50 * dt, n = Math.hypot(vx, vy), nx = player.x + vx / n * sp, ny = player.y + vy / n * sp;
+      if (!blocked(nx, player.y)) player.x = nx;
+      if (!blocked(player.x, ny)) player.y = ny;
+      player.dir = Math.abs(vx) >= Math.abs(vy) && vx ? (vx > 0 ? 'right' : 'left') : (vy > 0 ? 'down' : 'up');
+      player.moving = true; player.step++;
+    } else if (player.path.length) {
+      if (moveAlong(player, dt) && pendingTalk) { var t = pendingTalk; pendingTalk = null; openTalk(t); }
+    } else player.moving = false;
+  }
+  function nearestTarget() {
+    var best = null, bd = 22;
+    bots.forEach(function (b) { var d = Math.hypot(b.x - player.x, b.y - player.y); if (d < bd) { bd = d; best = { kind: 'bot', ref: b }; } });
+    THINGS.forEach(function (o) { var d = Math.hypot(o.x - player.x, o.y - player.y); if (d < bd) { bd = d; best = { kind: 'thing', ref: o }; } });
+    return best;
+  }
+
+  // ---------- camera + render ----------
+  var room = $('room'), g = room.getContext('2d');
+  var cam = { x: 0, y: 0, w: WW, h: WH };
+  function sizeView() {
+    var w = $('office').clientWidth || 320, small = w < 640;
+    cam.w = small ? 176 : WW; cam.h = small ? 150 : WH;
+    if (room.width !== cam.w || room.height !== cam.h) { room.width = cam.w; room.height = cam.h; g.imageSmoothingEnabled = false; }
+  }
+  function updateCam() {
+    cam.x = Math.max(0, Math.min(WW - cam.w, player.x - cam.w / 2));
+    cam.y = Math.max(0, Math.min(WH - cam.h, player.y - 10 - cam.h / 2));
+  }
+  var ticker = []; for (var ti = 0; ti < 40; ti++) ticker.push(0); var tv = 0, lastTick = 0;
+  function drawWorld(t) {
+    var c = clock();
+    g.save(); g.translate(-Math.round(cam.x), -Math.round(cam.y));
     // wall
-    g.fillStyle = '#1d1d24'; g.fillRect(0, 0, W, 64);
-    g.fillStyle = '#26262f'; for (var x = 0; x < W; x += 16) g.fillRect(x, 0, 1, 64);
-    g.fillStyle = '#0f0f13'; g.fillRect(0, 62, W, 3);
-    // big wall screen with live-ish NQ line
-    g.fillStyle = '#0a0a0b'; g.fillRect(104, 8, 112, 44);
-    g.fillStyle = '#2a2a2f'; g.fillRect(104, 8, 112, 1); g.fillRect(104, 51, 112, 1); g.fillRect(104, 8, 1, 44); g.fillRect(215, 8, 1, 44);
-    var open = clock.min >= 390 && clock.min <= 780 && clock.dow > 0 && clock.dow < 6;
-    if (Math.floor(t / 250) !== drawRoom.lastTick) {
-      drawRoom.lastTick = Math.floor(t / 250);
-      tickerV += (Math.random() - 0.47) * (open ? 3 : 1.2); tickerV = Math.max(-14, Math.min(14, tickerV));
-      tickerPts.push(tickerV); tickerPts.shift();
-    }
-    for (var k = 1; k < tickerPts.length; k++) {
-      var up = tickerPts[k] <= tickerPts[k - 1];
-      g.fillStyle = up ? '#3ddc84' : '#ff5a4e';
-      var y0 = 30 + Math.round(tickerPts[k]);
-      g.fillRect(107 + k * 1.75, y0, 2, 1 + Math.abs(Math.round(tickerPts[k] - tickerPts[k - 1])));
-    }
-    g.fillStyle = open ? '#3ddc84' : '#6d6d73'; g.fillRect(108, 12, 3, 3);
-    // windows
-    var dayLight = clock.min > 400 && clock.min < 1050;
-    [[18, 12], [244, 12]].forEach(function (w) {
-      g.fillStyle = dayLight ? '#3b6fa3' : '#11152a'; g.fillRect(w[0], w[1], 58, 36);
-      g.fillStyle = '#2a2a2f'; g.fillRect(w[0] + 28, w[1], 2, 36); g.fillRect(w[0], w[1] + 17, 58, 2);
-      if (!dayLight) { g.fillStyle = '#f4f4f1'; g.fillRect(w[0] + 8, w[1] + 6, 1, 1); g.fillRect(w[0] + 44, w[1] + 24, 1, 1); g.fillRect(w[0] + 36, w[1] + 9, 1, 1); }
-    });
+    g.fillStyle = '#1d1d24'; g.fillRect(0, 0, WW, 62);
+    g.fillStyle = '#24242c'; for (var x = 0; x < WW; x += 16) g.fillRect(x, 0, 1, 62);
+    g.fillStyle = '#0f0f13'; g.fillRect(0, 60, WW, 3);
+    // setup board
+    g.fillStyle = '#d9d9d2'; g.fillRect(24, 14, 56, 36); g.fillStyle = '#6d6d73'; g.fillRect(24, 50, 56, 2);
+    g.fillStyle = '#2f9bff'; g.fillRect(30, 20, 26, 2); g.fillStyle = '#ff5a4e'; g.fillRect(30, 26, 18, 2); g.fillStyle = '#3ddc84'; g.fillRect(30, 32, 30, 2); g.fillStyle = '#0a0a0b'; g.fillRect(30, 38, 22, 2); g.fillRect(62, 20, 12, 12);
+    // trading terminal (big screen)
+    g.fillStyle = '#0a0a0b'; g.fillRect(112, 8, 96, 46); g.fillStyle = '#2a2a2f'; g.fillRect(112, 8, 96, 1); g.fillRect(112, 53, 96, 1);
+    var open = c.dow > 0 && c.dow < 6 && c.min >= OPEN && c.min <= CLOSE;
+    if (t - lastTick > 220) { lastTick = t; tv += (Math.random() - .48) * (open ? 3 : 1.2); tv = Math.max(-15, Math.min(15, tv)); ticker.push(tv); ticker.shift(); }
+    for (var k = 1; k < ticker.length; k++) { g.fillStyle = ticker[k] <= ticker[k - 1] ? '#3ddc84' : '#ff5a4e'; g.fillRect(116 + k * 2.2, 31 + Math.round(ticker[k]), 2, 1 + Math.abs(Math.round(ticker[k] - ticker[k - 1]))); }
+    g.fillStyle = open ? '#3ddc84' : '#6d6d73'; g.fillRect(116, 12, 3, 3);
+    // news wall
+    g.fillStyle = '#0a0a0b'; g.fillRect(220, 14, 36, 36); g.fillStyle = '#2a2a2f'; g.fillRect(220, 14, 36, 1);
+    var hot = S.news.some(function (n) { return n.impact === 'high' && n.date === nowAZ().date; });
+    g.fillStyle = hot && Math.floor(t / 400) % 2 ? '#ff5a4e' : '#f5b84a'; g.fillRect(224, 18, 10, 3);
+    g.fillStyle = '#6d6d73'; for (var nl = 0; nl < 5; nl++) g.fillRect(224, 25 + nl * 5, 28 - (nl % 2) * 8, 2);
+    // discord portal
+    g.fillStyle = '#5865f2'; g.fillRect(286, 18, 28, 44); g.fillStyle = '#3c45a5'; g.fillRect(290, 22, 20, 40);
+    var sw = Math.floor(t / 150) % 4; g.fillStyle = '#c9cdfb'; g.fillRect(296 + (sw % 2) * 4, 34 + (sw > 1 ? 4 : 0), 4, 4); g.fillRect(298, 46, 4, 4);
     // floor
-    for (var fy = 65; fy < H; fy += 10) for (var fx = 0; fx < W; fx += 10) {
-      g.fillStyle = ((fx + fy) / 10) % 2 ? '#17171c' : '#1b1b21'; g.fillRect(fx, fy, 10, 10);
-    }
-    // plant + coffee machine
-    g.fillStyle = '#2d6b45'; g.fillRect(6, 70, 10, 10); g.fillStyle = '#3ddc84'; g.fillRect(8, 66, 6, 6); g.fillStyle = '#5a3a24'; g.fillRect(7, 80, 8, 8);
-    g.fillStyle = '#3a3a44'; g.fillRect(302, 70, 12, 18); g.fillStyle = '#ff5a4e'; g.fillRect(305, 74, 2, 2);
-    // desks
-    SEATS.forEach(function (s) {
-      var st = agentState(s.a, clock);
-      s.state = st;
-      var dx = s.x - 22, dy = s.y;
-      // chair
-      g.fillStyle = '#2a2a33'; g.fillRect(s.x - 8, dy - 2, 16, 14);
-      // person (behind desk, facing camera)
-      drawPerson(g, s.x - 6, dy - 14 + (st.pose === 'sleep' ? 6 : 0), s.a, st.pose, t + s.x * 7);
-      // desk
-      g.fillStyle = '#4a3527'; g.fillRect(dx, dy + 2, 44, 6); g.fillStyle = '#35261c'; g.fillRect(dx, dy + 8, 44, 14);
-      g.fillStyle = '#2a1d15'; g.fillRect(dx + 2, dy + 22, 3, 6); g.fillRect(dx + 39, dy + 22, 3, 6);
-      // monitor (back of monitor faces us, glow around)
-      var glow = st.pose === 'work' ? ((Math.floor(t / 120) % 3) ? '#3ddc84' : '#2f9bff') : st.kind === 'done' ? '#3ddc84' : '#2a2a2f';
-      g.fillStyle = glow; g.fillRect(dx + 4, dy - 9, 14, 1);
-      g.fillStyle = '#0d0d10'; g.fillRect(dx + 4, dy - 8, 14, 10); g.fillStyle = '#3a3a44'; g.fillRect(dx + 10, dy + 2, 2, 1);
-      // mug
-      g.fillStyle = '#f4f4f1'; g.fillRect(dx + 34, dy - 1, 4, 3);
-      if (st.kind === 'done') { g.fillStyle = '#3ddc84'; g.fillRect(dx + 28, dy - 2, 2, 2); }
+    for (var fy = 63; fy < WH; fy += 8) for (var fx = 0; fx < WW; fx += 8) { g.fillStyle = ((fx + fy) / 8) % 2 ? '#17171c' : '#1a1a20'; g.fillRect(fx, fy, 8, 8); }
+    // rug in lounge
+    g.fillStyle = '#22222b'; g.fillRect(4, 168, 120, 38);
+    // plant
+    g.fillStyle = '#5a3a24'; g.fillRect(5, 70, 8, 8); g.fillStyle = '#2d6b45'; g.fillRect(3, 62, 12, 9); g.fillStyle = '#3ddc84'; g.fillRect(6, 59, 6, 5);
+
+    // y-sorted drawables
+    var list = [];
+    DESKS.forEach(function (d) { list.push({ y: d.y + 1, draw: function () { drawDesk(d, t); } }); });
+    list.push({ y: 188, draw: function () { drawFrontDesk(); } });
+    list.push({ y: 182, draw: function () { g.fillStyle = '#3d2c4f'; g.fillRect(6, 182, 52, 14); g.fillStyle = '#4e3a66'; g.fillRect(6, 176, 52, 8); g.fillRect(6, 176, 6, 20); g.fillRect(52, 176, 6, 20); } });
+    list.push({ y: 188, draw: function () { g.fillStyle = '#3a3a44'; g.fillRect(142, 184, 18, 22); g.fillStyle = '#0a0a0b'; g.fillRect(146, 190, 10, 6); g.fillStyle = '#ff5a4e'; g.fillRect(145, 186, 2, 2); g.fillStyle = '#f4f4f1'; g.fillRect(149, 198, 4, 4); } });
+    list.push({ y: 176, draw: function () { drawVault(t); } });
+    bots.forEach(function (b) { list.push({ y: b.y, draw: function () { drawPerson(g, b, t); } }); });
+    list.push({ y: player.y, draw: function () { drawPerson(g, player, t); } });
+    list.sort(function (a, b) { return a.y - b.y; }).forEach(function (d) { d.draw(); });
+
+    // zzz
+    bots.forEach(function (b) {
+      if (!(b.mode === 'sleep' && b.seated) || b.state.text === 'Off') return;
+      var p = (t / 40 + b.seat.x) % 20; g.fillStyle = 'rgba(244,244,241,' + (1 - p / 20).toFixed(2) + ')';
+      var zx = b.x + 5 + p / 4, zy = b.y - 14 - p; g.fillRect(zx, zy, 3, 1); g.fillRect(zx + 1, zy + 1, 1, 1); g.fillRect(zx, zy + 2, 3, 1);
     });
-    // Zzz particles for sleeping
-    SEATS.forEach(function (s) {
-      if (s.state.pose !== 'sleep' || s.state.kind === 'off') return;
-      var p = (t / 40 + s.x) % 24;
-      g.fillStyle = 'rgba(244,244,241,' + (1 - p / 24).toFixed(2) + ')';
-      g.fillRect(s.x + 6 + p / 4, s.y - 10 - p, 3, 1); g.fillRect(s.x + 8 + p / 4, s.y - 9 - p, 1, 1); g.fillRect(s.x + 6 + p / 4, s.y - 8 - p, 3, 1);
-    });
+    // target marker
+    if (player.path.length) { var last = player.path[player.path.length - 1]; g.strokeStyle = 'rgba(61,220,132,.8)'; g.strokeRect(Math.round(last.x) - 3.5, Math.round(last.y) - 1.5, 7, 3); }
+    g.restore();
+  }
+  function drawDesk(d, t) {
+    var b = bots.filter(function (x) { return x.a === d.a; })[0], working = b && b.mode === 'work' && b.seated;
+    var x = d.x - 20, y = d.y;
+    g.fillStyle = '#4a3527'; g.fillRect(x, y, 40, 5); g.fillStyle = '#35261c'; g.fillRect(x, y + 5, 40, 11);
+    g.fillStyle = '#2a1d15'; g.fillRect(x + 2, y + 16, 3, 3); g.fillRect(x + 35, y + 16, 3, 3);
+    var glow = working ? (Math.floor(t / 120) % 3 ? '#3ddc84' : '#2f9bff') : '#2a2a2f';
+    g.fillStyle = '#0d0d10'; g.fillRect(x + 2, y - 8, 12, 9); g.fillStyle = glow; g.fillRect(x + 3, y - 7, 10, 1);
+    g.fillStyle = '#f4f4f1'; g.fillRect(x + 33, y - 2, 3, 3);
+    g.fillStyle = d.a.shirt; g.fillRect(x + 26, y + 8, 8, 3); // nameplate color
+  }
+  function drawFrontDesk() {
+    var x = 214, y = 188;
+    g.fillStyle = '#2b2d55'; g.fillRect(x, y, 44, 6); g.fillStyle = '#20223f'; g.fillRect(x, y + 6, 44, 14);
+    g.fillStyle = '#5865f2'; g.fillRect(x + 16, y + 10, 12, 4);
+  }
+  function drawVault(t) {
+    var x = 288, y = 176;
+    g.fillStyle = '#4b4b55'; g.fillRect(x, y, 28, 30); g.fillStyle = '#3a3a44'; g.fillRect(x + 3, y + 3, 22, 24);
+    g.fillStyle = '#f5b84a'; g.fillRect(x + 12, y + 12, 4, 4);
+    var tot = S.payouts.reduce(function (s, p) { return s + (+p.amount || 0); }, 0);
+    if (tot) { g.fillStyle = Math.floor(t / 500) % 2 ? '#3ddc84' : '#2a8a55'; g.fillRect(x + 6, y + 6, 2, 2); }
   }
 
-  // overlay nameplates + bubbles
-  var ov = $('ov');
-  SEATS.forEach(function (s) {
-    var b = el('button', { class: 'seat', type: 'button', 'aria-pressed': 'false', 'aria-label': s.a.name });
-    b.style.left = (s.x / 320 * 100) + '%'; b.style.top = ((s.y + 30) / 200 * 100) + '%';
-    b.appendChild(el('span', { class: 'plate', text: s.a.name }));
-    b.addEventListener('click', function () { selectAgent(s.a.id, true); });
-    s.btn = b; ov.appendChild(b);
-    var bub = el('div', { class: 'bubble' }); bub.hidden = true;
-    bub.style.left = (s.x / 320 * 100) + '%'; bub.style.top = ((s.y - 18) / 200 * 100) + '%';
-    s.bub = bub; ov.appendChild(bub);
-  });
-  function updateOverlay() {
-    SEATS.forEach(function (s) {
-      var st = s.state; if (!st) return;
-      var show = st.kind === 'work' || st.kind === 'done' && sim.on || selected === s.a.id;
-      s.bub.hidden = !show;
-      if (show && s.bub.textContent !== st.text) s.bub.textContent = st.text;
-      s.btn.setAttribute('aria-pressed', String(selected === s.a.id));
+  // ---------- overlay (tags + bubbles) ----------
+  var ov = $('ov'), tagEls = new Map(), bubbleEls = new Map();
+  function overlayFor(p, label) {
+    var tg = tagEls.get(p); if (!tg) { tg = el('span', { class: 'tag' + (p === player ? ' you' : ''), text: label }); ov.appendChild(tg); tagEls.set(p, tg); }
+    var bb = bubbleEls.get(p); if (!bb) { bb = el('span', { class: 'bubble' }); bb.hidden = true; ov.appendChild(bb); bubbleEls.set(p, bb); }
+    return { tag: tg, bub: bb };
+  }
+  function place(node, wx, wy) { node.style.left = ((wx - cam.x) / cam.w * 100) + '%'; node.style.top = ((wy - cam.y) / cam.h * 100) + '%'; }
+  function updateOverlay(now) {
+    var small = cam.w < WW;
+    bots.forEach(function (b) {
+      var o = overlayFor(b, b.a.name);
+      var vis = b.x > cam.x - 10 && b.x < cam.x + cam.w + 10 && b.y > cam.y - 10 && b.y < cam.y + cam.h + 24;
+      o.tag.hidden = !vis || (small && Math.hypot(b.x - player.x, b.y - player.y) > 60);
+      place(o.tag, b.x, b.y + 2);
+      var txt = b.mode === 'work' && b.seated ? b.state.text : b.chat || null;
+      o.bub.hidden = !vis || !txt;
+      if (txt && o.bub.textContent !== txt) o.bub.textContent = txt;
+      place(o.bub, b.x, b.y - 19);
     });
-    var c = currentClock();
-    $('simClock').textContent = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][c.dow] + ' ' + fmtMin(c.min) + ' PT';
+    var po = overlayFor(player, 'YOU'); place(po.tag, player.x, player.y + 2); po.bub.hidden = true;
+    var c = clock(); $('simClock').textContent = DOW[c.dow].toUpperCase() + ' ' + fmtMin(c.min) + ' MST';
+    // talk prompt
+    var near = $('dialog').hidden ? nearestTarget() : null, pr = $('prompt');
+    if (near) { pr.hidden = false; pr.textContent = (window.matchMedia('(hover: hover)').matches ? 'E: ' : 'TAP: ') + (near.kind === 'bot' ? 'Talk to ' + near.ref.a.name : near.ref.name); pr.onclick = function () { openTalk(near); }; }
+    else pr.hidden = true;
+  }
+
+  // ---------- input ----------
+  var office = $('office');
+  var KEYMAP = { ArrowUp: 'up', KeyW: 'up', ArrowDown: 'down', KeyS: 'down', ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right' };
+  office.addEventListener('keydown', function (e) {
+    if (e.target.closest('textarea, input, select')) return;
+    if (KEYMAP[e.code]) { keys[KEYMAP[e.code]] = true; e.preventDefault(); }
+    else if (e.code === 'KeyE' || e.code === 'Space' || e.code === 'Enter') { if (!e.target.closest('button')) { e.preventDefault(); var n = nearestTarget(); if (n && $('dialog').hidden) openTalk(n); } }
+    else if (e.code === 'Escape') closeTalk();
+  });
+  office.addEventListener('keyup', function (e) { if (KEYMAP[e.code]) keys[KEYMAP[e.code]] = false; });
+  office.addEventListener('blur', function () { keys = {}; });
+  room.addEventListener('pointerdown', function (e) {
+    office.focus({ preventScroll: true });
+    var r = room.getBoundingClientRect(), wx = cam.x + (e.clientX - r.left) / r.width * cam.w, wy = cam.y + (e.clientY - r.top) / r.height * cam.h;
+    var hit = null, hd = 12;
+    bots.forEach(function (b) { var d = Math.hypot(b.x - wx, b.y - 8 - wy); if (d < hd) { hd = d; hit = { kind: 'bot', ref: b }; } });
+    THINGS.forEach(function (o) { var tx = o.x, ty = o.id === 'terminal' || o.id === 'board' || o.id === 'portal' || o.id === 'news' ? 34 : o.y - 6; var d = Math.hypot(tx - wx, ty - wy); if (d < (ty < 62 ? 26 : 14) && d < hd + 14) { hd = d; hit = { kind: 'thing', ref: o }; } });
+    if (hit) {
+      var tx = hit.kind === 'bot' ? hit.ref.x : hit.ref.x, ty = hit.kind === 'bot' ? hit.ref.y + 10 : hit.ref.y;
+      if (Math.hypot(tx - player.x, ty - player.y) < 20) { openTalk(hit); return; }
+      player.path = findPath(player.x, player.y, tx, Math.min(WH - 4, ty)); pendingTalk = hit;
+    } else {
+      if (wy < 64) wy = 66;
+      player.path = findPath(player.x, player.y, wx, wy); pendingTalk = null;
+      if (blocked(wx, wy) && player.path.length) player.path.pop();
+    }
+  });
+
+  // ---------- dialog ----------
+  var talking = null;
+  function closeTalk() { $('dialog').hidden = true; talking = null; office.focus({ preventScroll: true }); }
+  $('dClose').addEventListener('click', closeTalk);
+  function typeText(node, text) {
+    node.textContent = '';
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { node.textContent = text; return; }
+    var i = 0, tok = {}; node._tok = tok;
+    (function tick() { if (node._tok !== tok) return; i += 2; node.textContent = text.slice(0, i); if (i < text.length) setTimeout(tick, 14); })();
+  }
+  function openTalk(t) {
+    talking = t; keys = {}; player.path = [];
+    var d = $('dialog'), body = $('dBody'); body.innerHTML = ''; d.hidden = false;
+    if (t.kind === 'bot') {
+      var b = t.ref, a = b.a; selectAgent(a.id);
+      player.dir = b.x < player.x - 4 ? 'left' : b.x > player.x + 4 ? 'right' : b.y < player.y ? 'up' : 'down';
+      $('dName').textContent = a.name.toUpperCase() + (a.live ? ' · LIVE' : a.always ? ' · NOT HIRED' : '');
+      typeText($('dText'), a.hi + '  ' + statusLine(b));
+      body.appendChild(agentControls(a, true));
+      if (a.id === 'market') body.appendChild(levelsForm());
+      if (a.id === 'news') body.appendChild(el('div', { class: 'row' }, [goBtn('Read the news', 'news')]));
+      if (a.ch) body.appendChild(el('div', { class: 'row' }, [goBtn('See my post', 'discord', a.ch)]));
+      if (a.id === 'greeter') body.appendChild(el('div', { class: 'row' }, [goBtn('How to hire me', 'setup')]));
+    } else {
+      var o = t.ref; $('dName').textContent = o.name.toUpperCase();
+      var td = todaysTradesSummary(), tot = S.payouts.reduce(function (s, p) { return s + (+p.amount || 0); }, 0);
+      var lines = {
+        terminal: 'Your trade journal. ' + (td.n ? 'Today: ' + money(td.pnl, true) + ' on ' + td.n + ' trade' + (td.n === 1 ? '' : 's') + '.' : 'Nothing logged today.') + ' Every trade you log is +5 XP, +5 more if you followed your rules.',
+        vault: tot ? 'The vault holds ' + money(tot) + ' in logged payouts. Next milestone: ' + nextMilestoneText(tot) + '.' : 'Empty vault. Log your payouts and watch it fill up.',
+        portal: 'Step through to see exactly what each agent posts in your Discord.',
+        news: latestNewsLine(),
+        board: 'The go-live checklist: webhooks, the 24/7 bot, and which agents post on their own.',
+        coffee: '☕ Fresh pot. +1 focus. (It’s just coffee.)',
+        couch: clock().min >= OPEN && clock().min <= CLOSE && clock().dow > 0 && clock().dow < 6 ? 'Not now, market’s open.' : 'Comfy. Market’s closed, take five.'
+      };
+      typeText($('dText'), lines[o.id] || '');
+      var goto = { terminal: ['Open my journal', 'trades'], vault: ['Open payouts', 'payouts'], portal: ['Enter Discord', 'discord'], news: ['Read the news', 'news'], board: ['Open setup', 'setup'] }[o.id];
+      if (goto) body.appendChild(el('div', { class: 'row' }, [goBtn(goto[0], goto[1])]));
+    }
+  }
+  function goBtn(label, tab, ch) {
+    var b = el('button', { class: 'btn small', type: 'button', text: label });
+    b.addEventListener('click', function () { if (ch) dcSel = ch; closeTalk(); showTab(tab); window.scrollTo({ top: 0 }); });
+    return b;
+  }
+  function statusLine(b) {
+    var st = b.state || { mode: 'free', text: '' };
+    if (st.mode === 'work') return 'Right now: ' + st.text.replace(/…$/, '') + '.';
+    if (st.mode === 'sleep') return st.text === 'Off' ? 'You turned me off.' : 'Clocked out for the night.';
+    return st.text ? st.text + '.' : '';
+  }
+  function agentControls(a, compact) {
+    var c = cfg(a.id), wrap = el('div', { class: 'row' });
+    if (a.ch && !a.always) {
+      var seg = el('div', { class: 'seg', role: 'group', 'aria-label': a.name + ' posting mode' });
+      [['auto', 'Auto-post'], ['approve', 'Ask me first']].forEach(function (m) {
+        var b = el('button', { type: 'button', text: m[1], 'aria-pressed': String(c.mode === m[0]) });
+        b.addEventListener('click', function () { setCfg(a.id, { mode: m[0] }); if (compact && talking) openTalk(talking); });
+        seg.appendChild(b);
+      });
+      wrap.appendChild(seg);
+    }
+    var on = el('button', { class: 'btn ghost small', type: 'button', text: c.on ? 'Turn off' : 'Turn on' });
+    on.addEventListener('click', function () { setCfg(a.id, { on: !c.on }); if (compact && talking) openTalk(talking); });
+    wrap.appendChild(on);
+    return wrap;
+  }
+  function levelsForm() {
+    var today = nowAZ().date, cur = S.levels && S.levels.date === today ? S.levels.text : '';
+    var ta = el('textarea', { id: 'lvlText', placeholder: 'Your levels for today, one per line\ne.g. 21,480 ON high\n21,355 PDL', 'aria-label': 'Your levels for today' });
+    ta.value = cur;
+    var save = el('button', { class: 'btn small', type: 'button', text: cur ? 'Update my levels' : 'Use my levels today' });
+    save.addEventListener('click', function () {
+      var txt = ta.value.trim(); if (!txt) { toast('Type at least one level.'); return; }
+      dbSet('settings/levels', { date: today, text: txt.slice(0, 600), updated: new Date().toISOString() }).then(function () { toast('Got it. Market Desk will use your levels today.'); });
+    });
+    return el('div', { style: 'display:grid;gap:8px' }, [el('span', { class: 'label', text: 'Your levels (optional, today only)' }), ta, el('div', { class: 'row' }, [save])]);
   }
 
   // ---------- agent cards ----------
-  var cardEls = {};
+  var cardEls = {}, selected = null;
   function renderAgents() {
     var box = $('agents'); box.innerHTML = '';
     AGENTS.forEach(function (a) {
-      var c = cfg(a.id);
-      var av = el('canvas', { class: 'ava', 'aria-hidden': 'true' }); drawAvatar(av, a);
-      var posts = agentPosts(a.id);
-      var lvl = Math.floor(Math.sqrt(posts / 2)) + 1;
+      var av = el('canvas', { class: 'ava', width: '16', height: '20', 'aria-hidden': 'true' });
+      var ag = av.getContext('2d'); ag.fillStyle = '#1b1b1e'; ag.fillRect(0, 0, 16, 20);
+      drawPerson(ag, Person({ x: 8, y: 19, shirt: a.shirt, hair: a.hair, skin: a.skin, dir: 'down' }), 0);
       var status = el('span', { class: 'pill' });
-      var modeSeg = el('div', { class: 'seg', role: 'group', 'aria-label': a.name + ' posting mode' });
-      [['auto', 'Auto-post'], ['approve', 'Ask me first']].forEach(function (m) {
-        var b = el('button', { type: 'button', text: m[1], 'aria-pressed': String(c.mode === m[0]) });
-        b.addEventListener('click', function () { setCfg(a.id, { mode: m[0] }); });
-        modeSeg.appendChild(b);
-      });
-      if (!a.ch) modeSeg.hidden = true;
-      var onBtn = el('button', { class: 'btn ghost small', type: 'button', text: c.on ? 'Turn off' : 'Turn on' });
-      onBtn.addEventListener('click', function () { setCfg(a.id, { on: !c.on }); });
       var card = el('article', { class: 'agent' + (selected === a.id ? ' sel' : '') }, [
         el('div', { class: 'agent-head' }, [av, el('div', { style: 'min-width:0;flex:1' }, [
           el('div', { class: 'row between' }, [el('span', { class: 'agent-name', text: a.name }), status]),
-          el('span', { class: 'agent-lvl', text: 'LV ' + lvl + ' · ' + posts + ' posts' })
+          el('span', { class: 'agent-lvl', text: a.live ? 'LIVE NOW' : a.always ? 'NEEDS THE BOT' : 'PREVIEW' })
         ])]),
         el('p', { class: 'job', text: a.job }),
         el('dl', { class: 'meta' }, [
           el('dt', { text: 'When' }), el('dd', { text: schedText(a) }),
-          el('dt', { text: 'Posts to' }), el('dd', { text: a.ch ? '#' + a.ch : 'Content HQ + phone' })
+          el('dt', { text: 'Posts to' }), el('dd', { text: a.id === 'news' ? 'Your phone + #news' : a.ch ? '#' + a.ch + (a.id === 'greeter' ? ' + #ask-gene' : '') : 'Content HQ + your phone' })
         ]),
-        el('div', { class: 'row between' }, [modeSeg, onBtn])
+        agentControls(a, false)
       ]);
-      card.addEventListener('click', function (e) { if (e.target.closest('button')) return; selectAgent(a.id, false); });
       cardEls[a.id] = { card: card, status: status };
       box.appendChild(card);
     });
     updateCardStatus();
   }
   function updateCardStatus() {
-    AGENTS.forEach(function (a) {
-      var s = SEATS.filter(function (x) { return x.a === a; })[0], st = s && s.state, ce = cardEls[a.id];
-      if (!st || !ce) return;
-      var label = st.kind === 'work' ? 'Working' : st.kind === 'done' ? 'Done' : st.kind === 'off' ? 'Off' : st.kind === 'sleep' ? 'Asleep' : 'Waiting';
-      var cls = st.kind === 'work' || st.kind === 'done' ? 'live' : st.kind === 'off' ? 'off' : 'wait';
+    bots.forEach(function (b) {
+      var ce = cardEls[b.a.id], st = b.state; if (!ce || !st) return;
+      var label = st.mode === 'work' ? 'Working' : st.mode === 'sleep' ? (st.text === 'Off' ? 'Off' : 'Asleep') : st.mode === 'go' ? 'On the way' : 'Free';
+      var cls = st.mode === 'work' ? 'live' : st.text === 'Off' ? 'off' : 'wait';
       if (ce.status.dataset.k !== label) { ce.status.dataset.k = label; ce.status.className = 'pill ' + cls; ce.status.innerHTML = ''; ce.status.appendChild(el('i')); ce.status.appendChild(document.createTextNode(label)); }
     });
   }
   function schedText(a) {
-    if (a.onEvent) return 'Right after ' + a.onEvent.replace('when ', '');
-    var d = a.days.length === 7 ? 'Every day' : a.days.length === 5 ? 'Weekdays' : a.days.length === 1 ? ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'][a.days[0]] : a.days.length + ' days a week';
-    return d + ' · ' + fmtMin(a.at) + ' PT';
+    if (a.always) return '24/7';
+    if (a.onEvent) return 'Right when ' + a.onEvent;
+    if (a.times) return 'About every 2 hours, all day and night (' + a.times.length + ' sweeps)';
+    var d = a.days.length === 7 ? 'Every day' : a.days.length === 5 ? 'Weekdays' : a.days.length === 1 ? DOW[a.days[0]] + 'days' : a.days.length + ' days a week';
+    return d + ' · ' + fmtMin(a.at) + ' MST';
   }
-  function agentPosts(id) {
-    var n = 0;
-    if (id === 'payout') n = S.payouts.filter(function (p) { return p.post !== false; }).length;
-    if (id === 'recap') n = Object.keys(dayPnl()).length;
-    return n;
-  }
-  function selectAgent(id, scroll) {
-    selected = selected === id ? null : id;
+  function selectAgent(id) {
+    selected = id;
     Object.keys(cardEls).forEach(function (k) { cardEls[k].card.classList.toggle('sel', k === selected); });
-    if (scroll && selected && cardEls[id]) cardEls[id].card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    updateOverlay();
   }
   function setCfg(id, patch) {
     var next = Object.assign({}, cfg(id), patch);
     S.agentCfg[id] = next; renderAgents();
-    dbSet('agents/' + id, next);
-    toast(AGENTS.filter(function (a) { return a.id === id; })[0].name + (patch.mode ? (patch.mode === 'auto' ? ' will post on its own' : ' will ask you first') : (next.on ? ' is on' : ' is off')));
+    dbSet('agents/' + id, next).catch(function () {});
+    toast(A[id].name + (patch.mode ? (patch.mode === 'auto' ? ' will post on its own' : ' will ask you first') : (next.on ? ' is on' : ' is off')));
   }
 
-  // ---------- activity feed ----------
+  // ---------- activity feed + simulation ----------
   var feedItems = [];
-  function feedAdd(min, who, text) {
-    feedItems.unshift({ min: min, who: who, text: text });
-    renderFeed();
-  }
+  function feedAdd(min, who, text) { feedItems.unshift({ min: min, who: who, text: text }); renderFeed(); }
   function renderFeed() {
     var f = $('feed'); f.innerHTML = '';
-    if (!feedItems.length) {
-      f.appendChild(el('p', { class: 'empty-state', text: 'Nothing has run yet. Tap “Run a trading day” to see what a normal weekday looks like.' }));
-      return;
-    }
-    feedItems.slice(0, 14).forEach(function (it) {
-      f.appendChild(el('div', { class: 'feed-item' }, [el('time', { text: fmtMin(it.min) }), el('p', null, [el('b', { text: it.who + ' ' }), it.text])]));
-    });
+    if (!feedItems.length) { f.appendChild(el('p', { class: 'empty-state', text: 'Tap “Run a trading day” to watch a full weekday play out in about a minute.' })); return; }
+    feedItems.slice(0, 16).forEach(function (it) { f.appendChild(el('div', { class: 'feed-item' }, [el('time', { text: fmtMin(it.min) }), el('p', null, [el('b', { text: it.who + ' ' }), it.text])])); });
   }
-
-  // ---------- simulation ----------
-  var SIM_START = 330, SIM_END = 1170, SIM_MS = 42000;
+  var SIM_START = 300, SIM_END = 1170, SIM_MS = 64000, simT0 = 0;
   function simEvents() {
-    var tp = todaysTradesSummary();
-    var lastPay = S.payouts.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; })[0];
+    var tp = todaysTradesSummary(), lastPay = S.payouts.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; })[0];
     return [
-      { at: 345, who: 'Market Desk', text: 'woke up and pulled overnight NQ data.' },
-      { at: 351, who: 'Script Writer', text: 'wrote today’s talking video and bonus take in your Content HQ and pinged your phone.' },
-      { at: 354, who: 'Market Desk', text: 'posted the pre-market chart, levels and 8:30 AM ET news to #pre-market.' },
-      { at: 390, who: 'You', text: 'went live in the Discord.' },
-      { at: 552, who: 'Lead Closer', text: 'saw a new WARM application and dropped the reply text in #applicants.' },
-      { at: 819, who: 'Recap Bot', text: tp.n ? 'posted your recap: ' + money(tp.pnl, true) + ' on ' + tp.n + ' trade' + (tp.n === 1 ? '' : 's') + '.' : 'found no trades logged today, so it posted a market-only recap.' },
-      { at: 966, who: 'Payout Hype', text: lastPay ? 'posted your ' + money(lastPay.amount) + ' payout card to #payouts.' : 'had nothing to post (no payout logged).' },
-      { at: 1146, who: 'Hype Man', text: 'asked #general: “What’s one rule you broke this week? Be honest 👇”' }
+      { at: 300, who: 'News Desk', text: 'flagged an overnight mover: a mega-cap down 6% after earnings, NQ gapping lower. Pinged your phone.' },
+      { at: 352, who: 'Script Writer', text: 'wrote today’s talking video and bonus take in your Content HQ.' },
+      { at: OPEN - 40, who: 'Market Desk', text: 'posted the pre-market chart, levels and news to #pre-market' + (S.levels && S.levels.date === nowAZ().date ? ' using your levels.' : '.') },
+      { at: OPEN, who: 'You', text: 'went live in the Discord.' },
+      { at: OPEN + 35, who: 'Greeter', text: 'welcomed 3 new members and answered “how do I get funded?” in #ask-gene.' },
+      { at: OPEN + 102, who: 'Lead Closer', text: 'dropped a new WARM applicant in #applicants with your reply ready.' },
+      { at: CLOSE + 20, who: 'Recap Bot', text: tp.n ? 'posted your recap: ' + money(tp.pnl, true) + ' on ' + tp.n + ' trade' + (tp.n === 1 ? '' : 's') + '.' : 'found no trades logged today, so it posted a market-only recap.' },
+      { at: 905, who: 'Payout Hype', text: lastPay ? 'posted your ' + money(lastPay.amount) + ' payout card to #payouts.' : 'had nothing to post. Log a payout at the vault.' },
+      { at: 600, who: 'News Desk', text: 'flagged a surprise Fed headline mid-session. NQ dropped 80 points in 2 minutes. Pinged your phone.' },
+      { at: 965, who: 'News Desk', text: 'did its after-close sweep: earnings after the bell and futures reaction. Nothing major.' },
+      { at: 1145, who: 'Hype Man', text: 'asked #general: “What’s one rule you broke this week? Be honest 👇”' }
     ];
   }
-  function startSim() {
-    sim.on = true; sim.min = SIM_START; sim.dow = 4; sim.startReal = performance.now(); sim.fired = {}; sim.events = simEvents();
-    feedItems = []; renderFeed();
-    $('simTag').hidden = false; $('simBtn').hidden = true; $('simStop').hidden = false; $('feedLabel').textContent = 'Simulated Thursday';
-  }
-  function stopSim() {
-    sim.on = false; $('simTag').hidden = true; $('simBtn').hidden = false; $('simStop').hidden = true;
-    $('simBtn').textContent = 'Run it again'; $('feedLabel').textContent = 'Simulated Thursday';
-    renderAgents();
-  }
+  function startSim() { sim.on = true; sim.min = SIM_START; sim.dow = 4; sim.fired = {}; sim.events = simEvents(); simT0 = performance.now(); feedItems = []; renderFeed(); $('simTag').hidden = false; $('simBtn').hidden = true; $('simStop').hidden = false; $('feedLabel').textContent = 'Simulated Thursday'; office.focus({ preventScroll: true }); }
+  function stopSim() { sim.on = false; $('simTag').hidden = true; $('simBtn').hidden = false; $('simStop').hidden = true; $('simBtn').textContent = 'Run it again'; }
   $('simBtn').addEventListener('click', startSim);
   $('simStop').addEventListener('click', stopSim);
 
-  var lastCardUpdate = 0;
+  // ---------- main loop ----------
+  var last = 0, lastCards = 0, running = false;
   function frame(t) {
+    running = true;
+    var dt = Math.min(0.05, (t - (last || t)) / 1000); last = t;
     if (sim.on) {
-      sim.min = SIM_START + (performance.now() - sim.startReal) / SIM_MS * (SIM_END - SIM_START);
+      sim.min = SIM_START + (performance.now() - simT0) / SIM_MS * (SIM_END - SIM_START);
       sim.events.forEach(function (ev, i) { if (!sim.fired[i] && sim.min >= ev.at) { sim.fired[i] = true; feedAdd(ev.at, ev.who, ev.text); } });
       if (sim.min >= SIM_END) stopSim();
     }
-    drawRoom(t); updateOverlay();
-    if (t - lastCardUpdate > 500) { lastCardUpdate = t; updateCardStatus(); }
-    if (!document.hidden) requestAnimationFrame(frame);
+    var now = performance.now();
+    bots.forEach(function (b) { updateBot(b, dt, now); });
+    if ($('dialog').hidden) playerStep(dt);
+    sizeView(); updateCam();
+    g.clearRect(0, 0, cam.w, cam.h); drawWorld(t); updateOverlay(now);
+    if (t - lastCards > 600) { lastCards = t; updateCardStatus(); }
+    if (!document.hidden && !$('v-farm').hidden) requestAnimationFrame(frame); else running = false;
   }
-  document.addEventListener('visibilitychange', function () { if (!document.hidden) requestAnimationFrame(frame); });
+  function kick() { if (!running && !document.hidden && !$('v-farm').hidden) { last = 0; requestAnimationFrame(frame); } }
+  document.addEventListener('visibilitychange', kick);
+
+  // ===================================================================
+  // NEWS TAB
+  // ===================================================================
+  function latestNewsLine() {
+    var n = S.news.slice().sort(function (a, b) { return String(b.time || '').localeCompare(String(a.time || '')); })[0];
+    return n ? 'Latest: ' + n.headline + (n.impact === 'high' ? ' (major)' : '') : 'Nothing logged yet. The News Desk’s first sweep fills this wall.';
+  }
+  function renderNews() {
+    var box = $('newsList'); box.innerHTML = '';
+    var items = S.news.slice().sort(function (a, b) { return String(b.time || '').localeCompare(String(a.time || '')); });
+    if (!items.length) { box.appendChild(el('p', { class: 'empty-state', text: 'No sweeps yet. The first one runs within a couple of hours, and anything major also pings your phone.' })); return; }
+    $('newsStamp').textContent = 'Last sweep ' + (items[0].time ? new Date(items[0].time).toLocaleString('en-US', { timeZone: 'America/Phoenix', weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' MST' : '');
+    items.slice(0, 60).forEach(function (n) {
+      var imp = n.impact === 'high' ? 'high' : n.impact === 'medium' ? 'med' : 'low';
+      box.appendChild(el('div', { class: 'news-item' }, [
+        el('div', { class: 'row' }, [el('span', { class: 'imp ' + imp, text: imp === 'high' ? 'Major' : imp === 'med' ? 'Watch' : 'FYI' }), el('span', { class: 'label', text: (n.time ? new Date(n.time).toLocaleString('en-US', { timeZone: 'America/Phoenix', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) + ' MST' : n.date || '') })]),
+        el('p', { class: 'h', text: n.headline || '' }),
+        n.summary ? el('p', { class: 's', text: n.summary }) : null,
+        n.nq ? el('p', { class: 's', text: 'NQ: ' + n.nq }) : null
+      ]));
+    });
+  }
 
   // ===================================================================
   // DISCORD PREVIEW
   // ===================================================================
   var CHANNELS = [
     { id: 'pre-market', agent: 'Market Desk', topic: 'Charts + levels before the open' },
+    { id: 'news', agent: 'News Desk', topic: 'Big market news, any time of day' },
+    { id: 'welcome', agent: 'Greeter', topic: 'Every new member gets a hello' },
+    { id: 'ask-gene', agent: 'Greeter', topic: 'Questions answered 24/7' },
     { id: 'recaps', agent: 'Recap Bot', topic: 'How the day went' },
     { id: 'payouts', agent: 'Payout Hype', topic: 'Money hitting accounts' },
     { id: 'general', agent: 'Hype Man', topic: 'Talk' },
@@ -697,12 +1019,13 @@
     });
   }
   function nextWeekday() { var d = new Date(); do { d.setDate(d.getDate() + 1); } while (d.getDay() === 0 || d.getDay() === 6); return d; }
-  function mdy(d) { return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate(); }
-  function msg(time, text, embed) {
+  function mdy(d) { return DOW[d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate(); }
+  function msg(time, text, embed, who) {
+    var member = who && who !== 'BNB Desk';
     return el('div', { class: 'msg' }, [
-      el('div', { class: 'msg-ava', text: 'BNB' }),
+      el('div', { class: 'msg-ava' + (member ? ' member' : ''), text: member ? who.charAt(0).toUpperCase() : 'BNB' }),
       el('div', { class: 'msg-body' }, [
-        el('div', { class: 'msg-who' }, [el('b', { text: 'BNB Desk' }), el('span', { class: 'app', text: 'APP' }), el('time', { text: time })]),
+        el('div', { class: 'msg-who' }, [el('b', { text: who || 'BNB Desk' }), member ? null : el('span', { class: 'app', text: 'APP' }), el('time', { text: time })]),
         text ? el('div', { class: 'msg-text', text: text }) : null,
         embed || null
       ])
@@ -713,123 +1036,112 @@
     if (color) e.style.borderLeftColor = color;
     return e;
   }
+  function liveTime() { return fmtMin(OPEN) + ' MST'; }
   function renderDc() {
     var c = CHANNELS.filter(function (x) { return x.id === dcSel; })[0];
-    var t = $('dcTitle'); t.innerHTML = ''; t.appendChild(document.createTextNode('# ' + c.id)); t.appendChild(el('span', { text: c.topic + ' · posted by ' + c.agent }));
+    var t = $('dcTitle'); t.innerHTML = ''; t.appendChild(document.createTextNode('# ' + c.id)); t.appendChild(el('span', { text: c.topic + ' · ' + c.agent }));
     var m = $('dcMsgs'); m.innerHTML = '';
     var d = nextWeekday(), when = 'Today at ';
     if (c.id === 'pre-market') {
-      m.appendChild(msg(when + '5:54 AM',
+      var mine = S.levels && S.levels.date === nowAZ().date;
+      m.appendChild(msg(when + fmtMin(OPEN - 36),
         '🌅 PRE-MARKET · ' + mdy(d) + '\n\n' +
         'NQ overnight: holding above yesterday’s high\n\n' +
-        'Levels on my chart:\n🔺 21,482 overnight high\n🔻 21,356 yesterday’s low\n➖ 21,410 yesterday’s close\n\n' +
+        'Levels on my chart:\n' + (mine ? S.levels.text : '🔺 21,482 overnight high\n🔻 21,356 yesterday’s low\n➖ 21,410 yesterday’s close') + '\n\n' +
         '📰 8:30 AM ET CPI · 2:00 PM ET Fed speaker\n\n' +
         'Let the news hit before you touch anything. Protect the account first.\n' +
-        'Live at 6:30 AM PT 🔴\n\n' +
-        'Not financial advice.',
-        embedWith(drawPremarket(), css('--hl'), 'Sample chart · real one uses live NQ data')));
+        'Live at ' + liveTime() + ' 🔴\n\nNot financial advice.',
+        embedWith(drawPremarket(), css('--hl'), mine ? 'Your levels · sample candles' : 'Sample chart · the real one uses live NQ data')));
+    } else if (c.id === 'news') {
+      var hi = S.news.filter(function (n) { return n.impact === 'high'; }).sort(function (a, b) { return String(b.time).localeCompare(String(a.time)); })[0];
+      m.appendChild(msg(hi ? new Date(hi.time).toLocaleString('en-US', { timeZone: 'America/Phoenix', hour: 'numeric', minute: '2-digit' }) : 'Today at 4:02 AM',
+        hi ? '🚨 ' + hi.headline + (hi.summary ? '\n\n' + hi.summary : '') + (hi.nq ? '\nNQ: ' + hi.nq : '') :
+          '🚨 OVERNIGHT MOVE\n\nNVIDIA down 6% after hours on its earnings report. NQ futures off about 1.2% overnight.\n\nExpect a gap down at the open. Sit on your hands for the first 5 minutes. 👀'));
+      if (!hi) m.appendChild(el('p', { class: 'sample-flag', text: 'Sample alert · real ones come from the News Desk sweeps' }));
+    } else if (c.id === 'welcome') {
+      m.appendChild(msg('Today at 2:14 AM', 'Yo @jordan, welcome to BNBProfits 🤝\n\nStart in #start-here, catch the live every weekday at ' + liveTime() + ', and drop your questions in #ask-gene. Everything here is free.'));
+      m.appendChild(el('p', { class: 'sample-flag', text: 'Sample · the Greeter writes a fresh one for each person' }));
+    } else if (c.id === 'ask-gene') {
+      m.appendChild(msg('Today at 11:48 PM', 'how do i pass an eval i keep blowing them', null, 'marcus'));
+      m.appendChild(msg('Today at 11:48 PM', '@marcus most evals don’t get blown by bad entries, they get blown by one bad day. Set a daily max loss and when you hit it you’re done, no "one more trade". Pull up to the live at ' + liveTime() + ' and watch how Gene manages risk. 🤝\n\nNot financial advice.'));
+      m.appendChild(el('p', { class: 'sample-flag', text: 'Sample · never gives signals, entries or financial advice' }));
     } else if (c.id === 'recaps') {
       var tp = todaysTradesSummary(), real = tp.n > 0, sp = real ? tp : { pnl: 840, n: 3, wins: 2 };
-      m.appendChild(msg(when + '1:39 PM',
-        '📊 RECAP · ' + mdy(new Date()) + '\n\n' +
-        (sp.pnl >= 0 ? 'Green day. ' : 'Red day, but I followed the plan. ') + sp.n + ' trade' + (sp.n === 1 ? '' : 's') + ', ' + sp.wins + ' winner' + (sp.wins === 1 ? '' : 's') + '.\n' +
-        'Lesson: the best trade today was the one I didn’t take.\n\n' +
-        'Want to learn how I trade? The Discord is free, mentorship apps are in #apply 👇',
+      m.appendChild(msg(when + fmtMin(CLOSE + 22),
+        '📊 RECAP · ' + mdy(new Date()) + '\n\n' + (sp.pnl >= 0 ? 'Green day. ' : 'Red day, but I followed the plan. ') + sp.n + ' trade' + (sp.n === 1 ? '' : 's') + ', ' + sp.wins + ' winner' + (sp.wins === 1 ? '' : 's') + '.\n' +
+        'Lesson: the best trade today was the one I didn’t take.\n\nWant to learn how I trade? Mentorship apps are in #apply 👇',
         embedWith(drawRecapCard(sp), sp.pnl >= 0 ? css('--good') : css('--bad'), real ? null : 'Sample · uses your journal once you log today’s trades')));
     } else if (c.id === 'payouts') {
-      var lp = S.payouts.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; })[0];
-      var pay = lp || { amount: 2500, firm: 'Tradeify', date: isoLocal(new Date()) };
-      m.appendChild(msg(when + '4:06 PM',
-        '💰 ANOTHER ONE · ' + money(pay.amount) + ' payout from ' + (pay.firm || 'Tradeify') + '\n\n' +
-        'Same rules every day. Nothing fancy.\n' +
-        'Getting funded? Use code BNB on Tradeify ⚡',
+      var lp = S.payouts.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; })[0], pay = lp || { amount: 2500, date: isoLocal(new Date()) };
+      m.appendChild(msg(when + '3:06 PM', '💰 ANOTHER ONE · ' + money(pay.amount) + ' payout\n\nSame rules every day. Nothing fancy.\nWant to see how? The live is free, ' + liveTime() + ' weekdays 🔴',
         embedWith(drawPayoutCard(pay), css('--good'), lp ? null : 'Sample · uses your real payouts once you log one')));
     } else if (c.id === 'general') {
       m.appendChild(msg(when + '7:02 PM', 'Real question: what’s one rule you broke this week, and what did it cost you? Be honest 👇'));
       m.appendChild(msg('Yesterday at 7:01 PM', 'This or that: one big win a week or small green days every day? 👇'));
     } else if (c.id === 'weekly-outlook') {
       var mon = new Date(); mon.setDate(mon.getDate() + ((8 - mon.getDay()) % 7 || 7)); var fri = new Date(mon); fri.setDate(mon.getDate() + 4);
-      m.appendChild(msg('Sunday at 5:08 PM',
-        '📅 WEEK AHEAD · ' + (mon.getMonth() + 1) + '/' + mon.getDate() + '–' + (fri.getMonth() + 1) + '/' + fri.getDate() + '\n\n' +
-        'News to watch:\nMon – No major news\nTue – 10:00 AM ET JOLTS\nWed – 8:30 AM ET CPI 🚨\nThu – 8:30 AM ET Jobless claims, PPI\nFri – 10:00 AM ET Consumer sentiment\n\n' +
-        'Live Mon–Fri 6:30 AM PT 🔴\n\nWhat’s your goal this week? 👇'));
+      m.appendChild(msg('Sunday at 5:08 PM', '📅 WEEK AHEAD · ' + (mon.getMonth() + 1) + '/' + mon.getDate() + '–' + (fri.getMonth() + 1) + '/' + fri.getDate() + '\n\nNews to watch:\nMon – No major news\nTue – 10:00 AM ET JOLTS\nWed – 8:30 AM ET CPI 🚨\nThu – 8:30 AM ET Jobless claims, PPI\nFri – 10:00 AM ET Consumer sentiment\n\nLive Mon–Fri ' + liveTime() + ' 🔴\n\nWhat’s your goal this week? 👇'));
       m.appendChild(el('p', { class: 'sample-flag', text: 'Sample week · the real post uses that week’s calendar' }));
     } else if (c.id === 'applicants') {
-      m.appendChild(msg(when + '9:12 AM',
-        '🟡 WARM · new 1:1 application\nTrading under 6 months · keeps failing evals · budget $500–$1,000\n\n' +
-        'Copy this to them:\n“Yo, it’s Gene from BNBProfits. Saw your application 🤝 Failing evals from guessing and moving your stop is all fixable, that’s exactly what I fix in 1:1. It’s a paid mentorship. If you’re ready to invest and lock in, let me know and I’ll send you the details.”'));
-      m.appendChild(el('p', { class: 'sample-flag', text: 'Sample applicant · never auto-sends to the person, you send it' }));
+      m.appendChild(msg(when + fmtMin(OPEN + 102), '🟡 WARM · new 1:1 application\nTrading under 6 months · keeps failing evals · budget $500–$1,000\n\nCopy this to them:\n“Yo, it’s Gene from BNBProfits. Saw your application 🤝 Failing evals from guessing and moving your stop is all fixable, that’s exactly what I fix in 1:1. It’s a paid mentorship. If you’re ready to invest and lock in, let me know and I’ll send you the details.”'));
+      m.appendChild(el('p', { class: 'sample-flag', text: 'Sample applicant · never messages the person, you send it' }));
     }
-    var a = AGENTS.filter(function (x) { return x.ch === c.id; })[0];
-    m.appendChild(el('p', { class: 'dc-sched', text: a ? (schedText(a) + ' · ' + (cfg(a.id).mode === 'auto' ? 'posts on its own' : 'waits for your OK')) : 'Runs the moment an application comes in.' }));
+    var a = AGENTS.filter(function (x) { return x.name === c.agent; })[0];
+    m.appendChild(el('p', { class: 'dc-sched', text: a ? schedText(a) + (a.ch && !a.always ? ' · ' + (cfg(a.id).mode === 'auto' ? 'posts on its own' : 'waits for your OK') : '') : '' }));
   }
 
   // ---------- generated images ----------
   function seeded(seed) { return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
   function drawPremarket() {
-    var W = 1040, H = 560, cv = el('canvas', { width: W, height: H, 'aria-label': 'Sample NQ pre-market chart with levels' }), g = cv.getContext('2d');
-    g.fillStyle = '#0a0a0b'; g.fillRect(0, 0, W, H);
+    var W = 1040, H = 560, cv = el('canvas', { width: W, height: H, 'aria-label': 'Sample NQ pre-market chart with levels' }), gg = cv.getContext('2d');
+    gg.fillStyle = '#0a0a0b'; gg.fillRect(0, 0, W, H);
     var r = seeded(20261113), n = 78, p = 21360, bars = [];
-    for (var i = 0; i < n; i++) {
-      var o = p, c = o + (r() - 0.46) * 22, h = Math.max(o, c) + r() * 10, l = Math.min(o, c) - r() * 10; bars.push([o, h, l, c]); p = c;
-    }
+    for (var i = 0; i < n; i++) { var o = p, c = o + (r() - 0.46) * 22, h = Math.max(o, c) + r() * 10, l = Math.min(o, c) - r() * 10; bars.push([o, h, l, c]); p = c; }
     var hi = Math.max.apply(null, bars.map(function (b) { return b[1]; })), lo = Math.min.apply(null, bars.map(function (b) { return b[2]; }));
-    var top = Math.max(hi, 21482) + 15, bot = Math.min(lo, 21356) - 15;
-    var L = 30, R = W - 130, T = 70, B = H - 40;
-    function y(v) { return T + (top - v) / (top - bot) * (B - T); }
-    g.strokeStyle = '#1b1b1e'; g.lineWidth = 1;
-    for (var gy = Math.ceil(bot / 25) * 25; gy < top; gy += 25) { g.beginPath(); g.moveTo(L, y(gy)); g.lineTo(R, y(gy)); g.stroke(); g.fillStyle = '#6d6d73'; g.font = '16px JetBrains Mono, monospace'; g.fillText(gy.toLocaleString('en-US'), R + 10, y(gy) + 5); }
+    var top = Math.max(hi, 21482) + 15, bot = Math.min(lo, 21356) - 15, L = 30, R = W - 130, Tp = 70, B = H - 40;
+    function y(v) { return Tp + (top - v) / (top - bot) * (B - Tp); }
+    gg.strokeStyle = '#1b1b1e'; gg.lineWidth = 1;
+    for (var gy2 = Math.ceil(bot / 25) * 25; gy2 < top; gy2 += 25) { gg.beginPath(); gg.moveTo(L, y(gy2)); gg.lineTo(R, y(gy2)); gg.stroke(); gg.fillStyle = '#6d6d73'; gg.font = '16px JetBrains Mono, monospace'; gg.fillText(gy2.toLocaleString('en-US'), R + 10, y(gy2) + 5); }
     var bw = (R - L) / n;
     bars.forEach(function (b, k) {
-      var up = b[3] >= b[0], x = L + k * bw + bw / 2;
-      g.strokeStyle = g.fillStyle = up ? '#3ddc84' : '#ff5a4e';
-      g.beginPath(); g.moveTo(x, y(b[1])); g.lineTo(x, y(b[2])); g.stroke();
-      var yt = y(Math.max(b[0], b[3])), yb = y(Math.min(b[0], b[3]));
-      g.fillRect(x - bw * 0.35, yt, bw * 0.7, Math.max(1, yb - yt));
+      var up = b[3] >= b[0], x = L + k * bw + bw / 2; gg.strokeStyle = gg.fillStyle = up ? '#3ddc84' : '#ff5a4e';
+      gg.beginPath(); gg.moveTo(x, y(b[1])); gg.lineTo(x, y(b[2])); gg.stroke();
+      var yt = y(Math.max(b[0], b[3])), yb = y(Math.min(b[0], b[3])); gg.fillRect(x - bw * 0.35, yt, bw * 0.7, Math.max(1, yb - yt));
     });
     [[21482, 'ON HIGH', '#3ddc84'], [21410, 'PREV CLOSE', '#a3a3a8'], [21356, 'PREV LOW', '#ff5a4e']].forEach(function (lv) {
-      g.setLineDash([8, 6]); g.strokeStyle = lv[2]; g.lineWidth = 2; g.beginPath(); g.moveTo(L, y(lv[0])); g.lineTo(R, y(lv[0])); g.stroke(); g.setLineDash([]);
-      g.fillStyle = lv[2]; g.fillRect(R + 4, y(lv[0]) - 13, 122, 26);
-      g.fillStyle = '#0a0a0b'; g.font = 'bold 15px JetBrains Mono, monospace'; g.fillText(lv[0].toLocaleString('en-US'), R + 12, y(lv[0]) + 5);
-      g.fillStyle = lv[2]; g.font = 'bold 14px JetBrains Mono, monospace'; g.fillText(lv[1], L + 8, y(lv[0]) - 8);
+      gg.setLineDash([8, 6]); gg.strokeStyle = lv[2]; gg.lineWidth = 2; gg.beginPath(); gg.moveTo(L, y(lv[0])); gg.lineTo(R, y(lv[0])); gg.stroke(); gg.setLineDash([]);
+      gg.fillStyle = lv[2]; gg.fillRect(R + 4, y(lv[0]) - 13, 122, 26);
+      gg.fillStyle = '#0a0a0b'; gg.font = 'bold 15px JetBrains Mono, monospace'; gg.fillText(lv[0].toLocaleString('en-US'), R + 12, y(lv[0]) + 5);
+      gg.fillStyle = lv[2]; gg.font = 'bold 14px JetBrains Mono, monospace'; gg.fillText(lv[1], L + 8, y(lv[0]) - 8);
     });
-    g.fillStyle = '#f4f4f1'; g.font = '900 34px Archivo, Arial Black, sans-serif'; g.fillText('NQ PRE-MARKET', L, 46);
-    g.fillStyle = '#a3a3a8'; g.font = '18px JetBrains Mono, monospace'; g.fillText('5m · ' + mdy(nextWeekday()) + ' · @bnbgene', L + 300, 44);
-    g.fillStyle = '#f5b84a'; g.font = 'bold 16px JetBrains Mono, monospace'; g.fillText('SAMPLE DATA', W - 140, 44);
+    gg.fillStyle = '#f4f4f1'; gg.font = '900 34px Archivo, Arial Black, sans-serif'; gg.fillText('NQ PRE-MARKET', L, 46);
+    gg.fillStyle = '#a3a3a8'; gg.font = '18px JetBrains Mono, monospace'; gg.fillText('5m · ' + mdy(nextWeekday()) + ' · @bnbgene', L + 300, 44);
+    gg.fillStyle = '#f5b84a'; gg.font = 'bold 16px JetBrains Mono, monospace'; gg.fillText('SAMPLE DATA', W - 140, 44);
     return cv;
   }
-  function cardBase(W, H) {
-    var cv = el('canvas', { width: W, height: H }), g = cv.getContext('2d');
-    g.fillStyle = '#0a0a0b'; g.fillRect(0, 0, W, H);
-    g.strokeStyle = '#2a2a2f'; g.lineWidth = 2; g.strokeRect(14, 14, W - 28, H - 28);
-    return { cv: cv, g: g };
-  }
+  function cardBase(W, H) { var cv = el('canvas', { width: W, height: H }), gg = cv.getContext('2d'); gg.fillStyle = '#0a0a0b'; gg.fillRect(0, 0, W, H); gg.strokeStyle = '#2a2a2f'; gg.lineWidth = 2; gg.strokeRect(14, 14, W - 28, H - 28); return { cv: cv, g: gg }; }
   function drawRecapCard(sp) {
-    var o = cardBase(1040, 480), g = o.g;
-    g.fillStyle = '#a3a3a8'; g.font = '20px JetBrains Mono, monospace'; g.fillText('DAILY RECAP · ' + mdy(new Date()).toUpperCase(), 56, 80);
-    g.fillStyle = sp.pnl >= 0 ? '#3ddc84' : '#ff5a4e'; g.font = '900 150px Archivo, Arial Black, sans-serif'; g.fillText(money(sp.pnl, true), 50, 250);
-    g.fillStyle = '#f4f4f1'; g.font = '800 34px Archivo, Arial, sans-serif';
-    g.fillText(sp.n + ' TRADES', 56, 340); g.fillText(sp.wins + ' WINS', 330, 340); g.fillText(Math.round(sp.wins / Math.max(1, sp.n) * 100) + '% WIN RATE', 560, 340);
-    g.fillStyle = '#6d6d73'; g.font = '20px JetBrains Mono, monospace'; g.fillText('@bnbgene · BNBPROFITS', 56, 420);
+    var o = cardBase(1040, 480), gg = o.g;
+    gg.fillStyle = '#a3a3a8'; gg.font = '20px JetBrains Mono, monospace'; gg.fillText('DAILY RECAP · ' + mdy(new Date()).toUpperCase(), 56, 80);
+    gg.fillStyle = sp.pnl >= 0 ? '#3ddc84' : '#ff5a4e'; gg.font = '900 150px Archivo, Arial Black, sans-serif'; gg.fillText(money(sp.pnl, true), 50, 250);
+    gg.fillStyle = '#f4f4f1'; gg.font = '800 34px Archivo, Arial, sans-serif';
+    gg.fillText(sp.n + ' TRADES', 56, 340); gg.fillText(sp.wins + ' WINS', 330, 340); gg.fillText(Math.round(sp.wins / Math.max(1, sp.n) * 100) + '% WIN RATE', 560, 340);
+    gg.fillStyle = '#6d6d73'; gg.font = '20px JetBrains Mono, monospace'; gg.fillText('@bnbgene · BNBPROFITS', 56, 420);
     return o.cv;
   }
   function drawPayoutCard(p) {
-    var o = cardBase(1040, 480), g = o.g;
-    g.fillStyle = '#a3a3a8'; g.font = '20px JetBrains Mono, monospace'; g.fillText('PAYOUT · ' + (p.firm || 'TRADEIFY').toUpperCase() + ' · ' + p.date, 56, 80);
-    g.fillStyle = '#3ddc84'; g.font = '900 170px Archivo, Arial Black, sans-serif'; g.fillText(money(p.amount), 50, 270);
-    g.fillStyle = '#f4f4f1'; g.font = '900 44px Archivo, Arial Black, sans-serif'; g.fillText('ANOTHER ONE 🤝', 56, 360);
-    g.fillStyle = '#6d6d73'; g.font = '20px JetBrains Mono, monospace'; g.fillText('CODE BNB ON TRADEIFY · @bnbgene', 56, 420);
+    var o = cardBase(1040, 480), gg = o.g;
+    gg.fillStyle = '#a3a3a8'; gg.font = '20px JetBrains Mono, monospace'; gg.fillText('PAYOUT · ' + p.date, 56, 80);
+    gg.fillStyle = '#3ddc84'; gg.font = '900 170px Archivo, Arial Black, sans-serif'; gg.fillText(money(p.amount), 50, 270);
+    gg.fillStyle = '#f4f4f1'; gg.font = '900 44px Archivo, Arial Black, sans-serif'; gg.fillText('ANOTHER ONE 🤝', 56, 360);
+    gg.fillStyle = '#6d6d73'; gg.font = '20px JetBrains Mono, monospace'; gg.fillText('@bnbgene · BNBPROFITS', 56, 420);
     return o.cv;
   }
 
   // ===================================================================
   // TRADES
   // ===================================================================
-  function dayPnl() {
-    var m = {};
-    S.trades.forEach(function (t) { m[t.date] = (m[t.date] || 0) + (+t.pnl || 0); });
-    return m;
-  }
+  function dayPnl() { var m = {}; S.trades.forEach(function (t) { m[t.date] = (m[t.date] || 0) + (+t.pnl || 0); }); return m; }
   function todaysTradesSummary() {
     var d = isoLocal(new Date()), ts = S.trades.filter(function (t) { return t.date === d; });
     return { n: ts.length, pnl: ts.reduce(function (s, t) { return s + (+t.pnl || 0); }, 0), wins: ts.filter(function (t) { return +t.pnl > 0; }).length };
@@ -852,10 +1164,9 @@
     ];
     var box = $('tradeTiles'); box.innerHTML = '';
     tiles.forEach(function (t) { box.appendChild(el('div', { class: 'tile' }, [el('span', { class: 'label', text: t[0] }), el('b', { class: t[2], text: t[1] })])); });
-
     var list = $('tradeList'); list.innerHTML = '';
     var sorted = ts.slice().sort(function (a, b) { return (b.date + (b.created || '')).localeCompare(a.date + (a.created || '')); });
-    if (!sorted.length) list.appendChild(el('p', { class: 'empty-state', text: 'No trades yet. Log your first one on the left and it shows up here, on the calendar and in your recap post.' }));
+    if (!sorted.length) list.appendChild(el('p', { class: 'empty-state', text: 'No trades yet. Log your first one and it shows up here, on the calendar and in your recap post.' }));
     sorted.slice(0, 30).forEach(function (t) {
       var x = el('button', { class: 'x', type: 'button', 'aria-label': 'Delete trade', text: '×' });
       x.addEventListener('click', function () { confirmDel(x, function () { dbDel('trades/' + t._id); }); });
@@ -864,8 +1175,7 @@
         el('b', { class: 'num ' + (+t.pnl >= 0 ? 'pos' : 'neg'), text: money(+t.pnl, true) }), x
       ]));
     });
-    var accts = {};
-    S.trades.concat(S.payouts).forEach(function (t) { if (t.acct) accts[t.acct] = 1; });
+    var accts = {}; S.trades.concat(S.payouts).forEach(function (t) { if (t.acct) accts[t.acct] = 1; });
     var dl = $('acctList'); dl.innerHTML = ''; Object.keys(accts).forEach(function (a) { dl.appendChild(el('option', { value: a })); });
     renderCal(); drawEquity();
   }
@@ -891,54 +1201,44 @@
   }
   $('calPrev').addEventListener('click', function () { calMonth.setMonth(calMonth.getMonth() - 1); renderCal(); });
   $('calNext').addEventListener('click', function () { calMonth.setMonth(calMonth.getMonth() + 1); renderCal(); });
-
   function setupCanvas(cv) {
-    var r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
-    if (!r.width) return null;
+    var r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1; if (!r.width) return null;
     cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
-    var g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    return { g: g, W: r.width, H: r.height };
+    var gg = cv.getContext('2d'); gg.setTransform(dpr, 0, 0, dpr, 0, 0); return { g: gg, W: r.width, H: r.height };
   }
   function drawEquity() {
     var o = setupCanvas($('eqChart')); if (!o) return;
-    var g = o.g, W = o.W, H = o.H, dp = dayPnl(), days = Object.keys(dp).sort();
-    g.clearRect(0, 0, W, H);
-    if (!days.length) { g.fillStyle = css('--dim'); g.font = '14px Archivo, sans-serif'; g.textAlign = 'center'; g.fillText('Your curve draws itself as you log trades', W / 2, H / 2); g.textAlign = 'left'; return; }
+    var gg = o.g, W = o.W, H = o.H, dp = dayPnl(), days = Object.keys(dp).sort(); gg.clearRect(0, 0, W, H);
+    if (!days.length) { gg.fillStyle = css('--dim'); gg.font = '14px Archivo, sans-serif'; gg.textAlign = 'center'; gg.fillText('Your curve draws itself as you log trades', W / 2, H / 2); gg.textAlign = 'left'; return; }
     var pts = [0], s = 0; days.forEach(function (d) { s += dp[d]; pts.push(s); });
     var mx = Math.max.apply(null, pts), mn = Math.min.apply(null, pts); if (mx === mn) { mx += 1; mn -= 1; }
-    var L = 8, R = W - 64, T = 12, B = H - 22;
+    var L = 8, R = W - 64, Tp = 12, B = H - 22;
     function X(i) { return L + i / (pts.length - 1 || 1) * (R - L); }
-    function Y(v) { return T + (mx - v) / (mx - mn) * (B - T); }
-    g.strokeStyle = css('--line'); g.lineWidth = 1;
-    [mx, 0, mn].forEach(function (v) { g.beginPath(); g.moveTo(L, Y(v)); g.lineTo(R, Y(v)); g.stroke(); g.fillStyle = css('--dim'); g.font = '11px JetBrains Mono, monospace'; g.fillText(money(Math.round(v)), R + 6, Y(v) + 4); });
+    function Y(v) { return Tp + (mx - v) / (mx - mn) * (B - Tp); }
+    gg.strokeStyle = css('--line'); gg.lineWidth = 1;
+    [mx, 0, mn].forEach(function (v) { gg.beginPath(); gg.moveTo(L, Y(v)); gg.lineTo(R, Y(v)); gg.stroke(); gg.fillStyle = css('--dim'); gg.font = '11px JetBrains Mono, monospace'; gg.fillText(money(Math.round(v)), R + 6, Y(v) + 4); });
     var col = s >= 0 ? css('--good') : css('--bad');
-    g.beginPath(); pts.forEach(function (v, i) { if (i) g.lineTo(X(i), Y(v)); else g.moveTo(X(i), Y(v)); });
-    g.strokeStyle = col; g.lineWidth = 2; g.stroke();
-    g.lineTo(X(pts.length - 1), Y(Math.max(mn, 0) === 0 ? 0 : mn)); g.lineTo(X(0), Y(Math.max(mn, 0) === 0 ? 0 : mn)); g.closePath();
-    g.globalAlpha = .12; g.fillStyle = col; g.fill(); g.globalAlpha = 1;
-    g.beginPath(); g.arc(X(pts.length - 1), Y(s), 4, 0, 7); g.fillStyle = col; g.fill();
-    g.fillStyle = css('--dim'); g.font = '11px JetBrains Mono, monospace'; g.fillText(days[0], L, H - 4); var lw = g.measureText(days[days.length - 1]).width; g.fillText(days[days.length - 1], R - lw, H - 4);
+    gg.beginPath(); pts.forEach(function (v, i) { if (i) gg.lineTo(X(i), Y(v)); else gg.moveTo(X(i), Y(v)); }); gg.strokeStyle = col; gg.lineWidth = 2; gg.stroke();
+    var base = Y(Math.max(mn, Math.min(mx, 0))); gg.lineTo(X(pts.length - 1), base); gg.lineTo(X(0), base); gg.closePath();
+    gg.globalAlpha = .12; gg.fillStyle = col; gg.fill(); gg.globalAlpha = 1;
+    gg.beginPath(); gg.arc(X(pts.length - 1), Y(s), 4, 0, 7); gg.fillStyle = col; gg.fill();
+    gg.fillStyle = css('--dim'); gg.font = '11px JetBrains Mono, monospace'; gg.fillText(days[0], L, H - 4); var lw = gg.measureText(days[days.length - 1]).width; gg.fillText(days[days.length - 1], R - lw, H - 4);
     $('eqLabel').textContent = days.length + ' trading day' + (days.length === 1 ? '' : 's');
   }
-
   $('tDate').value = isoLocal(new Date());
   $('tradeForm').addEventListener('submit', function (e) {
     e.preventDefault();
     if (!S.db) { toast('Open the farm from your sidebar to save.'); return; }
-    var pnl = parseFloat($('tPnl').value);
-    if (isNaN(pnl)) { toast('Add the P&L in dollars, like 640 or -220.'); return; }
+    var pnl = parseFloat($('tPnl').value); if (isNaN(pnl)) { toast('Add the P&L in dollars, like 640 or -220.'); return; }
     var t = { date: $('tDate').value, sym: $('tSym').value, side: $('tSide').value, qty: Math.max(1, parseInt($('tQty').value, 10) || 1), pnl: pnl, acct: $('tAcct').value.trim(), rules: $('tRules').value, note: $('tNote').value.trim(), created: new Date().toISOString() };
-    var id = 't' + Date.now().toString(36);
-    dbSet('trades/' + id, t).then(function () {
-      toast(pnl >= 0 ? 'Saved. +' + (5 + (t.rules === 'yes' ? 5 : 0)) + ' XP' : 'Saved. Red days count too. +' + (5 + (t.rules === 'yes' ? 5 : 0)) + ' XP');
-      $('tPnl').value = ''; $('tNote').value = '';
-    });
+    dbSet('trades/t' + Date.now().toString(36), t).then(function () { toast((pnl >= 0 ? 'Saved. ' : 'Saved. Red days count too. ') + '+' + (5 + (t.rules === 'yes' ? 5 : 0)) + ' XP'); $('tPnl').value = ''; $('tNote').value = ''; });
   });
 
   // ===================================================================
   // PAYOUTS
   // ===================================================================
   var MILESTONES = [[1, 'FIRST PAYOUT'], [1000, '$1K CLUB'], [5000, '$5K'], [10000, '$10K'], [25000, '$25K'], [50000, '$50K'], [100000, '$100K'], [250000, '$250K']];
+  function nextMilestoneText(total) { var n = MILESTONES.filter(function (m) { return total < m[0]; })[0]; return n ? money(n[0] - total) + ' to ' + n[1] : 'every milestone unlocked'; }
   function renderPayouts() {
     var ps = S.payouts, total = ps.reduce(function (s, p) { return s + (+p.amount || 0); }, 0);
     var yr = String(new Date().getFullYear()), yTot = ps.filter(function (p) { return p.date.slice(0, 4) === yr; }).reduce(function (s, p) { return s + (+p.amount); }, 0);
@@ -946,65 +1246,49 @@
     var tiles = [['All-time payouts', money(total), total ? 'pos' : ''], ['This year', money(yTot), ''], ['Payouts', String(ps.length), ''], ['Biggest', big ? money(big) : '—', ''], ['Average', ps.length ? money(Math.round(total / ps.length)) : '—', '']];
     var box = $('payTiles'); box.innerHTML = '';
     tiles.forEach(function (t) { box.appendChild(el('div', { class: 'tile' }, [el('span', { class: 'label', text: t[0] }), el('b', { class: t[2], text: t[1] })])); });
-
-    var next = MILESTONES.filter(function (m) { return total < m[0]; })[0], prev = MILESTONES.filter(function (m) { return total >= m[0]; }).pop();
-    var base = prev ? prev[0] : 0;
+    var next = MILESTONES.filter(function (m) { return total < m[0]; })[0], prev = MILESTONES.filter(function (m) { return total >= m[0]; }).pop(), base = prev ? prev[0] : 0;
     $('goalFill').style.width = next ? Math.min(100, (total - base) / (next[0] - base) * 100) + '%' : '100%';
     $('goalText').textContent = next ? money(next[0] - total) + ' to ' + next[1] : 'Every milestone unlocked';
     var bx = $('badges'); bx.innerHTML = '';
-    MILESTONES.forEach(function (m, i) {
-      var got = total >= m[0], cv = el('canvas', { width: 10, height: 10, 'aria-hidden': 'true' });
-      drawCoin(cv, got, i);
-      bx.appendChild(el('div', { class: 'badge' + (got ? '' : ' locked') }, [cv, el('b', { text: m[1] }), el('span', { class: 'label', text: got ? 'Unlocked' : 'Locked' })]));
-    });
-
+    MILESTONES.forEach(function (m, i) { var got = total >= m[0], cv = el('canvas', { width: '10', height: '10', 'aria-hidden': 'true' }); drawCoin(cv, got, i); bx.appendChild(el('div', { class: 'badge' + (got ? '' : ' locked') }, [cv, el('b', { text: m[1] }), el('span', { class: 'label', text: got ? 'Unlocked' : 'Locked' })])); });
     var list = $('payList'); list.innerHTML = '';
     var sorted = ps.slice().sort(function (a, b) { return b.date.localeCompare(a.date); });
     if (!sorted.length) list.appendChild(el('p', { class: 'empty-state', text: 'No payouts logged yet. Add your last one above, it counts toward your milestones and the #payouts post.' }));
     sorted.forEach(function (p) {
       var x = el('button', { class: 'x', type: 'button', 'aria-label': 'Delete payout', text: '×' });
       x.addEventListener('click', function () { confirmDel(x, function () { dbDel('payouts/' + p._id); }); });
-      list.appendChild(el('div', { class: 'li' }, [
-        el('div', { style: 'min-width:0' }, [el('div', { text: p.date + ' · ' + (p.firm || 'Tradeify') + (p.acct ? ' · ' + p.acct : '') }), el('div', { class: 'sub', text: p.post === false ? 'Private' : 'Shared to #payouts' })]),
-        el('b', { class: 'num pos', text: money(+p.amount) }), x
-      ]));
+      list.appendChild(el('div', { class: 'li' }, [el('div', { style: 'min-width:0' }, [el('div', { text: p.date + (p.firm ? ' · ' + p.firm : '') + (p.acct ? ' · ' + p.acct : '') }), el('div', { class: 'sub', text: p.post === false ? 'Private' : 'Shared to #payouts' })]), el('b', { class: 'num pos', text: money(+p.amount) }), x]));
     });
     drawPayChart();
   }
   function drawCoin(cv, got, i) {
-    var g = cv.getContext('2d'), c = got ? ['#f5b84a', '#3ddc84', '#2f9bff', '#f4f4f1'][i % 4] : '#6d6d73';
-    g.fillStyle = c; g.fillRect(3, 0, 4, 1); g.fillRect(1, 1, 8, 1); g.fillRect(0, 2, 10, 6); g.fillRect(1, 8, 8, 1); g.fillRect(3, 9, 4, 1);
-    g.fillStyle = '#0a0a0b'; g.fillRect(4, 3, 2, 4); g.fillRect(3, 3, 1, 1); g.fillRect(6, 6, 1, 1);
+    var gg = cv.getContext('2d'), c = got ? ['#f5b84a', '#3ddc84', '#2f9bff', '#f4f4f1'][i % 4] : '#6d6d73';
+    gg.fillStyle = c; gg.fillRect(3, 0, 4, 1); gg.fillRect(1, 1, 8, 1); gg.fillRect(0, 2, 10, 6); gg.fillRect(1, 8, 8, 1); gg.fillRect(3, 9, 4, 1);
+    gg.fillStyle = '#0a0a0b'; gg.fillRect(4, 3, 2, 4); gg.fillRect(3, 3, 1, 1); gg.fillRect(6, 6, 1, 1);
   }
   function drawPayChart() {
     var o = setupCanvas($('payChart')); if (!o) return;
-    var g = o.g, W = o.W, H = o.H; g.clearRect(0, 0, W, H);
+    var gg = o.g, W = o.W, H = o.H; gg.clearRect(0, 0, W, H);
     var months = [], now = new Date();
     for (var i = 11; i >= 0; i--) { var d = new Date(now.getFullYear(), now.getMonth() - i, 1); months.push({ k: d.getFullYear() + '-' + pad(d.getMonth() + 1), l: d.toLocaleString('en-US', { month: 'narrow' }), v: 0 }); }
     S.payouts.forEach(function (p) { months.forEach(function (m) { if (p.date.slice(0, 7) === m.k) m.v += +p.amount; }); });
-    var mx = Math.max.apply(null, months.map(function (m) { return m.v; }));
-    var L = 4, R = W - 4, T = 22, B = H - 20, bw = (R - L) / 12;
-    if (!mx) { g.fillStyle = css('--dim'); g.font = '14px Archivo, sans-serif'; g.textAlign = 'center'; g.fillText('Bars show up when you log payouts', W / 2, H / 2); g.textAlign = 'left'; }
+    var mx = Math.max.apply(null, months.map(function (m) { return m.v; })), L = 4, R = W - 4, Tp = 22, B = H - 20, bw = (R - L) / 12;
+    if (!mx) { gg.fillStyle = css('--dim'); gg.font = '14px Archivo, sans-serif'; gg.textAlign = 'center'; gg.fillText('Bars show up when you log payouts', W / 2, H / 2); gg.textAlign = 'left'; }
     months.forEach(function (m, i) {
-      var h = mx ? m.v / mx * (B - T) : 0, x = L + i * bw;
-      g.fillStyle = m.v ? css('--good') : css('--line');
-      g.fillRect(x + bw * .18, B - Math.max(h, 2), bw * .64, Math.max(h, 2));
-      g.fillStyle = css('--dim'); g.font = '11px JetBrains Mono, monospace'; g.textAlign = 'center';
-      g.fillText(m.l, x + bw / 2, H - 4);
-      if (m.v && m.v === mx) { g.fillStyle = css('--fg'); g.fillText(money(m.v), x + bw / 2, B - h - 6); }
-      g.textAlign = 'left';
+      var h = mx ? m.v / mx * (B - Tp) : 0, x = L + i * bw;
+      gg.fillStyle = m.v ? css('--good') : css('--line'); gg.fillRect(x + bw * .18, B - Math.max(h, 2), bw * .64, Math.max(h, 2));
+      gg.fillStyle = css('--dim'); gg.font = '11px JetBrains Mono, monospace'; gg.textAlign = 'center'; gg.fillText(m.l, x + bw / 2, H - 4);
+      if (m.v && m.v === mx) { gg.fillStyle = css('--fg'); gg.fillText(money(m.v), x + bw / 2, B - h - 6); }
+      gg.textAlign = 'left';
     });
   }
   $('pDate').value = isoLocal(new Date());
   $('payForm').addEventListener('submit', function (e) {
     e.preventDefault();
     if (!S.db) { toast('Open the farm from your sidebar to save.'); return; }
-    var amt = parseFloat($('pAmt').value);
-    if (!(amt > 0)) { toast('Add the payout amount in dollars.'); return; }
-    var p = { date: $('pDate').value, amount: amt, firm: $('pFirm').value.trim() || 'Tradeify', acct: $('pAcct').value.trim(), post: $('pPost').value === 'yes', created: new Date().toISOString() };
-    dbSet('payouts/p' + Date.now().toString(36), p).then(function () {
-      toast('Payout saved. +' + Math.round(amt / 10) + ' XP 💰'); $('pAmt').value = '';
-    });
+    var amt = parseFloat($('pAmt').value); if (!(amt > 0)) { toast('Add the payout amount in dollars.'); return; }
+    var p = { date: $('pDate').value, amount: amt, firm: $('pFirm').value.trim(), acct: $('pAcct').value.trim(), post: $('pPost').value === 'yes', created: new Date().toISOString() };
+    dbSet('payouts/p' + Date.now().toString(36), p).then(function () { toast('Payout saved. +' + Math.round(amt / 10) + ' XP 💰'); $('pAmt').value = ''; });
   });
 
   // ===================================================================
@@ -1025,11 +1309,11 @@
   // SETUP
   // ===================================================================
   var CHECK = [
-    'Make a webhook for each channel: Server Settings › Integrations › Webhooks. Name it “BNB Desk” and give it the logo.',
-    'Paste the webhook links to Claude in chat (not here) so they get saved as private keys.',
-    'Let Claude’s environment reach discord.com and a market-data source for the NQ chart.',
-    'Claude creates one scheduled task per agent and turns them on.',
-    'First week on “Ask me first”. Flip each one to Auto-post once you like its posts.'
+    'Make a webhook in each channel the agents post to: Server Settings › Integrations › Webhooks. Name it “BNB Desk” and give it the logo.',
+    'Create the Greeter bot in the Discord Developer Portal and invite it to the server (Claude walks you through it).',
+    'Put the Greeter on an always-on host (about $5 a month) with its bot token and an Anthropic API key.',
+    'Let Claude’s environment reach discord.com and an NQ price feed for the pre-market chart.',
+    'Claude creates one scheduled task per agent. First week on “Ask me first”, then flip each one to Auto-post.'
   ];
   function renderSetup() {
     var c = $('checklist'); c.innerHTML = '';
@@ -1042,44 +1326,33 @@
       var ok = el('button', { class: 'btn small', type: 'button', text: 'Approve' }), no = el('button', { class: 'btn ghost small', type: 'button', text: 'Skip' });
       ok.addEventListener('click', function () { dbUpdate('queue/' + x._id, { status: 'approved' }).then(function () { toast('Approved. It posts on the agent’s next run.'); }); });
       no.addEventListener('click', function () { dbUpdate('queue/' + x._id, { status: 'skipped' }); });
-      l.appendChild(el('div', { class: 'li', style: 'grid-template-columns:1fr auto' }, [
-        el('div', { style: 'min-width:0' }, [el('div', { text: (x.agent || 'Agent') + ' → #' + (x.channel || '') }), el('div', { class: 'sub', style: 'white-space:pre-wrap', text: String(x.text || '').slice(0, 400) })]),
-        el('div', { class: 'row' }, [ok, no])
-      ]));
+      l.appendChild(el('div', { class: 'li', style: 'grid-template-columns:1fr auto' }, [el('div', { style: 'min-width:0' }, [el('div', { text: (x.agent || 'Agent') + ' → #' + (x.channel || '') }), el('div', { class: 'sub', style: 'white-space:pre-wrap', text: String(x.text || '').slice(0, 400) })]), el('div', { class: 'row' }, [ok, no])]));
     });
   }
 
   // ===================================================================
-  // TABS
+  // TABS + DB
   // ===================================================================
-  var drawn = {};
   function showTab(name) {
     document.querySelectorAll('.tab').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.tab === name)); });
     document.querySelectorAll('section.view').forEach(function (s) { s.hidden = s.id !== 'v-' + name; });
     if (name === 'discord') { renderDcSide(); renderDc(); }
     if (name === 'trades') drawEquity();
     if (name === 'payouts') drawPayChart();
+    if (name === 'news') renderNews();
+    if (name === 'farm') kick();
     try { localStorage.setItem('farmTab', name); } catch (e) {}
   }
   document.querySelectorAll('.tab').forEach(function (b) { b.addEventListener('click', function () { showTab(b.dataset.tab); }); });
   window.addEventListener('resize', function () { drawEquity(); drawPayChart(); });
 
-  // ===================================================================
-  // DB
-  // ===================================================================
-  function dbSet(path, data) {
-    if (!S.db) return Promise.reject();
-    return S.db.doc(path).set(data).catch(function (e) { toast("Couldn't save. Try again."); throw e; });
-  }
+  function dbSet(path, data) { if (!S.db) { toast('Open the farm from your sidebar to save.'); return Promise.reject(); } return S.db.doc(path).set(data).catch(function (e) { toast("Couldn't save. Try again."); throw e; }); }
   function dbUpdate(path, data) { return S.db ? S.db.doc(path).update(data).catch(function () { toast("Couldn't save. Try again."); }) : Promise.resolve(); }
   function dbDel(path) { return S.db ? S.db.doc(path).delete().catch(function () { toast("Couldn't delete. Try again."); }) : Promise.resolve(); }
   function listen(coll, fn) {
-    S.db.collection(coll).onSnapshot(function (snap) {
-      fn(snap.docs.map(function (d) { var x = Object.assign({}, d.data()); x._id = d.id; return x; }));
-      renderAll();
-    }, function () {});
+    S.db.collection(coll).onSnapshot(function (snap) { fn(snap.docs.map(function (d) { var x = Object.assign({}, d.data()); x._id = d.id; return x; })); renderAll(); }, function () {});
   }
-  function renderAll() { renderTrades(); renderPayouts(); renderXp(); renderAgents(); renderSetup(); if (!$('v-discord').hidden) renderDc(); }
+  function renderAll() { renderTrades(); renderPayouts(); renderXp(); renderAgents(); renderSetup(); if (!$('v-discord').hidden) renderDc(); if (!$('v-news').hidden) renderNews(); }
   var dbP = (window.claude && window.claude.use) ? window.claude.use('db') : Promise.resolve(null);
   dbP.then(function (db) {
     if (!db) { $('offline').hidden = false; return; }
@@ -1088,14 +1361,16 @@
     listen('payouts', function (a) { S.payouts = a.filter(function (p) { return p.date; }); });
     listen('agents', function (a) { S.agentCfg = {}; a.forEach(function (x) { S.agentCfg[x._id] = x; }); });
     listen('queue', function (a) { S.queue = a; });
+    listen('news', function (a) { S.news = a; });
+    listen('settings', function (a) { var l = a.filter(function (x) { return x._id === 'levels'; })[0]; S.levels = l || null; });
   }).catch(function () { $('offline').hidden = false; });
 
   // boot
   renderAll(); renderFeed();
   var saved = null; try { saved = localStorage.getItem('farmTab'); } catch (e) {}
   showTab(saved && $('v-' + saved) ? saved : 'farm');
-  setInterval(function () { var c = nowPT(); $('ptClock').textContent = fmtMin(c.min) + ' PT'; }, 15000);
-  $('ptClock').textContent = fmtMin(nowPT().min) + ' PT';
-  requestAnimationFrame(frame);
+  function tickClock() { $('azClock').textContent = fmtMin(nowAZ().min) + ' MST'; }
+  tickClock(); setInterval(tickClock, 15000);
+  kick();
 })();
 </script>
