@@ -387,6 +387,8 @@
       <div class="imp">
         <span class="label">Import from Tradovate</span>
         <div class="row"><select id="impAcct" aria-label="Account to import into" style="max-width:220px"></select><label class="btn ghost small" for="impFile" style="cursor:pointer">Choose CSV</label><input type="file" id="impFile" accept=".csv,text/csv" hidden></div>
+        <textarea id="impPaste" placeholder="Or paste the Performance CSV text here" aria-label="Paste Tradovate Performance CSV" style="min-height:70px"></textarea>
+        <div class="row"><button class="btn ghost small" id="impPasteBtn" type="button">Import pasted trades</button></div>
         <p class="muted" id="impMsg" style="font-size:.82rem">In Tradovate: Account Reports › Performance › pick the dates › Download (CSV). Drop it here after the close. Trades already imported are skipped.</p>
       </div>
     </div>
@@ -1371,8 +1373,18 @@
     var acct = $('impAcct').value, a = S.accounts.filter(function (x) { return x.name === acct; })[0];
     if (!S.db) { toast('Open the farm from your sidebar to import.'); return; }
     var rd = new FileReader();
-    rd.onload = function () {
-      var rows = parseCSV(String(rd.result)), h = rows.shift().map(function (x) { return x.trim().toLowerCase(); });
+    rd.onload = function () { importText(String(rd.result), acct, a); $('impFile').value = ''; };
+    rd.readAsText(f);
+  });
+  $('impPasteBtn').addEventListener('click', function () {
+    var acct = $('impAcct').value, a = S.accounts.filter(function (x) { return x.name === acct; })[0], txt = $('impPaste').value.trim();
+    if (!txt) { toast('Paste the Tradovate Performance CSV first.'); return; }
+    if (!S.db) { toast('Open the farm from your sidebar to import.'); return; }
+    importText(txt.indexOf(',') === -1 && txt.indexOf('\t') !== -1 ? txt.replace(/\t/g, ',') : txt, acct, a); $('impPaste').value = '';
+  });
+  function importText(text, acct, a) {
+    {
+      var rows = parseCSV(text), h = rows.shift().map(function (x) { return x.trim().toLowerCase(); });
       function col(n) { return h.indexOf(n); }
       var iSym = col('symbol'), iQty = col('qty'), iPnl = col('pnl'), iB = col('boughttimestamp'), iS = col('soldtimestamp'), iBF = col('buyfillid'), iSF = col('sellfillid'), iBP = col('buyprice'), iSP = col('sellprice');
       if (iSym < 0 || iPnl < 0 || iB < 0 || iS < 0) { $('impMsg').textContent = 'That file doesn’t look like a Tradovate Performance export. In Tradovate: Account Reports › Performance › Download CSV.'; return; }
@@ -1380,7 +1392,7 @@
       var adds = [];
       rows.forEach(function (r) {
         var bt = tvDate(r[iB]), stt = tvDate(r[iS]), pnl = money2(r[iPnl]); if (!bt || !stt || pnl == null) return;
-        var src = 'tv' + (r[iBF] || '') + '-' + (r[iSF] || '') + '-' + r[iB] + r[iS]; if (have[src]) return;
+        var src = ('tv' + (r[iBF] || '') + '-' + (r[iSF] || '') + '-' + r[iB] + r[iS]).replace(/[^A-Za-z0-9_\-.~:@+]/g, ''); if (have[src]) return;
         var long = bt <= stt, close = long ? stt : bt, sym = String(r[iSym]).replace(/[FGHJKMNQUVXZ]\d{1,2}$/, '') || r[iSym];
         adds.push({ date: isoLocal(close), sym: sym, side: long ? 'Long' : 'Short', qty: Math.abs(parseInt(r[iQty], 10) || 1), pnl: pnl, acct: acct, type: a && a.stage === 'test' ? 'eval' : 'funded', rules: 'yes', note: 'Imported from Tradovate' + (iBP >= 0 ? ' · ' + (long ? r[iBP] + ' → ' + r[iSP] : r[iSP] + ' → ' + r[iBP]) : ''), created: close.toISOString(), src: src.replace(/[^A-Za-z0-9_\-.~:@+]/g, '') });
       });
@@ -1390,10 +1402,8 @@
       adds.forEach(function (t, i) { chain = chain.then(function () { return S.db.doc('trades/' + ('t' + t.src).slice(0, 180)).set(t); }); });
       chain.then(function () { $('impMsg').textContent = 'Imported ' + adds.length + ' trades into ' + acct + '. Set “Followed my rules?” on any you broke.'; toast('Imported ' + adds.length + ' trades'); })
         .catch(function () { $('impMsg').textContent = 'Some trades didn’t save. Try the file again; duplicates are skipped.'; });
-      $('impFile').value = '';
-    };
-    rd.readAsText(f);
-  });
+    }
+  }
 
   // ===================================================================
   // STRATEGY CHECKLIST (private: never read by the posting agents)
