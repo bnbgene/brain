@@ -10,6 +10,7 @@ Clients send W-2 photos through **TaxesToGo**, but TaxSlayer Pro doesn't fill in
 ## Tools
 - [[W-2 Helper App]]: the Windows app (installer, how it works, recent changes)
 - Web demo: https://claude.ai/artifact/WdWrcdWsuvSeFwS3pRwfCX
+- [[Competitor - SmartWiz]]: the main competitor and how we beat them
 
 ## Key Decisions
 - 2026-10-24: Windows desktop app next to TaxSlayer Pro Desktop. Clients keep using TaxesToGo.
