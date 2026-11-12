@@ -222,7 +222,9 @@
   .verdict.go { background: color-mix(in srgb, var(--good) 18%, var(--panel)); color: var(--good); }
   .verdict.stop { background: color-mix(in srgb, var(--bad) 16%, var(--panel)); color: var(--bad); }
   .verdict.maybe { background: color-mix(in srgb, var(--warn) 14%, var(--panel)); color: var(--warn); }
-  .ck-edit { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; }
+  .ck-edit { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; }
+  .must.fund { color: var(--hl); border-color: color-mix(in srgb, var(--hl) 45%, transparent); }
+  @media (max-width: 520px) { .ck-edit { grid-template-columns: 1fr auto auto; } .ck-edit input { grid-column: 1 / -1; } }
   .seg-btn { background: none; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-weight: 700; font-size: .74rem; color: var(--muted); cursor: pointer; }
   .seg-btn[aria-pressed="true"] { background: var(--warn); color: #0a0a0b; border-color: var(--warn); }
   .ckb { font-family: var(--mono); font-size: .62rem; letter-spacing: .06em; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 6px; margin-left: 6px; }
@@ -306,6 +308,7 @@
     <div class="grid2">
       <div class="panel" id="ckRun">
         <div class="row between"><h2>Before every trade</h2><span class="label num" id="ckCount">0 / 0</span></div>
+        <div class="seg" role="group" aria-label="Account type" id="ckMode"><button type="button" data-mode="eval">Eval</button><button type="button" data-mode="funded">Funded</button></div>
         <div class="goal-bar"><i id="ckFill"></i></div>
         <p class="notice" id="ckStarter" style="display:block">These are starter rules. Tap <b>Edit my checklist</b> and swap in your real strategy. It stays private to you, and no agent ever reads or posts it.</p>
         <div class="ck-list" id="ckList"></div>
@@ -372,6 +375,7 @@
           <label>Contracts<input type="number" id="tQty" min="1" step="1" value="1" required></label>
           <label>P&amp;L ($)<input type="number" id="tPnl" step="0.01" placeholder="e.g. 640 or -220" required></label>
           <label>Account<input type="text" id="tAcct" placeholder="50K #1" list="acctList"></label>
+          <label>Account type<select id="tType"><option value="eval">Eval</option><option value="funded">Funded</option></select></label>
           <label>Followed my rules?<select id="tRules"><option value="yes">Yes</option><option value="no">No</option></select></label>
           <label class="wide">Note<input type="text" id="tNote" placeholder="What happened, in a few words"></label>
           <p class="wide ckb ap" id="tCheckNote" hidden style="margin:0;padding:8px 10px;border-radius:8px"></p>
@@ -1255,7 +1259,11 @@
   ];
   var ck = { ticks: {}, editing: false };
   try { ck.ticks = JSON.parse(localStorage.getItem('ckTicks') || '{}') || {}; } catch (e) {}
-  function ckItems() { var c = S.checklist; return c && c.items && c.items.length ? c.items : STARTER.map(function (x, i) { return Object.assign({ id: 's' + i }, x); }); }
+  function ckMode() { return (S.risk && S.risk.mode) || ck.mode || 'eval'; }
+  function ckAll() { var c = S.checklist; return c && c.items && c.items.length ? c.items : STARTER.map(function (x, i) { return Object.assign({ id: 's' + i }, x); }); }
+  function ckItems() { var m = ckMode(); return ckAll().filter(function (it) { return m === 'funded' || !it.funded; }); }
+  function setMode(m) { ck.mode = m; var v = Object.assign({}, S.risk || { perTrade: 250, dailyMax: 500 }, { mode: m }); S.risk = v; renderChecklist(); dbSet('settings/risk', v).then(function () { toast(m === 'funded' ? 'Funded mode: risk rules on.' : 'Eval mode: setup rules only.'); }); }
+  document.querySelectorAll('#ckMode button').forEach(function (b) { b.addEventListener('click', function () { setMode(b.dataset.mode); }); });
   function ckSaveTicks() { try { localStorage.setItem('ckTicks', JSON.stringify(ck.ticks)); } catch (e) {} }
   function ckScore() {
     var items = ckItems(), done = items.filter(function (it) { return ck.ticks[it.id]; }), mustMissing = items.filter(function (it) { return it.must && !ck.ticks[it.id]; });
@@ -1264,13 +1272,14 @@
   function renderChecklist() {
     var items = ckItems(), list = $('ckList'); list.innerHTML = '';
     $('ckStarter').hidden = !!(S.checklist && S.checklist.items && S.checklist.items.length);
-    if (ck.editing) { renderChecklistEditor(items); return; }
+    document.querySelectorAll('#ckMode button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === ckMode())); });
+    if (ck.editing) { renderChecklistEditor(ckAll()); return; }
     $('ckEditor').hidden = true; $('ckRun').hidden = false;
     items.forEach(function (it, i) {
       var id = 'ck_' + i, on = !!ck.ticks[it.id];
       var box = el('input', { type: 'checkbox', id: id }); box.checked = on;
       box.addEventListener('change', function () { if (box.checked) ck.ticks[it.id] = 1; else delete ck.ticks[it.id]; ckSaveTicks(); renderChecklist(); });
-      list.appendChild(el('label', { class: 'ck-item' + (on ? ' on' : ''), for: id }, [box, el('span', { text: it.t }), it.must ? el('span', { class: 'must', text: 'Must' }) : null]));
+      list.appendChild(el('label', { class: 'ck-item' + (on ? ' on' : ''), for: id }, [box, el('span', { text: it.t }), it.funded ? el('span', { class: 'must fund', text: 'Funded' }) : it.must ? el('span', { class: 'must', text: 'Must' }) : null]));
     });
     var sc = ckScore(), v = $('ckVerdict');
     $('ckFill').style.width = (sc.done / Math.max(1, sc.total) * 100) + '%';
@@ -1278,33 +1287,36 @@
     v.className = 'verdict ' + (sc.aplus ? 'go' : sc.mustMissing ? 'stop' : 'maybe');
     v.textContent = sc.aplus ? 'A+ setup. Take it, follow the plan.' : sc.mustMissing ? 'No trade. ' + sc.mustMissing + ' must-have' + (sc.mustMissing === 1 ? ' is' : 's are') + ' missing.' : 'All must-haves are there. Smaller size, or wait for the rest.';
     $('ckTake').disabled = !!sc.mustMissing;
+    $('sizer').hidden = ckMode() !== 'funded';
     renderChecklistStats(); renderSizer();
   }
   function renderChecklistEditor(items) {
     $('ckRun').hidden = true; $('ckEditor').hidden = false;
     var box = $('ckEditList'); box.innerHTML = '';
-    var draft = ck.draft || (ck.draft = items.map(function (x) { return { id: x.id, t: x.t, must: !!x.must }; }));
+    var draft = ck.draft || (ck.draft = items.map(function (x) { return { id: x.id, t: x.t, must: !!x.must, funded: !!x.funded }; }));
     draft.forEach(function (it, i) {
       var inp = el('input', { type: 'text', value: it.t, 'aria-label': 'Checklist item ' + (i + 1), maxlength: '140' });
       inp.addEventListener('input', function () { it.t = inp.value; });
       var must = el('button', { class: 'seg-btn', type: 'button', 'aria-pressed': String(it.must), text: 'Must' });
       must.addEventListener('click', function () { it.must = !it.must; must.setAttribute('aria-pressed', String(it.must)); });
+      var fund = el('button', { class: 'seg-btn', type: 'button', 'aria-pressed': String(!!it.funded), text: 'Funded only' });
+      fund.addEventListener('click', function () { it.funded = !it.funded; fund.setAttribute('aria-pressed', String(it.funded)); });
       var del = el('button', { class: 'x', type: 'button', 'aria-label': 'Remove item', text: '×' });
       del.addEventListener('click', function () { draft.splice(i, 1); renderChecklistEditor(items); });
-      box.appendChild(el('div', { class: 'ck-edit' }, [inp, must, del]));
+      box.appendChild(el('div', { class: 'ck-edit' }, [inp, must, fund, del]));
     });
   }
-  $('ckAdd').addEventListener('click', function () { ck.draft.push({ id: 'c' + Date.now().toString(36), t: '', must: false }); renderChecklistEditor(ckItems()); var ins = $('ckEditList').querySelectorAll('input'); if (ins.length) ins[ins.length - 1].focus(); });
+  $('ckAdd').addEventListener('click', function () { ck.draft.push({ id: 'c' + Date.now().toString(36), t: '', must: false }); renderChecklistEditor(ckAll()); var ins = $('ckEditList').querySelectorAll('input'); if (ins.length) ins[ins.length - 1].focus(); });
   $('ckEdit').addEventListener('click', function () { ck.editing = true; ck.draft = null; renderChecklist(); });
   $('ckCancel').addEventListener('click', function () { ck.editing = false; ck.draft = null; renderChecklist(); });
   $('ckSave').addEventListener('click', function () {
-    var items = (ck.draft || []).map(function (x, i) { return { id: x.id && x.id.charAt(0) !== 's' ? x.id : 'c' + Date.now().toString(36) + i, t: x.t.trim().slice(0, 140), must: !!x.must }; }).filter(function (x) { return x.t; });
+    var items = (ck.draft || []).map(function (x, i) { return { id: x.id && x.id.charAt(0) !== 's' ? x.id : 'c' + Date.now().toString(36) + i, t: x.t.trim().slice(0, 140), must: !!x.must, funded: !!x.funded }; }).filter(function (x) { return x.t; });
     if (!items.length) { toast('Add at least one item.'); return; }
     dbSet('settings/checklist', { items: items, updated: new Date().toISOString() }).then(function () { ck.editing = false; ck.draft = null; ck.ticks = {}; ckSaveTicks(); toast('Checklist saved. It’s private to you.'); });
   });
   $('ckReset').addEventListener('click', function () { ck.ticks = {}; ckSaveTicks(); renderChecklist(); });
   $('ckTake').addEventListener('click', function () {
-    var sc = ckScore(); S.pendingCheck = { done: sc.done, total: sc.total, aplus: sc.aplus };
+    var sc = ckScore(); S.pendingCheck = { done: sc.done, total: sc.total, aplus: sc.aplus, mode: ckMode() };
     showTab('trades'); window.scrollTo({ top: 0 }); renderPendingCheck(); $('tPnl').focus();
     toast('Checklist ' + sc.done + '/' + sc.total + ' attached. Log the trade when it’s done.');
   });
@@ -1315,7 +1327,7 @@
     });
   });
   function renderPendingCheck() {
-    var p = S.pendingCheck, n = $('tCheckNote');
+    var p = S.pendingCheck, n = $('tCheckNote'); if (p && p.mode) $('tType').value = p.mode;
     n.hidden = !p; if (p) n.textContent = 'Checklist ' + p.done + '/' + p.total + (p.aplus ? ' · A+ setup' : '') + ' will be saved with this trade.';
   }
   function renderSizer() {
@@ -1606,6 +1618,7 @@
     if (!S.db) { toast('Open the farm from your sidebar to save.'); return; }
     var pnl = parseFloat($('tPnl').value); if (isNaN(pnl)) { toast('Add the P&L in dollars, like 640 or -220.'); return; }
     var t = { date: $('tDate').value, sym: $('tSym').value, side: $('tSide').value, qty: Math.max(1, parseInt($('tQty').value, 10) || 1), pnl: pnl, acct: $('tAcct').value.trim(), rules: $('tRules').value, note: $('tNote').value.trim(), created: new Date().toISOString() };
+    t.type = $('tType').value;
     if (S.pendingCheck) t.check = S.pendingCheck;
     dbSet('trades/t' + Date.now().toString(36), t).then(function () { toast((pnl >= 0 ? 'Saved. ' : 'Saved. Red days count too. ') + '+' + (5 + (t.rules === 'yes' ? 5 : 0)) + ' XP'); $('tPnl').value = ''; $('tNote').value = ''; S.pendingCheck = null; renderPendingCheck(); ck.ticks = {}; ckSaveTicks(); });
   });
