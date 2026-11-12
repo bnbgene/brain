@@ -1433,44 +1433,42 @@
     var ps = S.payouts.filter(function (p) { return String(p.date).slice(0, 4) === yr; });
     var amt = ps.reduce(function (s, p) { return s + (+p.amount || 0); }, 0);
     var end = new Date(+yr, 11, 31, 23, 59), daysLeft = Math.max(0, Math.ceil((end - new Date()) / 864e5));
-    return { yr: yr, g: g, amt: amt, n: ps.length, daysLeft: daysLeft, pctAmt: g && g.amount ? amt / g.amount : 0, pctN: g && g.count ? ps.length / g.count : 0 };
+    return { yr: yr, g: g, amt: amt, n: ps.length, daysLeft: daysLeft, pctAmt: g && g.amount ? amt / g.amount : 0, pctN: 1 };
   }
   function goalLine() {
     var d = goalData();
     if (!d.g) return 'Set a payout goal for the year and this trophy fills with gold as you hit it.';
-    return money(d.amt) + ' of ' + money(d.g.amount) + ' and ' + d.n + ' of ' + d.g.count + ' payouts this year. ' + (d.pctAmt >= 1 && d.pctN >= 1 ? 'Goal smashed 🏆' : d.daysLeft + ' days left.');
+    return money(d.amt) + ' of ' + money(d.g.amount) + ' paid out this year. ' + (d.pctAmt >= 1 ? 'Goal smashed 🏆' : d.daysLeft + ' days left.');
   }
   function renderGoal() {
     var d = goalData(), card = $('goalCard'), hud = $('goalHud');
     if (hud) {
-      hud.textContent = d.g ? '🏆 ' + money(Math.round(d.amt)) + ' / ' + money(d.g.amount) + ' · ' + d.n + '/' + d.g.count + ' payouts' : '🏆 Set a payout goal';
+      hud.textContent = d.g ? '🏆 ' + money(Math.round(d.amt)) + ' / ' + money(d.g.amount) + ' paid out' : '🏆 Set a payout goal';
       hud.onclick = function () { showTab('payouts'); window.scrollTo({ top: 0 }); };
     }
     if (!card) return;
     card.innerHTML = '';
     if (!d.g || goalEdit) {
       var a = el('input', { type: 'number', id: 'gAmt', min: '1', step: '500', placeholder: '20000', value: d.g ? String(d.g.amount) : '' });
-      var n = el('input', { type: 'number', id: 'gCnt', min: '1', step: '1', placeholder: '8', value: d.g ? String(d.g.count) : '' });
       var save = el('button', { class: 'btn', type: 'button', text: 'Set my goal' });
       save.addEventListener('click', function () {
-        var amt = parseFloat(a.value), cnt = parseInt(n.value, 10);
-        if (!(amt > 0) || !(cnt > 0)) { toast('Add a dollar amount and a number of payouts.'); return; }
-        dbSet('settings/goals', { year: d.yr, amount: amt, count: cnt, set: new Date().toISOString() }).then(function () { goalEdit = false; toast('Goal locked in 🏆'); confetti(60); });
+        var amt = parseFloat(a.value);
+        if (!(amt > 0)) { toast('Add the total you want paid out.'); return; }
+        dbSet('settings/goals', { year: d.yr, amount: amt, set: new Date().toISOString() }).then(function () { goalEdit = false; toast('Goal locked in 🏆'); confetti(60); });
       });
       card.appendChild(el('h2', { text: d.yr + ' payout goal' }));
       card.appendChild(el('p', { class: 'muted', style: 'font-size:.88rem', text: 'What do you want to have paid out by December 31? It shows on the island and fills the trophy in the plaza.' }));
-      card.appendChild(el('div', { class: 'log' }, [el('label', null, ['Total payouts ($)', a]), el('label', null, ['Number of payouts', n]), save]));
+      card.appendChild(el('div', { class: 'log' }, [el('label', null, ['Total payouts by Dec 31 ($)', a]), save]));
       return;
     }
-    var left = Math.max(0, d.g.amount - d.amt), weeks = Math.max(1, d.daysLeft / 7), payoutsLeft = Math.max(0, d.g.count - d.n);
-    var done = d.pctAmt >= 1 && d.pctN >= 1;
+    var left = Math.max(0, d.g.amount - d.amt), weeks = Math.max(1, d.daysLeft / 7);
+    var done = d.pctAmt >= 1;
     var edit = el('button', { class: 'btn ghost small', type: 'button', text: 'Edit' }); edit.addEventListener('click', function () { goalEdit = true; renderGoal(); });
     card.appendChild(el('div', { class: 'row between' }, [el('span', { class: 'label', text: d.yr + ' payout goal · ' + d.daysLeft + ' days left' }), edit]));
     card.appendChild(el('div', { class: 'goal-big' }, [el('b', { class: 'num pos', text: money(Math.round(d.amt)) }), el('span', { class: 'muted', text: ' of ' + money(d.g.amount) })]));
     card.appendChild(bar(d.pctAmt * 100, 'gold'));
-    card.appendChild(el('div', { class: 'acct-line' }, [el('span', { class: 'label', text: 'Payouts' }), el('span', { class: 'num', text: d.n + ' of ' + d.g.count })]));
-    card.appendChild(bar(d.pctN * 100, 'gold'));
-    card.appendChild(el('p', { class: 'goal-pace', text: done ? 'Goal smashed 🏆 Raise it?' : (left ? money(Math.ceil(left / weeks)) + ' a week' : 'Amount hit ✓') + (payoutsLeft ? ' · ' + payoutsLeft + ' more payout' + (payoutsLeft === 1 ? '' : 's') + ', about 1 every ' + Math.max(1, Math.floor(d.daysLeft / payoutsLeft)) + ' days' : ' · payout count hit ✓') }));
+    card.appendChild(el('p', { class: 'goal-pace', text: done ? 'Goal smashed 🏆 Raise it?' : money(Math.ceil(left)) + ' to go · about ' + money(Math.ceil(left / weeks)) + ' a week' }));
+    card.appendChild(el('p', { class: 'muted', style: 'font-size:.84rem', text: d.n + ' payout' + (d.n === 1 ? '' : 's') + ' so far this year' }));
   }
   function drawTrophy(g, t) {
     var T = ST.trophy; if (!T) return;
