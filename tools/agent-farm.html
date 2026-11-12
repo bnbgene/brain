@@ -1,0 +1,1101 @@
+<title>BNB Agent Farm</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=JetBrains+Mono:wght@400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  /* Layout: a phone-first control room. Sticky header with level/XP, tabs below. The Farm tab opens on a pixel-art office (the one playful place), everything else is plain BNB dark UI. Green only means money/done, red only means loss. */
+  :root {
+    --bg: #0a0a0b;
+    --panel: #131315;
+    --panel-2: #1b1b1e;
+    --line: #2a2a2f;
+    --fg: #f4f4f1;
+    --muted: #a3a3a8;
+    --dim: #6d6d73;
+    --hl: #2f9bff;
+    --good: #3ddc84;
+    --warn: #f5b84a;
+    --bad: #ff5a4e;
+    --dc-bg: #313338;
+    --dc-side: #2b2d31;
+    --dc-text: #dbdee1;
+    --dc-embed: #2b2d31;
+    --dc-blurple: #5865f2;
+    --display: "Archivo", "Arial Black", sans-serif;
+    --body: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    --pixel: "Press Start 2P", "JetBrains Mono", monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.5; margin: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px; }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  h1, h2, h3 { margin: 0; font-family: var(--display); font-variation-settings: "wdth" 120; font-weight: 900; text-transform: uppercase; line-height: 1.05; text-wrap: balance; }
+  h2 { font-size: .95rem; letter-spacing: .02em; }
+  h3 { font-size: .85rem; letter-spacing: .02em; }
+  p { margin: 0; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  .label { font-family: var(--mono); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .muted { color: var(--muted); }
+  .dim { color: var(--dim); }
+  .num { font-variant-numeric: tabular-nums; }
+  .pos { color: var(--good); }
+  .neg { color: var(--bad); }
+  :focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+  /* header */
+  .top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); margin-left: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px))); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); border-bottom: 1px solid var(--line); }
+  .top-row { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand h1 { font-size: 1.2rem; }
+  .lvl { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .lvl-badge { font-family: var(--pixel); font-size: .62rem; background: var(--fg); color: var(--bg); padding: 6px 8px; border-radius: 4px; white-space: nowrap; }
+  .xp { display: grid; gap: 4px; min-width: 140px; }
+  .xp-bar { height: 8px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 2px; overflow: hidden; }
+  .xp-bar i { display: block; height: 100%; width: 0; background: var(--good); transition: width .6s ease; }
+  .tabs { max-width: 1100px; margin: 0 auto; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding-top: 10px; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { background: none; border: 0; border-bottom: 2px solid transparent; padding: 8px 12px 10px; cursor: pointer; font-family: var(--display); font-variation-settings: "wdth" 110; font-weight: 800; text-transform: uppercase; font-size: .78rem; letter-spacing: .04em; color: var(--muted); white-space: nowrap; }
+  .tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--fg); }
+
+  main { display: grid; gap: 18px; padding-top: 18px; }
+  section.view { display: grid; gap: 18px; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 12px; min-width: 0; align-content: start; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .between { justify-content: space-between; }
+  .grid2 { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
+  .notice { border: 1px dashed var(--line); border-radius: 10px; padding: 10px 12px; color: var(--muted); font-size: .85rem; display: flex; gap: 10px; align-items: flex-start; }
+  .notice b { color: var(--fg); }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+  .pill.live { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+  .pill.wait { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+  .pill.off { color: var(--dim); }
+  .pill i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .btn { background: var(--fg); color: var(--bg); border: 0; border-radius: 8px; padding: 9px 14px; font-weight: 800; cursor: pointer; font-family: var(--display); font-variation-settings: "wdth" 110; text-transform: uppercase; font-size: .78rem; letter-spacing: .04em; }
+  .btn.ghost { background: none; color: var(--fg); border: 1px solid var(--line); }
+  .btn.small { padding: 6px 10px; font-size: .7rem; }
+  .btn:disabled { opacity: .45; cursor: default; }
+
+  /* office */
+  .office { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #15151a; }
+  .office canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; image-rendering: crisp-edges; }
+  .ov { position: absolute; inset: 0; pointer-events: none; }
+  .seat { position: absolute; transform: translate(-50%, 0); display: grid; justify-items: center; gap: 4px; pointer-events: auto; cursor: pointer; background: none; border: 0; padding: 0; }
+  .plate { font-family: var(--pixel); font-size: clamp(6px, 1.25vw, 9px); background: rgba(10,10,11,.85); color: var(--fg); padding: 4px 6px; border-radius: 3px; white-space: nowrap; }
+  .seat[aria-pressed="true"] .plate { background: var(--fg); color: var(--bg); }
+  .bubble { position: absolute; transform: translate(-50%, -100%); background: var(--fg); color: var(--bg); font-size: clamp(9px, 1.5vw, 12px); font-weight: 700; line-height: 1.25; padding: 5px 8px; border-radius: 6px; max-width: 30%; text-align: center; white-space: normal; }
+  .bubble::after { content: ""; position: absolute; left: 50%; bottom: -5px; transform: translateX(-50%); border: 5px solid transparent; border-bottom: 0; border-top-color: var(--fg); }
+  .clock { position: absolute; top: 10px; right: 10px; font-family: var(--pixel); font-size: clamp(7px, 1.4vw, 10px); color: var(--good); background: rgba(10,10,11,.85); padding: 6px 8px; border-radius: 4px; }
+  .sim-tag { position: absolute; top: 10px; left: 10px; font-family: var(--pixel); font-size: clamp(6px, 1.2vw, 9px); color: var(--warn); background: rgba(10,10,11,.85); padding: 6px 8px; border-radius: 4px; }
+
+  .agents { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+  .agent { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+  .agent.sel { border-color: var(--fg); }
+  .agent-head { display: flex; gap: 12px; align-items: center; }
+  .ava { width: 40px; height: 40px; border-radius: 6px; flex: none; image-rendering: pixelated; background: var(--panel-2); }
+  .agent-name { font-family: var(--display); font-variation-settings: "wdth" 115; font-weight: 900; text-transform: uppercase; font-size: .9rem; }
+  .agent p.job { color: var(--muted); font-size: .86rem; }
+  .meta { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; font-size: .8rem; }
+  .meta dt { font-family: var(--mono); font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); padding-top: 2px; }
+  .meta dd { margin: 0; min-width: 0; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .seg button { background: none; border: 0; padding: 6px 10px; font-size: .74rem; font-weight: 700; color: var(--muted); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+  .agent-lvl { font-family: var(--pixel); font-size: .5rem; color: var(--muted); }
+
+  .feed { display: grid; gap: 0; }
+  .feed-item { display: grid; grid-template-columns: 64px 1fr; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: .88rem; animation: pop .35s ease; }
+  .feed-item:first-child { border-top: 0; }
+  .feed-item time { font-family: var(--mono); font-size: .72rem; color: var(--dim); padding-top: 2px; }
+  .feed-item b { font-weight: 800; }
+  @keyframes pop { from { transform: translateY(-4px); opacity: .3; } to { transform: none; opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .feed-item { animation: none; } .xp-bar i { transition: none; } }
+
+  /* discord mock */
+  .dc { display: grid; grid-template-columns: 220px 1fr; background: var(--dc-bg); color: var(--dc-text); border-radius: 12px; overflow: hidden; border: 1px solid var(--line); min-height: 520px; }
+  .dc-side { background: var(--dc-side); padding: 14px 8px; display: grid; align-content: start; gap: 2px; }
+  .dc-server { font-weight: 800; padding: 0 8px 12px; border-bottom: 1px solid rgba(0,0,0,.3); margin-bottom: 8px; color: #fff; }
+  .dc-ch { background: none; border: 0; text-align: left; padding: 6px 8px; border-radius: 4px; color: #949ba4; cursor: pointer; font-size: .92rem; display: flex; justify-content: space-between; gap: 6px; }
+  .dc-ch[aria-pressed="true"] { background: rgba(78,80,88,.6); color: #fff; }
+  .dc-ch small { font-family: var(--mono); font-size: .62rem; color: #949ba4; }
+  .dc-main { display: grid; grid-template-rows: auto 1fr; min-width: 0; }
+  .dc-title { padding: 12px 16px; border-bottom: 1px solid rgba(0,0,0,.3); font-weight: 800; color: #fff; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .dc-title span { font-weight: 400; color: #949ba4; font-size: .82rem; }
+  .dc-msgs { padding: 16px; display: grid; gap: 18px; align-content: start; overflow-y: auto; max-height: 720px; }
+  .msg { display: grid; grid-template-columns: 40px 1fr; gap: 12px; min-width: 0; }
+  .msg-ava { width: 40px; height: 40px; border-radius: 50%; background: #111; display: grid; place-items: center; font-family: var(--pixel); font-size: .5rem; color: #fff; }
+  .msg-body { min-width: 0; display: grid; gap: 4px; }
+  .msg-who { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .msg-who b { color: #fff; }
+  .app { background: var(--dc-blurple); color: #fff; font-size: .6rem; font-weight: 800; padding: 1px 5px; border-radius: 3px; }
+  .msg-who time { font-size: .72rem; color: #949ba4; }
+  .msg-text { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .93rem; line-height: 1.45; }
+  .embed { background: var(--dc-embed); border-left: 4px solid var(--good); border-radius: 4px; padding: 10px 12px; display: grid; gap: 8px; max-width: 520px; }
+  .embed canvas, .embed img { width: 100%; height: auto; border-radius: 4px; display: block; }
+  .sample-flag { font-family: var(--mono); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--warn); }
+  .dc-sched { font-size: .8rem; color: #949ba4; border-top: 1px solid rgba(0,0,0,.3); padding-top: 10px; }
+
+  /* tracker */
+  .tiles { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: grid; gap: 4px; }
+  .tile b { font-family: var(--display); font-variation-settings: "wdth" 115; font-size: 1.35rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+  form.log { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); align-items: end; }
+  form.log label { display: grid; gap: 4px; font-size: .78rem; color: var(--muted); }
+  form.log .wide { grid-column: 1 / -1; }
+  input, select, textarea { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; min-width: 0; width: 100%; }
+  .chart-box { position: relative; }
+  .chart-box canvas { width: 100%; height: 220px; display: block; }
+  .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal .dow { font-family: var(--mono); font-size: .6rem; color: var(--dim); text-align: center; letter-spacing: .1em; }
+  .cal .day { border: 1px solid var(--line); border-radius: 6px; padding: 4px; min-height: 52px; display: grid; align-content: space-between; font-size: .7rem; background: var(--panel-2); min-width: 0; }
+  .cal .day.empty { background: none; border-color: transparent; }
+  .cal .day.g { background: color-mix(in srgb, var(--good) 18%, var(--panel-2)); border-color: color-mix(in srgb, var(--good) 40%, transparent); }
+  .cal .day.r { background: color-mix(in srgb, var(--bad) 16%, var(--panel-2)); border-color: color-mix(in srgb, var(--bad) 40%, transparent); }
+  .cal .day.today { outline: 1px solid var(--fg); }
+  .cal .day span { color: var(--dim); }
+  .cal .day b { font-size: .68rem; font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .list { display: grid; }
+  .li { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); font-size: .88rem; }
+  .li:first-child { border-top: 0; }
+  .li .sub { color: var(--dim); font-size: .76rem; }
+  .x { background: none; border: 0; color: var(--dim); cursor: pointer; font-size: 1rem; padding: 4px 6px; }
+  .empty-state { color: var(--muted); font-size: .9rem; padding: 18px 0; text-align: center; }
+  .badges { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+  .badge { border: 1px solid var(--line); border-radius: 10px; padding: 12px 8px; display: grid; justify-items: center; gap: 6px; text-align: center; background: var(--panel-2); }
+  .badge canvas { width: 40px; height: 40px; image-rendering: pixelated; }
+  .badge b { font-family: var(--pixel); font-size: .5rem; line-height: 1.5; }
+  .badge.locked { opacity: .35; }
+  .goal-bar { height: 12px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+  .goal-bar i { display: block; height: 100%; background: var(--good); width: 0; }
+
+  /* setup */
+  .flow { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); counter-reset: s; }
+  .step { border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: grid; gap: 6px; background: var(--panel-2); }
+  .step h3 { display: flex; gap: 8px; align-items: center; }
+  .step h3::before { counter-increment: s; content: counter(s); font-family: var(--pixel); font-size: .55rem; background: var(--fg); color: var(--bg); width: 20px; height: 20px; display: grid; place-items: center; border-radius: 3px; flex: none; }
+  .step p { font-size: .84rem; color: var(--muted); }
+  .check { display: grid; gap: 8px; }
+  .check div { display: grid; grid-template-columns: 22px 1fr; gap: 8px; font-size: .88rem; }
+  .check i { font-style: normal; font-family: var(--mono); color: var(--warn); }
+  .toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: .85rem; z-index: 40; }
+
+  @media (max-width: 640px) {
+    .dc { grid-template-columns: 1fr; }
+    .dc-side { grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; padding: 8px; }
+    .dc-server { display: none; }
+    .xp { min-width: 110px; }
+  }
+</style>
+
+<header class="top">
+  <div class="top-row">
+    <div class="brand"><h1>BNB Agent Farm</h1><span class="label" id="ptClock">PT</span></div>
+    <div class="lvl">
+      <span class="lvl-badge" id="lvlBadge">LVL 1</span>
+      <div class="xp"><div class="xp-bar"><i id="xpFill"></i></div><span class="label" id="xpText">0 XP</span></div>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" data-tab="farm" aria-selected="true">Farm</button>
+    <button class="tab" role="tab" data-tab="discord" aria-selected="false">Discord</button>
+    <button class="tab" role="tab" data-tab="trades" aria-selected="false">Trades</button>
+    <button class="tab" role="tab" data-tab="payouts" aria-selected="false">Payouts</button>
+    <button class="tab" role="tab" data-tab="setup" aria-selected="false">Setup</button>
+  </nav>
+</header>
+
+<main class="wrap">
+  <!-- FARM -->
+  <section class="view" id="v-farm">
+    <div class="notice"><span class="pill wait"><i></i>Preview</span><p>The agents aren't connected to Discord yet. Tap <b>Run a trading day</b> to watch one full day play out. Your trades and payouts below are real and save.</p></div>
+    <div class="office" id="office">
+      <canvas id="room" width="320" height="200" aria-label="Pixel office with your agents at their desks"></canvas>
+      <div class="ov" id="ov"></div>
+      <span class="clock" id="simClock">--:--</span>
+      <span class="sim-tag" id="simTag" hidden>SIMULATION</span>
+    </div>
+    <div class="row between">
+      <div class="row"><button class="btn" id="simBtn" type="button">Run a trading day</button><button class="btn ghost" id="simStop" type="button" hidden>Stop</button></div>
+      <span class="muted" style="font-size:.85rem" id="farmSum">6 agents · 5 post to Discord</span>
+    </div>
+    <div class="agents" id="agents"></div>
+    <div class="panel">
+      <div class="row between"><h2>Agent activity</h2><span class="label" id="feedLabel">Today</span></div>
+      <div class="feed" id="feed"></div>
+    </div>
+  </section>
+
+  <!-- DISCORD -->
+  <section class="view" id="v-discord" hidden>
+    <div class="notice"><span class="pill wait"><i></i>Preview</span><p>This is what each agent will post. Charts and levels below are <b>sample data</b>. The recap and payout posts use your real logs once you add them.</p></div>
+    <div class="dc">
+      <div class="dc-side" id="dcSide"><div class="dc-server">BNBProfits</div></div>
+      <div class="dc-main">
+        <div class="dc-title" id="dcTitle"></div>
+        <div class="dc-msgs" id="dcMsgs"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRADES -->
+  <section class="view" id="v-trades" hidden>
+    <div class="tiles" id="tradeTiles"></div>
+    <div class="grid2">
+      <div class="panel">
+        <h2>Log a trade</h2>
+        <form class="log" id="tradeForm">
+          <label>Date<input type="date" id="tDate" required></label>
+          <label>Contract<select id="tSym"><option>NQ</option><option>MNQ</option><option>ES</option><option>MES</option></select></label>
+          <label>Side<select id="tSide"><option>Long</option><option>Short</option></select></label>
+          <label>Contracts<input type="number" id="tQty" min="1" step="1" value="1" required></label>
+          <label>P&amp;L ($)<input type="number" id="tPnl" step="0.01" placeholder="e.g. 640 or -220" required></label>
+          <label>Account<input type="text" id="tAcct" placeholder="Tradeify 50K #1" list="acctList"></label>
+          <label>Followed my rules?<select id="tRules"><option value="yes">Yes</option><option value="no">No</option></select></label>
+          <label class="wide">Note<input type="text" id="tNote" placeholder="What happened, in a few words"></label>
+          <button class="btn wide" type="submit">Save trade</button>
+        </form>
+        <datalist id="acctList"></datalist>
+      </div>
+      <div class="panel">
+        <div class="row between"><h2>Equity curve</h2><span class="label" id="eqLabel">All time</span></div>
+        <div class="chart-box"><canvas id="eqChart" aria-label="Cumulative P&L by day"></canvas></div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="row between"><h2 id="calTitle">This month</h2><div class="row"><button class="btn ghost small" id="calPrev" type="button" aria-label="Previous month">‹</button><button class="btn ghost small" id="calNext" type="button" aria-label="Next month">›</button></div></div>
+        <div class="cal" id="cal"></div>
+      </div>
+      <div class="panel">
+        <h2>Recent trades</h2>
+        <div class="list" id="tradeList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAYOUTS -->
+  <section class="view" id="v-payouts" hidden>
+    <div class="tiles" id="payTiles"></div>
+    <div class="panel">
+      <div class="row between"><h2>Next milestone</h2><span class="label" id="goalText"></span></div>
+      <div class="goal-bar"><i id="goalFill"></i></div>
+      <div class="badges" id="badges"></div>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <h2>Log a payout</h2>
+        <form class="log" id="payForm">
+          <label>Date<input type="date" id="pDate" required></label>
+          <label>Amount ($)<input type="number" id="pAmt" min="1" step="0.01" placeholder="2500" required></label>
+          <label>Firm<input type="text" id="pFirm" value="Tradeify"></label>
+          <label>Account<input type="text" id="pAcct" placeholder="50K #1" list="acctList"></label>
+          <label class="wide">Post it to #payouts?<select id="pPost"><option value="yes">Yes, let Payout Hype post it</option><option value="no">No, keep it private</option></select></label>
+          <button class="btn wide" type="submit">Save payout</button>
+        </form>
+      </div>
+      <div class="panel">
+        <div class="row between"><h2>Payouts by month</h2><span class="label">Last 12 months</span></div>
+        <div class="chart-box"><canvas id="payChart" aria-label="Payout total by month"></canvas></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Every payout</h2>
+      <div class="list" id="payList"></div>
+    </div>
+  </section>
+
+  <!-- SETUP -->
+  <section class="view" id="v-setup" hidden>
+    <div class="panel">
+      <h2>How the farm runs</h2>
+      <div class="flow">
+        <div class="step"><h3>Clock hits</h3><p>Each agent is a scheduled Claude task, like your morning content brief. Market Desk wakes at 5:45 AM PT on weekdays.</p></div>
+        <div class="step"><h3>It does the work</h3><p>Pulls NQ data, checks the news calendar, reads your trade log and payouts from this page, then writes the post and draws the image.</p></div>
+        <div class="step"><h3>Auto or ask</h3><p>On <b>Auto-post</b> it sends straight to Discord. On <b>Ask me first</b> it parks the post in the queue below for you to approve.</p></div>
+        <div class="step"><h3>Posts to Discord</h3><p>Through a webhook for each channel, as the BNB bot. Then it checks in here, so the office and activity feed update.</p></div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <h2>To go live</h2>
+        <div class="check" id="checklist"></div>
+      </div>
+      <div class="panel">
+        <div class="row between"><h2>Waiting for your OK</h2><span class="label" id="queueCount">0</span></div>
+        <div class="list" id="queueList"></div>
+      </div>
+    </div>
+  </section>
+
+  <p class="notice" id="offline" hidden>Saving is off in this view. Open the farm from your claude.ai sidebar to log trades and payouts.</p>
+</main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  function el(tag, attrs, kids) {
+    var n = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      if (k === 'text') n.textContent = attrs[k];
+      else if (k === 'class') n.className = attrs[k];
+      else n.setAttribute(k, attrs[k]);
+    });
+    (kids || []).forEach(function (c) { if (c) n.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+    return n;
+  }
+  function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  var toastT;
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true; }, 2600); }
+  function money(n, signed) {
+    var s = Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: Math.abs(n) % 1 ? 2 : 0 });
+    return (n < 0 ? '-$' : (signed && n > 0 ? '+$' : '$')) + s;
+  }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function isoLocal(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function nowPT() {
+    var p = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour12: false, weekday: 'short', hour: '2-digit', minute: '2-digit' }).formatToParts(new Date());
+    var o = {}; p.forEach(function (x) { o[x.type] = x.value; });
+    var dow = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(o.weekday);
+    return { dow: dow, min: (parseInt(o.hour, 10) % 24) * 60 + parseInt(o.minute, 10) };
+  }
+  function fmtMin(m) { var h = Math.floor(m / 60) % 24, mm = m % 60; return ((h % 12) || 12) + ':' + pad(mm) + (h < 12 ? ' AM' : ' PM'); }
+
+  // ===================================================================
+  // AGENTS
+  // ===================================================================
+  var WEEKDAYS = [1, 2, 3, 4, 5], DAILY = [0, 1, 2, 3, 4, 5, 6];
+  var AGENTS = [
+    { id: 'market', name: 'Market Desk', shirt: '#2f9bff', hair: '#1b1b1e', skin: '#c68b59', ch: 'pre-market', days: WEEKDAYS, at: 345, dur: 12,
+      job: 'Draws the NQ pre-market chart, marks the overnight high/low and yesterday’s levels, lists the red-folder news, and hypes the 6:30 live.',
+      steps: ['Pulling overnight NQ…', 'Drawing levels…', 'Checking news…', 'Posting to #pre-market'] },
+    { id: 'content', name: 'Script Writer', shirt: '#f4f4f1', hair: '#3a2a1e', skin: '#e0ac7e', ch: null, days: DAILY, at: 350, dur: 10,
+      job: 'Your existing morning brief. Picks today’s video, writes both scripts and the Discord lines in your Content HQ, then pings your phone.',
+      steps: ['Reading tracker…', 'Writing script…', 'Saving to HQ'] },
+    { id: 'recap', name: 'Recap Bot', shirt: '#3ddc84', hair: '#111', skin: '#8d5524', ch: 'recaps', days: WEEKDAYS, at: 810, dur: 12,
+      job: 'After the close, reads the trades you logged today and posts a clean recap card: P&L, trades, and one lesson. Skips your numbers if you didn’t log.',
+      steps: ['Reading your journal…', 'Making the card…', 'Posting to #recaps'] },
+    { id: 'payout', name: 'Payout Hype', shirt: '#f5b84a', hair: '#222', skin: '#c68b59', ch: 'payouts', days: DAILY, at: 960, dur: 10, onEvent: 'when you log a payout',
+      job: 'When you log a payout and say "post it", it makes the payout card and drops it in #payouts with a line that sends people to the free Discord.',
+      steps: ['New payout logged!', 'Making the card…', 'Posting to #payouts'] },
+    { id: 'hype', name: 'Hype Man', shirt: '#ff5a4e', hair: '#0d0d0d', skin: '#e0ac7e', ch: 'general', days: DAILY, at: 1140, dur: 10,
+      job: 'Keeps the server alive at night: one question, hot take or this-or-that in #general. Never the same one twice in 30 days.',
+      steps: ['Thinking of a question…', 'Posting to #general'] },
+    { id: 'outlook', name: 'Week Ahead', shirt: '#9b7bff', hair: '#2a1a10', skin: '#8d5524', ch: 'weekly-outlook', days: [0], at: 1020, dur: 12,
+      job: 'Sunday evening: the full week of news with times in ET, plus the "what’s your goal this week?" question.',
+      steps: ['Pulling the calendar…', 'Writing the week…', 'Posting to #weekly-outlook'] }
+  ];
+  var S = { trades: [], payouts: [], agentCfg: {}, queue: [], db: null };
+
+  function cfg(id) { var c = S.agentCfg[id] || {}; return { on: c.on !== false, mode: c.mode || 'auto' }; }
+
+  // ---------- pixel sprites ----------
+  function drawPerson(g, x, y, a, pose, t) {
+    // x,y = top-left of a 12x16 sprite (head + torso, seated)
+    var bob = pose === 'work' ? (Math.floor(t / 180) % 2) : 0;
+    if (pose === 'sleep') {
+      g.fillStyle = a.shirt; g.fillRect(x + 1, y + 8, 10, 7);
+      g.fillStyle = a.skin; g.fillRect(x + 2, y + 6, 8, 5);
+      g.fillStyle = a.hair; g.fillRect(x + 2, y + 5, 8, 2);
+      return;
+    }
+    g.fillStyle = a.hair; g.fillRect(x + 3, y, 6, 2);
+    g.fillStyle = a.skin; g.fillRect(x + 3, y + 2, 6, 5);
+    g.fillStyle = a.hair; g.fillRect(x + 2, y + 1, 1, 3); g.fillRect(x + 9, y + 1, 1, 3);
+    g.fillStyle = a.shirt; g.fillRect(x + 1, y + 7, 10, 8);
+    g.fillStyle = a.skin;
+    g.fillRect(x, y + 8 + bob, 2, 4); g.fillRect(x + 10, y + 9 - bob, 2, 4);
+  }
+  function drawAvatar(cv, a) {
+    var g = cv.getContext('2d'); cv.width = 14; cv.height = 16; g.imageSmoothingEnabled = false;
+    g.fillStyle = '#1b1b1e'; g.fillRect(0, 0, 14, 16);
+    drawPerson(g, 1, 1, a, 'idle', 0);
+  }
+
+  // ---------- office scene ----------
+  var room = $('room'), rg = room.getContext('2d'); rg.imageSmoothingEnabled = false;
+  var SEATS = [];
+  (function layout() {
+    var cols = [56, 160, 264], rows = [92, 150];
+    AGENTS.forEach(function (a, i) { SEATS.push({ a: a, x: cols[i % 3], y: rows[Math.floor(i / 3)] }); });
+  })();
+  var tickerPts = [];
+  for (var i = 0; i < 60; i++) tickerPts.push(0);
+  var tickerV = 0;
+
+  var sim = { on: false, min: 0, dow: 4, startReal: 0, firedFor: {} };
+  var selected = null;
+
+  function agentState(a, clock) {
+    var c = cfg(a.id);
+    if (!c.on) return { pose: 'sleep', text: 'Off', kind: 'off' };
+    var today = a.days.indexOf(clock.dow) !== -1;
+    if (a.id === 'payout' && !sim.on) return { pose: 'idle', text: 'Waiting for a payout', kind: 'wait' };
+    if (today && clock.min >= a.at && clock.min < a.at + a.dur) {
+      var k = Math.min(a.steps.length - 1, Math.floor((clock.min - a.at) / (a.dur / a.steps.length)));
+      return { pose: 'work', text: a.steps[k], kind: 'work' };
+    }
+    if (today && clock.min >= a.at + a.dur) return { pose: 'idle', text: 'Done ✓', kind: 'done' };
+    if (clock.min < 300 || clock.min > 1320) return { pose: 'sleep', text: 'zzz', kind: 'sleep' };
+    return { pose: 'idle', text: nextRunText(a, clock), kind: 'wait' };
+  }
+  function nextRunText(a, clock) {
+    if (a.onEvent && !sim.on) return 'Runs ' + a.onEvent;
+    for (var d = 0; d < 8; d++) {
+      var dow = (clock.dow + d) % 7;
+      if (a.days.indexOf(dow) === -1) continue;
+      if (d === 0 && clock.min >= a.at) continue;
+      var day = d === 0 ? 'Today' : d === 1 ? 'Tomorrow' : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][dow];
+      return 'Next: ' + day + ' ' + fmtMin(a.at);
+    }
+    return '';
+  }
+  function currentClock() { return sim.on ? { dow: sim.dow, min: Math.floor(sim.min) } : nowPT(); }
+
+  function drawRoom(t) {
+    var g = rg, W = 320, H = 200, clock = currentClock();
+    // wall
+    g.fillStyle = '#1d1d24'; g.fillRect(0, 0, W, 64);
+    g.fillStyle = '#26262f'; for (var x = 0; x < W; x += 16) g.fillRect(x, 0, 1, 64);
+    g.fillStyle = '#0f0f13'; g.fillRect(0, 62, W, 3);
+    // big wall screen with live-ish NQ line
+    g.fillStyle = '#0a0a0b'; g.fillRect(104, 8, 112, 44);
+    g.fillStyle = '#2a2a2f'; g.fillRect(104, 8, 112, 1); g.fillRect(104, 51, 112, 1); g.fillRect(104, 8, 1, 44); g.fillRect(215, 8, 1, 44);
+    var open = clock.min >= 390 && clock.min <= 780 && clock.dow > 0 && clock.dow < 6;
+    if (Math.floor(t / 250) !== drawRoom.lastTick) {
+      drawRoom.lastTick = Math.floor(t / 250);
+      tickerV += (Math.random() - 0.47) * (open ? 3 : 1.2); tickerV = Math.max(-14, Math.min(14, tickerV));
+      tickerPts.push(tickerV); tickerPts.shift();
+    }
+    for (var k = 1; k < tickerPts.length; k++) {
+      var up = tickerPts[k] <= tickerPts[k - 1];
+      g.fillStyle = up ? '#3ddc84' : '#ff5a4e';
+      var y0 = 30 + Math.round(tickerPts[k]);
+      g.fillRect(107 + k * 1.75, y0, 2, 1 + Math.abs(Math.round(tickerPts[k] - tickerPts[k - 1])));
+    }
+    g.fillStyle = open ? '#3ddc84' : '#6d6d73'; g.fillRect(108, 12, 3, 3);
+    // windows
+    var dayLight = clock.min > 400 && clock.min < 1050;
+    [[18, 12], [244, 12]].forEach(function (w) {
+      g.fillStyle = dayLight ? '#3b6fa3' : '#11152a'; g.fillRect(w[0], w[1], 58, 36);
+      g.fillStyle = '#2a2a2f'; g.fillRect(w[0] + 28, w[1], 2, 36); g.fillRect(w[0], w[1] + 17, 58, 2);
+      if (!dayLight) { g.fillStyle = '#f4f4f1'; g.fillRect(w[0] + 8, w[1] + 6, 1, 1); g.fillRect(w[0] + 44, w[1] + 24, 1, 1); g.fillRect(w[0] + 36, w[1] + 9, 1, 1); }
+    });
+    // floor
+    for (var fy = 65; fy < H; fy += 10) for (var fx = 0; fx < W; fx += 10) {
+      g.fillStyle = ((fx + fy) / 10) % 2 ? '#17171c' : '#1b1b21'; g.fillRect(fx, fy, 10, 10);
+    }
+    // plant + coffee machine
+    g.fillStyle = '#2d6b45'; g.fillRect(6, 70, 10, 10); g.fillStyle = '#3ddc84'; g.fillRect(8, 66, 6, 6); g.fillStyle = '#5a3a24'; g.fillRect(7, 80, 8, 8);
+    g.fillStyle = '#3a3a44'; g.fillRect(302, 70, 12, 18); g.fillStyle = '#ff5a4e'; g.fillRect(305, 74, 2, 2);
+    // desks
+    SEATS.forEach(function (s) {
+      var st = agentState(s.a, clock);
+      s.state = st;
+      var dx = s.x - 22, dy = s.y;
+      // chair
+      g.fillStyle = '#2a2a33'; g.fillRect(s.x - 8, dy - 2, 16, 14);
+      // person (behind desk, facing camera)
+      drawPerson(g, s.x - 6, dy - 14 + (st.pose === 'sleep' ? 6 : 0), s.a, st.pose, t + s.x * 7);
+      // desk
+      g.fillStyle = '#4a3527'; g.fillRect(dx, dy + 2, 44, 6); g.fillStyle = '#35261c'; g.fillRect(dx, dy + 8, 44, 14);
+      g.fillStyle = '#2a1d15'; g.fillRect(dx + 2, dy + 22, 3, 6); g.fillRect(dx + 39, dy + 22, 3, 6);
+      // monitor (back of monitor faces us, glow around)
+      var glow = st.pose === 'work' ? ((Math.floor(t / 120) % 3) ? '#3ddc84' : '#2f9bff') : st.kind === 'done' ? '#3ddc84' : '#2a2a2f';
+      g.fillStyle = glow; g.fillRect(dx + 4, dy - 9, 14, 1);
+      g.fillStyle = '#0d0d10'; g.fillRect(dx + 4, dy - 8, 14, 10); g.fillStyle = '#3a3a44'; g.fillRect(dx + 10, dy + 2, 2, 1);
+      // mug
+      g.fillStyle = '#f4f4f1'; g.fillRect(dx + 34, dy - 1, 4, 3);
+      if (st.kind === 'done') { g.fillStyle = '#3ddc84'; g.fillRect(dx + 28, dy - 2, 2, 2); }
+    });
+    // Zzz particles for sleeping
+    SEATS.forEach(function (s) {
+      if (s.state.pose !== 'sleep' || s.state.kind === 'off') return;
+      var p = (t / 40 + s.x) % 24;
+      g.fillStyle = 'rgba(244,244,241,' + (1 - p / 24).toFixed(2) + ')';
+      g.fillRect(s.x + 6 + p / 4, s.y - 10 - p, 3, 1); g.fillRect(s.x + 8 + p / 4, s.y - 9 - p, 1, 1); g.fillRect(s.x + 6 + p / 4, s.y - 8 - p, 3, 1);
+    });
+  }
+
+  // overlay nameplates + bubbles
+  var ov = $('ov');
+  SEATS.forEach(function (s) {
+    var b = el('button', { class: 'seat', type: 'button', 'aria-pressed': 'false', 'aria-label': s.a.name });
+    b.style.left = (s.x / 320 * 100) + '%'; b.style.top = ((s.y + 30) / 200 * 100) + '%';
+    b.appendChild(el('span', { class: 'plate', text: s.a.name }));
+    b.addEventListener('click', function () { selectAgent(s.a.id, true); });
+    s.btn = b; ov.appendChild(b);
+    var bub = el('div', { class: 'bubble' }); bub.hidden = true;
+    bub.style.left = (s.x / 320 * 100) + '%'; bub.style.top = ((s.y - 18) / 200 * 100) + '%';
+    s.bub = bub; ov.appendChild(bub);
+  });
+  function updateOverlay() {
+    SEATS.forEach(function (s) {
+      var st = s.state; if (!st) return;
+      var show = st.kind === 'work' || st.kind === 'done' && sim.on || selected === s.a.id;
+      s.bub.hidden = !show;
+      if (show && s.bub.textContent !== st.text) s.bub.textContent = st.text;
+      s.btn.setAttribute('aria-pressed', String(selected === s.a.id));
+    });
+    var c = currentClock();
+    $('simClock').textContent = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][c.dow] + ' ' + fmtMin(c.min) + ' PT';
+  }
+
+  // ---------- agent cards ----------
+  var cardEls = {};
+  function renderAgents() {
+    var box = $('agents'); box.innerHTML = '';
+    AGENTS.forEach(function (a) {
+      var c = cfg(a.id);
+      var av = el('canvas', { class: 'ava', 'aria-hidden': 'true' }); drawAvatar(av, a);
+      var posts = agentPosts(a.id);
+      var lvl = Math.floor(Math.sqrt(posts / 2)) + 1;
+      var status = el('span', { class: 'pill' });
+      var modeSeg = el('div', { class: 'seg', role: 'group', 'aria-label': a.name + ' posting mode' });
+      [['auto', 'Auto-post'], ['approve', 'Ask me first']].forEach(function (m) {
+        var b = el('button', { type: 'button', text: m[1], 'aria-pressed': String(c.mode === m[0]) });
+        b.addEventListener('click', function () { setCfg(a.id, { mode: m[0] }); });
+        modeSeg.appendChild(b);
+      });
+      if (!a.ch) modeSeg.hidden = true;
+      var onBtn = el('button', { class: 'btn ghost small', type: 'button', text: c.on ? 'Turn off' : 'Turn on' });
+      onBtn.addEventListener('click', function () { setCfg(a.id, { on: !c.on }); });
+      var card = el('article', { class: 'agent' + (selected === a.id ? ' sel' : '') }, [
+        el('div', { class: 'agent-head' }, [av, el('div', { style: 'min-width:0;flex:1' }, [
+          el('div', { class: 'row between' }, [el('span', { class: 'agent-name', text: a.name }), status]),
+          el('span', { class: 'agent-lvl', text: 'LV ' + lvl + ' · ' + posts + ' posts' })
+        ])]),
+        el('p', { class: 'job', text: a.job }),
+        el('dl', { class: 'meta' }, [
+          el('dt', { text: 'When' }), el('dd', { text: schedText(a) }),
+          el('dt', { text: 'Posts to' }), el('dd', { text: a.ch ? '#' + a.ch : 'Content HQ + phone' })
+        ]),
+        el('div', { class: 'row between' }, [modeSeg, onBtn])
+      ]);
+      card.addEventListener('click', function (e) { if (e.target.closest('button')) return; selectAgent(a.id, false); });
+      cardEls[a.id] = { card: card, status: status };
+      box.appendChild(card);
+    });
+    updateCardStatus();
+  }
+  function updateCardStatus() {
+    AGENTS.forEach(function (a) {
+      var s = SEATS.filter(function (x) { return x.a === a; })[0], st = s && s.state, ce = cardEls[a.id];
+      if (!st || !ce) return;
+      var label = st.kind === 'work' ? 'Working' : st.kind === 'done' ? 'Done' : st.kind === 'off' ? 'Off' : st.kind === 'sleep' ? 'Asleep' : 'Waiting';
+      var cls = st.kind === 'work' || st.kind === 'done' ? 'live' : st.kind === 'off' ? 'off' : 'wait';
+      if (ce.status.dataset.k !== label) { ce.status.dataset.k = label; ce.status.className = 'pill ' + cls; ce.status.innerHTML = ''; ce.status.appendChild(el('i')); ce.status.appendChild(document.createTextNode(label)); }
+    });
+  }
+  function schedText(a) {
+    if (a.onEvent) return 'Right after ' + a.onEvent.replace('when ', '');
+    var d = a.days.length === 7 ? 'Every day' : a.days.length === 5 ? 'Weekdays' : a.days.length === 1 ? ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'][a.days[0]] : a.days.length + ' days a week';
+    return d + ' · ' + fmtMin(a.at) + ' PT';
+  }
+  function agentPosts(id) {
+    var n = 0;
+    if (id === 'payout') n = S.payouts.filter(function (p) { return p.post !== false; }).length;
+    if (id === 'recap') n = Object.keys(dayPnl()).length;
+    return n;
+  }
+  function selectAgent(id, scroll) {
+    selected = selected === id ? null : id;
+    Object.keys(cardEls).forEach(function (k) { cardEls[k].card.classList.toggle('sel', k === selected); });
+    if (scroll && selected && cardEls[id]) cardEls[id].card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    updateOverlay();
+  }
+  function setCfg(id, patch) {
+    var next = Object.assign({}, cfg(id), patch);
+    S.agentCfg[id] = next; renderAgents();
+    dbSet('agents/' + id, next);
+    toast(AGENTS.filter(function (a) { return a.id === id; })[0].name + (patch.mode ? (patch.mode === 'auto' ? ' will post on its own' : ' will ask you first') : (next.on ? ' is on' : ' is off')));
+  }
+
+  // ---------- activity feed ----------
+  var feedItems = [];
+  function feedAdd(min, who, text) {
+    feedItems.unshift({ min: min, who: who, text: text });
+    renderFeed();
+  }
+  function renderFeed() {
+    var f = $('feed'); f.innerHTML = '';
+    if (!feedItems.length) {
+      f.appendChild(el('p', { class: 'empty-state', text: 'Nothing has run yet. Tap “Run a trading day” to see what a normal weekday looks like.' }));
+      return;
+    }
+    feedItems.slice(0, 14).forEach(function (it) {
+      f.appendChild(el('div', { class: 'feed-item' }, [el('time', { text: fmtMin(it.min) }), el('p', null, [el('b', { text: it.who + ' ' }), it.text])]));
+    });
+  }
+
+  // ---------- simulation ----------
+  var SIM_START = 330, SIM_END = 1170, SIM_MS = 42000;
+  function simEvents() {
+    var tp = todaysTradesSummary();
+    var lastPay = S.payouts.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; })[0];
+    return [
+      { at: 345, who: 'Market Desk', text: 'woke up and pulled overnight NQ data.' },
+      { at: 351, who: 'Script Writer', text: 'wrote today’s talking video and bonus take in your Content HQ and pinged your phone.' },
+      { at: 354, who: 'Market Desk', text: 'posted the pre-market chart, levels and 8:30 AM ET news to #pre-market.' },
+      { at: 390, who: 'You', text: 'went live in the Discord.' },
+      { at: 552, who: 'Lead Closer', text: 'saw a new WARM application and dropped the reply text in #applicants.' },
+      { at: 819, who: 'Recap Bot', text: tp.n ? 'posted your recap: ' + money(tp.pnl, true) + ' on ' + tp.n + ' trade' + (tp.n === 1 ? '' : 's') + '.' : 'found no trades logged today, so it posted a market-only recap.' },
+      { at: 966, who: 'Payout Hype', text: lastPay ? 'posted your ' + money(lastPay.amount) + ' payout card to #payouts.' : 'had nothing to post (no payout logged).' },
+      { at: 1146, who: 'Hype Man', text: 'asked #general: “What’s one rule you broke this week? Be honest 👇”' }
+    ];
+  }
+  function startSim() {
+    sim.on = true; sim.min = SIM_START; sim.dow = 4; sim.startReal = performance.now(); sim.fired = {}; sim.events = simEvents();
+    feedItems = []; renderFeed();
+    $('simTag').hidden = false; $('simBtn').hidden = true; $('simStop').hidden = false; $('feedLabel').textContent = 'Simulated Thursday';
+  }
+  function stopSim() {
+    sim.on = false; $('simTag').hidden = true; $('simBtn').hidden = false; $('simStop').hidden = true;
+    $('simBtn').textContent = 'Run it again'; $('feedLabel').textContent = 'Simulated Thursday';
+    renderAgents();
+  }
+  $('simBtn').addEventListener('click', startSim);
+  $('simStop').addEventListener('click', stopSim);
+
+  var lastCardUpdate = 0;
+  function frame(t) {
+    if (sim.on) {
+      sim.min = SIM_START + (performance.now() - sim.startReal) / SIM_MS * (SIM_END - SIM_START);
+      sim.events.forEach(function (ev, i) { if (!sim.fired[i] && sim.min >= ev.at) { sim.fired[i] = true; feedAdd(ev.at, ev.who, ev.text); } });
+      if (sim.min >= SIM_END) stopSim();
+    }
+    drawRoom(t); updateOverlay();
+    if (t - lastCardUpdate > 500) { lastCardUpdate = t; updateCardStatus(); }
+    if (!document.hidden) requestAnimationFrame(frame);
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) requestAnimationFrame(frame); });
+
+  // ===================================================================
+  // DISCORD PREVIEW
+  // ===================================================================
+  var CHANNELS = [
+    { id: 'pre-market', agent: 'Market Desk', topic: 'Charts + levels before the open' },
+    { id: 'recaps', agent: 'Recap Bot', topic: 'How the day went' },
+    { id: 'payouts', agent: 'Payout Hype', topic: 'Money hitting accounts' },
+    { id: 'general', agent: 'Hype Man', topic: 'Talk' },
+    { id: 'weekly-outlook', agent: 'Week Ahead', topic: 'The week’s news' },
+    { id: 'applicants', agent: 'Lead Closer', topic: 'New 1:1 applications (private)' }
+  ];
+  var dcSel = 'pre-market';
+  function renderDcSide() {
+    var side = $('dcSide');
+    side.querySelectorAll('.dc-ch').forEach(function (n) { n.remove(); });
+    CHANNELS.forEach(function (c) {
+      var b = el('button', { class: 'dc-ch', type: 'button', 'aria-pressed': String(c.id === dcSel) }, [el('span', { text: '# ' + c.id }), el('small', { text: c.agent.split(' ')[0] })]);
+      b.addEventListener('click', function () { dcSel = c.id; renderDcSide(); renderDc(); });
+      side.appendChild(b);
+    });
+  }
+  function nextWeekday() { var d = new Date(); do { d.setDate(d.getDate() + 1); } while (d.getDay() === 0 || d.getDay() === 6); return d; }
+  function mdy(d) { return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate(); }
+  function msg(time, text, embed) {
+    return el('div', { class: 'msg' }, [
+      el('div', { class: 'msg-ava', text: 'BNB' }),
+      el('div', { class: 'msg-body' }, [
+        el('div', { class: 'msg-who' }, [el('b', { text: 'BNB Desk' }), el('span', { class: 'app', text: 'APP' }), el('time', { text: time })]),
+        text ? el('div', { class: 'msg-text', text: text }) : null,
+        embed || null
+      ])
+    ]);
+  }
+  function embedWith(canvas, color, flag) {
+    var e = el('div', { class: 'embed' }, [canvas, flag ? el('span', { class: 'sample-flag', text: flag }) : null]);
+    if (color) e.style.borderLeftColor = color;
+    return e;
+  }
+  function renderDc() {
+    var c = CHANNELS.filter(function (x) { return x.id === dcSel; })[0];
+    var t = $('dcTitle'); t.innerHTML = ''; t.appendChild(document.createTextNode('# ' + c.id)); t.appendChild(el('span', { text: c.topic + ' · posted by ' + c.agent }));
+    var m = $('dcMsgs'); m.innerHTML = '';
+    var d = nextWeekday(), when = 'Today at ';
+    if (c.id === 'pre-market') {
+      m.appendChild(msg(when + '5:54 AM',
+        '🌅 PRE-MARKET · ' + mdy(d) + '\n\n' +
+        'NQ overnight: holding above yesterday’s high\n\n' +
+        'Levels on my chart:\n🔺 21,482 overnight high\n🔻 21,356 yesterday’s low\n➖ 21,410 yesterday’s close\n\n' +
+        '📰 8:30 AM ET CPI · 2:00 PM ET Fed speaker\n\n' +
+        'Let the news hit before you touch anything. Protect the account first.\n' +
+        'Live at 6:30 AM PT 🔴\n\n' +
+        'Not financial advice.',
+        embedWith(drawPremarket(), css('--hl'), 'Sample chart · real one uses live NQ data')));
+    } else if (c.id === 'recaps') {
+      var tp = todaysTradesSummary(), real = tp.n > 0, sp = real ? tp : { pnl: 840, n: 3, wins: 2 };
+      m.appendChild(msg(when + '1:39 PM',
+        '📊 RECAP · ' + mdy(new Date()) + '\n\n' +
+        (sp.pnl >= 0 ? 'Green day. ' : 'Red day, but I followed the plan. ') + sp.n + ' trade' + (sp.n === 1 ? '' : 's') + ', ' + sp.wins + ' winner' + (sp.wins === 1 ? '' : 's') + '.\n' +
+        'Lesson: the best trade today was the one I didn’t take.\n\n' +
+        'Want to learn how I trade? The Discord is free, mentorship apps are in #apply 👇',
+        embedWith(drawRecapCard(sp), sp.pnl >= 0 ? css('--good') : css('--bad'), real ? null : 'Sample · uses your journal once you log today’s trades')));
+    } else if (c.id === 'payouts') {
+      var lp = S.payouts.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; })[0];
+      var pay = lp || { amount: 2500, firm: 'Tradeify', date: isoLocal(new Date()) };
+      m.appendChild(msg(when + '4:06 PM',
+        '💰 ANOTHER ONE · ' + money(pay.amount) + ' payout from ' + (pay.firm || 'Tradeify') + '\n\n' +
+        'Same rules every day. Nothing fancy.\n' +
+        'Getting funded? Use code BNB on Tradeify ⚡',
+        embedWith(drawPayoutCard(pay), css('--good'), lp ? null : 'Sample · uses your real payouts once you log one')));
+    } else if (c.id === 'general') {
+      m.appendChild(msg(when + '7:02 PM', 'Real question: what’s one rule you broke this week, and what did it cost you? Be honest 👇'));
+      m.appendChild(msg('Yesterday at 7:01 PM', 'This or that: one big win a week or small green days every day? 👇'));
+    } else if (c.id === 'weekly-outlook') {
+      var mon = new Date(); mon.setDate(mon.getDate() + ((8 - mon.getDay()) % 7 || 7)); var fri = new Date(mon); fri.setDate(mon.getDate() + 4);
+      m.appendChild(msg('Sunday at 5:08 PM',
+        '📅 WEEK AHEAD · ' + (mon.getMonth() + 1) + '/' + mon.getDate() + '–' + (fri.getMonth() + 1) + '/' + fri.getDate() + '\n\n' +
+        'News to watch:\nMon – No major news\nTue – 10:00 AM ET JOLTS\nWed – 8:30 AM ET CPI 🚨\nThu – 8:30 AM ET Jobless claims, PPI\nFri – 10:00 AM ET Consumer sentiment\n\n' +
+        'Live Mon–Fri 6:30 AM PT 🔴\n\nWhat’s your goal this week? 👇'));
+      m.appendChild(el('p', { class: 'sample-flag', text: 'Sample week · the real post uses that week’s calendar' }));
+    } else if (c.id === 'applicants') {
+      m.appendChild(msg(when + '9:12 AM',
+        '🟡 WARM · new 1:1 application\nTrading under 6 months · keeps failing evals · budget $500–$1,000\n\n' +
+        'Copy this to them:\n“Yo, it’s Gene from BNBProfits. Saw your application 🤝 Failing evals from guessing and moving your stop is all fixable, that’s exactly what I fix in 1:1. It’s a paid mentorship. If you’re ready to invest and lock in, let me know and I’ll send you the details.”'));
+      m.appendChild(el('p', { class: 'sample-flag', text: 'Sample applicant · never auto-sends to the person, you send it' }));
+    }
+    var a = AGENTS.filter(function (x) { return x.ch === c.id; })[0];
+    m.appendChild(el('p', { class: 'dc-sched', text: a ? (schedText(a) + ' · ' + (cfg(a.id).mode === 'auto' ? 'posts on its own' : 'waits for your OK')) : 'Runs the moment an application comes in.' }));
+  }
+
+  // ---------- generated images ----------
+  function seeded(seed) { return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
+  function drawPremarket() {
+    var W = 1040, H = 560, cv = el('canvas', { width: W, height: H, 'aria-label': 'Sample NQ pre-market chart with levels' }), g = cv.getContext('2d');
+    g.fillStyle = '#0a0a0b'; g.fillRect(0, 0, W, H);
+    var r = seeded(20261113), n = 78, p = 21360, bars = [];
+    for (var i = 0; i < n; i++) {
+      var o = p, c = o + (r() - 0.46) * 22, h = Math.max(o, c) + r() * 10, l = Math.min(o, c) - r() * 10; bars.push([o, h, l, c]); p = c;
+    }
+    var hi = Math.max.apply(null, bars.map(function (b) { return b[1]; })), lo = Math.min.apply(null, bars.map(function (b) { return b[2]; }));
+    var top = Math.max(hi, 21482) + 15, bot = Math.min(lo, 21356) - 15;
+    var L = 30, R = W - 130, T = 70, B = H - 40;
+    function y(v) { return T + (top - v) / (top - bot) * (B - T); }
+    g.strokeStyle = '#1b1b1e'; g.lineWidth = 1;
+    for (var gy = Math.ceil(bot / 25) * 25; gy < top; gy += 25) { g.beginPath(); g.moveTo(L, y(gy)); g.lineTo(R, y(gy)); g.stroke(); g.fillStyle = '#6d6d73'; g.font = '16px JetBrains Mono, monospace'; g.fillText(gy.toLocaleString('en-US'), R + 10, y(gy) + 5); }
+    var bw = (R - L) / n;
+    bars.forEach(function (b, k) {
+      var up = b[3] >= b[0], x = L + k * bw + bw / 2;
+      g.strokeStyle = g.fillStyle = up ? '#3ddc84' : '#ff5a4e';
+      g.beginPath(); g.moveTo(x, y(b[1])); g.lineTo(x, y(b[2])); g.stroke();
+      var yt = y(Math.max(b[0], b[3])), yb = y(Math.min(b[0], b[3]));
+      g.fillRect(x - bw * 0.35, yt, bw * 0.7, Math.max(1, yb - yt));
+    });
+    [[21482, 'ON HIGH', '#3ddc84'], [21410, 'PREV CLOSE', '#a3a3a8'], [21356, 'PREV LOW', '#ff5a4e']].forEach(function (lv) {
+      g.setLineDash([8, 6]); g.strokeStyle = lv[2]; g.lineWidth = 2; g.beginPath(); g.moveTo(L, y(lv[0])); g.lineTo(R, y(lv[0])); g.stroke(); g.setLineDash([]);
+      g.fillStyle = lv[2]; g.fillRect(R + 4, y(lv[0]) - 13, 122, 26);
+      g.fillStyle = '#0a0a0b'; g.font = 'bold 15px JetBrains Mono, monospace'; g.fillText(lv[0].toLocaleString('en-US'), R + 12, y(lv[0]) + 5);
+      g.fillStyle = lv[2]; g.font = 'bold 14px JetBrains Mono, monospace'; g.fillText(lv[1], L + 8, y(lv[0]) - 8);
+    });
+    g.fillStyle = '#f4f4f1'; g.font = '900 34px Archivo, Arial Black, sans-serif'; g.fillText('NQ PRE-MARKET', L, 46);
+    g.fillStyle = '#a3a3a8'; g.font = '18px JetBrains Mono, monospace'; g.fillText('5m · ' + mdy(nextWeekday()) + ' · @bnbgene', L + 300, 44);
+    g.fillStyle = '#f5b84a'; g.font = 'bold 16px JetBrains Mono, monospace'; g.fillText('SAMPLE DATA', W - 140, 44);
+    return cv;
+  }
+  function cardBase(W, H) {
+    var cv = el('canvas', { width: W, height: H }), g = cv.getContext('2d');
+    g.fillStyle = '#0a0a0b'; g.fillRect(0, 0, W, H);
+    g.strokeStyle = '#2a2a2f'; g.lineWidth = 2; g.strokeRect(14, 14, W - 28, H - 28);
+    return { cv: cv, g: g };
+  }
+  function drawRecapCard(sp) {
+    var o = cardBase(1040, 480), g = o.g;
+    g.fillStyle = '#a3a3a8'; g.font = '20px JetBrains Mono, monospace'; g.fillText('DAILY RECAP · ' + mdy(new Date()).toUpperCase(), 56, 80);
+    g.fillStyle = sp.pnl >= 0 ? '#3ddc84' : '#ff5a4e'; g.font = '900 150px Archivo, Arial Black, sans-serif'; g.fillText(money(sp.pnl, true), 50, 250);
+    g.fillStyle = '#f4f4f1'; g.font = '800 34px Archivo, Arial, sans-serif';
+    g.fillText(sp.n + ' TRADES', 56, 340); g.fillText(sp.wins + ' WINS', 330, 340); g.fillText(Math.round(sp.wins / Math.max(1, sp.n) * 100) + '% WIN RATE', 560, 340);
+    g.fillStyle = '#6d6d73'; g.font = '20px JetBrains Mono, monospace'; g.fillText('@bnbgene · BNBPROFITS', 56, 420);
+    return o.cv;
+  }
+  function drawPayoutCard(p) {
+    var o = cardBase(1040, 480), g = o.g;
+    g.fillStyle = '#a3a3a8'; g.font = '20px JetBrains Mono, monospace'; g.fillText('PAYOUT · ' + (p.firm || 'TRADEIFY').toUpperCase() + ' · ' + p.date, 56, 80);
+    g.fillStyle = '#3ddc84'; g.font = '900 170px Archivo, Arial Black, sans-serif'; g.fillText(money(p.amount), 50, 270);
+    g.fillStyle = '#f4f4f1'; g.font = '900 44px Archivo, Arial Black, sans-serif'; g.fillText('ANOTHER ONE 🤝', 56, 360);
+    g.fillStyle = '#6d6d73'; g.font = '20px JetBrains Mono, monospace'; g.fillText('CODE BNB ON TRADEIFY · @bnbgene', 56, 420);
+    return o.cv;
+  }
+
+  // ===================================================================
+  // TRADES
+  // ===================================================================
+  function dayPnl() {
+    var m = {};
+    S.trades.forEach(function (t) { m[t.date] = (m[t.date] || 0) + (+t.pnl || 0); });
+    return m;
+  }
+  function todaysTradesSummary() {
+    var d = isoLocal(new Date()), ts = S.trades.filter(function (t) { return t.date === d; });
+    return { n: ts.length, pnl: ts.reduce(function (s, t) { return s + (+t.pnl || 0); }, 0), wins: ts.filter(function (t) { return +t.pnl > 0; }).length };
+  }
+  function renderTrades() {
+    var ts = S.trades, wins = ts.filter(function (t) { return +t.pnl > 0; }), losses = ts.filter(function (t) { return +t.pnl < 0; });
+    var month = isoLocal(new Date()).slice(0, 7);
+    var mNet = ts.filter(function (t) { return t.date.slice(0, 7) === month; }).reduce(function (s, t) { return s + (+t.pnl); }, 0);
+    var gw = wins.reduce(function (s, t) { return s + (+t.pnl); }, 0), gl = -losses.reduce(function (s, t) { return s + (+t.pnl); }, 0);
+    var rules = ts.length ? Math.round(ts.filter(function (t) { return t.rules !== 'no'; }).length / ts.length * 100) : null;
+    var dp = dayPnl(), days = Object.keys(dp).sort(), streak = 0;
+    for (var i = days.length - 1; i >= 0 && dp[days[i]] > 0; i--) streak++;
+    var tiles = [
+      ['This month', ts.length ? money(mNet, true) : '—', mNet > 0 ? 'pos' : mNet < 0 ? 'neg' : ''],
+      ['Win rate', ts.length ? Math.round(wins.length / ts.length * 100) + '%' : '—', ''],
+      ['Avg win / loss', ts.length ? money(wins.length ? gw / wins.length : 0) + ' / ' + money(losses.length ? gl / losses.length : 0) : '—', ''],
+      ['Profit factor', gl > 0 ? (gw / gl).toFixed(2) : wins.length ? '∞' : '—', ''],
+      ['Followed rules', rules == null ? '—' : rules + '%', rules != null && rules < 80 ? 'neg' : ''],
+      ['Green day streak', String(streak), streak ? 'pos' : '']
+    ];
+    var box = $('tradeTiles'); box.innerHTML = '';
+    tiles.forEach(function (t) { box.appendChild(el('div', { class: 'tile' }, [el('span', { class: 'label', text: t[0] }), el('b', { class: t[2], text: t[1] })])); });
+
+    var list = $('tradeList'); list.innerHTML = '';
+    var sorted = ts.slice().sort(function (a, b) { return (b.date + (b.created || '')).localeCompare(a.date + (a.created || '')); });
+    if (!sorted.length) list.appendChild(el('p', { class: 'empty-state', text: 'No trades yet. Log your first one on the left and it shows up here, on the calendar and in your recap post.' }));
+    sorted.slice(0, 30).forEach(function (t) {
+      var x = el('button', { class: 'x', type: 'button', 'aria-label': 'Delete trade', text: '×' });
+      x.addEventListener('click', function () { confirmDel(x, function () { dbDel('trades/' + t._id); }); });
+      list.appendChild(el('div', { class: 'li' }, [
+        el('div', { style: 'min-width:0' }, [el('div', { text: t.date + ' · ' + t.side + ' ' + t.qty + ' ' + t.sym + (t.rules === 'no' ? ' · broke rules' : '') }), el('div', { class: 'sub', text: [t.acct, t.note].filter(Boolean).join(' · ') || ' ' })]),
+        el('b', { class: 'num ' + (+t.pnl >= 0 ? 'pos' : 'neg'), text: money(+t.pnl, true) }), x
+      ]));
+    });
+    var accts = {};
+    S.trades.concat(S.payouts).forEach(function (t) { if (t.acct) accts[t.acct] = 1; });
+    var dl = $('acctList'); dl.innerHTML = ''; Object.keys(accts).forEach(function (a) { dl.appendChild(el('option', { value: a })); });
+    renderCal(); drawEquity();
+  }
+  function confirmDel(btn, fn) {
+    if (btn.dataset.arm) { fn(); return; }
+    btn.dataset.arm = '1'; btn.textContent = 'Delete?'; btn.style.color = css('--bad');
+    setTimeout(function () { if (btn.isConnected) { delete btn.dataset.arm; btn.textContent = '×'; btn.style.color = ''; } }, 3000);
+  }
+  var calMonth = new Date(); calMonth.setDate(1);
+  function renderCal() {
+    var box = $('cal'); box.innerHTML = '';
+    var y = calMonth.getFullYear(), mo = calMonth.getMonth(), dp = dayPnl();
+    $('calTitle').textContent = calMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(function (d) { box.appendChild(el('div', { class: 'dow', text: d })); });
+    var first = new Date(y, mo, 1).getDay(), n = new Date(y, mo + 1, 0).getDate(), today = isoLocal(new Date());
+    for (var i = 0; i < first; i++) box.appendChild(el('div', { class: 'day empty' }));
+    for (var d = 1; d <= n; d++) {
+      var key = y + '-' + pad(mo + 1) + '-' + pad(d), v = dp[key];
+      var c = 'day' + (v > 0 ? ' g' : v < 0 ? ' r' : '') + (key === today ? ' today' : '');
+      var short = v == null ? '' : (v < 0 ? '-' : '+') + '$' + (Math.abs(v) >= 1000 ? (Math.abs(v) / 1000).toFixed(1) + 'k' : Math.round(Math.abs(v)));
+      box.appendChild(el('div', { class: c, title: v == null ? key : key + ': ' + money(v, true) }, [el('span', { text: String(d) }), el('b', { class: v > 0 ? 'pos' : v < 0 ? 'neg' : '', text: short })]));
+    }
+  }
+  $('calPrev').addEventListener('click', function () { calMonth.setMonth(calMonth.getMonth() - 1); renderCal(); });
+  $('calNext').addEventListener('click', function () { calMonth.setMonth(calMonth.getMonth() + 1); renderCal(); });
+
+  function setupCanvas(cv) {
+    var r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    if (!r.width) return null;
+    cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+    var g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { g: g, W: r.width, H: r.height };
+  }
+  function drawEquity() {
+    var o = setupCanvas($('eqChart')); if (!o) return;
+    var g = o.g, W = o.W, H = o.H, dp = dayPnl(), days = Object.keys(dp).sort();
+    g.clearRect(0, 0, W, H);
+    if (!days.length) { g.fillStyle = css('--dim'); g.font = '14px Archivo, sans-serif'; g.textAlign = 'center'; g.fillText('Your curve draws itself as you log trades', W / 2, H / 2); g.textAlign = 'left'; return; }
+    var pts = [0], s = 0; days.forEach(function (d) { s += dp[d]; pts.push(s); });
+    var mx = Math.max.apply(null, pts), mn = Math.min.apply(null, pts); if (mx === mn) { mx += 1; mn -= 1; }
+    var L = 8, R = W - 64, T = 12, B = H - 22;
+    function X(i) { return L + i / (pts.length - 1 || 1) * (R - L); }
+    function Y(v) { return T + (mx - v) / (mx - mn) * (B - T); }
+    g.strokeStyle = css('--line'); g.lineWidth = 1;
+    [mx, 0, mn].forEach(function (v) { g.beginPath(); g.moveTo(L, Y(v)); g.lineTo(R, Y(v)); g.stroke(); g.fillStyle = css('--dim'); g.font = '11px JetBrains Mono, monospace'; g.fillText(money(Math.round(v)), R + 6, Y(v) + 4); });
+    var col = s >= 0 ? css('--good') : css('--bad');
+    g.beginPath(); pts.forEach(function (v, i) { if (i) g.lineTo(X(i), Y(v)); else g.moveTo(X(i), Y(v)); });
+    g.strokeStyle = col; g.lineWidth = 2; g.stroke();
+    g.lineTo(X(pts.length - 1), Y(Math.max(mn, 0) === 0 ? 0 : mn)); g.lineTo(X(0), Y(Math.max(mn, 0) === 0 ? 0 : mn)); g.closePath();
+    g.globalAlpha = .12; g.fillStyle = col; g.fill(); g.globalAlpha = 1;
+    g.beginPath(); g.arc(X(pts.length - 1), Y(s), 4, 0, 7); g.fillStyle = col; g.fill();
+    g.fillStyle = css('--dim'); g.font = '11px JetBrains Mono, monospace'; g.fillText(days[0], L, H - 4); var lw = g.measureText(days[days.length - 1]).width; g.fillText(days[days.length - 1], R - lw, H - 4);
+    $('eqLabel').textContent = days.length + ' trading day' + (days.length === 1 ? '' : 's');
+  }
+
+  $('tDate').value = isoLocal(new Date());
+  $('tradeForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!S.db) { toast('Open the farm from your sidebar to save.'); return; }
+    var pnl = parseFloat($('tPnl').value);
+    if (isNaN(pnl)) { toast('Add the P&L in dollars, like 640 or -220.'); return; }
+    var t = { date: $('tDate').value, sym: $('tSym').value, side: $('tSide').value, qty: Math.max(1, parseInt($('tQty').value, 10) || 1), pnl: pnl, acct: $('tAcct').value.trim(), rules: $('tRules').value, note: $('tNote').value.trim(), created: new Date().toISOString() };
+    var id = 't' + Date.now().toString(36);
+    dbSet('trades/' + id, t).then(function () {
+      toast(pnl >= 0 ? 'Saved. +' + (5 + (t.rules === 'yes' ? 5 : 0)) + ' XP' : 'Saved. Red days count too. +' + (5 + (t.rules === 'yes' ? 5 : 0)) + ' XP');
+      $('tPnl').value = ''; $('tNote').value = '';
+    });
+  });
+
+  // ===================================================================
+  // PAYOUTS
+  // ===================================================================
+  var MILESTONES = [[1, 'FIRST PAYOUT'], [1000, '$1K CLUB'], [5000, '$5K'], [10000, '$10K'], [25000, '$25K'], [50000, '$50K'], [100000, '$100K'], [250000, '$250K']];
+  function renderPayouts() {
+    var ps = S.payouts, total = ps.reduce(function (s, p) { return s + (+p.amount || 0); }, 0);
+    var yr = String(new Date().getFullYear()), yTot = ps.filter(function (p) { return p.date.slice(0, 4) === yr; }).reduce(function (s, p) { return s + (+p.amount); }, 0);
+    var big = ps.reduce(function (m, p) { return Math.max(m, +p.amount); }, 0);
+    var tiles = [['All-time payouts', money(total), total ? 'pos' : ''], ['This year', money(yTot), ''], ['Payouts', String(ps.length), ''], ['Biggest', big ? money(big) : '—', ''], ['Average', ps.length ? money(Math.round(total / ps.length)) : '—', '']];
+    var box = $('payTiles'); box.innerHTML = '';
+    tiles.forEach(function (t) { box.appendChild(el('div', { class: 'tile' }, [el('span', { class: 'label', text: t[0] }), el('b', { class: t[2], text: t[1] })])); });
+
+    var next = MILESTONES.filter(function (m) { return total < m[0]; })[0], prev = MILESTONES.filter(function (m) { return total >= m[0]; }).pop();
+    var base = prev ? prev[0] : 0;
+    $('goalFill').style.width = next ? Math.min(100, (total - base) / (next[0] - base) * 100) + '%' : '100%';
+    $('goalText').textContent = next ? money(next[0] - total) + ' to ' + next[1] : 'Every milestone unlocked';
+    var bx = $('badges'); bx.innerHTML = '';
+    MILESTONES.forEach(function (m, i) {
+      var got = total >= m[0], cv = el('canvas', { width: 10, height: 10, 'aria-hidden': 'true' });
+      drawCoin(cv, got, i);
+      bx.appendChild(el('div', { class: 'badge' + (got ? '' : ' locked') }, [cv, el('b', { text: m[1] }), el('span', { class: 'label', text: got ? 'Unlocked' : 'Locked' })]));
+    });
+
+    var list = $('payList'); list.innerHTML = '';
+    var sorted = ps.slice().sort(function (a, b) { return b.date.localeCompare(a.date); });
+    if (!sorted.length) list.appendChild(el('p', { class: 'empty-state', text: 'No payouts logged yet. Add your last one above, it counts toward your milestones and the #payouts post.' }));
+    sorted.forEach(function (p) {
+      var x = el('button', { class: 'x', type: 'button', 'aria-label': 'Delete payout', text: '×' });
+      x.addEventListener('click', function () { confirmDel(x, function () { dbDel('payouts/' + p._id); }); });
+      list.appendChild(el('div', { class: 'li' }, [
+        el('div', { style: 'min-width:0' }, [el('div', { text: p.date + ' · ' + (p.firm || 'Tradeify') + (p.acct ? ' · ' + p.acct : '') }), el('div', { class: 'sub', text: p.post === false ? 'Private' : 'Shared to #payouts' })]),
+        el('b', { class: 'num pos', text: money(+p.amount) }), x
+      ]));
+    });
+    drawPayChart();
+  }
+  function drawCoin(cv, got, i) {
+    var g = cv.getContext('2d'), c = got ? ['#f5b84a', '#3ddc84', '#2f9bff', '#f4f4f1'][i % 4] : '#6d6d73';
+    g.fillStyle = c; g.fillRect(3, 0, 4, 1); g.fillRect(1, 1, 8, 1); g.fillRect(0, 2, 10, 6); g.fillRect(1, 8, 8, 1); g.fillRect(3, 9, 4, 1);
+    g.fillStyle = '#0a0a0b'; g.fillRect(4, 3, 2, 4); g.fillRect(3, 3, 1, 1); g.fillRect(6, 6, 1, 1);
+  }
+  function drawPayChart() {
+    var o = setupCanvas($('payChart')); if (!o) return;
+    var g = o.g, W = o.W, H = o.H; g.clearRect(0, 0, W, H);
+    var months = [], now = new Date();
+    for (var i = 11; i >= 0; i--) { var d = new Date(now.getFullYear(), now.getMonth() - i, 1); months.push({ k: d.getFullYear() + '-' + pad(d.getMonth() + 1), l: d.toLocaleString('en-US', { month: 'narrow' }), v: 0 }); }
+    S.payouts.forEach(function (p) { months.forEach(function (m) { if (p.date.slice(0, 7) === m.k) m.v += +p.amount; }); });
+    var mx = Math.max.apply(null, months.map(function (m) { return m.v; }));
+    var L = 4, R = W - 4, T = 22, B = H - 20, bw = (R - L) / 12;
+    if (!mx) { g.fillStyle = css('--dim'); g.font = '14px Archivo, sans-serif'; g.textAlign = 'center'; g.fillText('Bars show up when you log payouts', W / 2, H / 2); g.textAlign = 'left'; }
+    months.forEach(function (m, i) {
+      var h = mx ? m.v / mx * (B - T) : 0, x = L + i * bw;
+      g.fillStyle = m.v ? css('--good') : css('--line');
+      g.fillRect(x + bw * .18, B - Math.max(h, 2), bw * .64, Math.max(h, 2));
+      g.fillStyle = css('--dim'); g.font = '11px JetBrains Mono, monospace'; g.textAlign = 'center';
+      g.fillText(m.l, x + bw / 2, H - 4);
+      if (m.v && m.v === mx) { g.fillStyle = css('--fg'); g.fillText(money(m.v), x + bw / 2, B - h - 6); }
+      g.textAlign = 'left';
+    });
+  }
+  $('pDate').value = isoLocal(new Date());
+  $('payForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!S.db) { toast('Open the farm from your sidebar to save.'); return; }
+    var amt = parseFloat($('pAmt').value);
+    if (!(amt > 0)) { toast('Add the payout amount in dollars.'); return; }
+    var p = { date: $('pDate').value, amount: amt, firm: $('pFirm').value.trim() || 'Tradeify', acct: $('pAcct').value.trim(), post: $('pPost').value === 'yes', created: new Date().toISOString() };
+    dbSet('payouts/p' + Date.now().toString(36), p).then(function () {
+      toast('Payout saved. +' + Math.round(amt / 10) + ' XP 💰'); $('pAmt').value = '';
+    });
+  });
+
+  // ===================================================================
+  // XP / LEVEL
+  // ===================================================================
+  function renderXp() {
+    var xp = 0, dp = dayPnl();
+    S.trades.forEach(function (t) { xp += 5 + (t.rules !== 'no' ? 5 : 0); });
+    Object.keys(dp).forEach(function (d) { if (dp[d] > 0) xp += 10; });
+    S.payouts.forEach(function (p) { xp += Math.round((+p.amount || 0) / 10); });
+    var lvl = Math.floor(Math.sqrt(xp / 60)) + 1, cur = 60 * Math.pow(lvl - 1, 2), nxt = 60 * Math.pow(lvl, 2);
+    $('lvlBadge').textContent = 'LVL ' + lvl;
+    $('xpFill').style.width = ((xp - cur) / (nxt - cur) * 100).toFixed(1) + '%';
+    $('xpText').textContent = xp.toLocaleString('en-US') + ' XP · ' + (nxt - xp).toLocaleString('en-US') + ' to LVL ' + (lvl + 1);
+  }
+
+  // ===================================================================
+  // SETUP
+  // ===================================================================
+  var CHECK = [
+    'Make a webhook for each channel: Server Settings › Integrations › Webhooks. Name it “BNB Desk” and give it the logo.',
+    'Paste the webhook links to Claude in chat (not here) so they get saved as private keys.',
+    'Let Claude’s environment reach discord.com and a market-data source for the NQ chart.',
+    'Claude creates one scheduled task per agent and turns them on.',
+    'First week on “Ask me first”. Flip each one to Auto-post once you like its posts.'
+  ];
+  function renderSetup() {
+    var c = $('checklist'); c.innerHTML = '';
+    CHECK.forEach(function (t) { c.appendChild(el('div', null, [el('i', { text: '□' }), el('span', { text: t })])); });
+    var q = S.queue.filter(function (x) { return x.status === 'pending'; });
+    $('queueCount').textContent = String(q.length);
+    var l = $('queueList'); l.innerHTML = '';
+    if (!q.length) { l.appendChild(el('p', { class: 'empty-state', text: 'Posts from agents on “Ask me first” show up here with Approve and Skip buttons.' })); return; }
+    q.forEach(function (x) {
+      var ok = el('button', { class: 'btn small', type: 'button', text: 'Approve' }), no = el('button', { class: 'btn ghost small', type: 'button', text: 'Skip' });
+      ok.addEventListener('click', function () { dbUpdate('queue/' + x._id, { status: 'approved' }).then(function () { toast('Approved. It posts on the agent’s next run.'); }); });
+      no.addEventListener('click', function () { dbUpdate('queue/' + x._id, { status: 'skipped' }); });
+      l.appendChild(el('div', { class: 'li', style: 'grid-template-columns:1fr auto' }, [
+        el('div', { style: 'min-width:0' }, [el('div', { text: (x.agent || 'Agent') + ' → #' + (x.channel || '') }), el('div', { class: 'sub', style: 'white-space:pre-wrap', text: String(x.text || '').slice(0, 400) })]),
+        el('div', { class: 'row' }, [ok, no])
+      ]));
+    });
+  }
+
+  // ===================================================================
+  // TABS
+  // ===================================================================
+  var drawn = {};
+  function showTab(name) {
+    document.querySelectorAll('.tab').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.tab === name)); });
+    document.querySelectorAll('section.view').forEach(function (s) { s.hidden = s.id !== 'v-' + name; });
+    if (name === 'discord') { renderDcSide(); renderDc(); }
+    if (name === 'trades') drawEquity();
+    if (name === 'payouts') drawPayChart();
+    try { localStorage.setItem('farmTab', name); } catch (e) {}
+  }
+  document.querySelectorAll('.tab').forEach(function (b) { b.addEventListener('click', function () { showTab(b.dataset.tab); }); });
+  window.addEventListener('resize', function () { drawEquity(); drawPayChart(); });
+
+  // ===================================================================
+  // DB
+  // ===================================================================
+  function dbSet(path, data) {
+    if (!S.db) return Promise.reject();
+    return S.db.doc(path).set(data).catch(function (e) { toast("Couldn't save. Try again."); throw e; });
+  }
+  function dbUpdate(path, data) { return S.db ? S.db.doc(path).update(data).catch(function () { toast("Couldn't save. Try again."); }) : Promise.resolve(); }
+  function dbDel(path) { return S.db ? S.db.doc(path).delete().catch(function () { toast("Couldn't delete. Try again."); }) : Promise.resolve(); }
+  function listen(coll, fn) {
+    S.db.collection(coll).onSnapshot(function (snap) {
+      fn(snap.docs.map(function (d) { var x = Object.assign({}, d.data()); x._id = d.id; return x; }));
+      renderAll();
+    }, function () {});
+  }
+  function renderAll() { renderTrades(); renderPayouts(); renderXp(); renderAgents(); renderSetup(); if (!$('v-discord').hidden) renderDc(); }
+  var dbP = (window.claude && window.claude.use) ? window.claude.use('db') : Promise.resolve(null);
+  dbP.then(function (db) {
+    if (!db) { $('offline').hidden = false; return; }
+    S.db = db;
+    listen('trades', function (a) { S.trades = a.filter(function (t) { return t.date; }); });
+    listen('payouts', function (a) { S.payouts = a.filter(function (p) { return p.date; }); });
+    listen('agents', function (a) { S.agentCfg = {}; a.forEach(function (x) { S.agentCfg[x._id] = x; }); });
+    listen('queue', function (a) { S.queue = a; });
+  }).catch(function () { $('offline').hidden = false; });
+
+  // boot
+  renderAll(); renderFeed();
+  var saved = null; try { saved = localStorage.getItem('farmTab'); } catch (e) {}
+  showTab(saved && $('v-' + saved) ? saved : 'farm');
+  setInterval(function () { var c = nowPT(); $('ptClock').textContent = fmtMin(c.min) + ' PT'; }, 15000);
+  $('ptClock').textContent = fmtMin(nowPT().min) + ' PT';
+  requestAnimationFrame(frame);
+})();
+</script>
