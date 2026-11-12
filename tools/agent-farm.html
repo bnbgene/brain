@@ -227,6 +227,17 @@
   .seg-btn[aria-pressed="true"] { background: var(--warn); color: #0a0a0b; border-color: var(--warn); }
   .ckb { font-family: var(--mono); font-size: .62rem; letter-spacing: .06em; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 6px; margin-left: 6px; }
   .ckb.ap { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+  /* content */
+  .hook { font-size: 1.15rem; text-transform: none; font-variation-settings: "wdth" 105; letter-spacing: 0; }
+  pre.script { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--body); font-size: 1rem; line-height: 1.55; background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+  pre.script.small { font-size: .9rem; padding: 10px 12px; }
+  .meta-grid { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; align-items: baseline; font-size: .9rem; }
+  .post-btn[aria-pressed="true"] { background: var(--good); border-color: var(--good); color: #0a0a0b; }
+  .dline { display: grid; gap: 6px; }
+  details.past { border-top: 1px solid var(--line); padding: 10px 0; }
+  details.past summary { cursor: pointer; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  details.past pre { margin-top: 8px; }
+  .copy-fallback { margin-top: 6px; min-height: 80px; }
   .toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: .85rem; z-index: 40; }
 
   @media (max-width: 640px) {
@@ -247,6 +258,7 @@
   </div>
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button class="tab" role="tab" data-tab="farm" aria-selected="true">Farm</button>
+    <button class="tab" role="tab" data-tab="content" aria-selected="false">Content</button>
     <button class="tab" role="tab" data-tab="checklist" aria-selected="false">Checklist</button>
     <button class="tab" role="tab" data-tab="news" aria-selected="false">News</button>
     <button class="tab" role="tab" data-tab="discord" aria-selected="false">Discord</button>
@@ -282,6 +294,11 @@
       <div class="feed" id="feed"></div>
     </div>
     <div class="agents" id="agents"></div>
+  </section>
+
+  <!-- CONTENT -->
+  <section class="view" id="v-content" hidden>
+    <div id="contentBody" style="display:grid;gap:18px"></div>
   </section>
 
   <!-- CHECKLIST -->
@@ -503,7 +520,7 @@
       steps: ['Welcoming a new member…', 'Answering in #ask-gene…'] }
   ];
   var A = {}; AGENTS.forEach(function (a) { A[a.id] = a; });
-  var S = { trades: [], payouts: [], agentCfg: {}, queue: [], news: [], levels: null, checklist: null, skips: [], pendingCheck: null, db: null };
+  var S = { plans: {}, days: {}, trades: [], payouts: [], agentCfg: {}, queue: [], news: [], levels: null, checklist: null, skips: [], pendingCheck: null, db: null };
   function cfg(id) { var c = S.agentCfg[id] || {}; return { on: c.on !== false, mode: c.mode || 'approve' }; }
 
   // ===================================================================
@@ -513,7 +530,7 @@
   // Buildings: tile footprint (tx, ty, w, h). The agent stands on the tile below the door.
   var STATIONS = [
     { id: 'tower', name: 'Market Tower', tx: 22, ty: 4, w: 4, h: 5, agent: 'market' },
-    { id: 'studio', name: 'Content Studio', tx: 13, ty: 6, w: 5, h: 4, agent: 'content' },
+    { id: 'studio', name: 'Content Studio', tx: 13, ty: 6, w: 5, h: 4, agent: 'content', open: 'content' },
     { id: 'newsroom', name: 'News Antenna', tx: 30, ty: 6, w: 4, h: 4, agent: 'news', open: 'news' },
     { id: 'lighthouse', name: 'Lighthouse', tx: 6, ty: 11, w: 3, h: 4, agent: 'outlook' },
     { id: 'journal', name: 'Trade Journal', tx: 37, ty: 11, w: 3, h: 2, open: 'trades' },
@@ -961,10 +978,11 @@
         vault: tot ? 'The vault holds ' + money(tot) + ' in logged payouts. Next milestone: ' + nextMilestoneText(tot) + '.' : 'Empty vault. Log your payouts and watch the gold stack up.',
         portal: 'Step through to see exactly what each agent posts in your Discord.',
         newsroom: latestNewsLine(),
+        studio: (function () { var pl = S.plans[nowAZ().date]; return pl && pl.main ? 'Today\u2019s video is ready: \u201c' + pl.main.hook + '\u201d. Script, caption and Discord lines are inside.' : 'The Script Writer drops your script here every morning at 5:50 AM MST.'; })(),
         checklist: 'Run your checklist before every trade. All boxes ticked means it’s an A+ setup. Missing a must-have means you pass, and passing on a bad setup earns XP too.'
       };
       typeText($('dText'), lines[o.id] || '');
-      var goto = { journal: ['Open my journal', 'trades'], vault: ['Open payouts', 'payouts'], portal: ['Enter Discord', 'discord'], newsroom: ['Read the news', 'news'], checklist: ['Run my checklist', 'checklist'] }[o.id];
+      var goto = { studio: ['Get my scripts', 'content'], journal: ['Open my journal', 'trades'], vault: ['Open payouts', 'payouts'], portal: ['Enter Discord', 'discord'], newsroom: ['Read the news', 'news'], checklist: ['Run my checklist', 'checklist'] }[o.id];
       if (goto) body.appendChild(el('div', { class: 'row' }, [goBtn(goto[0], goto[1])]));
       if (o.agent) { var ag = bots.filter(function (x) { return x.a.id === o.agent; })[0]; if (ag) { var tb = el('button', { class: 'btn ghost small', type: 'button', text: 'Talk to ' + ag.a.name }); tb.addEventListener('click', function () { openTalk({ kind: 'bot', ref: ag }); }); body.appendChild(el('div', { class: 'row' }, [tb])); } }
     }
@@ -1130,6 +1148,86 @@
   function startWorld() {
     try { resize(); buildMap(); spawn(); kick(); }
     catch (err) { player = null; $('noGL').hidden = false; office.hidden = true; $('controls').hidden = true; console.log('world failed to start:', err && err.message); }
+  }
+
+  // ===================================================================
+  // CONTENT (today's scripts from the Script Writer)
+  // ===================================================================
+  var CTA_TEXT = { F: 'Follow for part 2', K: 'Comment BNB → free Discord', C: 'Ask them to comment their take', '—': 'No CTA, just end naturally' };
+  function ctaLabel(c) { c = c || '—'; return CTA_TEXT[c] || ('Comment ' + c.replace(/^C\s*/, '') + ' → send it to them'); }
+  function copyBtn(label, getText) {
+    var b = el('button', { class: 'btn ghost small', type: 'button', text: label });
+    b.addEventListener('click', function () {
+      var txt = getText();
+      var done = function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = label; }, 1500); };
+      try { navigator.clipboard.writeText(txt).then(done, function () { selectFallback(b, txt); }); } catch (e) { selectFallback(b, txt); }
+    });
+    return b;
+  }
+  function selectFallback(b, txt) { var ta = el('textarea', { class: 'copy-fallback', 'aria-label': 'Text to copy' }); ta.value = txt; b.parentNode.appendChild(ta); ta.select(); toast('Select all and copy.'); }
+  function postStreak() {
+    var n = 0, d = new Date(); d.setDate(d.getDate() - 1);
+    var today = S.days[isoLocal(new Date())]; if (today && (today.ig || today.tt)) n++;
+    for (var i = 0; i < 365; i++) { var k = isoLocal(d), x = S.days[k]; if (x && (x.ig || x.tt)) { n++; d.setDate(d.getDate() - 1); } else break; }
+    return n;
+  }
+  function scriptCard(title, v, extra) {
+    var script = v.script || '';
+    var card = el('div', { class: 'panel' }, [
+      el('div', { class: 'row between' }, [el('span', { class: 'label', text: title + (v.pillar ? ' · ' + v.pillar : '') + (v.length ? ' · ' + v.length : '') }), copyBtn('Copy script', function () { return script; })]),
+      el('h2', { class: 'hook', text: '“' + (v.hook || '') + '”' }),
+      v.say ? el('p', { class: 'muted', style: 'font-size:.9rem', text: v.say }) : null,
+      script ? el('pre', { class: 'script', text: script }) : el('p', { class: 'empty-state', text: 'No script written yet.' }),
+      extra || null
+    ]);
+    return card;
+  }
+  function renderContent() {
+    var box = $('contentBody'); box.innerHTML = '';
+    var today = nowAZ().date, plan = S.plans[today];
+    var day = S.days[today] || {};
+    // posted toggles + streak
+    var tog = el('div', { class: 'row' });
+    [['ig', 'Posted on IG'], ['tt', 'Posted on TikTok']].forEach(function (k) {
+      var b = el('button', { class: 'seg-btn post-btn', type: 'button', 'aria-pressed': String(!!day[k[0]]), text: (day[k[0]] ? '✓ ' : '') + k[1] });
+      b.addEventListener('click', function () { var next = Object.assign({}, S.days[today] || {}); next[k[0]] = !next[k[0]]; S.days[today] = next; renderContent(); renderXp(); dbSet('days/' + today, next).then(function () { if (next[k[0]]) toast('Nice. +20 XP 🔥'); }); });
+      tog.appendChild(b);
+    });
+    var streak = postStreak();
+    box.appendChild(el('div', { class: 'panel' }, [
+      el('div', { class: 'row between' }, [el('h2', { text: 'Today · ' + mdy(new Date()) }), el('span', { class: 'pill' + (streak ? ' live' : ''), text: streak + '-day posting streak' })]),
+      tog
+    ]));
+    if (!plan || !plan.main) {
+      box.appendChild(el('div', { class: 'panel' }, [el('p', { class: 'empty-state', text: 'The Script Writer drops today’s talking video here every morning at 5:50 AM MST. Check back after that.' })]));
+    } else {
+      var m = plan.main;
+      box.appendChild(scriptCard('Main video', m, el('div', { class: 'meta-grid' }, [
+        el('span', { class: 'label', text: 'Ends with' }), el('span', { text: ctaLabel(m.cta) }),
+        el('span', { class: 'label', text: 'Caption' }), el('div', { class: 'row', style: 'gap:8px' }, [el('span', { text: m.caption || '—' }), m.caption ? copyBtn('Copy', function () { return m.caption; }) : null]),
+        plan.note ? el('span', { class: 'label', text: 'Why this one' }) : null, plan.note ? el('span', { class: 'muted', text: plan.note }) : null
+      ])));
+      if (plan.bonus && plan.bonus.script) box.appendChild(scriptCard('Bonus take', plan.bonus));
+      var dc = plan.discord || {}, lines = [['news', 'News for the live'], ['eve', 'Tonight’s question'], ['chat', 'Weekend chat'], ['outlook', 'Week ahead post']].filter(function (k) { return dc[k[0]]; });
+      if (lines.length) {
+        var dp = el('div', { class: 'panel' }, [el('h2', { text: 'Discord lines' })]);
+        lines.forEach(function (k) { dp.appendChild(el('div', { class: 'dline' }, [el('div', { class: 'row between' }, [el('span', { class: 'label', text: k[1] }), copyBtn('Copy', function () { return dc[k[0]]; })]), el('pre', { class: 'script small', text: dc[k[0]] })])); });
+        box.appendChild(dp);
+      }
+    }
+    // earlier days
+    var past = Object.keys(S.plans).filter(function (k) { return k < today && S.plans[k].main; }).sort().reverse().slice(0, 7);
+    if (past.length) {
+      var pp = el('div', { class: 'panel' }, [el('h2', { text: 'Earlier this week' })]);
+      past.forEach(function (k) {
+        var p0 = S.plans[k], dd = S.days[k] || {}, det = el('details', { class: 'past' }, [
+          el('summary', null, [el('span', { class: 'label', text: k + (dd.ig || dd.tt ? ' · posted' : '') + ' ' }), el('span', { text: '“' + p0.main.hook + '”' })]),
+          el('pre', { class: 'script small', text: p0.main.script || '' })
+        ]);
+        pp.appendChild(det);
+      });
+      box.appendChild(pp);
+    }
   }
 
   // ===================================================================
@@ -1549,6 +1647,7 @@
     Object.keys(dp).forEach(function (d) { if (dp[d] > 0) xp += 10; });
     S.payouts.forEach(function (p) { xp += Math.round((+p.amount || 0) / 10); });
     xp += S.skips.length * 15;
+    Object.keys(S.days).forEach(function (k) { if (S.days[k].ig || S.days[k].tt) xp += 20; });
     var lvl = Math.floor(Math.sqrt(xp / 60)) + 1, cur = 60 * Math.pow(lvl - 1, 2), nxt = 60 * Math.pow(lvl, 2);
     $('lvlBadge').textContent = 'LVL ' + lvl;
     $('xpFill').style.width = ((xp - cur) / (nxt - cur) * 100).toFixed(1) + '%';
@@ -1591,6 +1690,7 @@
     if (name === 'payouts') drawPayChart();
     if (name === 'news') renderNews();
     if (name === 'checklist') renderChecklist();
+    if (name === 'content') renderContent();
     if (name === 'farm') kick();
     try { localStorage.setItem('farmTab', name); } catch (e) {}
   }
@@ -1603,7 +1703,7 @@
   function listen(coll, fn) {
     S.db.collection(coll).onSnapshot(function (snap) { fn(snap.docs.map(function (d) { var x = Object.assign({}, d.data()); x._id = d.id; return x; })); renderAll(); }, function () {});
   }
-  function renderAll() { renderTrades(); renderPayouts(); renderXp(); renderAgents(); renderSetup(); if (!ck.editing) renderChecklist(); if (!$('v-discord').hidden) renderDc(); if (!$('v-news').hidden) renderNews(); }
+  function renderAll() { renderTrades(); renderPayouts(); renderXp(); renderAgents(); renderSetup(); if (!ck.editing) renderChecklist(); if (!$('v-discord').hidden) renderDc(); if (!$('v-news').hidden) renderNews(); if (!$('v-content').hidden) renderContent(); }
   var dbP = (window.claude && window.claude.use) ? window.claude.use('db') : Promise.resolve(null);
   dbP.then(function (db) {
     if (!db) { $('offline').hidden = false; return; }
@@ -1615,6 +1715,8 @@
     listen('news', function (a) { S.news = a; });
     listen('settings', function (a) { S.levels = a.filter(function (x) { return x._id === 'levels'; })[0] || null; S.checklist = a.filter(function (x) { return x._id === 'checklist'; })[0] || null; });
     listen('skips', function (a) { S.skips = a; });
+    listen('plan', function (a) { S.plans = {}; a.forEach(function (x) { S.plans[x._id] = x; }); });
+    listen('days', function (a) { S.days = {}; a.forEach(function (x) { S.days[x._id] = x; }); });
   }).catch(function () { $('offline').hidden = false; });
 
   // boot
