@@ -319,6 +319,17 @@
         <div class="row"><button class="btn ghost small" id="ckAdd" type="button">Add a rule</button></div>
         <div class="row"><button class="btn" id="ckSave" type="button">Save checklist</button><button class="btn ghost" id="ckCancel" type="button">Cancel</button></div>
       </div>
+      <div class="panel" id="sizer">
+        <div class="row between"><h2>Size the trade</h2><span class="label" id="szDay"></span></div>
+        <form class="log" id="szForm">
+          <label>Stop (points)<input type="number" id="szStop" min="1" step="0.25" placeholder="e.g. 18" inputmode="decimal"></label>
+          <label>Contract<select id="szSym"><option value="2">MNQ ($2/pt)</option><option value="20">NQ ($20/pt)</option></select></label>
+          <label>Risk per trade ($)<input type="number" id="szRisk" min="10" step="10" value="250"></label>
+          <label>Daily max loss ($)<input type="number" id="szMax" min="10" step="10" value="500"></label>
+        </form>
+        <div class="tiles" id="szOut"></div>
+        <p class="muted" style="font-size:.84rem" id="szNote">Type your stop in points. It sizes the trade to your risk and shows where break-even and your 2R target are.</p>
+      </div>
       <div class="panel">
         <h2>Does the checklist pay?</h2>
         <p class="muted" style="font-size:.86rem">Trades you take after a full checklist get tagged A+. Passing on a bad setup is +15 XP.</p>
@@ -520,7 +531,7 @@
       steps: ['Welcoming a new member…', 'Answering in #ask-gene…'] }
   ];
   var A = {}; AGENTS.forEach(function (a) { A[a.id] = a; });
-  var S = { plans: {}, days: {}, trades: [], payouts: [], agentCfg: {}, queue: [], news: [], levels: null, checklist: null, skips: [], pendingCheck: null, db: null };
+  var S = { risk: null, plans: {}, days: {}, trades: [], payouts: [], agentCfg: {}, queue: [], news: [], levels: null, checklist: null, skips: [], pendingCheck: null, db: null };
   function cfg(id) { var c = S.agentCfg[id] || {}; return { on: c.on !== false, mode: c.mode || 'approve' }; }
 
   // ===================================================================
@@ -1267,7 +1278,7 @@
     v.className = 'verdict ' + (sc.aplus ? 'go' : sc.mustMissing ? 'stop' : 'maybe');
     v.textContent = sc.aplus ? 'A+ setup. Take it, follow the plan.' : sc.mustMissing ? 'No trade. ' + sc.mustMissing + ' must-have' + (sc.mustMissing === 1 ? ' is' : 's are') + ' missing.' : 'All must-haves are there. Smaller size, or wait for the rest.';
     $('ckTake').disabled = !!sc.mustMissing;
-    renderChecklistStats();
+    renderChecklistStats(); renderSizer();
   }
   function renderChecklistEditor(items) {
     $('ckRun').hidden = true; $('ckEditor').hidden = false;
@@ -1307,6 +1318,24 @@
     var p = S.pendingCheck, n = $('tCheckNote');
     n.hidden = !p; if (p) n.textContent = 'Checklist ' + p.done + '/' + p.total + (p.aplus ? ' · A+ setup' : '') + ' will be saved with this trade.';
   }
+  function renderSizer() {
+    var r = S.risk || {}, riskIn = $('szRisk'), maxIn = $('szMax');
+    if (r.perTrade && document.activeElement !== riskIn) riskIn.value = r.perTrade;
+    if (r.dailyMax && document.activeElement !== maxIn) maxIn.value = r.dailyMax;
+    var stop = parseFloat($('szStop').value), ppt = +$('szSym').value, risk = +riskIn.value || 250, dmax = +maxIn.value || 500;
+    var td = S.trades.filter(function (t) { return t.date === isoLocal(new Date()); }), pnl = td.reduce(function (s, t) { return s + (+t.pnl || 0); }, 0), losses = td.filter(function (t) { return +t.pnl < 0; }).length;
+    var left = dmax + Math.min(0, pnl), stopDay = left <= 0 || losses >= 2;
+    $('szDay').textContent = stopDay ? 'Done for today' : 'Room left today: ' + money(Math.max(0, left));
+    $('szDay').style.color = stopDay ? css('--bad') : '';
+    var out = $('szOut'); out.innerHTML = '';
+    if (!(stop > 0)) return;
+    var n = Math.floor(Math.min(risk, Math.max(0, left)) / (stop * ppt)), real = n * stop * ppt;
+    var tiles = [[ppt === 2 ? 'Micros to trade' : 'Contracts', String(n), n ? 'pos' : 'neg'], ['Actual risk', money(real), ''], ['Break-even at', '+' + stop + ' pts (' + money(real) + ')', ''], ['2R target', '+' + (stop * 2) + ' pts (' + money(real * 2) + ')', 'pos']];
+    tiles.forEach(function (t) { out.appendChild(el('div', { class: 'tile' }, [el('span', { class: 'label', text: t[0] }), el('b', { class: t[2], text: t[1] })])); });
+    $('szNote').textContent = stopDay ? 'You hit your daily max loss or took 2 losses. Done for today, protect the account.' : n ? 'Only take it if the opposite liquidity is at least ' + (stop * 2) + ' points away.' : 'That stop is too wide for your risk. Skip it or wait for a tighter entry.';
+  }
+  ['szStop', 'szSym', 'szRisk', 'szMax'].forEach(function (id) { $(id).addEventListener('input', renderSizer); });
+  ['szRisk', 'szMax'].forEach(function (id) { $(id).addEventListener('change', function () { var v = { perTrade: +$('szRisk').value || 250, dailyMax: +$('szMax').value || 500 }; S.risk = v; dbSet('settings/risk', v).then(function () { toast('Risk rules saved.'); }); }); });
   function renderChecklistStats() {
     var withCk = S.trades.filter(function (t) { return t.check; }), ap = withCk.filter(function (t) { return t.check.aplus; }), rest = S.trades.filter(function (t) { return !(t.check && t.check.aplus); });
     function wr(a) { return a.length ? Math.round(a.filter(function (t) { return +t.pnl > 0; }).length / a.length * 100) + '%' : '—'; }
@@ -1713,7 +1742,7 @@
     listen('agents', function (a) { S.agentCfg = {}; a.forEach(function (x) { S.agentCfg[x._id] = x; }); });
     listen('queue', function (a) { S.queue = a; });
     listen('news', function (a) { S.news = a; });
-    listen('settings', function (a) { S.levels = a.filter(function (x) { return x._id === 'levels'; })[0] || null; S.checklist = a.filter(function (x) { return x._id === 'checklist'; })[0] || null; });
+    listen('settings', function (a) { S.levels = a.filter(function (x) { return x._id === 'levels'; })[0] || null; S.checklist = a.filter(function (x) { return x._id === 'checklist'; })[0] || null; S.risk = a.filter(function (x) { return x._id === 'risk'; })[0] || null; });
     listen('skips', function (a) { S.skips = a; });
     listen('plan', function (a) { S.plans = {}; a.forEach(function (x) { S.plans[x._id] = x; }); });
     listen('days', function (a) { S.days = {}; a.forEach(function (x) { S.days[x._id] = x; }); });
