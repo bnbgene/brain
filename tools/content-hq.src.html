@@ -301,7 +301,7 @@
   <section id="tab-discord" class="stack" hidden>
     <div class="card">
       <div class="card-head"><h2>Today in the Discord</h2><span class="label" id="discordDay"></span></div>
-      <p class="muted">Fill the brackets, copy, paste. Tick each one when it's done. Live is Mon–Fri 6:30 AM PT.</p>
+      <p class="muted">Fill the brackets, copy, paste. Tick each one when it's done. Live is Mon–Fri at the NY open (9:30 AM ET, which is 7:30 AM MST in winter and 6:30 AM MST in summer).</p>
       <div class="row"><span class="label">Discord streak</span><b id="dStreak" style="font:700 1.1rem var(--mono)">0</b><span class="label">days</span></div>
     </div>
     <div id="discordMsgs" class="stack"></div>
@@ -444,9 +444,9 @@
 
   // ===================================================================
   // CONTENT LIBRARY (from the @bnbgene Growth Playbook, filtered to Gene's rules:
-  // no quizzes, no strategy explainers, no mentee show yet, Tradeify only, free Discord)
+  // no quizzes, no strategy explainers, no mentee show yet, no prop firm name or promo code, free Discord)
   // ===================================================================
-  var BRAND = 'Gene (@bnbgene), 21, trades NQ/MNQ futures full time with Tradeify (code BNB), bought his first house at 18. Brand: BNBProfits. Bio: "Just helping people make money." His Discord is FREE and 1:1 mentorship applications happen inside it. Voice: casual, short, direct, young, confident, not corny, not corporate. Never describe his strategy, setups, entries, levels or sessions in detail. No quizzes or polls. No income guarantees.';
+  var BRAND = 'Gene (@bnbgene), 21, trades NQ/MNQ futures full time on prop firm accounts, bought his first house at 18. Brand: BNBProfits. Bio: "Just helping people make money." His Discord is FREE and 1:1 mentorship applications happen inside it. Voice: casual, short, direct, young, confident, not corny, not corporate. Never describe his strategy, setups, entries, levels or sessions in detail. No quizzes or polls. No income guarantees.';
   var PILLARS = ['Confessions', 'Prop firm reality', 'Story', 'Lifestyle', 'Psychology', 'Hot take', 'Relatable', 'Business', 'Life lessons'];
   var CTA_KEY = { F: 'Follow for part 2', C: 'Ask them to comment their take (agree or nah?)', K: 'Comment BNB → free Discord (auto-DM)', '—': 'No CTA. Let it spread.' };
   function ctaText(c) { return CTA_KEY[c] || ('Comment ' + c.replace(/^C\s*/, '') + ' (auto-DM)'); }
@@ -471,7 +471,7 @@
     { p: 'Prop firm reality', h: 'Nobody talks about what happens after your first payout.', s: 'Overconfidence, sizing up, giving it back. How to avoid it.', l: '30s', c: 'F', cap: 'Save this for when you get there' },
     { p: 'Relatable', h: 'Every trader on Sunday night is the most disciplined person alive', s: 'Quick funny take: the rules you swear by on Sunday vs what happens Monday morning.', l: '15s', c: '—', cap: 'Accurate?' },
     { p: 'Confessions', h: 'Being 21 with no boss is weird.', s: 'Freedom vs pressure. Honest, not motivational.', l: '25s', c: '—', cap: 'Nobody tells you this part' },
-    { p: 'Prop firm reality', h: 'Prop firm stuff nobody tells you: the payout request.', s: 'Walk through how requesting a payout on Tradeify actually goes, start to bank, and how long it takes.', l: '30s', c: 'C PAYOUT', cap: 'Comment PAYOUT for the steps' },
+    { p: 'Prop firm reality', h: 'Prop firm stuff nobody tells you: the payout request.', s: 'Walk through how requesting a payout from a prop firm actually goes, start to bank, and how long it takes.', l: '30s', c: 'C PAYOUT', cap: 'Comment PAYOUT for the steps' },
     { p: 'Psychology', h: "Your strategy isn't the problem. You are.", s: 'Rules you break, not setups you lack. One example from your own trading.', l: '25s', c: 'F', cap: 'Harsh but true' },
     { p: 'Confessions', h: 'A $50 dinner is 2 NQ points to me now.', s: 'Trader math on everyday stuff. Quick and funny.', l: '15s', c: '—', cap: 'I can\'t turn it off 😭' },
     { p: 'Story', h: "If you're 18 and want to trade, start here.", s: 'What you\'d do first if you were starting over: learn, sim, one small eval, rules. No strategy details.', l: '30s', c: 'K', cap: 'Comment BNB for the free Discord' },
@@ -519,7 +519,14 @@
     { h: 'When the market hits your stop then goes straight to your target', s: 'Quick rant everybody relates to. 10–15s.' }
   ];
   var ROLL_BY_DOW = ['Proof run', 'Motivation', 'Trade day', 'Member wins', 'Trade day', 'Payout drop', 'Motivation'];
-  var LIVE = '6:30 AM PT';
+  // NY open (9:30 AM ET) in Arizona time (MST all year), so it moves with Eastern daylight time.
+  var OPEN_MIN = (function () {
+    var d = new Date();
+    function at(tz) { var o = {}; new Intl.DateTimeFormat('en-US', { timeZone: tz, hour12: false, hour: '2-digit', minute: '2-digit' }).formatToParts(d).forEach(function (x) { o[x.type] = x.value; }); return (parseInt(o.hour, 10) % 24) * 60 + parseInt(o.minute, 10); }
+    return 570 - ((at('America/New_York') - at('America/Phoenix') + 1440) % 1440);
+  })();
+  function hmMST(m) { var h = Math.floor(m / 60); return ((h % 12) || 12) + ':' + (m % 60 < 10 ? '0' : '') + (m % 60) + (h < 12 ? ' AM' : ' PM') + ' MST'; }
+  var LIVE = hmMST(OPEN_MIN);
   var EVENING = [
     '',
     "🎯 New week. Drop ONE goal for this week below 👇 I'll check back Friday.",
@@ -567,8 +574,8 @@
     if (dow === 6) return [['d_wins', 'Reply to wins in #💸-daily-pnl', null], ['d_sat', 'Weekend chat', sd.chat || SAT_PROMPTS[wk % SAT_PROMPTS.length]]];
     if (dow === 0) return [['d_out', 'Weekly outlook', outlookMsg(k)], ['d_sun', d.getDate() <= 7 ? 'Monthly giveaway' : 'Sunday chat', d.getDate() <= 7 ? GIVEAWAY : (sd.chat || SUN_PROMPTS[wk % SUN_PROMPTS.length])]];
     return [
-      ['d_am', 'Bias (~6:00 AM PT)', biasMsg(k)],
-      ['d_live', 'Live ping (6:20 AM PT)', LIVE_PING],
+      ['d_am', 'Bias (~' + hmMST(OPEN_MIN - 30) + ')', biasMsg(k)],
+      ['d_live', 'Live ping (' + hmMST(OPEN_MIN - 10) + ')', LIVE_PING],
       ['d_pm', 'Recap after the live', RECAP_MSG],
       ['d_wins', 'Reply to wins in #💸-daily-pnl', null],
       ['d_eve', dow === 5 ? 'Wins of the week' : 'Evening', (dow !== 5 && sd.eve) || EVENING[dow]]
@@ -1112,7 +1119,7 @@
   var BANK = {
     'Motivation': ['Discipline > motivation', "Nobody's coming to save you", 'Every red day taught me something', 'Stay patient. The money comes.', 'Trading ruined my perception of money', 'Quiet grind. Loud results.', "You're one rule away from being consistent", 'Protect the account first'],
     'Trades': ['Done for the day ✅', 'One trade. Done.', 'Took what the market gave me and walked away', 'Green day ✅', 'Stressful hold but we got paid 😮‍💨', 'Clean trade today 📈', 'Literally rinsed the market today'],
-    'Payouts': ['Another payout secured 🤝', '*MAX* payout secured 🤝', 'Payout day 💰', 'New money coming in daily 🔥', 'Tradeify keeps paying 💸', 'Same discipline. Different day. Paid again.'],
+    'Payouts': ['Another payout secured 🤝', '*MAX* payout secured 🤝', 'Payout day 💰', 'New money coming in daily 🔥', 'Same discipline. Different day. Paid again.'],
     'Member wins': ['W day in the discord 🔥', 'More accounts passed today 🔥', 'From not knowing where to start to getting paid in 2 weeks', 'Built bro from the ground up 🔥', 'Helping people win has always been the goal 💯', 'First payout loading… 💰'],
     'Discord': ['The Discord is *free*. Pull up.', 'Daily bias drops before the open', 'Live call this week 🎙️', '200+ traders and growing', 'Mentorship apps are open inside', 'Ask questions. Get real answers.'],
     'Journey': ['Bought my first house at 18 🏠', '21 and trading full time', "A year ago I couldn't picture this", 'Started with one eval. Look at it now.', 'Just helping people make money']
@@ -1122,7 +1129,6 @@
     ['DM BNB', 'DM me ( *BNB* ) for the free Discord'],
     ['Highlight', 'Tap my ( *DISCORD* ) highlight to join 💸'],
     ['Mentorship', 'Mentorship apps are open in the ( *DISCORD* ) 🥂'],
-    ['Tradeify code', 'Use code ( *BNB* ) on Tradeify ⚡'],
     ['No CTA', '']
   ];
   var ROLLOUTS = {
