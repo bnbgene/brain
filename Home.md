@@ -20,6 +20,7 @@ It also updates itself automatically every morning around 7am (Phoenix time).
 More detail: [[How This Works]]
 
 ## Quick links
+- [[Brain Farm]]: your projects as a game
 - `00 Inbox/`: dump ideas here, sort them later
 - `Templates/`: blank forms for new notes
 
