@@ -240,6 +240,13 @@
   details.past summary { cursor: pointer; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
   details.past pre { margin-top: 8px; }
   .copy-fallback { margin-top: 6px; min-height: 80px; }
+  /* accounts */
+  .acct { border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 8px; background: var(--panel-2); }
+  .acct h3 { font-size: .95rem; }
+  .acct-line { display: flex; justify-content: space-between; gap: 10px; font-size: .86rem; flex-wrap: wrap; }
+  .acct-grid { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: .86rem; align-items: baseline; }
+  .goal-bar.danger i { background: var(--bad); }
+  .imp { display: grid; gap: 6px; border-top: 1px solid var(--line); padding-top: 12px; }
   .toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: .85rem; z-index: 40; }
 
   @media (max-width: 640px) {
@@ -364,6 +371,25 @@
 
   <!-- TRADES -->
   <section class="view" id="v-trades" hidden>
+    <div class="panel">
+      <div class="row between"><h2>My accounts</h2><div class="row"><button class="btn ghost small" id="acctAdd" type="button">Add account</button></div></div>
+      <form class="log" id="acctForm" hidden>
+        <label>Name<input type="text" id="aName" placeholder="TPT 50K Test"></label>
+        <label>Firm<input type="text" id="aFirm" value="Take Profit Trader"></label>
+        <label>Stage<select id="aStage"><option value="test">Test (eval)</option><option value="pro">PRO</option><option value="proplus">PRO+</option></select></label>
+        <label>Size ($)<input type="number" id="aSize" value="50000" step="1000"></label>
+        <label>Profit target ($)<input type="number" id="aTarget" value="3000" step="100"></label>
+        <label>Drawdown ($)<input type="number" id="aDD" value="2000" step="100"></label>
+        <label>Started<input type="date" id="aStart"></label>
+        <button class="btn" type="submit">Save account</button>
+      </form>
+      <div id="acctCards" style="display:grid;gap:12px"></div>
+      <div class="imp">
+        <span class="label">Import from Tradovate</span>
+        <div class="row"><select id="impAcct" aria-label="Account to import into" style="max-width:220px"></select><label class="btn ghost small" for="impFile" style="cursor:pointer">Choose CSV</label><input type="file" id="impFile" accept=".csv,text/csv" hidden></div>
+        <p class="muted" id="impMsg" style="font-size:.82rem">In Tradovate: Account Reports › Performance › pick the dates › Download (CSV). Drop it here after the close. Trades already imported are skipped.</p>
+      </div>
+    </div>
     <div class="tiles" id="tradeTiles"></div>
     <div class="grid2">
       <div class="panel">
@@ -374,7 +400,7 @@
           <label>Side<select id="tSide"><option>Long</option><option>Short</option></select></label>
           <label>Contracts<input type="number" id="tQty" min="1" step="1" value="1" required></label>
           <label>P&amp;L ($)<input type="number" id="tPnl" step="0.01" placeholder="e.g. 640 or -220" required></label>
-          <label>Account<input type="text" id="tAcct" placeholder="50K #1" list="acctList"></label>
+          <label>Account<select id="tAcct"></select></label>
           <label>Account type<select id="tType"><option value="eval">Eval</option><option value="funded">Funded</option></select></label>
           <label>Followed my rules?<select id="tRules"><option value="yes">Yes</option><option value="no">No</option></select></label>
           <label class="wide">Note<input type="text" id="tNote" placeholder="What happened, in a few words"></label>
@@ -535,7 +561,7 @@
       steps: ['Welcoming a new member…', 'Answering in #ask-gene…'] }
   ];
   var A = {}; AGENTS.forEach(function (a) { A[a.id] = a; });
-  var S = { risk: null, plans: {}, days: {}, trades: [], payouts: [], agentCfg: {}, queue: [], news: [], levels: null, checklist: null, skips: [], pendingCheck: null, db: null };
+  var S = { accounts: [], risk: null, plans: {}, days: {}, trades: [], payouts: [], agentCfg: {}, queue: [], news: [], levels: null, checklist: null, skips: [], pendingCheck: null, db: null };
   function cfg(id) { var c = S.agentCfg[id] || {}; return { on: c.on !== false, mode: c.mode || 'approve' }; }
 
   // ===================================================================
@@ -1246,6 +1272,130 @@
   }
 
   // ===================================================================
+  // ACCOUNTS (prop firm progress) + Tradovate import
+  // ===================================================================
+  var RULES = {
+    test: { label: 'Test (eval)', ddType: 'eod', note: 'End-of-day trailing drawdown, stops trailing once the floor reaches your starting balance. No single day can be 50% or more of your total profit. Minimum 5 trading days (some sources say 3). Flat by the close.' },
+    pro: { label: 'PRO', ddType: 'intraday', split: .8, note: 'Intraday trailing drawdown (open profit counts) that stops at your starting balance. Build the buffer first (start + drawdown), then withdraw anything above it daily at 80/20. No consistency rule. Withdrawals of $250 or less cost $50.' },
+    proplus: { label: 'PRO+', ddType: 'eod', split: .9, note: 'End-of-day drawdown, 90/10 split, no buffer.' }
+  };
+  function acctTrades(a) { return S.trades.filter(function (t) { return t.acct === a.name && (!a.start || t.date >= a.start); }); }
+  function acctStats(a) {
+    var ts = acctTrades(a), byDay = {};
+    ts.forEach(function (t) { byDay[t.date] = (byDay[t.date] || 0) + (+t.pnl || 0); });
+    var days = Object.keys(byDay).sort(), bal = a.startBalance, hw = a.startBalance, eod = [];
+    days.forEach(function (d) { bal += byDay[d]; eod.push(bal); hw = Math.max(hw, bal); });
+    bal += (+a.adj || 0); hw = Math.max(hw, bal);
+    var floor = Math.min(hw - a.dd, a.startBalance);
+    var profit = bal - a.startBalance, best = days.reduce(function (m, d) { return Math.max(m, byDay[d]); }, 0);
+    return { bal: bal, profit: profit, floor: floor, room: bal - floor, days: days.length, best: best, byDay: byDay, hw: hw };
+  }
+  function bar(pct, cls) { return el('div', { class: 'goal-bar' + (cls ? ' ' + cls : '') }, [(function () { var i = el('i'); i.style.width = Math.max(0, Math.min(100, pct)) + '%'; return i; })()]); }
+  function renderAccounts() {
+    var box = $('acctCards'); if (!box) return; box.innerHTML = '';
+    var accts = S.accounts.filter(function (a) { return a.active !== false; }).sort(function (a, b) { return String(b.start).localeCompare(String(a.start)); });
+    if (!accts.length) { box.appendChild(el('p', { class: 'empty-state', text: 'No accounts yet. Add your eval and every trade you log to it fills in the progress.' })); }
+    accts.forEach(function (a) {
+      var st = acctStats(a), r = RULES[a.stage] || RULES.test, rows = [];
+      var head = el('div', { class: 'row between' }, [el('div', null, [el('h3', { text: a.name }), el('span', { class: 'label', text: (a.firm || '') + ' · ' + r.label + ' · ' + (a.platform || '') })]), el('b', { class: 'num ' + (st.profit >= 0 ? 'pos' : 'neg'), style: 'font-size:1.2rem', text: money(Math.round(st.bal)) })]);
+      rows.push(head);
+      if (a.stage === 'test') {
+        var cons = st.profit > 0 ? st.best / st.profit : 0, consOk = st.profit <= 0 || cons < (a.consistency || .5);
+        var passed = st.profit >= a.target && st.days >= (a.minDays || 5) && consOk;
+        rows.push(el('div', { class: 'acct-line' }, [el('span', { class: 'label', text: 'Profit target' }), el('span', { class: 'num', text: money(Math.round(st.profit)) + ' / ' + money(a.target) })]), bar(st.profit / a.target * 100));
+        rows.push(el('div', { class: 'acct-line' }, [el('span', { class: 'label', text: 'Room to drawdown' }), el('span', { class: 'num ' + (st.room < a.dd * .35 ? 'neg' : ''), text: money(Math.round(st.room)) + ' (floor ' + money(Math.round(st.floor)) + ')' })]), bar(st.room / a.dd * 100, st.room < a.dd * .35 ? 'danger' : ''));
+        rows.push(el('div', { class: 'acct-grid' }, [
+          el('span', { class: 'label', text: 'Trading days' }), el('span', { text: st.days + ' / ' + (a.minDays || 5) + (st.days >= (a.minDays || 5) ? ' ✓' : '') }),
+          el('span', { class: 'label', text: 'Best day' }), el('span', { class: consOk ? '' : 'neg', text: st.profit > 0 ? money(Math.round(st.best)) + ' = ' + Math.round(cons * 100) + '% of profit' + (consOk ? ' ✓' : ' (needs to be under 50%)') : '—' }),
+          el('span', { class: 'label', text: 'To pass' }), el('span', { text: passed ? 'Passed 🎉 Upgrade to PRO below' : [st.profit < a.target ? money(Math.ceil(a.target - st.profit)) + ' more profit' : null, st.days < (a.minDays || 5) ? ((a.minDays || 5) - st.days) + ' more day(s)' : null, !consOk ? 'total profit of at least ' + money(Math.ceil(st.best * 2 + 1)) : null].filter(Boolean).join(', ') })
+        ]));
+        var up = el('button', { class: 'btn small' + (passed ? '' : ' ghost'), type: 'button', text: 'Passed: upgrade to PRO' });
+        up.addEventListener('click', function () { upgradeToPro(a); });
+        rows.push(el('div', { class: 'row' }, [up, balanceBtn(a, st)]));
+      } else {
+        var bufTarget = a.startBalance + a.dd, toBuf = bufTarget - st.bal, wd = Math.max(0, st.bal - bufTarget);
+        rows.push(el('div', { class: 'acct-line' }, [el('span', { class: 'label', text: 'Buffer (' + money(bufTarget) + ')' }), el('span', { class: 'num', text: toBuf > 0 ? money(Math.ceil(toBuf)) + ' to go' : 'Built ✓' })]), bar((st.bal - a.startBalance) / a.dd * 100));
+        rows.push(el('div', { class: 'acct-line' }, [el('span', { class: 'label', text: 'Room to drawdown' }), el('span', { class: 'num ' + (st.room < a.dd * .35 ? 'neg' : ''), text: money(Math.round(st.room)) + ' (floor ' + money(Math.round(st.floor)) + ')' })]), bar(st.room / a.dd * 100, st.room < a.dd * .35 ? 'danger' : ''));
+        rows.push(el('div', { class: 'acct-grid' }, [
+          el('span', { class: 'label', text: 'Withdrawable' }), el('span', { class: wd ? 'pos' : '', text: money(Math.floor(wd)) + (wd ? ' · you keep ' + money(Math.floor(wd * (r.split || .8))) : '') }),
+          el('span', { class: 'label', text: 'Trading days' }), el('span', { text: String(st.days) })
+        ]));
+        rows.push(el('p', { class: 'muted', style: 'font-size:.78rem', text: 'Drawdown here uses your end-of-day balances. PRO trails intraday peaks too, so give yourself extra room on big open-profit days.' }));
+        rows.push(el('div', { class: 'row' }, [balanceBtn(a, st)]));
+      }
+      rows.push(el('details', { class: 'past' }, [el('summary', null, [el('span', { class: 'label', text: 'Rules' })]), el('p', { class: 'muted', style: 'font-size:.84rem;margin-top:6px', text: r.note + ' Rules from public summaries of Take Profit Trader, so double-check anything that matters in your TPT dashboard.' })]));
+      box.appendChild(el('div', { class: 'acct' }, rows));
+    });
+    var sel = $('tAcct'); if (sel) { var cur = sel.value; sel.innerHTML = ''; accts.forEach(function (a) { sel.appendChild(el('option', { value: a.name, text: a.name })); }); sel.appendChild(el('option', { value: '', text: 'Other / none' })); if (cur && accts.some(function (a) { return a.name === cur; })) sel.value = cur; }
+    var imp = $('impAcct'); if (imp) { imp.innerHTML = ''; accts.forEach(function (a) { imp.appendChild(el('option', { value: a.name, text: a.name })); }); }
+  }
+  function balanceBtn(a, st) {
+    var b = el('button', { class: 'btn ghost small', type: 'button', text: 'Match my real balance' });
+    b.addEventListener('click', function () {
+      var wrap = b.parentNode, inp = el('input', { type: 'number', step: '0.01', placeholder: 'Balance in Tradovate', 'aria-label': 'Real account balance', style: 'max-width:180px' }), ok = el('button', { class: 'btn small', type: 'button', text: 'Save' });
+      ok.addEventListener('click', function () { var v = parseFloat(inp.value); if (!(v > 0)) { toast('Type the balance shown in Tradovate.'); return; } var adj = (+a.adj || 0) + (v - st.bal); dbUpdate('accounts/' + a._id, { adj: Math.round(adj * 100) / 100 }).then(function () { toast('Balance matched.'); }); });
+      wrap.appendChild(inp); wrap.appendChild(ok); b.remove(); inp.focus();
+    });
+    return b;
+  }
+  function upgradeToPro(a) {
+    var id = 'a' + Date.now().toString(36), today = isoLocal(new Date());
+    var pro = { name: a.name.replace(/test|eval/ig, '').trim() + ' PRO', firm: a.firm, platform: a.platform, stage: 'pro', size: a.size, startBalance: a.size, dd: a.dd, start: today, active: true, adj: 0 };
+    if (S.accounts.some(function (x) { return x.name === pro.name && x.active !== false; })) pro.name += ' ' + today.slice(5);
+    dbUpdate('accounts/' + a._id, { active: false, passed: today }).then(function () { return dbSet('accounts/' + id, pro); }).then(function () { toast('Congrats on PRO 🎉 New account is tracking.'); $('tAcct').value = pro.name; });
+  }
+  $('acctAdd').addEventListener('click', function () { $('acctForm').hidden = !$('acctForm').hidden; });
+  $('acctForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var stage = $('aStage').value, size = +$('aSize').value || 50000;
+    var a = { name: $('aName').value.trim() || ('TPT ' + size / 1000 + 'K ' + (stage === 'test' ? 'Test' : 'PRO')), firm: $('aFirm').value.trim() || 'Take Profit Trader', platform: 'Tradovate', stage: stage, size: size, startBalance: size, target: +$('aTarget').value || 3000, dd: +$('aDD').value || 2000, consistency: .5, minDays: 5, start: $('aStart').value || isoLocal(new Date()), active: true, adj: 0 };
+    dbSet('accounts/a' + Date.now().toString(36), a).then(function () { $('acctForm').hidden = true; toast('Account added.'); });
+  });
+  $('aStart').value = isoLocal(new Date());
+
+  // Tradovate Performance CSV import
+  function parseCSV(text) {
+    var rows = [], row = [], cur = '', q = false;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (q) { if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += c; }
+      else if (c === '"') q = true; else if (c === ',') { row.push(cur); cur = ''; } else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; row.push(cur); rows.push(row); row = []; cur = ''; } else cur += c;
+    }
+    if (cur || row.length) { row.push(cur); rows.push(row); }
+    return rows.filter(function (r) { return r.some(function (x) { return x.trim(); }); });
+  }
+  function money2(s) { s = String(s || '').trim(); var neg = /^\(.*\)$/.test(s.replace('$', '')) || s.indexOf('-') !== -1 || /\$\(/.test(s); var n = parseFloat(s.replace(/[^0-9.]/g, '')); return isNaN(n) ? null : (neg ? -n : n); }
+  function tvDate(s) { var m = String(s).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?/); if (!m) { var d = new Date(s); return isNaN(d) ? null : d; } return new Date(+m[3], +m[1] - 1, +m[2], +m[4], +m[5], +(m[6] || 0)); }
+  $('impFile').addEventListener('change', function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    var acct = $('impAcct').value, a = S.accounts.filter(function (x) { return x.name === acct; })[0];
+    if (!S.db) { toast('Open the farm from your sidebar to import.'); return; }
+    var rd = new FileReader();
+    rd.onload = function () {
+      var rows = parseCSV(String(rd.result)), h = rows.shift().map(function (x) { return x.trim().toLowerCase(); });
+      function col(n) { return h.indexOf(n); }
+      var iSym = col('symbol'), iQty = col('qty'), iPnl = col('pnl'), iB = col('boughttimestamp'), iS = col('soldtimestamp'), iBF = col('buyfillid'), iSF = col('sellfillid'), iBP = col('buyprice'), iSP = col('sellprice');
+      if (iSym < 0 || iPnl < 0 || iB < 0 || iS < 0) { $('impMsg').textContent = 'That file doesn’t look like a Tradovate Performance export. In Tradovate: Account Reports › Performance › Download CSV.'; return; }
+      var have = {}; S.trades.forEach(function (t) { if (t.src) have[t.src] = 1; });
+      var adds = [];
+      rows.forEach(function (r) {
+        var bt = tvDate(r[iB]), stt = tvDate(r[iS]), pnl = money2(r[iPnl]); if (!bt || !stt || pnl == null) return;
+        var src = 'tv' + (r[iBF] || '') + '-' + (r[iSF] || '') + '-' + r[iB] + r[iS]; if (have[src]) return;
+        var long = bt <= stt, close = long ? stt : bt, sym = String(r[iSym]).replace(/[FGHJKMNQUVXZ]\d{1,2}$/, '') || r[iSym];
+        adds.push({ date: isoLocal(close), sym: sym, side: long ? 'Long' : 'Short', qty: Math.abs(parseInt(r[iQty], 10) || 1), pnl: pnl, acct: acct, type: a && a.stage === 'test' ? 'eval' : 'funded', rules: 'yes', note: 'Imported from Tradovate' + (iBP >= 0 ? ' · ' + (long ? r[iBP] + ' → ' + r[iSP] : r[iSP] + ' → ' + r[iBP]) : ''), created: close.toISOString(), src: src.replace(/[^A-Za-z0-9_\-.~:@+]/g, '') });
+      });
+      if (!adds.length) { $('impMsg').textContent = 'No new trades in that file (already imported or empty).'; return; }
+      $('impMsg').textContent = 'Importing ' + adds.length + ' trades…';
+      var chain = Promise.resolve();
+      adds.forEach(function (t, i) { chain = chain.then(function () { return S.db.doc('trades/' + ('t' + t.src).slice(0, 180)).set(t); }); });
+      chain.then(function () { $('impMsg').textContent = 'Imported ' + adds.length + ' trades into ' + acct + '. Set “Followed my rules?” on any you broke.'; toast('Imported ' + adds.length + ' trades'); })
+        .catch(function () { $('impMsg').textContent = 'Some trades didn’t save. Try the file again; duplicates are skipped.'; });
+      $('impFile').value = '';
+    };
+    rd.readAsText(f);
+  });
+
+  // ===================================================================
   // STRATEGY CHECKLIST (private: never read by the posting agents)
   // ===================================================================
   var STARTER = [
@@ -1613,6 +1763,7 @@
     $('eqLabel').textContent = days.length + ' trading day' + (days.length === 1 ? '' : 's');
   }
   $('tDate').value = isoLocal(new Date());
+  $('tAcct').addEventListener('change', function () { var a = S.accounts.filter(function (x) { return x.name === $('tAcct').value; })[0]; if (a) $('tType').value = a.stage === 'test' ? 'eval' : 'funded'; });
   $('tradeForm').addEventListener('submit', function (e) {
     e.preventDefault();
     if (!S.db) { toast('Open the farm from your sidebar to save.'); return; }
@@ -1745,7 +1896,7 @@
   function listen(coll, fn) {
     S.db.collection(coll).onSnapshot(function (snap) { fn(snap.docs.map(function (d) { var x = Object.assign({}, d.data()); x._id = d.id; return x; })); renderAll(); }, function () {});
   }
-  function renderAll() { renderTrades(); renderPayouts(); renderXp(); renderAgents(); renderSetup(); if (!ck.editing) renderChecklist(); if (!$('v-discord').hidden) renderDc(); if (!$('v-news').hidden) renderNews(); if (!$('v-content').hidden) renderContent(); }
+  function renderAll() { renderAccounts(); renderTrades(); renderPayouts(); renderXp(); renderAgents(); renderSetup(); if (!ck.editing) renderChecklist(); if (!$('v-discord').hidden) renderDc(); if (!$('v-news').hidden) renderNews(); if (!$('v-content').hidden) renderContent(); }
   var dbP = (window.claude && window.claude.use) ? window.claude.use('db') : Promise.resolve(null);
   dbP.then(function (db) {
     if (!db) { $('offline').hidden = false; return; }
@@ -1757,6 +1908,7 @@
     listen('news', function (a) { S.news = a; });
     listen('settings', function (a) { S.levels = a.filter(function (x) { return x._id === 'levels'; })[0] || null; S.checklist = a.filter(function (x) { return x._id === 'checklist'; })[0] || null; S.risk = a.filter(function (x) { return x._id === 'risk'; })[0] || null; });
     listen('skips', function (a) { S.skips = a; });
+    listen('accounts', function (a) { S.accounts = a; });
     listen('plan', function (a) { S.plans = {}; a.forEach(function (x) { S.plans[x._id] = x; }); });
     listen('days', function (a) { S.days = {}; a.forEach(function (x) { S.days[x._id] = x; }); });
   }).catch(function () { $('offline').hidden = false; });
