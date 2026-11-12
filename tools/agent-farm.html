@@ -83,7 +83,13 @@
   /* ---------- game ---------- */
   .office { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #15151a; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
   .office:focus-visible { outline: 2px solid var(--good); outline-offset: 2px; }
-  .office canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; image-rendering: crisp-edges; cursor: pointer; }
+  .office canvas { display: block; width: 100%; cursor: pointer; image-rendering: pixelated; image-rendering: crisp-edges; }
+  .pad { position: absolute; bottom: 10px; display: flex; gap: 8px; pointer-events: auto; }
+  .pad.l { left: 10px; } .pad.r { right: 10px; }
+  .pad button { width: 52px; height: 52px; border-radius: 12px; border: 2px solid rgba(244,244,241,.7); background: rgba(10,10,11,.55); color: #f4f4f1; font-family: var(--pixel); font-size: 12px; touch-action: none; }
+  .pad button:active { background: rgba(244,244,241,.25); }
+  @media (hover: hover) and (pointer: fine) { .pad { display: none; } }
+  .stag { position: absolute; transform: translate(-50%, -100%); font-family: var(--display); font-variation-settings: "wdth" 115; font-weight: 900; text-transform: uppercase; font-size: clamp(9px, 1.2vw, 12px); letter-spacing: .03em; color: #fff; text-shadow: 0 1px 0 #000, 0 0 6px rgba(0,0,0,.7); white-space: nowrap; }
   .ov { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
   .tag { position: absolute; transform: translate(-50%, 0); font-family: var(--pixel); font-size: clamp(6px, 1.1vw, 8px); background: rgba(10,10,11,.8); color: var(--fg); padding: 3px 5px; border-radius: 3px; white-space: nowrap; }
   .tag.you { background: var(--good); color: #0a0a0b; }
@@ -93,7 +99,7 @@
   .hud span { font-family: var(--pixel); font-size: clamp(6px, 1.2vw, 9px); background: rgba(10,10,11,.85); padding: 6px 8px; border-radius: 4px; }
   .hud .clk { color: var(--good); }
   .hud .sim { color: var(--warn); }
-  .prompt { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); pointer-events: auto; font-family: var(--pixel); font-size: clamp(7px, 1.3vw, 10px); background: var(--fg); color: #0a0a0b; border: 0; padding: 9px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap; box-shadow: 0 0 0 3px #0a0a0b; }
+  .prompt { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); pointer-events: auto; font-family: var(--pixel); font-size: clamp(7px, 1.3vw, 10px); background: var(--fg); color: #0a0a0b; border: 0; padding: 9px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap; box-shadow: 0 0 0 3px #0a0a0b; }
   .dialog { position: absolute; left: 8px; right: 8px; bottom: 8px; pointer-events: auto; background: rgba(10,10,11,.96); border: 3px solid var(--fg); border-radius: 6px; padding: 12px 14px; display: grid; gap: 10px; max-height: calc(100% - 16px); overflow-y: auto; box-shadow: 0 0 0 3px #0a0a0b; }
   .dialog-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
   .dialog-name { font-family: var(--pixel); font-size: .62rem; color: var(--good); line-height: 1.5; }
@@ -202,6 +208,22 @@
   .check { display: grid; gap: 8px; }
   .check div { display: grid; grid-template-columns: 22px 1fr; gap: 8px; font-size: .88rem; }
   .check i { font-style: normal; font-family: var(--mono); color: var(--warn); }
+  /* checklist */
+  .ck-list { display: grid; gap: 8px; }
+  .ck-item { display: grid; grid-template-columns: 26px 1fr auto; gap: 12px; align-items: center; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-2); cursor: pointer; font-size: .95rem; }
+  .ck-item input { width: 22px; height: 22px; accent-color: var(--good); margin: 0; }
+  .ck-item.on { border-color: color-mix(in srgb, var(--good) 50%, transparent); }
+  .ck-item.on span:first-of-type { color: var(--muted); }
+  .must { font-family: var(--mono); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); border-radius: 999px; padding: 2px 7px; }
+  .verdict { font-family: var(--display); font-variation-settings: "wdth" 115; font-weight: 900; text-transform: uppercase; font-size: 1rem; padding: 12px 14px; border-radius: 10px; }
+  .verdict.go { background: color-mix(in srgb, var(--good) 18%, var(--panel)); color: var(--good); }
+  .verdict.stop { background: color-mix(in srgb, var(--bad) 16%, var(--panel)); color: var(--bad); }
+  .verdict.maybe { background: color-mix(in srgb, var(--warn) 14%, var(--panel)); color: var(--warn); }
+  .ck-edit { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; }
+  .seg-btn { background: none; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-weight: 700; font-size: .74rem; color: var(--muted); cursor: pointer; }
+  .seg-btn[aria-pressed="true"] { background: var(--warn); color: #0a0a0b; border-color: var(--warn); }
+  .ckb { font-family: var(--mono); font-size: .62rem; letter-spacing: .06em; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 6px; margin-left: 6px; }
+  .ckb.ap { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, transparent); }
   .toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: .85rem; z-index: 40; }
 
   @media (max-width: 640px) {
@@ -222,6 +244,7 @@
   </div>
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button class="tab" role="tab" data-tab="farm" aria-selected="true">Farm</button>
+    <button class="tab" role="tab" data-tab="checklist" aria-selected="false">Checklist</button>
     <button class="tab" role="tab" data-tab="news" aria-selected="false">News</button>
     <button class="tab" role="tab" data-tab="discord" aria-selected="false">Discord</button>
     <button class="tab" role="tab" data-tab="trades" aria-selected="false">Trades</button>
@@ -233,10 +256,12 @@
 <main class="wrap">
   <!-- FARM -->
   <section class="view" id="v-farm">
-    <div class="office" id="office" tabindex="0" aria-label="BNB office game. Arrow keys or WASD to walk, E to talk. Tap to walk on a phone.">
-      <canvas id="room" width="320" height="208"></canvas>
+    <div class="office" id="office" tabindex="0" aria-label="BNB Island. A and D to walk, W or Space to jump, E to talk. Tap to walk on a phone.">
+      <canvas id="world"></canvas>
       <div class="ov" id="ov"></div>
       <div class="hud"><span class="sim" id="simTag" hidden>SIMULATION</span><span class="clk" id="simClock">--:--</span></div>
+      <div class="pad l"><button id="padL" type="button" aria-label="Walk left">◀</button><button id="padR" type="button" aria-label="Walk right">▶</button></div>
+      <div class="pad r"><button id="padJ" type="button" aria-label="Jump">▲</button></div>
       <button class="prompt" id="prompt" type="button" hidden></button>
       <div class="dialog" id="dialog" hidden role="dialog" aria-live="polite">
         <div class="dialog-head"><span class="dialog-name" id="dName"></span><button class="close" id="dClose" type="button" aria-label="Close">X</button></div>
@@ -244,16 +269,43 @@
         <div id="dBody" style="display:grid;gap:10px"></div>
       </div>
     </div>
-    <div class="controls">
-      <p class="keys">Walk with <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> or <kbd>WASD</kbd>, talk with <kbd>E</kbd>. On your phone, tap where you want to go or tap someone to talk.</p>
-      <div class="row"><button class="btn" id="simBtn" type="button">Run a trading day</button><button class="btn ghost" id="simStop" type="button" hidden>Stop</button></div>
+    <p class="notice" id="noGL" hidden>Your browser couldn’t start the island. Everything else on this page still works.</p>
+    <div class="controls" id="controls">
+      <p class="keys">Run with <kbd>A</kbd> <kbd>D</kbd> or the arrow keys, jump with <kbd>W</kbd> or <kbd>Space</kbd>, talk with <kbd>E</kbd>. Click a building or an agent to walk over and talk. On your phone, use the arrows or tap where you want to go.</p>
+      <div class="row"><button class="btn" id="simBtn" type="button">Play a trading day</button><button class="btn ghost" id="simStop" type="button" hidden>Stop</button></div>
     </div>
-    <div class="notice"><span class="pill wait"><i></i>Preview</span><p>Agents aren't posting to Discord yet, so the office runs on its real schedule but nothing goes out. The <b>News Desk</b> is live and your <b>trades and payouts</b> save for real.</p></div>
+    <div class="notice"><span class="pill wait"><i></i>Preview</span><p>Agents aren't posting to Discord yet, so the island runs on the real schedule (day and night follow MST) but nothing goes out. The <b>News Desk</b> is live, and your <b>trades, payouts and checklist</b> save for real.</p></div>
     <div class="panel">
       <div class="row between"><h2>Agent activity</h2><span class="label" id="feedLabel">Today</span></div>
       <div class="feed" id="feed"></div>
     </div>
     <div class="agents" id="agents"></div>
+  </section>
+
+  <!-- CHECKLIST -->
+  <section class="view" id="v-checklist" hidden>
+    <div class="grid2">
+      <div class="panel" id="ckRun">
+        <div class="row between"><h2>Before every trade</h2><span class="label num" id="ckCount">0 / 0</span></div>
+        <div class="goal-bar"><i id="ckFill"></i></div>
+        <p class="notice" id="ckStarter" style="display:block">These are starter rules. Tap <b>Edit my checklist</b> and swap in your real strategy. It stays private to you, and no agent ever reads or posts it.</p>
+        <div class="ck-list" id="ckList"></div>
+        <p class="verdict" id="ckVerdict"></p>
+        <div class="row"><button class="btn" id="ckTake" type="button">Took the trade</button><button class="btn ghost" id="ckPass" type="button">Passed on it</button><button class="btn ghost small" id="ckReset" type="button">Clear</button><button class="btn ghost small" id="ckEdit" type="button">Edit my checklist</button></div>
+      </div>
+      <div class="panel" id="ckEditor" hidden>
+        <h2>Edit my checklist</h2>
+        <p class="muted" style="font-size:.86rem">One rule per line. Mark the ones you never break as <b>Must</b>. If any of those is unticked, the checklist tells you not to take the trade.</p>
+        <div class="ck-list" id="ckEditList"></div>
+        <div class="row"><button class="btn ghost small" id="ckAdd" type="button">Add a rule</button></div>
+        <div class="row"><button class="btn" id="ckSave" type="button">Save checklist</button><button class="btn ghost" id="ckCancel" type="button">Cancel</button></div>
+      </div>
+      <div class="panel">
+        <h2>Does the checklist pay?</h2>
+        <p class="muted" style="font-size:.86rem">Trades you take after a full checklist get tagged A+. Passing on a bad setup is +15 XP.</p>
+        <div class="tiles" id="ckStats"></div>
+      </div>
+    </div>
   </section>
 
   <!-- NEWS -->
@@ -292,6 +344,7 @@
           <label>Account<input type="text" id="tAcct" placeholder="50K #1" list="acctList"></label>
           <label>Followed my rules?<select id="tRules"><option value="yes">Yes</option><option value="no">No</option></select></label>
           <label class="wide">Note<input type="text" id="tNote" placeholder="What happened, in a few words"></label>
+          <p class="wide ckb ap" id="tCheckNote" hidden style="margin:0;padding:8px 10px;border-radius:8px"></p>
           <button class="btn wide" type="submit">Save trade</button>
         </form>
         <datalist id="acctList"></datalist>
@@ -448,121 +501,30 @@
       steps: ['Welcoming a new member…', 'Answering in #ask-gene…'] }
   ];
   var A = {}; AGENTS.forEach(function (a) { A[a.id] = a; });
-  var S = { trades: [], payouts: [], agentCfg: {}, queue: [], news: [], levels: null, db: null };
+  var S = { trades: [], payouts: [], agentCfg: {}, queue: [], news: [], levels: null, checklist: null, skips: [], pendingCheck: null, db: null };
   function cfg(id) { var c = S.agentCfg[id] || {}; return { on: c.on !== false, mode: c.mode || 'approve' }; }
 
   // ===================================================================
-  // WORLD
+  // WORLD (2D pixel side-scroller)
   // ===================================================================
-  var WW = 320, WH = 208, T = 8;
-  var DESK_COLS = [40, 120, 200, 280], DESK_ROWS = [84, 136];
-  var DESKS = [];
-  AGENTS.slice(0, 8).forEach(function (a, i) { DESKS.push({ a: a, x: DESK_COLS[i % 4], y: DESK_ROWS[Math.floor(i / 4)] }); });
-  var FRONT = { x: 236, y: 186 }; // greeter's front desk (bottom)
-  var OBST = [[0, 0, 320, 62]];
-  DESKS.forEach(function (d) { OBST.push([d.x - 20, d.y - 2, 40, 20]); });
-  OBST.push([6, 182, 52, 22]);      // couch
-  OBST.push([142, 188, 18, 20]);    // coffee
-  OBST.push([288, 176, 30, 32]);    // vault
-  OBST.push([214, 190, 44, 18]);    // front desk
-  OBST.push([4, 64, 10, 14]);       // plant
-  function blocked(x, y) {
-    if (x < 4 || x > WW - 4 || y < 64 || y > WH - 2) return true;
-    for (var i = 0; i < OBST.length; i++) { var r = OBST[i]; if (x + 3 > r[0] && x - 3 < r[0] + r[2] && y > r[1] && y - 2 < r[1] + r[3]) return true; }
-    return false;
-  }
-  var GW = WW / T, GH = Math.ceil(WH / T), GRID = [];
-  for (var gy = 0; gy < GH; gy++) { GRID.push([]); for (var gx = 0; gx < GW; gx++) GRID[gy].push(!blocked(gx * T + T / 2, gy * T + T / 2)); }
-  function cellOf(x, y) { return [Math.max(0, Math.min(GW - 1, Math.floor(x / T))), Math.max(0, Math.min(GH - 1, Math.floor(y / T)))]; }
-  function nearestOpen(c) {
-    if (GRID[c[1]][c[0]]) return c;
-    for (var r = 1; r < 8; r++) for (var dy = -r; dy <= r; dy++) for (var dx = -r; dx <= r; dx++) {
-      var x = c[0] + dx, y = c[1] + dy; if (x >= 0 && y >= 0 && x < GW && y < GH && GRID[y][x]) return [x, y];
-    }
-    return c;
-  }
-  function findPath(x0, y0, x1, y1) {
-    var s = nearestOpen(cellOf(x0, y0)), g = nearestOpen(cellOf(x1, y1));
-    var key = function (c) { return c[1] * GW + c[0]; }, prev = {}, q = [s], seen = {}; seen[key(s)] = 1;
-    while (q.length) {
-      var c = q.shift(); if (c[0] === g[0] && c[1] === g[1]) break;
-      [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (d) {
-        var n = [c[0] + d[0], c[1] + d[1]];
-        if (n[0] < 0 || n[1] < 0 || n[0] >= GW || n[1] >= GH || !GRID[n[1]][n[0]] || seen[key(n)]) return;
-        seen[key(n)] = 1; prev[key(n)] = c; q.push(n);
-      });
-    }
-    var path = [], cur = g;
-    if (!seen[key(g)]) return [];
-    while (cur && !(cur[0] === s[0] && cur[1] === s[1])) { path.unshift({ x: cur[0] * T + T / 2, y: cur[1] * T + T / 2 + 2 }); cur = prev[key(cur)]; }
-    path.push({ x: x1, y: y1 });
-    return path;
-  }
-
-  // things you can walk up to
-  var THINGS = [
-    { id: 'terminal', name: 'Trading Terminal', x: 160, y: 70 },
-    { id: 'board', name: 'Setup Board', x: 52, y: 70 },
-    { id: 'portal', name: 'Discord Portal', x: 300, y: 70 },
-    { id: 'news', name: 'News Wall', x: 238, y: 70 },
-    { id: 'vault', name: 'Payout Vault', x: 280, y: 196 },
-    { id: 'coffee', name: 'Coffee Machine', x: 151, y: 182 },
-    { id: 'couch', name: 'Couch', x: 32, y: 178 }
+  var TL = 8, WT = 190, HT = 64, WPX = WT * TL, HPX = HT * TL, SURF = 34, SEA = 36;
+  // Stations along the island, left to right. agent: who works here. open: tab it opens.
+  var STATIONS = [
+    { id: 'lighthouse', name: 'Lighthouse', tx: 16, w: 5, agent: 'outlook' },
+    { id: 'campfire', name: 'Campfire', tx: 31, w: 6, agent: 'hype' },
+    { id: 'mailbox', name: 'Application Box', tx: 43, w: 3, agent: 'lead' },
+    { id: 'studio', name: 'Content Studio', tx: 55, w: 9, agent: 'content' },
+    { id: 'tower', name: 'Market Tower', tx: 71, w: 8, agent: 'market' },
+    { id: 'checklist', name: 'Checklist Shrine', tx: 86, w: 5, open: 'checklist' },
+    { id: 'journal', name: 'Trade Journal', tx: 98, w: 6, open: 'trades' },
+    { id: 'recap', name: 'Recap Billboard', tx: 111, w: 8, agent: 'recap' },
+    { id: 'newsroom', name: 'News Antenna', tx: 125, w: 7, agent: 'news', open: 'news' },
+    { id: 'vault', name: 'Payout Vault', tx: 140, w: 8, agent: 'payout', open: 'payouts' },
+    { id: 'portal', name: 'Discord Portal', tx: 156, w: 6, agent: 'greeter', open: 'discord' }
   ];
-  var POIS = [{ x: 151, y: 182 }, { x: 32, y: 178 }, { x: 160, y: 70 }, { x: 238, y: 70 }, { x: 52, y: 70 }, { x: 100, y: 116 }, { x: 200, y: 168 }, { x: 80, y: 168 }, { x: 260, y: 116 }];
-
-  // ---------- people ----------
-  function Person(opts) { return Object.assign({ x: 160, y: 120, dir: 'down', path: [], moving: false, step: 0, seated: false, waitUntil: 0 }, opts); }
-  var player = Person({ x: 160, y: 122, name: 'You', shirt: '#0a0a0b', hair: '#111111', skin: '#c68b59', hoodie: true });
-  var bots = AGENTS.map(function (a, i) {
-    var d = DESKS.filter(function (x) { return x.a === a; })[0];
-    var seat = d ? { x: d.x, y: d.y - 3 } : { x: FRONT.x, y: FRONT.y - 3 };
-    return Person({ a: a, x: seat.x + (i % 2 ? 10 : -10), y: seat.y + 26, seat: seat, shirt: a.shirt, hair: a.hair, skin: a.skin, name: a.name, waitUntil: i * 900 });
-  });
-
-  function drawPerson(g, p, t) {
-    var x = Math.round(p.x), y = Math.round(p.y), walk = p.moving ? (Math.floor(p.step / 6) % 2) : 0;
-    var sleeping = p.mode === 'sleep' && p.seated;
-    // shadow
-    g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - 4, y - 1, 8, 2);
-    if (sleeping) {
-      g.fillStyle = p.shirt; g.fillRect(x - 5, y - 9, 10, 7);
-      g.fillStyle = p.hair; g.fillRect(x - 4, y - 11, 8, 3);
-      return;
-    }
-    var typing = p.mode === 'work' && p.seated ? (Math.floor(t / 160) % 2) : 0;
-    // legs
-    g.fillStyle = '#26262e';
-    if (!p.seated) { g.fillRect(x - 3, y - 4, 2, 4 - walk); g.fillRect(x + 1, y - 4, 2, 3 + walk); }
-    // body
-    g.fillStyle = p.shirt; g.fillRect(x - 4, y - 10, 8, 7);
-    if (p.hoodie) { g.fillStyle = '#f4f4f1'; g.fillRect(x - 1, y - 8, 2, 1); }
-    // arms
-    g.fillStyle = p.skin;
-    if (p.dir === 'left' || p.dir === 'right') g.fillRect(x - 1 + (p.dir === 'left' ? -1 : 1) * walk, y - 8, 2, 4);
-    else { g.fillRect(x - 6, y - 9 + typing, 2, 4); g.fillRect(x + 4, y - 9 + (typing ? 0 : 1) * (p.seated ? 1 : 0), 2, 4); }
-    // head
-    g.fillStyle = p.skin; g.fillRect(x - 3, y - 16, 6, 6);
-    g.fillStyle = p.hair; g.fillRect(x - 3, y - 17, 6, 2);
-    if (p.dir === 'up') g.fillRect(x - 3, y - 16, 6, 4);
-    else {
-      g.fillStyle = '#0a0a0b';
-      if (p.dir === 'down') { g.fillRect(x - 2, y - 13, 1, 1); g.fillRect(x + 1, y - 13, 1, 1); }
-      else if (p.dir === 'left') g.fillRect(x - 2, y - 13, 1, 1);
-      else g.fillRect(x + 1, y - 13, 1, 1);
-      g.fillStyle = p.hair; if (p.dir === 'left') g.fillRect(x + 2, y - 16, 1, 3); if (p.dir === 'right') g.fillRect(x - 3, y - 16, 1, 3);
-    }
-    if (p.hoodie) { g.fillStyle = '#0a0a0b'; g.fillRect(x - 4, y - 17, 1, 5); g.fillRect(x + 3, y - 17, 1, 5); }
-  }
-  function moveAlong(p, dt) {
-    if (!p.path.length) { p.moving = false; return true; }
-    var tgt = p.path[0], dx = tgt.x - p.x, dy = tgt.y - p.y, d = Math.hypot(dx, dy), sp = (p === player ? 46 : 30) * dt;
-    if (d <= sp) { p.x = tgt.x; p.y = tgt.y; p.path.shift(); }
-    else { p.x += dx / d * sp; p.y += dy / d * sp; }
-    p.moving = true; p.step++;
-    p.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
-    return !p.path.length;
-  }
+  STATIONS.forEach(function (s) { s.cx = (s.tx + s.w / 2) * TL; s.stand = { x: s.cx + (s.id === 'tower' || s.id === 'studio' || s.id === 'vault' ? -(s.w / 2 + 1) * TL : 0) }; });
+  var ST = {}; STATIONS.forEach(function (s) { ST[s.id] = s; });
+  function stationOf(agentId) { return STATIONS.filter(function (s) { return s.agent === agentId; })[0]; }
 
   // ---------- schedule ----------
   var sim = { on: false, min: 0, dow: 4, fired: {} };
@@ -576,9 +538,9 @@
     if (a.days.indexOf(c.dow) !== -1) {
       var ts = runTimes(a);
       for (var i = 0; i < ts.length; i++) {
-        var start = ts[i], m = c.min, rel = ((m - start) % 1440 + 1440) % 1440;
+        var rel = ((c.min - ts[i]) % 1440 + 1440) % 1440;
         if (rel < dur) { var k = Math.min(a.steps.length - 1, Math.floor(rel / (dur / a.steps.length))); return { mode: 'work', text: a.steps[k] }; }
-        if (rel > 1440 - lead) return { mode: 'go', text: 'Heading to my desk' };
+        if (rel > 1440 - lead) return { mode: 'go', text: 'Heading to my station' };
       }
     }
     return nightOr(c, { mode: 'free', text: nextRunText(a, c) });
@@ -595,199 +557,422 @@
     return 'Next: ' + (best.d === 0 ? 'today' : best.d === 1 ? 'tomorrow' : DOW[best.dow]) + ' ' + fmtMin(best.t);
   }
 
-  // ---------- bot brain ----------
-  function updateBot(b, dt, now) {
-    var c = clock(), st = scheduleState(b.a, c);
-    b.state = st;
-    var wantSeat = st.mode === 'work' || st.mode === 'go' || st.mode === 'sleep';
-    b.mode = st.mode === 'go' ? 'free' : st.mode;
-    if (wantSeat) {
-      var atSeat = Math.hypot(b.x - b.seat.x, b.y - b.seat.y) < 1;
-      if (!atSeat) {
-        b.seated = false;
-        if (!b.path.length || b.goal !== 'seat') { b.path = findPath(b.x, b.y, b.seat.x, b.seat.y); b.goal = 'seat'; }
-        moveAlong(b, dt);
-      } else { b.seated = true; b.moving = false; b.dir = 'down'; b.path = []; }
+  // ---------- terrain ----------
+  var ground = [];
+  (function genGround() {
+    var r = seeded(42), h = SURF;
+    for (var x = 0; x < WT; x++) {
+      if (x < 8 || x > WT - 9) { ground.push(SEA + 3); continue; }
+      if (x < 11 || x > WT - 12) { ground.push(SEA); continue; }
+      var flat = STATIONS.filter(function (s) { return x >= s.tx - 2 && x < s.tx + s.w + 2; })[0];
+      if (!flat && r() < .35) h += r() < .5 ? -1 : 1;
+      h = Math.max(SURF - 3, Math.min(SURF + 1, h));
+      if (flat) h = SURF;
+      ground.push(h);
+    }
+    // smooth single-tile spikes
+    for (var i = 1; i < WT - 1; i++) if (ground[i - 1] === ground[i + 1] && ground[i] !== ground[i - 1]) ground[i] = ground[i - 1];
+  })();
+  function groundYAt(px) { var tx = Math.max(0, Math.min(WT - 1, Math.floor(px / TL))); return ground[tx] * TL; }
+  function isWater(px) { var tx = Math.floor(px / TL); return tx < 11 || tx > WT - 12; }
+
+  // ---------- pixel helpers ----------
+  function hash(x, y) { var h = (x * 374761393 + y * 668265263) | 0; h = (h ^ (h >>> 13)) * 1274126177 | 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; }
+  function px(g, x, y, c) { g.fillStyle = c; g.fillRect(x, y, 1, 1); }
+  function rect(g, x, y, w, h, c) { g.fillStyle = c; g.fillRect(x, y, w, h); }
+
+  var terrainCv = null, bgFar = null, bgNear = null;
+  function buildTerrain() {
+    var cv = document.createElement('canvas'); cv.width = WPX; cv.height = HPX; var g = cv.getContext('2d');
+    var DIRT = ['#8a5a35', '#7c4f2e', '#94623b'], STONE = ['#6f6f78', '#64646c', '#7a7a84'], GRASS = ['#3fa34d', '#47b356', '#36923f'], SAND = ['#e3c98b', '#d9bd7c', '#ecd59a'];
+    for (var tx = 0; tx < WT; tx++) {
+      var top = ground[tx], sandy = tx < 14 || tx > WT - 15;
+      for (var ty = top; ty < HT; ty++) {
+        var depth = ty - top, pal = sandy && depth < 4 ? SAND : depth < 5 + (hash(tx, 1) * 3 | 0) ? DIRT : STONE;
+        for (var yy = 0; yy < TL; yy++) for (var xx = 0; xx < TL; xx++) {
+          var hv = hash(tx * TL + xx, ty * TL + yy), c = pal[hv < .55 ? 0 : hv < .8 ? 1 : 2];
+          if (pal === STONE && hash(tx, ty) > .93 && xx > 1 && xx < 6 && yy > 1 && yy < 6 && hv > .4) c = hash(tx, ty + 7) > .5 ? '#f5b84a' : '#5fc8ff'; // ore
+          px(g, tx * TL + xx, ty * TL + yy, c);
+        }
+        if (xx === undefined) {}
+        // tile edges for the blocky look
+        g.fillStyle = 'rgba(0,0,0,.12)'; g.fillRect(tx * TL, ty * TL + TL - 1, TL, 1); g.fillRect(tx * TL + TL - 1, ty * TL, 1, TL);
+      }
+      // grass cap
+      if (!sandy) {
+        for (var gx = 0; gx < TL; gx++) { var gh = 2 + (hash(tx * TL + gx, 3) * 2 | 0); rect(g, tx * TL + gx, top * TL, 1, gh, GRASS[hash(tx * TL + gx, 9) * 3 | 0]); if (hash(tx * TL + gx, 5) > .82) px(g, tx * TL + gx, top * TL - 1, GRASS[0]); }
+        // side grass where the neighbour is lower
+        if (ground[tx - 1] > top) rect(g, tx * TL, top * TL, 2, TL, GRASS[2]);
+        if (ground[tx + 1] > top) rect(g, tx * TL + TL - 2, top * TL, 2, TL, GRASS[2]);
+      }
+    }
+    // trees between stations
+    var r = seeded(9);
+    for (var t = 13; t < WT - 13; t += 2 + (r() * 3 | 0)) {
+      var busy = STATIONS.some(function (s) { return t >= s.tx - 1 && t < s.tx + s.w + 1; }); if (busy) continue;
+      if (r() < .62) drawTree(g, t * TL + 4, ground[t] * TL, 22 + (r() * 22 | 0), r);
+      else if (r() < .6) drawBush(g, t * TL + 4, ground[t] * TL);
+      else { // flowers
+        for (var f = 0; f < 3; f++) { var fx = t * TL + (r() * 8 | 0); rect(g, fx, ground[t] * TL - 3, 1, 3, '#2e8a3c'); px(g, fx, ground[t] * TL - 4, ['#ff5a4e', '#f5b84a', '#f4f4f1', '#9b7bff'][r() * 4 | 0]); }
+      }
+    }
+    // palm trees on the beaches
+    [12, 14, WT - 14, WT - 13].forEach(function (t, i) { drawPalm(g, t * TL + 4, ground[t] * TL, i % 2 ? 1 : -1); });
+    STATIONS.forEach(function (s) { drawStation(g, s); });
+    terrainCv = cv;
+
+    // parallax: far mountains and near hills
+    bgFar = document.createElement('canvas'); bgFar.width = 1200; bgFar.height = 200; var fg = bgFar.getContext('2d');
+    var h1 = 90; for (var x = 0; x < 1200; x++) { h1 += (hash(x, 77) - .5) * 3 + Math.sin(x / 70) * .8; h1 = Math.max(40, Math.min(130, h1)); rect(fg, x, 200 - h1, 1, h1, '#000'); if (hash(x, 3) > .5) {} }
+    bgNear = document.createElement('canvas'); bgNear.width = 1200; bgNear.height = 200; var ng = bgNear.getContext('2d');
+    var h2 = 60; for (var x2 = 0; x2 < 1200; x2++) { h2 += (hash(x2, 12) - .5) * 2 + Math.sin(x2 / 40) * .6; h2 = Math.max(30, Math.min(90, h2)); rect(ng, x2, 200 - h2, 1, h2, '#000'); }
+  }
+  function drawTree(g, x, y, h, r) {
+    for (var i = 0; i < h; i++) { rect(g, x - 2, y - i, 4, 1, i % 6 === 0 ? '#5e3c22' : '#6e4729'); px(g, x - 2, y - i, '#4f3220'); }
+    rect(g, x - 4, y - 1, 2, 1, '#6e4729'); rect(g, x + 2, y - 1, 2, 1, '#6e4729');
+    if (h > 26) { rect(g, x + 2, y - h + 12, 4, 2, '#6e4729'); blob(g, x + 7, y - h + 10, 4); }
+    blob(g, x, y - h, 9);
+    function blob(g2, cx, cy, rad) {
+      for (var yy = -rad; yy <= rad; yy++) for (var xx = -rad - 2; xx <= rad + 2; xx++) {
+        var d = (xx * xx) / ((rad + 2) * (rad + 2)) + (yy * yy) / (rad * rad); if (d > 1 + (hash(cx + xx, cy + yy) - .5) * .25) continue;
+        px(g2, cx + xx, cy + yy, d > .75 ? '#2c7a37' : hash(cx + xx, cy + yy) > .7 ? '#56c264' : '#3c9a48');
+      }
+    }
+  }
+  function drawBush(g, x, y) { for (var yy = -5; yy <= 0; yy++) for (var xx = -6; xx <= 6; xx++) { if ((xx * xx) / 36 + ((yy + 1) * (yy + 1)) / 25 > 1) continue; px(g, x + xx, y + yy - 1, hash(x + xx, yy) > .6 ? '#4fb85d' : '#3a9446'); } }
+  function drawPalm(g, x, y, dir) {
+    for (var i = 0; i < 30; i++) rect(g, x + Math.round(Math.sin(i / 12) * 3 * dir), y - i, 3, 1, i % 4 ? '#a37446' : '#8a5f37');
+    var tx = x + Math.round(Math.sin(30 / 12) * 3 * dir) + 1, ty = y - 30;
+    [[-1, -.2], [1, -.2], [-1, .5], [1, .5], [0, -1]].forEach(function (d) { for (var k = 0; k < 11; k++) { var xx = tx + d[0] * k, yy = ty + Math.round(d[1] * k + k * k * .05); rect(g, xx, yy, 2, 2, k % 3 ? '#3fa34d' : '#2c7a37'); } });
+    rect(g, tx - 1, ty, 3, 3, '#6e4729');
+  }
+
+  // ---------- buildings (static parts, drawn once) ----------
+  function bricks(g, x, y, w, h, c1, c2) { rect(g, x, y, w, h, c1); for (var yy = 0; yy < h; yy += 4) { rect(g, x, y + yy, w, 1, c2); for (var xx = (yy / 4 % 2) * 4; xx < w; xx += 8) rect(g, x + xx, y + yy, 1, 4, c2); } }
+  function planks(g, x, y, w, h, c1, c2) { rect(g, x, y, w, h, c1); for (var yy = 0; yy < h; yy += 3) rect(g, x, y + yy, w, 1, c2); for (var k = 0; k < w; k += 11) rect(g, x + k, y, 1, h, c2); }
+  function roof(g, x, y, w, c1, c2) { for (var i = 0; i < w / 2 + 2; i++) { rect(g, x - 2 + i, y - i, w + 4 - i * 2, 1, i % 2 ? c1 : c2); } }
+  function door(g, x, y) { rect(g, x, y - 12, 7, 12, '#5a3a22'); rect(g, x + 1, y - 11, 5, 11, '#7a5232'); px(g, x + 5, y - 6, '#f5b84a'); }
+  function win(g, x, y) { rect(g, x, y, 7, 6, '#2a2a33'); rect(g, x + 1, y + 1, 5, 4, '#8fd3ff'); rect(g, x + 3, y + 1, 1, 4, '#2a2a33'); rect(g, x + 1, y + 3, 5, 1, '#2a2a33'); }
+  function sign(g, x, y, c) { rect(g, x, y, 1, 8, '#5a3a22'); rect(g, x - 5, y - 5, 11, 6, '#8a5a35'); rect(g, x - 4, y - 4, 9, 4, c || '#a37446'); }
+  function drawStation(g, s) {
+    var x = s.tx * TL, y = SURF * TL, w = s.w * TL;
+    if (s.id === 'tower') {
+      bricks(g, x, y - 92, w, 92, '#6f6f78', '#55555e');
+      rect(g, x - 2, y - 94, w + 4, 3, '#3a3a44'); rect(g, x + w / 2, y - 112, 1, 18, '#a3a3a8');
+      rect(g, x + 6, y - 82, w - 12, 34, '#1b1b1e'); // screen frame (ticker drawn live)
+      door(g, x + w / 2 - 3, y); win(g, x + 8, y - 40); win(g, x + w - 15, y - 40);
+    } else if (s.id === 'studio') {
+      planks(g, x, y - 34, w, 34, '#c48a55', '#a8703f'); roof(g, x, y - 34, w, '#2f9bff', '#2580d6');
+      door(g, x + 8, y); win(g, x + w - 18, y - 26); win(g, x + w - 30, y - 26);
+      rect(g, x + w + 4, y - 18, 1, 18, '#2a2a33'); rect(g, x + w + 1, y - 24, 7, 7, '#f4f4f1'); rect(g, x + w + 3, y - 22, 3, 3, '#c48a55'); // ring light
+    } else if (s.id === 'recap') {
+      rect(g, x + 6, y - 26, 2, 26, '#3a3a44'); rect(g, x + w - 8, y - 26, 2, 26, '#3a3a44');
+      rect(g, x, y - 58, w, 34, '#2a2a33'); rect(g, x + 2, y - 56, w - 4, 30, '#0a0a0b');
+    } else if (s.id === 'journal') {
+      rect(g, x + 4, y - 30, w - 8, 3, '#ff5a4e'); for (var i = 0; i < w - 8; i += 6) rect(g, x + 4 + i, y - 27, 3, 2, '#ff5a4e');
+      rect(g, x + 4, y - 30, 2, 30, '#5a3a22'); rect(g, x + w - 6, y - 30, 2, 30, '#5a3a22');
+      planks(g, x + 10, y - 10, w - 20, 10, '#8a5a35', '#6e4729');
+      rect(g, x + w / 2 - 6, y - 21, 12, 9, '#2a2a33'); rect(g, x + w / 2 - 1, y - 12, 2, 2, '#2a2a33');
+    } else if (s.id === 'lighthouse') {
+      for (var j = 0; j < 8; j++) rect(g, x + 4 + (j > 5 ? 1 : 0), y - 8 - j * 9, w - 8 - (j > 5 ? 2 : 0), 9, j % 2 ? '#ff5a4e' : '#f4f4f1');
+      rect(g, x + 2, y - 82, w - 4, 3, '#2a2a33'); rect(g, x + 6, y - 92, w - 12, 10, '#fff1b8'); rect(g, x + 4, y - 96, w - 8, 4, '#2a2a33'); rect(g, x + w / 2 - 1, y - 100, 2, 4, '#2a2a33');
+      door(g, x + w / 2 - 3, y);
+    } else if (s.id === 'portal') {
+      bricks(g, x, y - 6, w, 6, '#3c3f6e', '#2b2d55');
+      rect(g, x + 4, y - 48, 4, 42, '#3c3f6e'); rect(g, x + w - 8, y - 48, 4, 42, '#3c3f6e'); rect(g, x + 4, y - 52, w - 8, 5, '#3c3f6e');
+      px(g, x + 6, y - 50, '#c9cdfb'); px(g, x + w - 6, y - 50, '#c9cdfb');
+    } else if (s.id === 'mailbox') {
+      rect(g, x + 10, y - 16, 3, 16, '#5a3a22'); rect(g, x + 5, y - 26, 14, 10, '#2f9bff'); rect(g, x + 5, y - 26, 14, 2, '#2580d6'); rect(g, x + 8, y - 22, 8, 1, '#0a0a0b');
+    } else if (s.id === 'campfire') {
+      rect(g, x + 8, y - 4, 10, 4, '#5a3a22'); rect(g, x + 30, y - 4, 10, 4, '#5a3a22'); // benches
+      rect(g, x + 20, y - 3, 8, 3, '#6e4729'); rect(g, x + 19, y - 2, 10, 2, '#4f3220'); // logs
+      rect(g, x + 18, y - 1, 12, 1, '#6f6f78');
+    } else if (s.id === 'checklist') {
+      bricks(g, x + 4, y - 8, w - 8, 8, '#d9d2c2', '#b8b0a0');
+      rect(g, x + w / 2 - 1, y - 30, 2, 22, '#5a3a22'); rect(g, x + 6, y - 38, w - 12, 14, '#8a5a35'); rect(g, x + 8, y - 36, w - 16, 10, '#f4f4f1');
+      for (var c2 = 0; c2 < 3; c2++) { rect(g, x + 10, y - 35 + c2 * 3, 2, 2, c2 < 2 ? '#3ddc84' : '#a3a3a8'); rect(g, x + 13, y - 34 + c2 * 3, w - 23, 1, '#6d6d73'); }
+    } else if (s.id === 'vault') {
+      bricks(g, x, y - 40, w, 40, '#8c8f99', '#6f6f78'); roof(g, x, y - 40, w, '#f5b84a', '#d99a2b');
+      rect(g, x + w / 2 - 9, y - 26, 18, 18, '#d99a2b'); rect(g, x + w / 2 - 7, y - 24, 14, 14, '#f5b84a'); rect(g, x + w / 2 - 1, y - 20, 2, 6, '#8a5a35'); rect(g, x + w / 2 - 3, y - 18, 6, 2, '#8a5a35');
+      rect(g, x + 4, y - 38, w - 8, 4, '#f5b84a');
+    } else if (s.id === 'newsroom') {
+      planks(g, x, y - 24, w - 20, 24, '#ff8a3d', '#d96f2b'); roof(g, x, y - 24, w - 20, '#2a2a33', '#3a3a44'); door(g, x + 8, y); win(g, x + w - 34, y - 18);
+      var ax = x + w - 10; for (var a2 = 0; a2 < 60; a2++) { rect(g, ax - Math.floor((60 - a2) / 12), y - a2, 1, 1, '#a3a3a8'); rect(g, ax + Math.floor((60 - a2) / 12), y - a2, 1, 1, '#a3a3a8'); if (a2 % 8 === 0) rect(g, ax - Math.floor((60 - a2) / 12), y - a2, Math.floor((60 - a2) / 6) + 1, 1, '#a3a3a8'); }
+      rect(g, ax - 6, y - 50, 6, 4, '#f4f4f1');
+    }
+    if (s.agent || s.open) sign(g, s.cx + (s.id === 'tower' || s.id === 'studio' || s.id === 'vault' ? -(s.w / 2 + 3) * TL : 0) - 0, y - 8, '#a37446');
+  }
+
+  // ---------- characters ----------
+  function makePerson(o) { return Object.assign({ x: 0, y: SURF * TL, vx: 0, vy: 0, facing: 1, frame: 0, onGround: true, target: null, waitUntil: 0, speed: 0 }, o); }
+  var player = null, bots = [], people = [];
+  function drawChar(g, p, t) {
+    var x = Math.round(p.x) - 6, y = Math.round(p.y) - 24, f = p.facing < 0, mv = Math.abs(p.vx) > 5 && p.onGround, fr = mv ? Math.floor(p.frame) % 4 : 0;
+    var sleeping = p.mode === 'sleep' && p.atPost, working = p.mode === 'work' && p.atPost;
+    var OUT = '#1a1a1f', skin = p.skin, shirt = p.shirt, hair = p.hair, pants = p.pants || '#2b3352', shoe = '#3a2a1e';
+    function P(dx, dy, w, h, c) { rect(g, f ? x + 12 - dx - w : x + dx, y + dy, w, h, c); }
+    if (sleeping) { // lying down, zzz handled by overlay
+      rect(g, x - 4, y + 18, 22, 6, OUT); rect(g, x - 3, y + 19, 7, 4, skin); rect(g, x - 3, y + 19, 7, 2, hair); rect(g, x + 4, y + 19, 9, 4, shirt); rect(g, x + 13, y + 19, 4, 4, pants);
       return;
     }
-    b.seated = false;
-    if (b.path.length) { if (moveAlong(b, dt)) { b.waitUntil = now + 2500 + Math.random() * 5000; b.chat = b.goal && b.goal.say; } return; }
-    b.moving = false;
-    if (now > b.waitUntil) {
-      var p = POIS[Math.floor(Math.random() * POIS.length)];
-      var j = { x: p.x + (Math.random() * 16 - 8), y: p.y + (Math.random() * 6 - 3) };
-      if (blocked(j.x, j.y)) j = p;
-      b.path = findPath(b.x, b.y, j.x, j.y);
-      b.goal = { say: p.x === 151 ? '☕ refill' : p.x === 238 ? 'Checking headlines' : p.x === 160 ? 'NQ looking spicy' : null };
+    var bob = mv && (fr === 1 || fr === 3) ? 1 : 0, air = !p.onGround;
+    // legs
+    var lA = air ? 2 : [0, 2, 0, -2][fr], lB = -lA;
+    P(3 + Math.max(0, lA), 17, 3, 6, OUT); P(4 + Math.max(0, lA), 17, 2, 5, pants); P(3 + lA, 22, 4, 2, shoe);
+    P(6 + Math.max(0, lB), 17, 3, 6, OUT); P(7 + Math.max(0, lB), 17, 2, 5, pants); P(6 + lB, 22, 4, 2, shoe);
+    // body
+    P(2, 10 - bob, 8, 8, OUT); P(3, 11 - bob, 6, 6, shirt); P(3, 16 - bob, 6, 1, pants);
+    // back arm
+    var swing = working ? (Math.floor(t / 140) % 2 ? -2 : 0) : mv ? [0, 1, 0, -1][fr] : 0;
+    P(1 - swing, 11 - bob, 2, 5, OUT); P(1 - swing, 15 - bob, 2, 1, skin);
+    // head
+    P(2, 1 - bob, 9, 9, OUT); P(3, 2 - bob, 7, 7, skin);
+    P(2, 0 - bob, 9, 3, hair); P(2, 3 - bob, 2, 3, hair); if (p.longHair) P(2, 3 - bob, 2, 7, hair);
+    if (p.cap) { P(2, 0 - bob, 9, 2, p.cap); P(9, 1 - bob, 3, 1, p.cap); }
+    P(7, 4 - bob, 2, 2, '#f4f4f1'); P(8, 4 - bob, 1, 2, '#1a1a1f'); // eye
+    if (p.mode === 'work' && p.atPost) P(6, 7 - bob, 2, 1, '#8a3a2a');
+    // front arm
+    var sw2 = working ? (Math.floor(t / 140) % 2 ? 0 : -2) : mv ? [0, -1, 0, 1][fr] : 0;
+    P(8 + sw2, 11 - bob, 2, 6, OUT); P(8 + sw2, 11 - bob, 2, 4, shirt); P(8 + sw2, 15 - bob, 2, 1, skin);
+    if (p.isPlayer) { P(4, 12 - bob, 4, 1, '#f5b84a'); }
+  }
+
+  // ---------- physics ----------
+  var GRAV = 520, JUMP = 190, RUN = 64;
+  function physics(p, dt, want) {
+    p.vx = want * (p.isPlayer ? RUN : RUN * .75);
+    if (want) p.facing = want > 0 ? 1 : -1;
+    var nx = p.x + p.vx * dt;
+    nx = Math.max(12 * TL, Math.min(WPX - 12 * TL, nx));
+    var curG = groundYAt(p.x), nG = groundYAt(nx);
+    if (nG < curG - TL && p.onGround) { // a step taller than one tile: hop it
+      if (p.isPlayer) nx = p.x; else { p.vy = -JUMP * .9; p.onGround = false; }
+    }
+    if (p.onGround && nG < p.y && p.y - nG <= TL) p.y = nG; // small step up
+    p.x = nx;
+    p.vy += GRAV * dt; p.y += p.vy * dt;
+    var gy = groundYAt(p.x);
+    if (p.y >= gy) { p.y = gy; p.vy = 0; p.onGround = true; } else if (p.y < gy - 1) p.onGround = false;
+    p.frame += Math.abs(p.vx) * dt / 6;
+  }
+  function jump(p) { if (p.onGround) { p.vy = -JUMP; p.onGround = false; } }
+
+  // ---------- bot brain ----------
+  function updateBot(b, dt, now) {
+    var st = scheduleState(b.a, clock()); b.state = st; b.mode = st.mode === 'go' ? 'free' : st.mode;
+    var wantPost = st.mode === 'work' || st.mode === 'go' || st.mode === 'sleep', want = 0;
+    if (wantPost) {
+      var dx = b.post - b.x;
+      if (Math.abs(dx) > 2) { b.atPost = false; want = dx > 0 ? (sim.on ? 1.6 : 1) : (sim.on ? -1.6 : -1); }
+      else { b.atPost = true; b.facing = b.faceDir; }
+      b.chat = null; physics(b, dt, want); return;
+    }
+    b.atPost = false;
+    if (b.target != null) {
+      var d2 = b.target - b.x;
+      if (Math.abs(d2) < 2) { b.target = null; b.waitUntil = now + 2500 + Math.random() * 5000; b.chat = b.goalSay || null; }
+      else want = d2 > 0 ? 1 : -1;
+    } else if (now > b.waitUntil) {
+      var s = Math.random() < .55 ? STATIONS[Math.floor(Math.random() * STATIONS.length)] : null;
+      b.target = s ? s.stand.x + (Math.random() - .5) * 24 : b.x + (Math.random() - .5) * 160;
+      b.target = Math.max(14 * TL, Math.min(WPX - 14 * TL, b.target));
+      b.goalSay = s ? ({ campfire: '🔥 vibes', vault: '💰 counting', tower: 'NQ looking spicy', newsroom: 'any headlines?', portal: 'checking the Discord', checklist: 'rules first', journal: 'logging trades' })[s.id] || null : null;
       b.chat = null; b.waitUntil = Infinity;
     }
+    physics(b, dt, want);
   }
 
   // ---------- player ----------
   var keys = {}, pendingTalk = null;
   function playerStep(dt) {
-    var vx = (keys.right ? 1 : 0) - (keys.left ? 1 : 0), vy = (keys.down ? 1 : 0) - (keys.up ? 1 : 0);
-    if (vx || vy) {
-      player.path = []; pendingTalk = null;
-      var sp = 50 * dt, n = Math.hypot(vx, vy), nx = player.x + vx / n * sp, ny = player.y + vy / n * sp;
-      if (!blocked(nx, player.y)) player.x = nx;
-      if (!blocked(player.x, ny)) player.y = ny;
-      player.dir = Math.abs(vx) >= Math.abs(vy) && vx ? (vx > 0 ? 'right' : 'left') : (vy > 0 ? 'down' : 'up');
-      player.moving = true; player.step++;
-    } else if (player.path.length) {
-      if (moveAlong(player, dt) && pendingTalk) { var t = pendingTalk; pendingTalk = null; openTalk(t); }
-    } else player.moving = false;
+    var want = (keys.right ? 1 : 0) - (keys.left ? 1 : 0);
+    if (want) { player.target = null; pendingTalk = null; }
+    else if (player.target != null) {
+      var d = player.target - player.x;
+      if (Math.abs(d) < 3) { player.target = null; if (pendingTalk) { var t = pendingTalk; pendingTalk = null; openTalk(t); } }
+      else want = d > 0 ? 1 : -1;
+      // hop over tall steps automatically when walking to a target
+      if (want && player.onGround && groundYAt(player.x + want * 6) < player.y - TL) jump(player);
+    }
+    if (keys.up) jump(player);
+    physics(player, dt, want);
   }
   function nearestTarget() {
     var best = null, bd = 22;
-    bots.forEach(function (b) { var d = Math.hypot(b.x - player.x, b.y - player.y); if (d < bd) { bd = d; best = { kind: 'bot', ref: b }; } });
-    THINGS.forEach(function (o) { var d = Math.hypot(o.x - player.x, o.y - player.y); if (d < bd) { bd = d; best = { kind: 'thing', ref: o }; } });
+    bots.forEach(function (b) { var d = Math.abs(b.x - player.x) + Math.abs(b.y - player.y) * .5; if (d < bd) { bd = d; best = { kind: 'bot', ref: b }; } });
+    STATIONS.forEach(function (s) { var d = Math.abs(s.stand.x - player.x) - 6; if (d < bd && (s.open || !best)) { bd = d; best = { kind: 'thing', ref: s }; } });
     return best;
   }
 
-  // ---------- camera + render ----------
-  var room = $('room'), g = room.getContext('2d');
-  var cam = { x: 0, y: 0, w: WW, h: WH };
-  function sizeView() {
-    var w = $('office').clientWidth || 320, small = w < 640;
-    cam.w = small ? 176 : WW; cam.h = small ? 150 : WH;
-    if (room.width !== cam.w || room.height !== cam.h) { room.width = cam.w; room.height = cam.h; g.imageSmoothingEnabled = false; }
+  // ---------- view ----------
+  var office = $('office'), canvas2d = $('world'), V = { w: 360, h: 200, cx: 0, cy: 0 }, g2 = null;
+  function resize() {
+    var w = office.clientWidth || 360, small = w < 640, h = small ? 170 : 210, cssH = small ? Math.round(w * 1.0) : Math.round(Math.min(w * .5625, 640));
+    var vw = Math.round(h * w / cssH);
+    if (V.w !== vw || V.h !== h) { V.w = vw; V.h = h; canvas2d.width = vw; canvas2d.height = h; g2 = canvas2d.getContext('2d'); g2.imageSmoothingEnabled = false; }
+    canvas2d.style.height = cssH + 'px';
   }
-  function updateCam() {
-    cam.x = Math.max(0, Math.min(WW - cam.w, player.x - cam.w / 2));
-    cam.y = Math.max(0, Math.min(WH - cam.h, player.y - 10 - cam.h / 2));
+  function camera(dt) {
+    var tx = player.x - V.w / 2 + player.facing * 12, ty = player.y - V.h * .7;
+    V.cx += (tx - V.cx) * Math.min(1, dt * 5); V.cy += (ty - V.cy) * Math.min(1, dt * 5);
+    V.cx = Math.max(0, Math.min(WPX - V.w, V.cx)); V.cy = Math.max(0, Math.min(HPX - V.h, V.cy));
   }
-  var ticker = []; for (var ti = 0; ti < 40; ti++) ticker.push(0); var tv = 0, lastTick = 0;
-  function drawWorld(t) {
-    var c = clock();
-    g.save(); g.translate(-Math.round(cam.x), -Math.round(cam.y));
-    // wall
-    g.fillStyle = '#1d1d24'; g.fillRect(0, 0, WW, 62);
-    g.fillStyle = '#24242c'; for (var x = 0; x < WW; x += 16) g.fillRect(x, 0, 1, 62);
-    g.fillStyle = '#0f0f13'; g.fillRect(0, 60, WW, 3);
-    // setup board
-    g.fillStyle = '#d9d9d2'; g.fillRect(24, 14, 56, 36); g.fillStyle = '#6d6d73'; g.fillRect(24, 50, 56, 2);
-    g.fillStyle = '#2f9bff'; g.fillRect(30, 20, 26, 2); g.fillStyle = '#ff5a4e'; g.fillRect(30, 26, 18, 2); g.fillStyle = '#3ddc84'; g.fillRect(30, 32, 30, 2); g.fillStyle = '#0a0a0b'; g.fillRect(30, 38, 22, 2); g.fillRect(62, 20, 12, 12);
-    // trading terminal (big screen)
-    g.fillStyle = '#0a0a0b'; g.fillRect(112, 8, 96, 46); g.fillStyle = '#2a2a2f'; g.fillRect(112, 8, 96, 1); g.fillRect(112, 53, 96, 1);
-    var open = c.dow > 0 && c.dow < 6 && c.min >= OPEN && c.min <= CLOSE;
-    if (t - lastTick > 220) { lastTick = t; tv += (Math.random() - .48) * (open ? 3 : 1.2); tv = Math.max(-15, Math.min(15, tv)); ticker.push(tv); ticker.shift(); }
-    for (var k = 1; k < ticker.length; k++) { g.fillStyle = ticker[k] <= ticker[k - 1] ? '#3ddc84' : '#ff5a4e'; g.fillRect(116 + k * 2.2, 31 + Math.round(ticker[k]), 2, 1 + Math.abs(Math.round(ticker[k] - ticker[k - 1]))); }
-    g.fillStyle = open ? '#3ddc84' : '#6d6d73'; g.fillRect(116, 12, 3, 3);
-    // news wall
-    g.fillStyle = '#0a0a0b'; g.fillRect(220, 14, 36, 36); g.fillStyle = '#2a2a2f'; g.fillRect(220, 14, 36, 1);
-    var hot = S.news.some(function (n) { return n.impact === 'high' && n.date === nowAZ().date; });
-    g.fillStyle = hot && Math.floor(t / 400) % 2 ? '#ff5a4e' : '#f5b84a'; g.fillRect(224, 18, 10, 3);
-    g.fillStyle = '#6d6d73'; for (var nl = 0; nl < 5; nl++) g.fillRect(224, 25 + nl * 5, 28 - (nl % 2) * 8, 2);
-    // discord portal
-    g.fillStyle = '#5865f2'; g.fillRect(286, 18, 28, 44); g.fillStyle = '#3c45a5'; g.fillRect(290, 22, 20, 40);
-    var sw = Math.floor(t / 150) % 4; g.fillStyle = '#c9cdfb'; g.fillRect(296 + (sw % 2) * 4, 34 + (sw > 1 ? 4 : 0), 4, 4); g.fillRect(298, 46, 4, 4);
-    // floor
-    for (var fy = 63; fy < WH; fy += 8) for (var fx = 0; fx < WW; fx += 8) { g.fillStyle = ((fx + fy) / 8) % 2 ? '#17171c' : '#1a1a20'; g.fillRect(fx, fy, 8, 8); }
-    // rug in lounge
-    g.fillStyle = '#22222b'; g.fillRect(4, 168, 120, 38);
-    // plant
-    g.fillStyle = '#5a3a24'; g.fillRect(5, 70, 8, 8); g.fillStyle = '#2d6b45'; g.fillRect(3, 62, 12, 9); g.fillStyle = '#3ddc84'; g.fillRect(6, 59, 6, 5);
 
-    // y-sorted drawables
-    var list = [];
-    DESKS.forEach(function (d) { list.push({ y: d.y + 1, draw: function () { drawDesk(d, t); } }); });
-    list.push({ y: 188, draw: function () { drawFrontDesk(); } });
-    list.push({ y: 182, draw: function () { g.fillStyle = '#3d2c4f'; g.fillRect(6, 182, 52, 14); g.fillStyle = '#4e3a66'; g.fillRect(6, 176, 52, 8); g.fillRect(6, 176, 6, 20); g.fillRect(52, 176, 6, 20); } });
-    list.push({ y: 188, draw: function () { g.fillStyle = '#3a3a44'; g.fillRect(142, 184, 18, 22); g.fillStyle = '#0a0a0b'; g.fillRect(146, 190, 10, 6); g.fillStyle = '#ff5a4e'; g.fillRect(145, 186, 2, 2); g.fillStyle = '#f4f4f1'; g.fillRect(149, 198, 4, 4); } });
-    list.push({ y: 176, draw: function () { drawVault(t); } });
-    bots.forEach(function (b) { list.push({ y: b.y, draw: function () { drawPerson(g, b, t); } }); });
-    list.push({ y: player.y, draw: function () { drawPerson(g, player, t); } });
-    list.sort(function (a, b) { return a.y - b.y; }).forEach(function (d) { d.draw(); });
-
-    // zzz
-    bots.forEach(function (b) {
-      if (!(b.mode === 'sleep' && b.seated) || b.state.text === 'Off') return;
-      var p = (t / 40 + b.seat.x) % 20; g.fillStyle = 'rgba(244,244,241,' + (1 - p / 20).toFixed(2) + ')';
-      var zx = b.x + 5 + p / 4, zy = b.y - 14 - p; g.fillRect(zx, zy, 3, 1); g.fillRect(zx + 1, zy + 1, 1, 1); g.fillRect(zx, zy + 2, 3, 1);
+  // ---------- sky / day-night ----------
+  function hexToRgb(h) { return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; }
+  function mix(a, b, k) { return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k]; }
+  function rgb(c) { return 'rgb(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ')'; }
+  var DAY_T = hexToRgb('#5fb8ff'), DAY_B = hexToRgb('#b9e4ff'), NIGHT_T = hexToRgb('#070b1e'), NIGHT_B = hexToRgb('#1a2348'), DUSK = hexToRgb('#ff8a5b');
+  var clouds = []; for (var ci = 0; ci < 9; ci++) clouds.push({ x: hash(ci, 1) * 1400, y: 10 + hash(ci, 2) * 50, s: .5 + hash(ci, 3), w: 20 + hash(ci, 4) * 26 | 0 });
+  function dayK(min) { return Math.max(0, Math.min(1, (Math.sin((min - 390) / 660 * Math.PI) + .15) * 1.6)); }
+  function drawSky(g, t, min) {
+    var k = dayK(min), dusk = Math.max(0, 1 - Math.abs(min - 1050) / 70) + Math.max(0, 1 - Math.abs(min - 395) / 60);
+    var top = mix(NIGHT_T, DAY_T, k), bot = mix(mix(NIGHT_B, DAY_B, k), DUSK, Math.min(.7, dusk * .7));
+    var gr = g.createLinearGradient(0, 0, 0, V.h); gr.addColorStop(0, rgb(top)); gr.addColorStop(1, rgb(bot)); g.fillStyle = gr; g.fillRect(0, 0, V.w, V.h);
+    // stars
+    if (k < .6) for (var s = 0; s < 70; s++) { var sx = (hash(s, 11) * V.w * 1.5 - V.cx * .05) % V.w, sy = hash(s, 12) * V.h * .6; if (sx < 0) sx += V.w; g.globalAlpha = (1 - k / .6) * (.5 + .5 * Math.sin(t / 500 + s)); rect(g, sx | 0, sy | 0, 1, 1, '#ffffff'); }
+    g.globalAlpha = 1;
+    // sun / moon arc
+    var ang = ((min - 360) / 720) * Math.PI, isDay = min >= 330 && min <= 1110;
+    var a2 = isDay ? ang : (((min + 720) % 1440 - 360) / 720) * Math.PI;
+    var bx = V.w * (.1 + .8 * (a2 / Math.PI)), by = V.h * .55 - Math.sin(a2) * V.h * .45;
+    if (isDay) { rect(g, bx - 6, by - 6, 12, 12, '#fff3b0'); rect(g, bx - 4, by - 8, 8, 16, '#fff3b0'); rect(g, bx - 8, by - 4, 16, 8, '#fff3b0'); rect(g, bx - 4, by - 4, 8, 8, '#ffe066'); }
+    else { rect(g, bx - 5, by - 5, 10, 10, '#e8ecff'); rect(g, bx - 3, by - 7, 6, 14, '#e8ecff'); rect(g, bx - 7, by - 3, 14, 6, '#e8ecff'); rect(g, bx - 1, by - 3, 3, 3, '#c5cbe8'); rect(g, bx + 2, by + 1, 2, 2, '#c5cbe8'); }
+    // parallax mountains + hills
+    var farC = rgb(mix(hexToRgb('#1a2140'), hexToRgb('#7fa6c9'), k)), nearC = rgb(mix(hexToRgb('#101a24'), hexToRgb('#4f8f5a'), k));
+    var gs = SURF * TL - V.cy;
+    drawLayer(g, bgFar, V.cx * .2, gs - 175, farC);
+    drawLayer(g, bgNear, V.cx * .45, gs - 192, nearC);
+    // clouds
+    clouds.forEach(function (c) {
+      var cx = ((c.x + t / 1000 * 4 * c.s - V.cx * .3) % 1500 + 1500) % 1500 - 100; g.fillStyle = k > .3 ? 'rgba(255,255,255,.9)' : 'rgba(170,180,220,.35)';
+      g.fillRect(cx, c.y, c.w, 5); g.fillRect(cx + 4, c.y - 4, c.w - 10, 4); g.fillRect(cx + 8, c.y - 7, c.w / 3, 3);
     });
-    // target marker
-    if (player.path.length) { var last = player.path[player.path.length - 1]; g.strokeStyle = 'rgba(61,220,132,.8)'; g.strokeRect(Math.round(last.x) - 3.5, Math.round(last.y) - 1.5, 7, 3); }
-    g.restore();
+    return k;
   }
-  function drawDesk(d, t) {
-    var b = bots.filter(function (x) { return x.a === d.a; })[0], working = b && b.mode === 'work' && b.seated;
-    var x = d.x - 20, y = d.y;
-    g.fillStyle = '#4a3527'; g.fillRect(x, y, 40, 5); g.fillStyle = '#35261c'; g.fillRect(x, y + 5, 40, 11);
-    g.fillStyle = '#2a1d15'; g.fillRect(x + 2, y + 16, 3, 3); g.fillRect(x + 35, y + 16, 3, 3);
-    var glow = working ? (Math.floor(t / 120) % 3 ? '#3ddc84' : '#2f9bff') : '#2a2a2f';
-    g.fillStyle = '#0d0d10'; g.fillRect(x + 2, y - 8, 12, 9); g.fillStyle = glow; g.fillRect(x + 3, y - 7, 10, 1);
-    g.fillStyle = '#f4f4f1'; g.fillRect(x + 33, y - 2, 3, 3);
-    g.fillStyle = d.a.shirt; g.fillRect(x + 26, y + 8, 8, 3); // nameplate color
-  }
-  function drawFrontDesk() {
-    var x = 214, y = 188;
-    g.fillStyle = '#2b2d55'; g.fillRect(x, y, 44, 6); g.fillStyle = '#20223f'; g.fillRect(x, y + 6, 44, 14);
-    g.fillStyle = '#5865f2'; g.fillRect(x + 16, y + 10, 12, 4);
-  }
-  function drawVault(t) {
-    var x = 288, y = 176;
-    g.fillStyle = '#4b4b55'; g.fillRect(x, y, 28, 30); g.fillStyle = '#3a3a44'; g.fillRect(x + 3, y + 3, 22, 24);
-    g.fillStyle = '#f5b84a'; g.fillRect(x + 12, y + 12, 4, 4);
-    var tot = S.payouts.reduce(function (s, p) { return s + (+p.amount || 0); }, 0);
-    if (tot) { g.fillStyle = Math.floor(t / 500) % 2 ? '#3ddc84' : '#2a8a55'; g.fillRect(x + 6, y + 6, 2, 2); }
+  var tinted = new Map();
+  function drawLayer(g, cv, ox, y, color) {
+    var key = cv === bgFar ? 'far' : 'near', tc = tinted.get(key);
+    if (!tc || tc.color !== color) { var c = document.createElement('canvas'); c.width = cv.width; c.height = cv.height; var cg = c.getContext('2d'); cg.drawImage(cv, 0, 0); cg.globalCompositeOperation = 'source-in'; cg.fillStyle = color; cg.fillRect(0, 0, c.width, c.height); tc = { color: color, c: c }; tinted.set(key, tc); }
+    var w = cv.width, sx = ((ox % w) + w) % w;
+    g.drawImage(tc.c, -sx, y); g.drawImage(tc.c, w - sx, y);
   }
 
-  // ---------- overlay (tags + bubbles) ----------
-  var ov = $('ov'), tagEls = new Map(), bubbleEls = new Map();
-  function overlayFor(p, label) {
-    var tg = tagEls.get(p); if (!tg) { tg = el('span', { class: 'tag' + (p === player ? ' you' : ''), text: label }); ov.appendChild(tg); tagEls.set(p, tg); }
-    var bb = bubbleEls.get(p); if (!bb) { bb = el('span', { class: 'bubble' }); bb.hidden = true; ov.appendChild(bb); bubbleEls.set(p, bb); }
-    return { tag: tg, bub: bb };
+  // ---------- live bits on buildings ----------
+  var tick2 = [0];
+  function drawLive(g, t, night) {
+    var c = clock(), open = c.dow > 0 && c.dow < 6 && c.min >= OPEN && c.min <= CLOSE;
+    // tower screen
+    var T0 = ST.tower, sx = T0.tx * TL + 7, sy = SURF * TL - 81, sw = T0.w * TL - 14, sh = 32;
+    if (t - (drawLive.last || 0) > 300) { drawLive.last = t; tick2.push(tick2[tick2.length - 1] + (Math.random() - .48) * (open ? 5 : 1.5)); if (tick2.length > Math.floor(sw / 3)) tick2.shift(); }
+    rect(g, sx, sy, sw, sh, '#0a0a0b');
+    var mx = Math.max.apply(null, tick2), mn = Math.min.apply(null, tick2); if (mx - mn < 8) { mx += 4; mn -= 4; }
+    tick2.forEach(function (v, i) { if (!i) return; var p0 = tick2[i - 1], y1 = sy + 3 + (mx - Math.max(v, p0)) / (mx - mn) * (sh - 6), y2 = sy + 3 + (mx - Math.min(v, p0)) / (mx - mn) * (sh - 6); rect(g, sx + 1 + i * 3, y1 | 0, 2, Math.max(1, (y2 - y1) | 0), v >= p0 ? '#3ddc84' : '#ff5a4e'); });
+    rect(g, sx + 2, sy + 2, 2, 2, open ? '#3ddc84' : '#6d6d73');
+    // billboard
+    var B = ST.recap, bx = B.tx * TL + 2, by = SURF * TL - 56, td = todaysTradesSummary();
+    rect(g, bx, by, B.w * TL - 4, 30, '#0a0a0b');
+    g.font = 'bold 8px "Press Start 2P", monospace'; g.fillStyle = '#a3a3a8'; g.fillText('TODAY', bx + 3, by + 9);
+    g.fillStyle = td.n ? (td.pnl >= 0 ? '#3ddc84' : '#ff5a4e') : '#f4f4f1'; g.fillText(td.n ? money(td.pnl, true) : 'NO TRADES', bx + 3, by + 22);
+    // journal screen
+    var J = ST.journal; rect(g, J.cx - 5, SURF * TL - 20, 10, 7, Math.floor(t / 500) % 2 ? '#3ddc84' : '#2fbf70');
+    // news bulb
+    var N = ST.newsroom, hot = S.news.some(function (n) { return n.impact === 'high' && n.date === nowAZ().date; });
+    if (Math.floor(t / (hot ? 250 : 900)) % 2 === 0) { rect(g, N.tx * TL + N.w * TL - 11, SURF * TL - 64, 3, 3, '#ff5a4e'); if (night > .3 || hot) glow(g, N.tx * TL + N.w * TL - 10, SURF * TL - 63, 10, 'rgba(255,90,78,.25)'); }
+    // portal swirl
+    var Pp = ST.portal, px0 = Pp.tx * TL + 8, pw = Pp.w * TL - 16;
+    for (var yy = 0; yy < 41; yy++) for (var xx = 0; xx < pw; xx += 2) { var v2 = Math.sin((xx + yy) / 5 + t / 200) + Math.sin((xx - yy) / 7 - t / 300); g.fillStyle = v2 > .8 ? '#c9cdfb' : v2 > -.2 ? '#7d86f7' : '#5865f2'; g.fillRect(px0 + xx, SURF * TL - 47 + yy, 2, 1); }
+    glow(g, Pp.cx, SURF * TL - 26, 26, 'rgba(88,101,242,.18)');
+    // campfire
+    var C = ST.campfire, fx = C.tx * TL + 24, fy = SURF * TL - 3;
+    for (var f = 0; f < 10; f++) { var hgt = 4 + ((Math.sin(t / 80 + f * 1.7) + 1) * 3 | 0) - Math.abs(f - 5); if (hgt > 0) rect(g, fx - 5 + f, fy - hgt, 1, hgt, hgt > 5 ? '#ffd23d' : '#ff8a3d'); }
+    glow(g, fx, fy - 4, 18 + night * 18, 'rgba(255,150,70,' + (.12 + night * .2).toFixed(2) + ')');
+    // lighthouse light
+    var L = ST.lighthouse; if (night > .3) { var lx = L.cx, ly = SURF * TL - 87, dir = Math.sin(t / 1200); g.fillStyle = 'rgba(255,241,184,.18)'; g.beginPath(); g.moveTo(lx, ly); g.lineTo(lx + dir * 140, ly - 18); g.lineTo(lx + dir * 140, ly + 18); g.fill(); }
+    // vault coins
+    var Vt = ST.vault, tot = S.payouts.reduce(function (s2, p) { return s2 + (+p.amount || 0); }, 0), n = Math.min(14, Math.ceil(tot / 2500));
+    for (var k2 = 0; k2 < n; k2++) rect(g, Vt.tx * TL + Vt.w * TL + 2 + (k2 % 2) * 2, SURF * TL - 2 - Math.floor(k2 / 1) * 2, 6, 2, k2 % 2 ? '#d99a2b' : '#f5b84a');
+    // windows glow at night
+    if (night > .4) STATIONS.forEach(function (s) { if (s.id === 'studio' || s.id === 'tower' || s.id === 'newsroom') glow(g, s.cx, SURF * TL - 20, 22, 'rgba(255,220,140,.12)'); });
   }
-  function place(node, wx, wy) { node.style.left = ((wx - cam.x) / cam.w * 100) + '%'; node.style.top = ((wy - cam.y) / cam.h * 100) + '%'; }
-  function updateOverlay(now) {
-    var small = cam.w < WW;
-    bots.forEach(function (b) {
-      var o = overlayFor(b, b.a.name);
-      var vis = b.x > cam.x - 10 && b.x < cam.x + cam.w + 10 && b.y > cam.y - 10 && b.y < cam.y + cam.h + 24;
-      o.tag.hidden = !vis || (small && Math.hypot(b.x - player.x, b.y - player.y) > 60);
-      place(o.tag, b.x, b.y + 2);
-      var txt = b.mode === 'work' && b.seated ? b.state.text : b.chat || null;
-      o.bub.hidden = !vis || !txt;
-      if (txt && o.bub.textContent !== txt) o.bub.textContent = txt;
-      place(o.bub, b.x, b.y - 19);
+  function glow(g, x, y, r, c) { var gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, c); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2); }
+  function drawWater(g, t, k) {
+    var lvl = SEA * TL + 2;
+    [[0, 11 * TL], [(WT - 11) * TL, WPX]].forEach(function (r) {
+      for (var x = r[0]; x < r[1]; x += 2) { var wy = lvl + Math.round(Math.sin(x / 9 + t / 400) * 1.5); g.fillStyle = k > .3 ? 'rgba(47,140,214,.85)' : 'rgba(20,50,110,.9)'; g.fillRect(x, wy, 2, HPX - wy); g.fillStyle = 'rgba(255,255,255,.55)'; if ((x + Math.floor(t / 120)) % 14 < 3) g.fillRect(x, wy, 2, 1); }
     });
-    var po = overlayFor(player, 'YOU'); place(po.tag, player.x, player.y + 2); po.bub.hidden = true;
+  }
+
+  // ---------- render ----------
+  function render(t) {
+    var min = clock().min, k = drawSky(g2, t, min), night = 1 - k;
+    g2.save(); g2.translate(-Math.round(V.cx), -Math.round(V.cy));
+    // dark cave wall behind the terrain
+    g2.drawImage(terrainCv, Math.round(V.cx), Math.round(V.cy), V.w, V.h, Math.round(V.cx), Math.round(V.cy), V.w, V.h);
+    drawLive(g2, t, night);
+    people.slice().sort(function (a, b) { return a.isPlayer ? 1 : b.isPlayer ? -1 : 0; }).forEach(function (p) { if (p.x > V.cx - 20 && p.x < V.cx + V.w + 20) drawChar(g2, p, t); });
+    drawWater(g2, t, k);
+    if (player.target != null) { var mx = Math.round(player.target), my = groundYAt(player.target) - 1; rect(g2, mx - 3, my, 7, 1, '#3ddc84'); rect(g2, mx, my - 3, 1, 3, '#3ddc84'); }
+    g2.restore();
+    // night tint
+    if (night > .05) { g2.fillStyle = 'rgba(10,16,48,' + (night * .38).toFixed(2) + ')'; g2.fillRect(0, 0, V.w, V.h); }
+    return night;
+  }
+
+  // ---------- overlay labels ----------
+  var ov = $('ov'), tagEls = new Map(), bubbleEls = new Map(), stationTags = new Map();
+  function pct(x, y) { return { x: (x - V.cx) / V.w * 100, y: (y - V.cy) / V.h * 100, vis: x > V.cx - 10 && x < V.cx + V.w + 10 && y > V.cy - 10 && y < V.cy + V.h + 30 }; }
+  function placePct(node, p) { node.style.left = p.x + '%'; node.style.top = p.y + '%'; }
+  function updateOverlay() {
+    people.forEach(function (p) {
+      var tg = tagEls.get(p); if (!tg) { tg = el('span', { class: 'tag' + (p.isPlayer ? ' you' : ''), text: p.isPlayer ? 'YOU' : p.a.name }); ov.appendChild(tg); tagEls.set(p, tg); }
+      var bb = bubbleEls.get(p); if (!bb) { bb = el('span', { class: 'bubble' }); bb.hidden = true; ov.appendChild(bb); bubbleEls.set(p, bb); }
+      var pt = pct(p.x, p.y + 2); tg.hidden = !pt.vis; placePct(tg, pt);
+      if (p.isPlayer) { bb.hidden = true; return; }
+      var txt = p.mode === 'work' && p.atPost ? p.state.text : (p.mode === 'sleep' && p.atPost && p.state.text !== 'Off' ? 'zzz' : p.chat);
+      var bp = pct(p.x, p.y - 28); bb.hidden = !bp.vis || !txt; if (txt && bb.textContent !== txt) bb.textContent = txt; placePct(bb, bp);
+    });
+    STATIONS.forEach(function (s) {
+      var n = stationTags.get(s); if (!n) { n = el('span', { class: 'stag', text: s.name }); ov.appendChild(n); stationTags.set(s, n); }
+      var hgt = { tower: 116, lighthouse: 104, newsroom: 68, recap: 62, vault: 52, portal: 56, studio: 46, checklist: 42, journal: 34, mailbox: 30, campfire: 22 }[s.id] || 40;
+      var p = pct(s.cx, SURF * TL - hgt); n.hidden = !p.vis; placePct(n, p);
+    });
     var c = clock(); $('simClock').textContent = DOW[c.dow].toUpperCase() + ' ' + fmtMin(c.min) + ' MST';
-    // talk prompt
-    var near = $('dialog').hidden ? nearestTarget() : null, pr = $('prompt');
-    if (near) { pr.hidden = false; pr.textContent = (window.matchMedia('(hover: hover)').matches ? 'E: ' : 'TAP: ') + (near.kind === 'bot' ? 'Talk to ' + near.ref.a.name : near.ref.name); pr.onclick = function () { openTalk(near); }; }
+    var near2 = $('dialog').hidden ? nearestTarget() : null, pr = $('prompt');
+    if (near2) { pr.hidden = false; pr.textContent = (window.matchMedia('(hover: hover)').matches ? 'E · ' : '') + (near2.kind === 'bot' ? 'Talk to ' + near2.ref.a.name : near2.ref.name); pr.onclick = function () { openTalk(near2); }; }
     else pr.hidden = true;
   }
 
   // ---------- input ----------
-  var office = $('office');
-  var KEYMAP = { ArrowUp: 'up', KeyW: 'up', ArrowDown: 'down', KeyS: 'down', ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right' };
+  var KEYMAP = { ArrowUp: 'up', KeyW: 'up', Space: 'up', ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right' };
   office.addEventListener('keydown', function (e) {
     if (e.target.closest('textarea, input, select')) return;
-    if (KEYMAP[e.code]) { keys[KEYMAP[e.code]] = true; e.preventDefault(); }
-    else if (e.code === 'KeyE' || e.code === 'Space' || e.code === 'Enter') { if (!e.target.closest('button')) { e.preventDefault(); var n = nearestTarget(); if (n && $('dialog').hidden) openTalk(n); } }
-    else if (e.code === 'Escape') closeTalk();
+    if (e.code === 'KeyE' || e.code === 'Enter') { if (!e.target.closest('button')) { e.preventDefault(); var n = nearestTarget(); if (n && $('dialog').hidden) openTalk(n); } return; }
+    if (e.code === 'Escape') { closeTalk(); return; }
+    if (KEYMAP[e.code] && !e.target.closest('button')) { keys[KEYMAP[e.code]] = true; e.preventDefault(); }
   });
   office.addEventListener('keyup', function (e) { if (KEYMAP[e.code]) keys[KEYMAP[e.code]] = false; });
   office.addEventListener('blur', function () { keys = {}; });
-  room.addEventListener('pointerdown', function (e) {
+  canvas2d.addEventListener('pointerdown', function (e) {
     office.focus({ preventScroll: true });
-    var r = room.getBoundingClientRect(), wx = cam.x + (e.clientX - r.left) / r.width * cam.w, wy = cam.y + (e.clientY - r.top) / r.height * cam.h;
-    var hit = null, hd = 12;
-    bots.forEach(function (b) { var d = Math.hypot(b.x - wx, b.y - 8 - wy); if (d < hd) { hd = d; hit = { kind: 'bot', ref: b }; } });
-    THINGS.forEach(function (o) { var tx = o.x, ty = o.id === 'terminal' || o.id === 'board' || o.id === 'portal' || o.id === 'news' ? 34 : o.y - 6; var d = Math.hypot(tx - wx, ty - wy); if (d < (ty < 62 ? 26 : 14) && d < hd + 14) { hd = d; hit = { kind: 'thing', ref: o }; } });
+    var r = canvas2d.getBoundingClientRect(), wx = V.cx + (e.clientX - r.left) / r.width * V.w, wy = V.cy + (e.clientY - r.top) / r.height * V.h;
+    var hit = null, hd = 14;
+    bots.forEach(function (b) { var d = Math.hypot(b.x - wx, (b.y - 12) - wy); if (d < hd) { hd = d; hit = { kind: 'bot', ref: b }; } });
+    if (!hit) STATIONS.forEach(function (s) { var halfW = s.w * TL / 2 + 6; if (Math.abs(wx - s.cx) < halfW && wy > SURF * TL - 110 && wy < SURF * TL + 4) hit = { kind: 'thing', ref: s }; });
     if (hit) {
-      var tx = hit.kind === 'bot' ? hit.ref.x : hit.ref.x, ty = hit.kind === 'bot' ? hit.ref.y + 10 : hit.ref.y;
-      if (Math.hypot(tx - player.x, ty - player.y) < 20) { openTalk(hit); return; }
-      player.path = findPath(player.x, player.y, tx, Math.min(WH - 4, ty)); pendingTalk = hit;
-    } else {
-      if (wy < 64) wy = 66;
-      player.path = findPath(player.x, player.y, wx, wy); pendingTalk = null;
-      if (blocked(wx, wy) && player.path.length) player.path.pop();
-    }
+      var tx = hit.kind === 'bot' ? hit.ref.x - Math.sign(hit.ref.x - player.x) * 12 : hit.ref.stand.x;
+      if (Math.abs(tx - player.x) < 14) { openTalk(hit); return; }
+      player.target = tx; pendingTalk = hit;
+    } else { player.target = Math.max(12 * TL, Math.min(WPX - 12 * TL, wx)); pendingTalk = null; if (wy < player.y - 30) jump(player); }
   });
+  // on-screen buttons for phones
+  function holdBtn(id, key) {
+    var b = $(id); if (!b) return;
+    function on(e) { e.preventDefault(); keys[key] = true; player && (player.target = null); }
+    function off() { keys[key] = false; }
+    b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointerleave', off); b.addEventListener('pointercancel', off);
+  }
+  holdBtn('padL', 'left'); holdBtn('padR', 'right'); holdBtn('padJ', 'up');
 
   // ---------- dialog ----------
   var talking = null;
@@ -800,11 +985,12 @@
     (function tick() { if (node._tok !== tok) return; i += 2; node.textContent = text.slice(0, i); if (i < text.length) setTimeout(tick, 14); })();
   }
   function openTalk(t) {
-    talking = t; keys = {}; player.path = [];
+    talking = t; keys = {}; player.target = null;
     var d = $('dialog'), body = $('dBody'); body.innerHTML = ''; d.hidden = false;
+    if (t.kind === 'thing' && t.ref.agent && !t.ref.open) { var b0 = bots.filter(function (x) { return x.a.id === t.ref.agent; })[0]; if (b0) t = { kind: 'bot', ref: b0 }; }
     if (t.kind === 'bot') {
       var b = t.ref, a = b.a; selectAgent(a.id);
-      player.dir = b.x < player.x - 4 ? 'left' : b.x > player.x + 4 ? 'right' : b.y < player.y ? 'up' : 'down';
+      player.facing = b.x < player.x ? -1 : 1; b.facing = -player.facing;
       $('dName').textContent = a.name.toUpperCase() + (a.live ? ' · LIVE' : a.always ? ' · NOT HIRED' : '');
       typeText($('dText'), a.hi + '  ' + statusLine(b));
       body.appendChild(agentControls(a, true));
@@ -816,17 +1002,16 @@
       var o = t.ref; $('dName').textContent = o.name.toUpperCase();
       var td = todaysTradesSummary(), tot = S.payouts.reduce(function (s, p) { return s + (+p.amount || 0); }, 0);
       var lines = {
-        terminal: 'Your trade journal. ' + (td.n ? 'Today: ' + money(td.pnl, true) + ' on ' + td.n + ' trade' + (td.n === 1 ? '' : 's') + '.' : 'Nothing logged today.') + ' Every trade you log is +5 XP, +5 more if you followed your rules.',
-        vault: tot ? 'The vault holds ' + money(tot) + ' in logged payouts. Next milestone: ' + nextMilestoneText(tot) + '.' : 'Empty vault. Log your payouts and watch it fill up.',
+        journal: 'Your trade journal. ' + (td.n ? 'Today: ' + money(td.pnl, true) + ' on ' + td.n + ' trade' + (td.n === 1 ? '' : 's') + '.' : 'Nothing logged today.') + ' Every trade you log is +5 XP, +5 more if you followed your rules.',
+        vault: tot ? 'The vault holds ' + money(tot) + ' in logged payouts. Next milestone: ' + nextMilestoneText(tot) + '.' : 'Empty vault. Log your payouts and watch the gold stack up.',
         portal: 'Step through to see exactly what each agent posts in your Discord.',
-        news: latestNewsLine(),
-        board: 'The go-live checklist: webhooks, the 24/7 bot, and which agents post on their own.',
-        coffee: '☕ Fresh pot. +1 focus. (It’s just coffee.)',
-        couch: clock().min >= OPEN && clock().min <= CLOSE && clock().dow > 0 && clock().dow < 6 ? 'Not now, market’s open.' : 'Comfy. Market’s closed, take five.'
+        newsroom: latestNewsLine(),
+        checklist: 'Run your checklist before every trade. All boxes ticked means it’s an A+ setup. Missing a must-have means you pass, and passing on a bad setup earns XP too.'
       };
       typeText($('dText'), lines[o.id] || '');
-      var goto = { terminal: ['Open my journal', 'trades'], vault: ['Open payouts', 'payouts'], portal: ['Enter Discord', 'discord'], news: ['Read the news', 'news'], board: ['Open setup', 'setup'] }[o.id];
+      var goto = { journal: ['Open my journal', 'trades'], vault: ['Open payouts', 'payouts'], portal: ['Enter Discord', 'discord'], newsroom: ['Read the news', 'news'], checklist: ['Run my checklist', 'checklist'] }[o.id];
       if (goto) body.appendChild(el('div', { class: 'row' }, [goBtn(goto[0], goto[1])]));
+      if (o.agent) { var ag = bots.filter(function (x) { return x.a.id === o.agent; })[0]; if (ag) { var tb = el('button', { class: 'btn ghost small', type: 'button', text: 'Talk to ' + ag.a.name }); tb.addEventListener('click', function () { openTalk({ kind: 'bot', ref: ag }); }); body.appendChild(el('div', { class: 'row' }, [tb])); } }
     }
   }
   function goBtn(label, tab, ch) {
@@ -870,22 +1055,29 @@
 
   // ---------- agent cards ----------
   var cardEls = {}, selected = null;
+  function avatar(a) {
+    var cv = el('canvas', { class: 'ava', width: '80', height: '80', 'aria-hidden': 'true' }), g = cv.getContext('2d');
+    g.fillStyle = '#1b1b1e'; g.fillRect(0, 0, 80, 80);
+    g.fillStyle = a.shirt; g.beginPath(); g.ellipse(40, 82, 26, 26, 0, Math.PI, 0); g.fill();
+    g.fillStyle = a.skin; g.beginPath(); g.arc(40, 36, 18, 0, 7); g.fill();
+    g.fillStyle = a.hair; g.beginPath(); g.arc(40, 33, 19, Math.PI * 1.05, Math.PI * 1.95); g.fill();
+    g.fillStyle = '#111'; g.beginPath(); g.arc(33, 39, 2.4, 0, 7); g.arc(47, 39, 2.4, 0, 7); g.fill();
+    return cv;
+  }
   function renderAgents() {
     var box = $('agents'); box.innerHTML = '';
     AGENTS.forEach(function (a) {
-      var av = el('canvas', { class: 'ava', width: '16', height: '20', 'aria-hidden': 'true' });
-      var ag = av.getContext('2d'); ag.fillStyle = '#1b1b1e'; ag.fillRect(0, 0, 16, 20);
-      drawPerson(ag, Person({ x: 8, y: 19, shirt: a.shirt, hair: a.hair, skin: a.skin, dir: 'down' }), 0);
       var status = el('span', { class: 'pill' });
       var card = el('article', { class: 'agent' + (selected === a.id ? ' sel' : '') }, [
-        el('div', { class: 'agent-head' }, [av, el('div', { style: 'min-width:0;flex:1' }, [
+        el('div', { class: 'agent-head' }, [avatar(a), el('div', { style: 'min-width:0;flex:1' }, [
           el('div', { class: 'row between' }, [el('span', { class: 'agent-name', text: a.name }), status]),
           el('span', { class: 'agent-lvl', text: a.live ? 'LIVE NOW' : a.always ? 'NEEDS THE BOT' : 'PREVIEW' })
         ])]),
         el('p', { class: 'job', text: a.job }),
         el('dl', { class: 'meta' }, [
           el('dt', { text: 'When' }), el('dd', { text: schedText(a) }),
-          el('dt', { text: 'Posts to' }), el('dd', { text: a.id === 'news' ? 'Your phone + #news' : a.ch ? '#' + a.ch + (a.id === 'greeter' ? ' + #ask-gene' : '') : 'Content HQ + your phone' })
+          el('dt', { text: 'Posts to' }), el('dd', { text: a.id === 'news' ? 'Your phone + #news' : a.ch ? '#' + a.ch + (a.id === 'greeter' ? ' + #ask-gene' : '') : 'Content HQ + your phone' }),
+          el('dt', { text: 'Find them' }), el('dd', { text: (stationOf(a.id) || {}).name || '' })
         ]),
         agentControls(a, false)
       ]);
@@ -895,8 +1087,9 @@
     updateCardStatus();
   }
   function updateCardStatus() {
-    bots.forEach(function (b) {
-      var ce = cardEls[b.a.id], st = b.state; if (!ce || !st) return;
+    AGENTS.forEach(function (a) {
+      var ce = cardEls[a.id], b = bots.filter(function (x) { return x.a === a; })[0];
+      var st = b && b.state ? b.state : scheduleState(a, clock()); if (!ce) return;
       var label = st.mode === 'work' ? 'Working' : st.mode === 'sleep' ? (st.text === 'Off' ? 'Off' : 'Asleep') : st.mode === 'go' ? 'On the way' : 'Free';
       var cls = st.mode === 'work' ? 'live' : st.text === 'Off' ? 'off' : 'wait';
       if (ce.status.dataset.k !== label) { ce.status.dataset.k = label; ce.status.className = 'pill ' + cls; ce.status.innerHTML = ''; ce.status.appendChild(el('i')); ce.status.appendChild(document.createTextNode(label)); }
@@ -909,10 +1102,7 @@
     var d = a.days.length === 7 ? 'Every day' : a.days.length === 5 ? 'Weekdays' : a.days.length === 1 ? DOW[a.days[0]] + 'days' : a.days.length + ' days a week';
     return d + ' · ' + fmtMin(a.at) + ' MST';
   }
-  function selectAgent(id) {
-    selected = id;
-    Object.keys(cardEls).forEach(function (k) { cardEls[k].card.classList.toggle('sel', k === selected); });
-  }
+  function selectAgent(id) { selected = id; Object.keys(cardEls).forEach(function (k) { cardEls[k].card.classList.toggle('sel', k === selected); }); }
   function setCfg(id, patch) {
     var next = Object.assign({}, cfg(id), patch);
     S.agentCfg[id] = next; renderAgents();
@@ -925,10 +1115,10 @@
   function feedAdd(min, who, text) { feedItems.unshift({ min: min, who: who, text: text }); renderFeed(); }
   function renderFeed() {
     var f = $('feed'); f.innerHTML = '';
-    if (!feedItems.length) { f.appendChild(el('p', { class: 'empty-state', text: 'Tap “Run a trading day” to watch a full weekday play out in about a minute.' })); return; }
+    if (!feedItems.length) { f.appendChild(el('p', { class: 'empty-state', text: 'Tap “Play a trading day” to watch a full weekday on the island in about a minute.' })); return; }
     feedItems.slice(0, 16).forEach(function (it) { f.appendChild(el('div', { class: 'feed-item' }, [el('time', { text: fmtMin(it.min) }), el('p', null, [el('b', { text: it.who + ' ' }), it.text])])); });
   }
-  var SIM_START = 300, SIM_END = 1170, SIM_MS = 64000, simT0 = 0;
+  var SIM_START = 300, SIM_END = 1260, SIM_MS = 72000, simT0 = 0;
   function simEvents() {
     var tp = todaysTradesSummary(), lastPay = S.payouts.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; })[0];
     return [
@@ -936,21 +1126,34 @@
       { at: 352, who: 'Script Writer', text: 'wrote today’s talking video and bonus take in your Content HQ.' },
       { at: OPEN - 40, who: 'Market Desk', text: 'posted the pre-market chart, levels and news to #pre-market' + (S.levels && S.levels.date === nowAZ().date ? ' using your levels.' : '.') },
       { at: OPEN, who: 'You', text: 'went live in the Discord.' },
+      { at: OPEN + 12, who: 'You', text: 'ran the checklist at the Checklist Pad before the first trade.' },
       { at: OPEN + 35, who: 'Greeter', text: 'welcomed 3 new members and answered “how do I get funded?” in #ask-gene.' },
       { at: OPEN + 102, who: 'Lead Closer', text: 'dropped a new WARM applicant in #applicants with your reply ready.' },
+      { at: 600, who: 'News Desk', text: 'flagged a surprise Fed headline mid-session. NQ dropped 80 points in 2 minutes. Pinged your phone.' },
       { at: CLOSE + 20, who: 'Recap Bot', text: tp.n ? 'posted your recap: ' + money(tp.pnl, true) + ' on ' + tp.n + ' trade' + (tp.n === 1 ? '' : 's') + '.' : 'found no trades logged today, so it posted a market-only recap.' },
       { at: 905, who: 'Payout Hype', text: lastPay ? 'posted your ' + money(lastPay.amount) + ' payout card to #payouts.' : 'had nothing to post. Log a payout at the vault.' },
-      { at: 600, who: 'News Desk', text: 'flagged a surprise Fed headline mid-session. NQ dropped 80 points in 2 minutes. Pinged your phone.' },
       { at: 965, who: 'News Desk', text: 'did its after-close sweep: earnings after the bell and futures reaction. Nothing major.' },
-      { at: 1145, who: 'Hype Man', text: 'asked #general: “What’s one rule you broke this week? Be honest 👇”' }
+      { at: 1145, who: 'Hype Man', text: 'lit the campfire and asked #general: “What’s one rule you broke this week? Be honest 👇”' }
     ];
   }
   function startSim() { sim.on = true; sim.min = SIM_START; sim.dow = 4; sim.fired = {}; sim.events = simEvents(); simT0 = performance.now(); feedItems = []; renderFeed(); $('simTag').hidden = false; $('simBtn').hidden = true; $('simStop').hidden = false; $('feedLabel').textContent = 'Simulated Thursday'; office.focus({ preventScroll: true }); }
-  function stopSim() { sim.on = false; $('simTag').hidden = true; $('simBtn').hidden = false; $('simStop').hidden = true; $('simBtn').textContent = 'Run it again'; }
+  function stopSim() { sim.on = false; $('simTag').hidden = true; $('simBtn').hidden = false; $('simStop').hidden = true; $('simBtn').textContent = 'Play it again'; }
   $('simBtn').addEventListener('click', startSim);
   $('simStop').addEventListener('click', stopSim);
 
-  // ---------- main loop ----------
+  // ---------- spawn + main loop ----------
+  var HAIR = { market: 'long', news: '', content: '', recap: '', payout: 'long', hype: '', outlook: '', lead: '', greeter: 'long' };
+  function spawn() {
+    player = makePerson({ isPlayer: true, x: ST.checklist.cx - 30, shirt: '#16161a', hair: '#1a1a1f', cap: '#f5b84a', skin: '#c68b59', pants: '#2b2b33' });
+    people.push(player);
+    bots = AGENTS.map(function (a, i) {
+      var s = stationOf(a.id), post = s ? s.stand.x : ST.portal.cx, faceDir = s && s.stand.x < s.cx ? 1 : (i % 2 ? 1 : -1);
+      var b = makePerson({ a: a, x: post + (i % 2 ? 30 : -30), shirt: a.shirt, hair: a.hair, skin: a.skin, longHair: HAIR[a.id] === 'long', post: post, faceDir: faceDir, waitUntil: i * 600 });
+      b.y = groundYAt(b.x); people.push(b); return b;
+    });
+    player.y = groundYAt(player.x);
+    V.cx = player.x - V.w / 2; V.cy = player.y - V.h * .7;
+  }
   var last = 0, lastCards = 0, running = false;
   function frame(t) {
     running = true;
@@ -962,14 +1165,104 @@
     }
     var now = performance.now();
     bots.forEach(function (b) { updateBot(b, dt, now); });
-    if ($('dialog').hidden) playerStep(dt);
-    sizeView(); updateCam();
-    g.clearRect(0, 0, cam.w, cam.h); drawWorld(t); updateOverlay(now);
+    if ($('dialog').hidden) playerStep(dt); else physics(player, dt, 0);
+    resize(); camera(dt); render(t); updateOverlay();
     if (t - lastCards > 600) { lastCards = t; updateCardStatus(); }
     if (!document.hidden && !$('v-farm').hidden) requestAnimationFrame(frame); else running = false;
   }
-  function kick() { if (!running && !document.hidden && !$('v-farm').hidden) { last = 0; requestAnimationFrame(frame); } }
+  function kick() { if (player && !running && !document.hidden && !$('v-farm').hidden) { last = 0; requestAnimationFrame(frame); } }
   document.addEventListener('visibilitychange', kick);
+  function startWorld() {
+    try { resize(); buildTerrain(); spawn(); kick(); }
+    catch (err) { player = null; $('noGL').hidden = false; office.hidden = true; $('controls').hidden = true; console.log('world failed to start:', err && err.message); }
+  }
+
+  // ===================================================================
+  // STRATEGY CHECKLIST (private: never read by the posting agents)
+  // ===================================================================
+  var STARTER = [
+    { t: 'Higher timeframe bias is clear and I’m trading with it', must: true },
+    { t: 'Price is at a level I marked before the session', must: true },
+    { t: 'My entry signal actually printed (no anticipating)', must: true },
+    { t: 'Stop and target are set before I click', must: true },
+    { t: 'Risk fits my daily max loss', must: true },
+    { t: 'No red-folder news in the next 10 minutes', must: false },
+    { t: 'I’m calm: not revenge trading or chasing', must: false }
+  ];
+  var ck = { ticks: {}, editing: false };
+  try { ck.ticks = JSON.parse(localStorage.getItem('ckTicks') || '{}') || {}; } catch (e) {}
+  function ckItems() { var c = S.checklist; return c && c.items && c.items.length ? c.items : STARTER.map(function (x, i) { return Object.assign({ id: 's' + i }, x); }); }
+  function ckSaveTicks() { try { localStorage.setItem('ckTicks', JSON.stringify(ck.ticks)); } catch (e) {} }
+  function ckScore() {
+    var items = ckItems(), done = items.filter(function (it) { return ck.ticks[it.id]; }), mustMissing = items.filter(function (it) { return it.must && !ck.ticks[it.id]; });
+    return { done: done.length, total: items.length, mustMissing: mustMissing.length, aplus: done.length === items.length };
+  }
+  function renderChecklist() {
+    var items = ckItems(), list = $('ckList'); list.innerHTML = '';
+    $('ckStarter').hidden = !!(S.checklist && S.checklist.items && S.checklist.items.length);
+    if (ck.editing) { renderChecklistEditor(items); return; }
+    $('ckEditor').hidden = true; $('ckRun').hidden = false;
+    items.forEach(function (it, i) {
+      var id = 'ck_' + i, on = !!ck.ticks[it.id];
+      var box = el('input', { type: 'checkbox', id: id }); box.checked = on;
+      box.addEventListener('change', function () { if (box.checked) ck.ticks[it.id] = 1; else delete ck.ticks[it.id]; ckSaveTicks(); renderChecklist(); });
+      list.appendChild(el('label', { class: 'ck-item' + (on ? ' on' : ''), for: id }, [box, el('span', { text: it.t }), it.must ? el('span', { class: 'must', text: 'Must' }) : null]));
+    });
+    var sc = ckScore(), v = $('ckVerdict');
+    $('ckFill').style.width = (sc.done / Math.max(1, sc.total) * 100) + '%';
+    $('ckCount').textContent = sc.done + ' / ' + sc.total;
+    v.className = 'verdict ' + (sc.aplus ? 'go' : sc.mustMissing ? 'stop' : 'maybe');
+    v.textContent = sc.aplus ? 'A+ setup. Take it, follow the plan.' : sc.mustMissing ? 'No trade. ' + sc.mustMissing + ' must-have' + (sc.mustMissing === 1 ? ' is' : 's are') + ' missing.' : 'All must-haves are there. Smaller size, or wait for the rest.';
+    $('ckTake').disabled = !!sc.mustMissing;
+    renderChecklistStats();
+  }
+  function renderChecklistEditor(items) {
+    $('ckRun').hidden = true; $('ckEditor').hidden = false;
+    var box = $('ckEditList'); box.innerHTML = '';
+    var draft = ck.draft || (ck.draft = items.map(function (x) { return { id: x.id, t: x.t, must: !!x.must }; }));
+    draft.forEach(function (it, i) {
+      var inp = el('input', { type: 'text', value: it.t, 'aria-label': 'Checklist item ' + (i + 1), maxlength: '140' });
+      inp.addEventListener('input', function () { it.t = inp.value; });
+      var must = el('button', { class: 'seg-btn', type: 'button', 'aria-pressed': String(it.must), text: 'Must' });
+      must.addEventListener('click', function () { it.must = !it.must; must.setAttribute('aria-pressed', String(it.must)); });
+      var del = el('button', { class: 'x', type: 'button', 'aria-label': 'Remove item', text: '×' });
+      del.addEventListener('click', function () { draft.splice(i, 1); renderChecklistEditor(items); });
+      box.appendChild(el('div', { class: 'ck-edit' }, [inp, must, del]));
+    });
+  }
+  $('ckAdd').addEventListener('click', function () { ck.draft.push({ id: 'c' + Date.now().toString(36), t: '', must: false }); renderChecklistEditor(ckItems()); var ins = $('ckEditList').querySelectorAll('input'); if (ins.length) ins[ins.length - 1].focus(); });
+  $('ckEdit').addEventListener('click', function () { ck.editing = true; ck.draft = null; renderChecklist(); });
+  $('ckCancel').addEventListener('click', function () { ck.editing = false; ck.draft = null; renderChecklist(); });
+  $('ckSave').addEventListener('click', function () {
+    var items = (ck.draft || []).map(function (x, i) { return { id: x.id && x.id.charAt(0) !== 's' ? x.id : 'c' + Date.now().toString(36) + i, t: x.t.trim().slice(0, 140), must: !!x.must }; }).filter(function (x) { return x.t; });
+    if (!items.length) { toast('Add at least one item.'); return; }
+    dbSet('settings/checklist', { items: items, updated: new Date().toISOString() }).then(function () { ck.editing = false; ck.draft = null; ck.ticks = {}; ckSaveTicks(); toast('Checklist saved. It’s private to you.'); });
+  });
+  $('ckReset').addEventListener('click', function () { ck.ticks = {}; ckSaveTicks(); renderChecklist(); });
+  $('ckTake').addEventListener('click', function () {
+    var sc = ckScore(); S.pendingCheck = { done: sc.done, total: sc.total, aplus: sc.aplus };
+    showTab('trades'); window.scrollTo({ top: 0 }); renderPendingCheck(); $('tPnl').focus();
+    toast('Checklist ' + sc.done + '/' + sc.total + ' attached. Log the trade when it’s done.');
+  });
+  $('ckPass').addEventListener('click', function () {
+    var sc = ckScore();
+    dbSet('skips/k' + Date.now().toString(36), { date: isoLocal(new Date()), done: sc.done, total: sc.total, created: new Date().toISOString() }).then(function () {
+      ck.ticks = {}; ckSaveTicks(); renderChecklist(); toast('Passed on it. +15 XP for discipline 🧠');
+    });
+  });
+  function renderPendingCheck() {
+    var p = S.pendingCheck, n = $('tCheckNote');
+    n.hidden = !p; if (p) n.textContent = 'Checklist ' + p.done + '/' + p.total + (p.aplus ? ' · A+ setup' : '') + ' will be saved with this trade.';
+  }
+  function renderChecklistStats() {
+    var withCk = S.trades.filter(function (t) { return t.check; }), ap = withCk.filter(function (t) { return t.check.aplus; }), rest = S.trades.filter(function (t) { return !(t.check && t.check.aplus); });
+    function wr(a) { return a.length ? Math.round(a.filter(function (t) { return +t.pnl > 0; }).length / a.length * 100) + '%' : '—'; }
+    function avg(a) { return a.length ? money(Math.round(a.reduce(function (s, t) { return s + (+t.pnl); }, 0) / a.length), true) : '—'; }
+    var weekAgo = isoLocal(new Date(Date.now() - 6 * 864e5)), skipsWk = S.skips.filter(function (k) { return k.date >= weekAgo; }).length;
+    var tiles = [['A+ trades', String(ap.length), ''], ['A+ win rate', wr(ap), ''], ['Avg A+ trade', avg(ap), ''], ['Everything else', wr(rest) + ' wins', ''], ['Bad setups passed (7d)', String(skipsWk), skipsWk ? 'pos' : '']];
+    var box = $('ckStats'); box.innerHTML = '';
+    tiles.forEach(function (t) { box.appendChild(el('div', { class: 'tile' }, [el('span', { class: 'label', text: t[0] }), el('b', { class: t[2], text: t[1] })])); });
+  }
 
   // ===================================================================
   // NEWS TAB
@@ -1171,7 +1464,7 @@
       var x = el('button', { class: 'x', type: 'button', 'aria-label': 'Delete trade', text: '×' });
       x.addEventListener('click', function () { confirmDel(x, function () { dbDel('trades/' + t._id); }); });
       list.appendChild(el('div', { class: 'li' }, [
-        el('div', { style: 'min-width:0' }, [el('div', { text: t.date + ' · ' + t.side + ' ' + t.qty + ' ' + t.sym + (t.rules === 'no' ? ' · broke rules' : '') }), el('div', { class: 'sub', text: [t.acct, t.note].filter(Boolean).join(' · ') || ' ' })]),
+        el('div', { style: 'min-width:0' }, [el('div', null, [t.date + ' · ' + t.side + ' ' + t.qty + ' ' + t.sym + (t.rules === 'no' ? ' · broke rules' : ''), t.check ? el('span', { class: 'ckb' + (t.check.aplus ? ' ap' : ''), text: t.check.aplus ? 'A+' : t.check.done + '/' + t.check.total }) : null]), el('div', { class: 'sub', text: [t.acct, t.note].filter(Boolean).join(' · ') || ' ' })]),
         el('b', { class: 'num ' + (+t.pnl >= 0 ? 'pos' : 'neg'), text: money(+t.pnl, true) }), x
       ]));
     });
@@ -1231,7 +1524,8 @@
     if (!S.db) { toast('Open the farm from your sidebar to save.'); return; }
     var pnl = parseFloat($('tPnl').value); if (isNaN(pnl)) { toast('Add the P&L in dollars, like 640 or -220.'); return; }
     var t = { date: $('tDate').value, sym: $('tSym').value, side: $('tSide').value, qty: Math.max(1, parseInt($('tQty').value, 10) || 1), pnl: pnl, acct: $('tAcct').value.trim(), rules: $('tRules').value, note: $('tNote').value.trim(), created: new Date().toISOString() };
-    dbSet('trades/t' + Date.now().toString(36), t).then(function () { toast((pnl >= 0 ? 'Saved. ' : 'Saved. Red days count too. ') + '+' + (5 + (t.rules === 'yes' ? 5 : 0)) + ' XP'); $('tPnl').value = ''; $('tNote').value = ''; });
+    if (S.pendingCheck) t.check = S.pendingCheck;
+    dbSet('trades/t' + Date.now().toString(36), t).then(function () { toast((pnl >= 0 ? 'Saved. ' : 'Saved. Red days count too. ') + '+' + (5 + (t.rules === 'yes' ? 5 : 0)) + ' XP'); $('tPnl').value = ''; $('tNote').value = ''; S.pendingCheck = null; renderPendingCheck(); ck.ticks = {}; ckSaveTicks(); });
   });
 
   // ===================================================================
@@ -1299,6 +1593,7 @@
     S.trades.forEach(function (t) { xp += 5 + (t.rules !== 'no' ? 5 : 0); });
     Object.keys(dp).forEach(function (d) { if (dp[d] > 0) xp += 10; });
     S.payouts.forEach(function (p) { xp += Math.round((+p.amount || 0) / 10); });
+    xp += S.skips.length * 15;
     var lvl = Math.floor(Math.sqrt(xp / 60)) + 1, cur = 60 * Math.pow(lvl - 1, 2), nxt = 60 * Math.pow(lvl, 2);
     $('lvlBadge').textContent = 'LVL ' + lvl;
     $('xpFill').style.width = ((xp - cur) / (nxt - cur) * 100).toFixed(1) + '%';
@@ -1340,6 +1635,7 @@
     if (name === 'trades') drawEquity();
     if (name === 'payouts') drawPayChart();
     if (name === 'news') renderNews();
+    if (name === 'checklist') renderChecklist();
     if (name === 'farm') kick();
     try { localStorage.setItem('farmTab', name); } catch (e) {}
   }
@@ -1352,7 +1648,7 @@
   function listen(coll, fn) {
     S.db.collection(coll).onSnapshot(function (snap) { fn(snap.docs.map(function (d) { var x = Object.assign({}, d.data()); x._id = d.id; return x; })); renderAll(); }, function () {});
   }
-  function renderAll() { renderTrades(); renderPayouts(); renderXp(); renderAgents(); renderSetup(); if (!$('v-discord').hidden) renderDc(); if (!$('v-news').hidden) renderNews(); }
+  function renderAll() { renderTrades(); renderPayouts(); renderXp(); renderAgents(); renderSetup(); if (!ck.editing) renderChecklist(); if (!$('v-discord').hidden) renderDc(); if (!$('v-news').hidden) renderNews(); }
   var dbP = (window.claude && window.claude.use) ? window.claude.use('db') : Promise.resolve(null);
   dbP.then(function (db) {
     if (!db) { $('offline').hidden = false; return; }
@@ -1362,15 +1658,15 @@
     listen('agents', function (a) { S.agentCfg = {}; a.forEach(function (x) { S.agentCfg[x._id] = x; }); });
     listen('queue', function (a) { S.queue = a; });
     listen('news', function (a) { S.news = a; });
-    listen('settings', function (a) { var l = a.filter(function (x) { return x._id === 'levels'; })[0]; S.levels = l || null; });
+    listen('settings', function (a) { S.levels = a.filter(function (x) { return x._id === 'levels'; })[0] || null; S.checklist = a.filter(function (x) { return x._id === 'checklist'; })[0] || null; });
+    listen('skips', function (a) { S.skips = a; });
   }).catch(function () { $('offline').hidden = false; });
 
   // boot
-  renderAll(); renderFeed();
+  renderFeed(); startWorld(); renderAll();
   var saved = null; try { saved = localStorage.getItem('farmTab'); } catch (e) {}
   showTab(saved && $('v-' + saved) ? saved : 'farm');
   function tickClock() { $('azClock').textContent = fmtMin(nowAZ().min) + ' MST'; }
   tickClock(); setInterval(tickClock, 15000);
-  kick();
 })();
 </script>
