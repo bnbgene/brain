@@ -1,33 +1,47 @@
-# BNB Greeter (24/7 Discord bot)
+# Gene's AI (BNB Discord bot)
 
-Welcomes every new member and answers questions in `#ask-gene` (or anywhere it's @mentioned), around the clock. It talks like you, says it's the BNB bot (never pretends to be you), and never gives signals or financial advice. What it knows lives in `knowledge.md`, so edit that file to change its answers.
+Talks like Gene, welcomes every new member, and answers questions in any channel. When someone asks a real question and nobody answers within about a minute, it replies. It always replies when it's @mentioned or replied to. It says it's Gene's AI (never Gene himself) and never gives trade signals.
 
-## 1. Create the bot in Discord (5 minutes)
-1. Go to https://discord.com/developers/applications and click **New Application**. Name it `BNB Desk` and give it the logo.
-2. In **Bot**: click **Reset Token**, copy it, and keep it private. That's your `DISCORD_TOKEN`.
-3. Still in **Bot**, turn on **Server Members Intent** and **Message Content Intent**.
-4. In **OAuth2 › URL Generator**: tick `bot`, then the permissions **View Channels**, **Send Messages**, **Read Message History**. Open the URL it makes and add the bot to your server.
-5. In Discord, turn on Developer Mode (User Settings › Advanced), then right-click your welcome channel and `#ask-gene` › **Copy Channel ID**.
+- `knowledge.md`: facts about BNBProfits it can use.
+- `voice.md`: paste Gene's real messages here so it sounds like him.
 
-## 2. Get a Claude API key
-Create one at https://console.anthropic.com and add a little credit. That's `ANTHROPIC_API_KEY`.
+## 1. Claude API key (2 minutes)
+1. Go to https://console.anthropic.com and sign up.
+2. Billing: add a card, then set a **monthly spend limit** (for example $30).
+3. API Keys › Create Key. Copy it somewhere safe; you only see it once.
 
-## 3. Put it on an always-on host
-Any host that keeps a Node app running works. Railway is the easiest:
-1. New Project › Deploy from GitHub repo › pick this repo, set the **root directory** to `bnb-bot`.
-2. Add the variables: `DISCORD_TOKEN`, `ANTHROPIC_API_KEY`, `WELCOME_CHANNEL_ID`, `ASK_CHANNEL_ID`.
-3. Deploy. The logs should say `greeter: online as BNB Desk#1234`.
+## 2. Create the Discord bot (5 minutes)
+1. https://discord.com/developers/applications › **New Application** › name it `Gene's AI` › add the BNB logo.
+2. **Bot** tab: click **Reset Token** and copy it (that's your bot token). Turn ON **Server Members Intent** and **Message Content Intent**. Save.
+3. **OAuth2 › URL Generator**: tick `bot`, then tick **View Channels**, **Send Messages**, **Read Message History**. Open the link at the bottom and add it to your server.
+4. In Discord: User Settings › Advanced › turn on **Developer Mode**. Then right-click and **Copy ID** on: your welcome channel, yourself (for OWNER_ID), and any channel it should stay out of.
 
-Netlify can't run this one: a Discord bot has to stay connected all the time, and Netlify functions only run for a few seconds.
+## 3. Run it on your computer
+Install Node.js (LTS) from https://nodejs.org first.
+
+**Mac:** open Terminal and run:
+```
+cd ~/Downloads/brain/bnb-bot
+cp .env.example .env
+open -e .env
+```
+Fill in `.env`, save, then:
+```
+npm install
+caffeinate -i npm start
+```
+(`caffeinate` keeps the Mac awake while the bot runs.)
+
+**Windows:** open the `bnb-bot` folder, copy `.env.example`, rename the copy to `.env`, open it in Notepad and fill it in. Then in that folder, click the address bar, type `cmd`, press Enter and run:
+```
+npm install
+npm start
+```
+Set Settings › System › Power › Sleep to **Never** while plugged in.
+
+You'll see `greeter: online as Gene's AI#1234`. Leave that window open. Closing it turns the bot off.
 
 ## Cost
-- Hosting: about $5 a month.
-- Claude: it uses Claude Opus 5.5 at low effort. A typical answer costs around one cent, so 100 answers a day is roughly $30 a month. Set `MODEL=claude-haiku-5-5` to make it much cheaper (simpler answers).
-- Built-in limits: one question per person every 15 seconds, 25 per person per day, 120 per hour total.
-
-## Run it on your computer (optional)
-```
-cd bnb-bot
-npm install
-DISCORD_TOKEN=... ANTHROPIC_API_KEY=... WELCOME_CHANNEL_ID=... ASK_CHANNEL_ID=... npm start
-```
+- Checking every message to see if it's a question: pennies a day.
+- Real answers: roughly $15–30 a month at about 100 a day. Your spend limit caps it.
+- Built-in limits: 1 question per person every 12 seconds, 30 per person per day, 150 per hour total.
