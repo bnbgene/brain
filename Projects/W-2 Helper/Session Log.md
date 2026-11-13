@@ -3,6 +3,9 @@
 Newest entries at the top. Back to [[W-2 Helper]].
 
 ---
+## 2026-11-12: Competitor research
+**Did:** Researched SmartWiz (main competitor). They don't support E Tax and charge $9–20 per return; we're ~5–10¢ per W-2. Plan: beta at the office first, then a time-saved counter and 1099s. See [[Competitor - SmartWiz]].
+
 ## 2026-10-24 (night): Fill works on E Tax ✅
 **Did:** Fixed the last issues (big dollar amounts with commas, employer name being cleared by E Tax after the EIN). v0.2.2: every box filled on a practice return.
 **Next:** API key, AI-read test, answers on code II and QUAL OT, then the office install.

@@ -1,0 +1,257 @@
+<title>Brain Farm</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;600&display=swap">
+<style>
+/* Layout: a pixel farm map on top, a wooden "field report" panel beside it (stacks on phones). Single game look on purpose. */
+:root{
+  --night:#1d2b22; --wood:#6b4a2f; --wood-dk:#3e2a1a; --parch:#f3e3bf; --ink:#2b1d12;
+  --gold:#f2c14e; --leaf:#5fa35a; --rust:#c4572f; --sky:#8fc6d9;
+  --display:"Press Start 2P", ui-monospace, monospace;
+  --body:"Pixelify Sans", ui-rounded, system-ui, sans-serif;
+  color-scheme:dark;
+}
+html,body{background:var(--night);color:var(--parch)}
+body{font-family:var(--body);font-size:17px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 32px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+h1{font-family:var(--display);font-size:clamp(18px,3vw,28px);margin:0;color:var(--gold);text-shadow:3px 3px 0 var(--wood-dk);letter-spacing:1px}
+.sub{margin:6px 0 0;opacity:.85}
+.hud{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--display);font-size:10px;background:var(--wood);border:3px solid var(--wood-dk);padding:8px 10px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25);font-variant-numeric:tabular-nums}
+.chip b{color:var(--gold);font-weight:400}
+.game{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+@media (max-width:860px){.game{grid-template-columns:minmax(0,1fr)}}
+.board{border:4px solid var(--wood-dk);background:var(--wood);padding:6px;box-shadow:0 6px 0 var(--wood-dk)}
+canvas{display:block;width:100%;height:auto;image-rendering:pixelated;cursor:pointer;max-width:100%}
+.hint{font-size:14px;opacity:.75;margin:8px 2px 0}
+.panel{background:var(--parch);color:var(--ink);border:4px solid var(--wood-dk);box-shadow:0 6px 0 var(--wood-dk);padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.panel h2{font-family:var(--display);font-size:13px;line-height:1.5;margin:0;text-wrap:balance}
+.badge{display:inline-block;font-family:var(--display);font-size:9px;padding:5px 7px;color:#fff;border:2px solid var(--ink)}
+.b-lush{background:#3f8a3b}.b-grow{background:#b58a1d}.b-dry{background:var(--rust)}.b-boss{background:#6a4fa3}
+.row{display:flex;flex-direction:column;gap:2px}
+.lbl{font-family:var(--display);font-size:8px;letter-spacing:1px;text-transform:uppercase;opacity:.65}
+.panel p{margin:0}
+.say{background:#fff8e6;border:2px dashed var(--wood);padding:8px 10px;font-weight:600}
+.panel ul{margin:0;padding-left:18px}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.card{background:var(--wood);border:3px solid var(--wood-dk);padding:12px;display:flex;flex-direction:column;gap:6px}
+.card h3{font-family:var(--display);font-size:10px;margin:0;color:var(--gold);line-height:1.5}
+.card p{margin:0;font-size:15px}
+.sect{font-family:var(--display);font-size:12px;color:var(--gold);margin:8px 0 0}
+button.tab{all:unset}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>BRAIN FARM</h1>
+      <p class="sub">Each plot is one of your projects. Each little farmer is a Claude chat. Tap a plot to see how it's growing.</p>
+    </div>
+    <div class="hud" id="hud"></div>
+  </header>
+
+  <div class="game">
+    <div>
+      <div class="board"><canvas id="farm" width="960" height="576" aria-label="Pixel farm map of your projects"></canvas></div>
+      <p class="hint">Green and tall = worked on recently. Brown and weedy = nobody has tended it in a while. Snapshot from Nov 12.</p>
+    </div>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+
+  <h2 class="sect">EMPTY PLOTS: HIRE A FARMHAND</h2>
+  <div class="list" id="hire"></div>
+</div>
+
+<script>
+const TODAY = new Date('2026-11-12T12:00:00Z');
+const daysAgo = d => Math.max(0, Math.round((TODAY - new Date(d)) / 864e5));
+
+const PROJECTS = [
+  {id:'aic', name:'AI Characters', chat:'AI CHARACTERS', crop:'flower', hat:'#e86fa6',
+   x:16,y:16,w:80,h:64, last:'2026-10-16',
+   did:'Designed Kasey Mae and saved her images to the project.',
+   next:'Make her accounts and the first videos.',
+   tools:['Kasey Mae']},
+  {id:'bnb', name:'BNB Profits', chat:'BNB PROFITS', crop:'coin', hat:'#f2c14e',
+   x:224,y:16,w:80,h:64, last:'2026-10-21',
+   did:'Wrote a short text to Damond pitching the paid 1:1 mentorship.',
+   next:'Keep daily content going and follow up with Damond.',
+   tools:['BNBProfits Website','Content HQ','Story Maker']},
+  {id:'web', name:'Web Design', chat:'WEBSITE DESIGN', crop:'sunflower', hat:'#4fa0d9',
+   x:16,y:112,w:80,h:64, last:'2026-10-24',
+   did:'Rebuilt the Jireh Services site in black and orange with their logo.',
+   next:'Send the 23 Bay Area sample sites to the business owners.',
+   tools:['Sample Sites','BNB Lead Desk','After the Close']},
+  {id:'air', name:'Airbnb', chat:'AIRBNB', crop:'pumpkin', hat:'#e0793a',
+   x:120,y:112,w:80,h:64, last:'2026-10-16',
+   did:'Made a 52-second walk-through video for the sample listing site.',
+   next:'DM real hosts with the sample.',
+   tools:['Desert Oasis Sample']},
+  {id:'w2', name:'W-2 Helper', chat:'TAX HELPER SOFTWARE', crop:'wheat', hat:'#8ad16b',
+   x:224,y:112,w:80,h:64, last:'2026-11-12',
+   did:'Compared SmartWiz to W-2 Helper and planned a beta.',
+   next:'Add the API key and test AI reading a real W-2.',
+   tools:['W-2 Helper App','Competitor - SmartWiz']},
+];
+const HOUSE = {id:'house', name:'Farmhouse (your Brain)', chat:'Obsidian integration overview', x:128,y:8,w:64,h:64, last:'2026-11-12'};
+
+PROJECTS.forEach(p=>{
+  p.days = daysAgo(p.last);
+  p.health = p.days<=3 ? 'lush' : p.days<=14 ? 'grow' : 'dry';
+  p.awake = p.days<=1;
+});
+
+/* ---------- HUD + hire list ---------- */
+const dry = PROJECTS.filter(p=>p.health==='dry').length;
+const firstDay = daysAgo('2026-09-25')+1;
+document.getElementById('hud').innerHTML =
+  `<span class="chip">DAY <b>${firstDay}</b></span>
+   <span class="chip">FARMERS <b>${PROJECTS.length+1}</b></span>
+   <span class="chip">AWAKE <b>${PROJECTS.filter(p=>p.awake).length+1}</b></span>
+   <span class="chip">NEED WATER <b>${dry}</b></span>`;
+
+const HIRES = [
+  ['Morning Poster','Writes 3 post ideas and captions for your AI characters every morning.'],
+  ['Market Scout','Once a week, looks up Airbnb pricing and trends for BNB Profits.'],
+  ['Site Inspector','Weekly check of your live sites for broken pages.'],
+  ['Friday Harvest','Runs "update my brain" by itself every Friday.'],
+];
+document.getElementById('hire').innerHTML = HIRES.map(([t,d])=>
+  `<div class="card"><h3>${t}</h3><p>${d}</p><p style="opacity:.8">To hire, tell Claude: <b>"hire the ${t}"</b></p></div>`).join('');
+
+/* ---------- Panel ---------- */
+const panel = document.getElementById('panel');
+const STATUS = {lush:['Thriving','b-lush'], grow:['Growing','b-grow'], dry:['Needs water','b-dry']};
+function showProject(p){
+  const [txt,cls] = STATUS[p.health];
+  panel.innerHTML = `
+    <h2>${p.name}</h2>
+    <div><span class="badge ${cls}">${txt}</span></div>
+    <div class="row"><span class="lbl">Farmer</span><p>The "${p.chat}" chat. ${p.awake?'Worked today, now resting.':'Asleep. Last tended '+p.days+' days ago.'}</p></div>
+    <div class="row"><span class="lbl">Last harvest</span><p>${p.did}</p></div>
+    <div class="row"><span class="lbl">Next to plant</span><p>${p.next}</p></div>
+    <div class="row"><span class="lbl">Tools on this plot</span><ul>${p.tools.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+    <div class="row"><span class="lbl">Wake this farmer</span><p class="say">Open the "${p.chat}" chat and say: "${p.next}"</p></div>`;
+}
+function showHouse(){
+  panel.innerHTML = `
+    <h2>${HOUSE.name}</h2>
+    <div><span class="badge b-boss">Foreman</span></div>
+    <div class="row"><span class="lbl">Farmer</span><p>The purple-hat farmer walks the fields and brings everything back to your notes.</p></div>
+    <div class="row"><span class="lbl">Schedule</span><p>Walks the whole farm every morning around 7am Phoenix time.</p></div>
+    <div class="row"><span class="lbl">Farm report</span><p>${PROJECTS.filter(p=>p.health==='dry').map(p=>p.name).join(', ')} haven't been tended in over 2 weeks.</p></div>
+    <div class="row"><span class="lbl">Make it walk now</span><p class="say">Say: "Update my brain"</p></div>`;
+}
+
+/* ---------- Canvas ---------- */
+const cv = document.getElementById('farm'), S = 3, ctx = cv.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+const W=320,H=192;
+const R=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(x)*S,Math.round(y)*S,w*S,h*S)};
+let seed=7; const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+const grass = []; for(let i=0;i<260;i++) grass.push([rnd()*W|0, rnd()*H|0, rnd()<.5]);
+const weeds = PROJECTS.map(()=>Array.from({length:7},()=>[rnd(),rnd()]));
+let selected = PROJECTS[0];
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function ground(){
+  R(0,0,W,H,'#6fae4b');
+  grass.forEach(([x,y,a])=>{R(x,y,1,2,a?'#5c9a3d':'#86c25c')});
+  // paths
+  R(0,88,W,14,'#c9a46a'); R(154,72,14,16,'#c9a46a');
+  for(let x=0;x<W;x+=9) R(x+(x%2),93,2,1,'#b08a52');
+  // pond
+  R(8,180,0,0,'#000');
+}
+function house(t){
+  const {x,y}=HOUSE;
+  R(x+6,y+26,52,36,'#d9b98a'); R(x+6,y+26,52,3,'#b9945f');
+  for(let i=0;i<14;i++) R(x+2+i*2, y+26-i, 60-i*4, 2, i%2?'#9c3b2b':'#b5473a');
+  R(x+26,y+44,12,18,'#6b4a2f'); R(x+35,y+52,2,2,'#f2c14e');
+  R(x+12,y+36,10,9,'#8fc6d9'); R(x+42,y+36,10,9,'#8fc6d9');
+  R(x+16,y+36,1,9,'#fff'); R(x+46,y+36,1,9,'#fff');
+  // brain sign
+  R(x+20,y+16,24,8,'#3e2a1a'); txt('BRAIN',x+32,y+22,'#f2c14e',5,'center');
+  // chimney smoke
+  R(x+46,y+4,6,10,'#7a4d3a');
+  if(!reduce) for(let i=0;i<3;i++){const k=((t/900)+i/3)%1; R(x+48+Math.sin(k*6+i)*2, y+2-k*14, 3,3,`rgba(240,240,240,${.7-k*.7})`)}
+}
+function txt(s,x,y,c,size,align){ctx.font=`${size*S}px "Press Start 2P"`;ctx.textAlign=align||'left';ctx.fillStyle=c;ctx.fillText(s,x*S,y*S)}
+
+function crop(type,cx,by,h,t,i){
+  const sway = reduce?0:Math.round(Math.sin(t/600+i)*0.6);
+  const dead = h==='dry', small = h!=='lush';
+  const stem = dead?'#8a7a43':'#3f8a3b';
+  const k = small?0.7:1;
+  if(type==='flower'){ const s=Math.round(7*k); R(cx,by-s,1,s,stem);
+    const c=dead?'#a07a7a':'#e86fa6'; R(cx-2+sway,by-s-2,5,3,c);R(cx-1+sway,by-s-3,3,5,c);R(cx+sway,by-s-1,1,1,'#f2c14e'); }
+  if(type==='coin'){ R(cx-3,by-5,7,5,dead?'#7d7a45':'#3f8a3b');R(cx-2,by-7,5,2,dead?'#7d7a45':'#4f9b45');
+    if(!dead){R(cx-2+sway,by-5,2,2,'#f2c14e');R(cx+2,by-3,2,2,'#f2c14e')} if(h==='lush')R(cx,by-8,2,2,'#ffe27a'); }
+  if(type==='sunflower'){ const s=Math.round(10*k); R(cx,by-s,1,s,stem);R(cx+1,by-5,2,1,stem);
+    R(cx-2+sway,by-s-4,5,5,dead?'#9b8a4a':'#f2c14e');R(cx-1+sway,by-s-3,3,3,'#6b4a2f'); }
+  if(type==='pumpkin'){ const w=small?5:7; R(cx-(w>>1),by-4,w,4,dead?'#9a6a45':'#e0793a');R(cx,by-6,1,2,stem);
+    if(!dead)R(cx-(w>>1)+1,by-3,1,2,'#c05f22'); }
+  if(type==='wheat'){ for(let j=-1;j<=1;j++){const s=Math.round(9*k)-Math.abs(j); R(cx+j*2,by-s,1,s,dead?'#8a7a43':'#c8a83a');R(cx+j*2-1+sway,by-s-3,3,3,'#e9c95a')} }
+}
+function plot(p,t,pi){
+  const {x,y,w,h}=p;
+  R(x-2,y-2,w+4,h+4,'#7a5233'); // fence
+  for(let i=0;i<w+4;i+=8){R(x-2+i,y-4,2,4,'#7a5233');R(x-2+i,y+h+2,2,3,'#7a5233')}
+  R(x,y,w,h,p.health==='dry'?'#8a6a43':'#6b4a2f');
+  for(let r=0;r<4;r++) R(x+2,y+8+r*15,w-4,2,p.health==='dry'?'#7a5c38':'#573a24');
+  for(let r=0;r<3;r++) for(let c=0;c<5;c++) crop(p.crop, x+9+c*15, y+22+r*17, p.health, t, r*5+c+pi);
+  if(p.health==='dry') weeds[pi].forEach(([a,b])=>{const wx=x+4+a*(w-8),wy=y+6+b*(h-10);R(wx,wy,1,3,'#4a7a2a');R(wx-1,wy+1,1,2,'#4a7a2a');R(wx+1,wy,1,2,'#5a8a35')});
+  // sign
+  const lw = p.name.length*5+8;
+  R(x+w/2-lw/2, y+h-1, lw, 9, selected===p?'#f2c14e':'#3e2a1a');
+  txt(p.name.toUpperCase(), x+w/2, y+h+6, selected===p?'#2b1d12':'#f3e3bf', 4.2, 'center');
+}
+function farmer(x,y,hat,state,t){
+  x=Math.round(x);y=Math.round(y);
+  if(state==='sleep'){
+    R(x,y+6,12,4,'#4a6fa5'); R(x+10,y+5,5,5,'#f1c9a0'); R(x+10,y+3,6,3,hat);
+    if(!reduce){const k=(t/1400)%1; txt('z',x+15+k*4,y+2-k*10,`rgba(255,255,255,${1-k})`,4)}
+    else txt('z',x+16,y,'#fff',4);
+    return;
+  }
+  const step = state==='walk'&&!reduce ? (Math.floor(t/160)%2) : 0;
+  R(x+1,y+12,2,3+step,'#3e2a1a'); R(x+5,y+12,2,4-step,'#3e2a1a');
+  R(x,y+6,8,6,'#4a6fa5'); R(x+2,y+1,5,5,'#f1c9a0'); R(x+4,y+3,1,1,'#2b1d12');
+  R(x,y,9,2,hat); R(x+2,y-2,5,2,hat);
+  if(state==='sit') { R(x-1,y+14,10,2,'#7a5233'); }
+}
+// foreman route
+const route = [[160,74],...PROJECTS.map(p=>[p.x+p.w/2, p.y<100? p.y+p.h+10 : 92]),[160,74]];
+function foreman(t){
+  const seg = reduce?0:(t/2600)%(route.length-1), i=Math.floor(seg), f=seg-i;
+  const a=route[i], b=route[i+1];
+  // walk along path: horizontal on y=88 lane, then vertical
+  const lane=86; let x,y;
+  if(f<.33){x=a[0];y=a[1]+(lane-a[1])*(f/.33)} else if(f<.66){x=a[0]+(b[0]-a[0])*((f-.33)/.33);y=lane} else {x=b[0];y=lane+(b[1]-lane)*((f-.66)/.34)}
+  farmer(x-4,y-14,'#8a5cd0','walk',t);
+}
+function draw(t){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ground(); house(t);
+  PROJECTS.forEach((p,i)=>plot(p,t,i));
+  PROJECTS.forEach(p=>{
+    const fx = p.x+p.w-14, fy = p.y<100 ? p.y+p.h+6 : p.y-14;
+    farmer(fx, p.awake? fy-6 : fy, p.hat, p.awake?'sit':'sleep', t);
+  });
+  foreman(t);
+  if(!reduce) requestAnimationFrame(draw);
+}
+document.fonts.load('12px "Press Start 2P"').finally(()=>{ showProject(selected); draw(performance.now()); });
+showProject(selected);
+draw(0);
+
+cv.addEventListener('click',e=>{
+  const r=cv.getBoundingClientRect(), mx=(e.clientX-r.left)/r.width*W, my=(e.clientY-r.top)/r.height*H;
+  const hit=(o,pad=6)=>mx>=o.x-pad&&mx<=o.x+o.w+pad&&my>=o.y-pad&&my<=o.y+o.h+12;
+  const p=PROJECTS.find(o=>hit(o));
+  if(p){selected=p;showProject(p)} else if(hit(HOUSE,0)){selected=HOUSE;showHouse()}
+  if(reduce) draw(0);
+});
+</script>

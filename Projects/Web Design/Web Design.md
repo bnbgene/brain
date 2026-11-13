@@ -30,6 +30,7 @@ BNB web design + ads for local (mostly Phoenix-area) businesses. Process:
 | A+ Pressure Washing | [link](https://bnbgene.github.io/brain/a-plus-pressure-washing-phoenix/) |
 | A-Science Termite & Pest Control | [link](https://bnbgene.github.io/brain/a-science-termite-pest-control/) |
 | Moreno Electric Co. | [link](https://bnbgene.github.io/brain/moreno-electric/) |
+| AZ EZ Moving (Chandler mover) | [link](https://bnbgene.github.io/brain/az-ez-moving/) |
 | ro.tinyfits (kids clothing) | [link](https://bnbgene.github.io/brain/ro-tinyfits/) |
 | On Scene Cleaning Services | [link](https://bnbgene.github.io/brain/on-scene-cleaning-services/) · [animated demo](https://bnbgene.github.io/brain/on-scene-cleaning-services-demo/) |
 
@@ -41,6 +42,7 @@ Older samples on Netlify (`samples/`): A Blessing Tree Service, Advanced Europea
 - 2026-10-13: Preview first; nothing is published until you OK it.
 
 ## Next Steps
+- [ ] Check AZ EZ Moving's services list with them
 - [ ] Send the 23 new Bay Area samples to those business owners
 - [ ] Send the latest samples to their business owners
 - [ ] Keep the Lead Desk updated
