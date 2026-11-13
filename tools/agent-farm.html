@@ -471,7 +471,7 @@
   <section class="view" id="v-agents" hidden>
     <div class="agents" id="agents"></div>
     <div id="v-discord" style="display:grid;gap:18px">
-    <div class="notice"><span class="pill wait"><i></i>Preview</span><p>This is what each agent will post. Charts and levels are <b>sample data</b> until the agents go live. Recap and payout posts already use your real logs.</p></div>
+    <div class="notice"><span class="pill live"><i></i>Live</span><p>BNB Desk posts these in your Discord on schedule. The examples below use sample numbers; the real posts use live NQ data and your logs.</p></div>
     <div class="dc">
       <div class="dc-side" id="dcSide"><div class="dc-server">BNBProfits</div></div>
       <div class="dc-main">
@@ -545,7 +545,7 @@
   // ===================================================================
   var WEEKDAYS = [1, 2, 3, 4, 5], DAILY = [0, 1, 2, 3, 4, 5, 6];
   var AGENTS = [
-    { id: 'market', name: 'Market Desk', shirt: '#2f9bff', hair: '#1b1b1e', skin: '#c68b59', ch: 'pre-market', days: WEEKDAYS, at: OPEN - 45, dur: 12,
+    { id: 'market', live: true, name: 'Market Desk', shirt: '#2f9bff', hair: '#1b1b1e', skin: '#c68b59', ch: 'pre-market', days: WEEKDAYS, at: OPEN - 45, dur: 12,
       job: 'Draws the NQ pre-market chart, marks the overnight high and low plus yesterday’s high, low and close, lists the red-folder news, and calls everyone to the live.',
       hi: 'I wake up 45 minutes before the open, pull NQ, mark the levels, check the news calendar and post it all to #pre-market. Drop your own levels here and I’ll use yours instead of mine.',
       steps: ['Pulling overnight NQ…', 'Drawing levels…', 'Checking news…', 'Posting to #pre-market'] },
@@ -558,34 +558,34 @@
       job: 'Your morning brief. Picks today’s video, writes both scripts and the Discord lines in your Content HQ, then pings your phone.',
       hi: 'Every morning at 5:50 I write your talking video and a bonus take, then ping your phone. Already on the clock.',
       steps: ['Reading your tracker…', 'Writing the script…', 'Saving to HQ'] },
-    { id: 'recap', name: 'Recap Bot', shirt: '#3ddc84', hair: '#111111', skin: '#8d5524', ch: 'recaps', days: WEEKDAYS, at: CLOSE + 15, dur: 12,
+    { id: 'recap', live: true, name: 'Recap Bot', shirt: '#3ddc84', hair: '#111111', skin: '#8d5524', ch: 'recaps', days: WEEKDAYS, at: CLOSE + 15, dur: 12,
       job: 'After the close, reads the trades you logged today and posts a clean recap card: P&L, trades, and one lesson. Skips your numbers if you didn’t log.',
       hi: 'After the close I read your journal at the terminal and post a recap card. No trades logged means I keep your numbers private.',
       steps: ['Reading your journal…', 'Making the card…', 'Posting to #recaps'] },
-    { id: 'payout', name: 'Payout Hype', shirt: '#f5b84a', hair: '#222222', skin: '#c68b59', ch: 'payouts', days: DAILY, at: 900, dur: 10, onEvent: 'you log a payout',
+    { id: 'payout', live: true, name: 'Payout Hype', shirt: '#f5b84a', hair: '#222222', skin: '#c68b59', ch: 'payouts', days: DAILY, at: 900, dur: 10, onEvent: 'you log a payout',
       job: 'When you log a payout and say "post it", it makes the payout card and drops it in #payouts with a line pointing people to the free Discord.',
       hi: 'Log a payout at the vault and I’ll make the card and post it. Every one of those is free marketing.',
       steps: ['New payout!', 'Making the card…', 'Posting to #payouts'] },
-    { id: 'hype', name: 'Hype Man', shirt: '#ff5a4e', hair: '#0d0d0d', skin: '#e0ac7e', ch: 'general', days: DAILY, at: 1140, dur: 10,
+    { id: 'hype', live: true, name: 'Hype Man', shirt: '#ff5a4e', hair: '#0d0d0d', skin: '#e0ac7e', ch: 'general', days: DAILY, at: 1140, dur: 10,
       job: 'Keeps the server alive at night: one question, hot take or this-or-that in #general. Never the same one twice in 30 days.',
       hi: 'Seven every night I throw a question in #general so the chat never goes dead.',
       steps: ['Thinking of a question…', 'Posting to #general'] },
-    { id: 'outlook', name: 'Week Ahead', shirt: '#9b7bff', hair: '#2a1a10', skin: '#8d5524', ch: 'weekly-outlook', days: [0], at: 1020, dur: 12,
+    { id: 'outlook', live: true, name: 'Week Ahead', shirt: '#9b7bff', hair: '#2a1a10', skin: '#8d5524', ch: 'weekly-outlook', days: [0], at: 1020, dur: 12,
       job: 'Sunday evening: the full week of news with times in ET, plus the "what’s your goal this week?" question.',
       hi: 'Sundays at 5 I post the whole week of news so nobody gets caught by CPI.',
       steps: ['Pulling the calendar…', 'Writing the week…', 'Posting to #weekly-outlook'] },
-    { id: 'lead', name: 'Lead Closer', shirt: '#2a2a33', hair: '#111111', skin: '#e0ac7e', ch: 'applicants', days: DAILY, at: OPEN + 100, dur: 8, onEvent: 'an application comes in',
+    { id: 'lead', live: true, name: 'Lead Closer', shirt: '#2a2a33', hair: '#111111', skin: '#e0ac7e', ch: 'applicants', days: DAILY, at: OPEN + 100, dur: 8, onEvent: 'an application comes in',
       job: 'The second someone applies for 1:1, it drops the lead in #applicants with the reply text ready for you to send. Never messages the person itself.',
       hi: 'Somebody applies, I drop them in #applicants with a reply you can copy. You do the closing.',
       steps: ['New application!', 'Writing the reply…', 'Posting to #applicants'] },
-    { id: 'greeter', name: 'Greeter', shirt: '#5865f2', hair: '#1b1b1e', skin: '#c68b59', ch: 'welcome', days: DAILY, at: 0, dur: 1440, always: true,
+    { id: 'greeter', live: true, name: 'Greeter', shirt: '#5865f2', hair: '#1b1b1e', skin: '#c68b59', ch: 'welcome', days: DAILY, at: 0, dur: 1440, always: true,
       job: 'The 24/7 Discord bot. Welcomes every new member by name, and answers questions in #ask-gene in your voice. Never gives signals or financial advice.',
       hi: 'I’m the bot that never sleeps. Once I’m hired I welcome everybody who joins and answer questions in #ask-gene all day and night.',
       steps: ['Welcoming a new member…', 'Answering in #ask-gene…'] }
   ];
   var A = {}; AGENTS.forEach(function (a) { A[a.id] = a; });
   var S = { goals: null, accounts: [], risk: null, plans: {}, days: {}, trades: [], payouts: [], agentCfg: {}, queue: [], news: [], levels: null, checklist: null, skips: [], pendingCheck: null, db: null };
-  function cfg(id) { var c = S.agentCfg[id] || {}; return { on: c.on !== false, mode: c.mode || 'approve' }; }
+  function cfg(id) { var c = S.agentCfg[id] || {}; return { on: c.on !== false, mode: c.mode || 'auto' }; }
 
   // ===================================================================
   // WORLD (top-down pixel island)
