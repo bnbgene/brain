@@ -134,10 +134,22 @@ export async function postLive(client) {
 // ---------- commands + clock ----------
 export function handleCommand(msg) {
   if (!OWNER_ID || msg.author.id !== OWNER_ID) return false;
-  const m = msg.content.trim().match(/^!(bias|nolive|live)\b\s*([\s\S]*)$/i);
+  const m = msg.content.trim().match(/^!(bias|nolive|live|help)\b\s*([\s\S]*)$/i);
   if (!m) return false;
   rollDay(partsIn('America/New_York'));
   const cmd = m[1].toLowerCase();
+  if (cmd === 'help') {
+    const status = `Today: ${today.bias ? 'bias set ✅' : 'no bias yet'} · Live in 10 ${today.nolive ? 'OFF 🚫' : 'ON 🔴'}`;
+    msg.author.send([
+      '**📋 Your commands** (type in any channel, only you can use them)',
+      '🧭 `!bias your text` → adds your bias to the 6:45 AM MST post',
+      '🚫 `!nolive` → skips today\'s Live in 10',
+      '🔴 `!live` → turns Live in 10 back on',
+      '❓ `!help` → this list',
+      '',
+      status,
+    ].join('\n')).catch(() => msg.reply('Turn on DMs from server members so I can send you the list.').catch(() => {}));
+  }
   if (cmd === 'bias') today.bias = m[2].trim().slice(0, 300);
   if (cmd === 'nolive') today.nolive = true;
   if (cmd === 'live') today.nolive = false;

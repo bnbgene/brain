@@ -243,6 +243,24 @@
   /* accounts */
   .acct { border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 8px; background: var(--panel-2); }
   .acct h3 { font-size: .95rem; }
+  .tab .ic { margin-right: 5px; font-size: .9rem; }
+  .shot { border: 1.5px dashed var(--line); border-radius: 10px; padding: 12px; text-align: center; color: var(--muted); font-size: .84rem; cursor: pointer; display: grid; gap: 8px; justify-items: center; }
+  .shot.over, .shot:focus-visible { border-color: var(--good); color: var(--fg); outline: none; }
+  .shot img { max-width: 100%; max-height: 160px; border-radius: 6px; }
+  .li.click { cursor: pointer; }
+  .li.click:hover { background: color-mix(in srgb, var(--fg) 4%, transparent); }
+  .li .ic { margin-right: 4px; }
+  .edit-trade { grid-column: 1 / -1; display: grid; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; margin-top: 4px; cursor: default; }
+  .cmds { display: grid; gap: 8px; }
+  .cmd { display: grid; grid-template-columns: 28px auto 1fr; gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; font-size: .86rem; }
+  .cmd .e { font-size: 1.1rem; text-align: center; }
+  .cmd code { font-family: var(--mono); font-size: .8rem; color: var(--good); white-space: nowrap; }
+  .cmd span:last-child { color: var(--muted); }
+  .light { display: inline-flex; align-items: center; gap: 6px; font-size: .76rem; color: var(--muted); }
+  .light i { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 0%, transparent); }
+  .light.ok i { background: var(--good); box-shadow: 0 0 8px var(--good); }
+  .light.bad i { background: var(--bad); box-shadow: 0 0 8px var(--bad); }
+  .light.bot i { background: #5865f2; box-shadow: 0 0 8px #5865f2; }
   .acct-line { display: flex; justify-content: space-between; gap: 10px; font-size: .86rem; flex-wrap: wrap; }
   .acct-grid { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: .86rem; align-items: baseline; }
   .goal-bar.danger i { background: var(--bad); }
@@ -295,13 +313,13 @@
     </div>
   </div>
   <nav class="tabs" role="tablist" aria-label="Sections">
-    <button class="tab" role="tab" data-tab="farm" aria-selected="true">Farm</button>
-    <button class="tab" role="tab" data-tab="content" aria-selected="false">Content</button>
-    <button class="tab" role="tab" data-tab="checklist" aria-selected="false">Checklist</button>
-    <button class="tab" role="tab" data-tab="trades" aria-selected="false">Trades</button>
-    <button class="tab" role="tab" data-tab="payouts" aria-selected="false">Payouts</button>
-    <button class="tab" role="tab" data-tab="news" aria-selected="false">News</button>
-    <button class="tab" role="tab" data-tab="agents" aria-selected="false">Agents</button>
+    <button class="tab" role="tab" data-tab="farm" aria-selected="true"><span class="ic" aria-hidden="true">🏝️</span>Farm</button>
+    <button class="tab" role="tab" data-tab="content" aria-selected="false"><span class="ic" aria-hidden="true">🎬</span>Content</button>
+    <button class="tab" role="tab" data-tab="checklist" aria-selected="false"><span class="ic" aria-hidden="true">✅</span>Checklist</button>
+    <button class="tab" role="tab" data-tab="trades" aria-selected="false"><span class="ic" aria-hidden="true">📈</span>Trades</button>
+    <button class="tab" role="tab" data-tab="payouts" aria-selected="false"><span class="ic" aria-hidden="true">💰</span>Payouts</button>
+    <button class="tab" role="tab" data-tab="news" aria-selected="false"><span class="ic" aria-hidden="true">📰</span>News</button>
+    <button class="tab" role="tab" data-tab="agents" aria-selected="false"><span class="ic" aria-hidden="true">🤖</span>Agents</button>
   </nav>
 </header>
 
@@ -422,6 +440,11 @@
             <label class="wide">Note<input type="text" id="tNote" placeholder="What happened, in a few words"></label>
           </div>
         </details>
+        <div class="wide shot" id="shotZone" tabindex="0" role="button" aria-label="Add a chart screenshot">
+          <span id="shotHint">📸 <b>Add your chart screenshot</b><br><span class="muted">Paste it (Ctrl+V), drop it here or tap to pick. It goes out with the recap.</span></span>
+          <img id="shotPrev" alt="Screenshot preview" hidden>
+        </div>
+        <input type="file" id="shotFile" accept="image/*" hidden>
         <p class="wide ckb ap" id="tCheckNote" hidden style="margin:0;padding:8px 10px;border-radius:8px"></p>
         <button class="btn wide" type="submit">Save trade</button>
         <button class="btn ghost small wide" id="recapNow" type="button">Post today&rsquo;s recap now</button>
@@ -470,6 +493,11 @@
 
   <!-- AGENTS -->
   <section class="view" id="v-agents" hidden>
+    <div class="panel">
+      <h2>📋 Discord commands</h2>
+      <p class="muted" style="font-size:.84rem;margin:0">Type these in any channel. Only you can use them, and the bot deletes your message after it reacts. Forgot them? Type <code>!help</code> and the bot DMs you this list.</p>
+      <div class="cmds" id="cmdList"></div>
+    </div>
     <div class="agents" id="agents"></div>
     <div id="v-discord" style="display:grid;gap:18px">
     <div class="notice"><span class="pill live"><i></i>Live</span><p>BNB Desk posts these in your Discord on schedule. The examples below use sample numbers; the real posts use live NQ data and your logs.</p></div>
@@ -559,8 +587,8 @@
       job: 'Your morning brief. Picks today’s video, writes both scripts and the Discord lines in your Content HQ, then pings your phone.',
       hi: 'Every morning at 5:50 I write your talking video and a bonus take, then ping your phone. Already on the clock.',
       steps: ['Reading your tracker…', 'Writing the script…', 'Saving to HQ'] },
-    { id: 'recap', live: true, name: 'Recap Bot', shirt: '#3ddc84', hair: '#111111', skin: '#8d5524', ch: 'recaps', days: WEEKDAYS, at: CLOSE + 15, dur: 12,
-      job: 'After the close, reads the trades you logged today and posts a clean recap card: P&L, trades, and one lesson. Skips your numbers if you didn’t log.',
+    { id: 'recap', live: true, onEvent: 'you log or edit a trade', name: 'Recap Bot', shirt: '#3ddc84', hair: '#111111', skin: '#8d5524', ch: 'recaps', days: WEEKDAYS, at: CLOSE + 15, dur: 12,
+      job: 'Right after you log a trade, posts your recap in #daily-recap: P&L, trade count, your lesson and your chart screenshot. Edit a trade later and it replaces the post. No trades logged means a market-only recap after the close.',
       hi: 'After the close I read your journal at the terminal and post a recap card. No trades logged means I keep your numbers private.',
       steps: ['Reading your journal…', 'Making the card…', 'Posting to #recaps'] },
     { id: 'payout', live: true, name: 'Payout Hype', shirt: '#f5b84a', hair: '#222222', skin: '#c68b59', ch: 'payouts', days: DAILY, at: 900, dur: 10, onEvent: 'you log a payout',
@@ -585,7 +613,7 @@
       steps: ['Welcoming a new member…', 'Answering in #ask-gene…'] }
   ];
   var A = {}; AGENTS.forEach(function (a) { A[a.id] = a; });
-  var S = { goals: null, accounts: [], risk: null, plans: {}, days: {}, trades: [], payouts: [], agentCfg: {}, queue: [], news: [], levels: null, checklist: null, skips: [], pendingCheck: null, db: null };
+  var S = { runs: {}, shot: null, goals: null, accounts: [], risk: null, plans: {}, days: {}, trades: [], payouts: [], agentCfg: {}, queue: [], news: [], levels: null, checklist: null, skips: [], pendingCheck: null, db: null };
   function cfg(id) { var c = S.agentCfg[id] || {}; return { on: c.on !== false, mode: c.mode || 'auto' }; }
 
   // ===================================================================
@@ -1099,15 +1127,17 @@
     wrap.appendChild(on);
     return wrap;
   }
+  var CMDS = [
+    ['🧭', '!bias bearish rn, watching 28,950', 'Adds your bias to the 6:45 AM post'],
+    ['🚫', '!nolive', 'Skips today\u2019s Live in 10'],
+    ['🔴', '!live', 'Turns Live in 10 back on'],
+    ['❓', '!help', 'The bot DMs you this list']
+  ];
+  function cmdRows() { return CMDS.map(function (c) { return el('div', { class: 'cmd' }, [el('span', { class: 'e', text: c[0], 'aria-hidden': 'true' }), el('code', { text: c[1] }), el('span', { text: c[2] })]); }); }
   function levelsForm() {
-    function cmd(t, d) { return el('div', { class: 'acct-line' }, [el('code', { class: 'ckb', text: t }), el('span', { class: 'muted', text: d })]); }
-    return el('div', { style: 'display:grid;gap:6px' }, [
-      el('span', { class: 'label', text: 'Control me from Discord (only you can)' }),
-      cmd('!bias bearish rn, watching 28,950', 'your bias in the 6:45 AM post'),
-      cmd('!nolive', 'skip today\u2019s Live in 10'),
-      cmd('!live', 'undo !nolive')
-    ]);
+    return el('div', { class: 'cmds' }, [el('span', { class: 'label', text: 'Control me from Discord' })].concat(cmdRows()));
   }
+
 
 
   // ---------- agent cards ----------
@@ -1130,6 +1160,7 @@
           el('div', { class: 'row between' }, [el('span', { class: 'agent-name', text: a.name }), status]),
           el('span', { class: 'agent-lvl', text: a.live ? 'LIVE NOW' : a.always ? 'NEEDS THE BOT' : 'PREVIEW' })
         ])]),
+        runLight(a),
         el('p', { class: 'job', text: a.job }),
         el('dl', { class: 'meta' }, [
           el('dt', { text: 'When' }), el('dd', { text: schedText(a) }),
@@ -1142,6 +1173,17 @@
       box.appendChild(card);
     });
     updateCardStatus();
+  }
+  function ago(iso) {
+    var m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+    return m < 1 ? 'just now' : m < 60 ? m + 'm ago' : m < 1440 ? Math.round(m / 60) + 'h ago' : Math.round(m / 1440) + 'd ago';
+  }
+  function runLight(a) {
+    if (a.id === 'market' || a.id === 'greeter') return el('span', { class: 'light bot' }, [el('i'), 'Runs on the Discord bot 24/7']);
+    if (a.id === 'content' || a.id === 'lead') return null;
+    var r = S.runs[a.id];
+    if (!r || !r.at) return el('span', { class: 'light' }, [el('i'), 'No report yet. Lights up after its next run.']);
+    return el('span', { class: 'light ' + (r.ok === false ? 'bad' : 'ok') }, [el('i'), (r.ok === false ? 'Failed ' : 'Last run ') + ago(r.at) + (r.what ? ' \u00b7 ' + r.what : '')]);
   }
   function updateCardStatus() {
     AGENTS.forEach(function (a) {
@@ -1520,6 +1562,90 @@
   }
 
 
+
+  // ---------- screenshots ----------
+  var assetsP = (window.claude && window.claude.use) ? window.claude.use('assets') : Promise.resolve(null);
+  function shrink(blob) {
+    return new Promise(function (res) {
+      var img = new Image(), u = URL.createObjectURL(blob);
+      img.onload = function () {
+        var sc = Math.min(1, 1600 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+        c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u);
+        c.toBlob(function (b) { res(b || blob); }, 'image/jpeg', 0.88);
+      };
+      img.onerror = function () { URL.revokeObjectURL(u); res(blob); };
+      img.src = u;
+    });
+  }
+  function uploadShot(blob) {
+    return assetsP.then(function (assets) {
+      if (!assets) { toast('Screenshots need the farm opened from your sidebar.'); return null; }
+      return shrink(blob).then(function (b) { return assets.upload(b); }).then(function (r) { return { id: r.id, url: r.url }; })
+        .catch(function () { toast('Couldn’t upload the screenshot. The trade still saves.'); return null; });
+    });
+  }
+  function setShot(blob) {
+    S.shot = blob || null;
+    var img = $('shotPrev'), hint = $('shotHint');
+    if (img.src) URL.revokeObjectURL(img.src);
+    if (blob) { img.src = URL.createObjectURL(blob); img.hidden = false; hint.hidden = true; } else { img.removeAttribute('src'); img.hidden = true; hint.hidden = false; }
+  }
+  function imageFrom(list) { for (var i = 0; list && i < list.length; i++) { var f = list[i].getAsFile ? (list[i].kind === 'file' ? list[i].getAsFile() : null) : list[i]; if (f && /^image\//.test(f.type)) return f; } return null; }
+  function wireDrop(zone, pick, onImg) {
+    zone.addEventListener('click', function () { pick.click(); });
+    zone.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick.click(); } });
+    pick.addEventListener('change', function () { var f = imageFrom(pick.files); if (f) onImg(f); pick.value = ''; });
+    zone.addEventListener('dragover', function (e) { e.preventDefault(); zone.classList.add('over'); });
+    zone.addEventListener('dragleave', function () { zone.classList.remove('over'); });
+    zone.addEventListener('drop', function (e) { e.preventDefault(); zone.classList.remove('over'); var f = imageFrom(e.dataTransfer.files); if (f) onImg(f); });
+  }
+  wireDrop($('shotZone'), $('shotFile'), setShot);
+  document.addEventListener('paste', function (e) {
+    if ($('v-trades').hidden) return;
+    var f = imageFrom(e.clipboardData && e.clipboardData.items); if (!f) return;
+    e.preventDefault();
+    var open = document.querySelector('.edit-trade');
+    if (open && open._setShot) open._setShot(f); else { setShot(f); toast('Screenshot added 📸'); }
+  });
+
+  // ---------- edit a logged trade ----------
+  function openEdit(row, t, keep) {
+    var old = document.querySelector('.edit-trade');
+    if (old) { var same = old.parentNode === row; old.remove(); if (same && !keep) { S.editing = null; return; } }
+    S.editing = t._id;
+    var newShot = null;
+    var note = el('textarea', { placeholder: 'What you saw, why you took it, what you’d do different', 'aria-label': 'Trade notes', style: 'min-height:70px' });
+    note.value = t.note || '';
+    var rules = el('select', { 'aria-label': 'Followed my rules?' }, [el('option', { value: 'yes', text: '✅ Followed my rules' }), el('option', { value: 'no', text: '⚠️ Broke my rules' })]);
+    rules.value = t.rules === 'no' ? 'no' : 'yes';
+    var prev = el('img', { alt: 'Screenshot', hidden: true });
+    if (t.shot && t.shot.url) { prev.src = t.shot.url; prev.hidden = false; }
+    var zone = el('div', { class: 'shot', tabindex: '0', role: 'button', 'aria-label': 'Add or replace the screenshot' }, [el('span', { text: t.shot ? '📸 Tap or paste to replace the screenshot' : '📸 Add a screenshot: paste, drop or tap' }), prev]);
+    var pick = el('input', { type: 'file', accept: 'image/*', hidden: true });
+    var save = el('button', { class: 'btn', type: 'button', text: 'Save + update recap' });
+    var saveOnly = el('button', { class: 'btn ghost small', type: 'button', text: 'Save only' });
+    var box = el('div', { class: 'edit-trade' }, [el('span', { class: 'label', text: 'Edit trade' }), note, rules, zone, pick, el('div', { class: 'row' }, [save, saveOnly])]);
+    box._setShot = function (f) { newShot = f; prev.src = URL.createObjectURL(f); prev.hidden = false; };
+    wireDrop(zone, pick, box._setShot);
+    function go(recap) {
+      save.disabled = saveOnly.disabled = true;
+      (newShot ? uploadShot(newShot) : Promise.resolve(null)).then(function (sh) {
+        var patch = { note: note.value.trim(), rules: rules.value };
+        if (sh) patch.shot = sh;
+        if (recap) patch.recapped = false;
+        return dbUpdate('trades/' + t._id, patch);
+      }).then(function () {
+        S.editing = null; box.remove();
+        toast('Trade updated');
+        if (recap) fireRecap(true);
+      });
+    }
+    save.addEventListener('click', function () { go(true); });
+    saveOnly.addEventListener('click', function () { go(false); });
+    row.appendChild(box);
+    if (!keep) note.focus();
+  }
   // Kick off the Recap agent right after trades are logged (uses Gene's Claude Code Remote connector).
   var RECAP_TRIGGER = 'trig_018tvnW4hA7Lj2fJ4t8krHyV', lastRecapFire = 0, recapTimer = null;
   var mcpP = (window.claude && window.claude.use) ? window.claude.use('mcp') : Promise.resolve(null);
@@ -1529,7 +1655,7 @@
     lastRecapFire = Date.now();
     mcpP.then(function (mcp) {
       if (!mcp) { toast('Recap will post after the close.'); return; }
-      return mcp.callTool('Claude Code Remote', 'fire_trigger', { trigger_id: RECAP_TRIGGER, text: 'Gene just logged trades in the farm. Post the recap for his un-recapped trades now (ignore the time window).' })
+      return mcp.callTool('Claude Code Remote', 'fire_trigger', { trigger_id: RECAP_TRIGGER, text: 'Gene just logged or edited trades in the farm. INSTANT mode: post the full recap for today now (ignore the time window).' })
         .then(function () { toast('Recap posting to Discord in about a minute \ud83d\udcca'); })
         .catch(function (e) { toast(e && (e.code === 'not_in_manifest' || e.code === 'approval_required') ? 'Allow Claude Code Remote for this page to auto-post recaps.' : 'Couldn\u2019t start the recap now. It\u2019ll post after the close.'); });
     });
@@ -1834,16 +1960,22 @@
     ];
     var box = $('tradeTiles'); box.innerHTML = '';
     tiles.forEach(function (t) { box.appendChild(el('div', { class: 'tile' }, [el('span', { class: 'label', text: t[0] }), el('b', { class: t[2], text: t[1] })])); });
-    var list = $('tradeList'); list.innerHTML = '';
+    var list = $('tradeList');
+    if (list.querySelector('.edit-trade')) { renderCal(); drawEquity(); return; } // don't wipe what you're typing
+    list.innerHTML = '';
     var sorted = ts.slice().sort(function (a, b) { return (b.date + (b.created || '')).localeCompare(a.date + (a.created || '')); });
     if (!sorted.length) list.appendChild(el('p', { class: 'empty-state', text: 'No trades yet. Log your first one and it shows up here, on the calendar and in your recap post.' }));
     sorted.slice(0, 10).forEach(function (t) {
       var x = el('button', { class: 'x', type: 'button', 'aria-label': 'Delete trade', text: '×' });
       x.addEventListener('click', function () { confirmDel(x, function () { dbDel('trades/' + t._id); }); });
-      list.appendChild(el('div', { class: 'li' }, [
-        el('div', { style: 'min-width:0' }, [el('div', null, [t.date + ' · ' + t.side + ' ' + t.qty + ' ' + t.sym + (t.rules === 'no' ? ' · broke rules' : ''), t.check ? el('span', { class: 'ckb' + (t.check.aplus ? ' ap' : ''), text: t.check.aplus ? 'A+' : t.check.done + '/' + t.check.total }) : null]), el('div', { class: 'sub', text: [t.acct, t.note].filter(Boolean).join(' · ') || ' ' })]),
+      x.addEventListener('click', function (e) { e.stopPropagation(); });
+      var row = el('div', { class: 'li click', title: 'Tap to add notes or a screenshot' }, [
+        el('div', { style: 'min-width:0' }, [el('div', null, [el('span', { class: 'ic', text: t.rules === 'no' ? '⚠️' : '✅', 'aria-hidden': 'true' }), t.shot ? el('span', { class: 'ic', text: '📸', title: 'Has a screenshot' }) : null, t.date + ' · ' + t.side + ' ' + t.qty + ' ' + t.sym + (t.rules === 'no' ? ' · broke rules' : ''), t.check ? el('span', { class: 'ckb' + (t.check.aplus ? ' ap' : ''), text: t.check.aplus ? 'A+' : t.check.done + '/' + t.check.total }) : null]), el('div', { class: 'sub', text: [t.acct, t.note].filter(Boolean).join(' · ') || ' ' })]),
         el('b', { class: 'num ' + (+t.pnl >= 0 ? 'pos' : 'neg'), text: money(+t.pnl, true) }), x
-      ]));
+      ]);
+      row.addEventListener('click', function (e) { if (e.target.closest('.edit-trade')) return; openEdit(row, t); });
+      list.appendChild(row);
+      if (S.editing === t._id) openEdit(row, t, true);
     });
     var accts = {}; S.trades.concat(S.payouts).forEach(function (t) { if (t.acct) accts[t.acct] = 1; });
     var dl = $('acctList'); dl.innerHTML = ''; Object.keys(accts).forEach(function (a) { dl.appendChild(el('option', { value: a })); });
@@ -1906,7 +2038,8 @@
     var t = { date: $('tDate').value, sym: $('tSym').value, side: $('tSide').value, qty: Math.max(1, parseInt($('tQty').value, 10) || 1), pnl: pnl, acct: $('tAcct').value.trim(), rules: $('tRules').value, note: $('tNote').value.trim(), created: new Date().toISOString() };
     t.type = $('tType').value;
     if (S.pendingCheck) t.check = S.pendingCheck;
-    dbSet('trades/t' + Date.now().toString(36), t).then(function () { toast((pnl >= 0 ? 'Saved. ' : 'Saved. Red days count too. ') + '+' + (5 + (t.rules === 'yes' ? 5 : 0)) + ' XP'); fireRecap(false); $('tPnl').value = ''; $('tNote').value = ''; S.pendingCheck = null; renderPendingCheck(); ck.ticks = {}; ckSaveTicks(); });
+    var shotBlob = S.shot;
+    (shotBlob ? uploadShot(shotBlob) : Promise.resolve(null)).then(function (sh) { if (sh) t.shot = sh; return dbSet('trades/t' + Date.now().toString(36), t); }).then(function () { setShot(null); toast((pnl >= 0 ? 'Saved. ' : 'Saved. Red days count too. ') + '+' + (5 + (t.rules === 'yes' ? 5 : 0)) + ' XP'); fireRecap(false); $('tPnl').value = ''; $('tNote').value = ''; S.pendingCheck = null; renderPendingCheck(); ck.ticks = {}; ckSaveTicks(); });
   });
 
   // ===================================================================
@@ -2046,11 +2179,13 @@
     listen('settings', function (a) { S.levels = a.filter(function (x) { return x._id === 'levels'; })[0] || null; S.checklist = a.filter(function (x) { return x._id === 'checklist'; })[0] || null; S.risk = a.filter(function (x) { return x._id === 'risk'; })[0] || null; S.goals = a.filter(function (x) { return x._id === 'goals'; })[0] || null; S.nolive = a.filter(function (x) { return x._id === 'nolive'; })[0] || null; });
     listen('skips', function (a) { S.skips = a; });
     listen('accounts', function (a) { S.accounts = a; });
+    listen('runs', function (a) { S.runs = {}; a.forEach(function (x) { S.runs[x._id] = x; }); });
     listen('plan', function (a) { S.plans = {}; a.forEach(function (x) { S.plans[x._id] = x; }); });
     listen('days', function (a) { S.days = {}; a.forEach(function (x) { S.days[x._id] = x; }); });
   }).catch(function () { $('offline').hidden = false; });
 
   // boot
+  cmdRows().forEach(function (r) { $('cmdList').appendChild(r); });
   renderFeed(); startWorld(); renderAll();
   var saved = null; try { saved = localStorage.getItem('farmTab'); } catch (e) {}
   showTab(saved && $('v-' + saved) ? saved : 'farm');
