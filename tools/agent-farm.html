@@ -547,7 +547,7 @@
   var AGENTS = [
     { id: 'market', live: true, name: 'Market Desk', shirt: '#2f9bff', hair: '#1b1b1e', skin: '#c68b59', ch: 'pre-market', days: WEEKDAYS, at: OPEN - 45, dur: 12,
       job: 'Draws the NQ pre-market chart, marks the overnight high and low plus yesterday’s high, low and close, lists the red-folder news, and calls everyone to the live.',
-      hi: 'I wake up 45 minutes before the open, pull NQ, mark the levels, check the news calendar and post it all to #pre-market. Drop your own levels here and I’ll use yours instead of mine.',
+      hi: 'I post the daily bias in #schedule 45 minutes before the open: real NQ chart, levels, news. Type your bias and levels here and I’ll use yours. Off today? Hit Not going live today and the live ping skips.',
       steps: ['Pulling overnight NQ…', 'Drawing levels…', 'Checking news…', 'Posting to #pre-market'] },
     { id: 'news', name: 'News Desk', shirt: '#ff8a3d', hair: '#2a1a10', skin: '#e0ac7e', ch: 'news', days: DAILY, at: 1260, dur: 10, live: true,
       times: [60, 240, 360, 480, 600, 720, 840, 960, 1140, 1320],
@@ -1100,14 +1100,16 @@
   }
   function levelsForm() {
     var today = nowAZ().date, cur = S.levels && S.levels.date === today ? S.levels.text : '';
-    var ta = el('textarea', { id: 'lvlText', placeholder: 'Your levels for today, one per line\ne.g. 21,480 ON high\n21,355 PDL', 'aria-label': 'Your levels for today' });
+    var ta = el('textarea', { id: 'lvlText', placeholder: 'Bias: bearish rn\nwant to see 28,950 then 28,700', 'aria-label': 'Your bias and levels for today' });
     ta.value = cur;
     var save = el('button', { class: 'btn small', type: 'button', text: cur ? 'Update my levels' : 'Use my levels today' });
     save.addEventListener('click', function () {
       var txt = ta.value.trim(); if (!txt) { toast('Type at least one level.'); return; }
       dbSet('settings/levels', { date: today, text: txt.slice(0, 600), updated: new Date().toISOString() }).then(function () { toast('Got it. Market Desk will use your levels today.'); });
     });
-    return el('div', { style: 'display:grid;gap:8px' }, [el('span', { class: 'label', text: 'Your levels (optional, today only)' }), ta, el('div', { class: 'row' }, [save])]);
+    var off = S.nolive && S.nolive.date === today, skip = el('button', { class: 'btn ghost small', type: 'button', text: off ? 'Live ping is off today' : 'Not going live today' });
+    skip.addEventListener('click', function () { dbSet('settings/nolive', { date: off ? '' : today }).then(function () { S.nolive = { date: off ? '' : today }; toast(off ? 'Live ping is back on for today.' : 'Got it. No live ping today.'); if (talking) openTalk(talking); }); });
+    return el('div', { style: 'display:grid;gap:8px' }, [el('span', { class: 'label', text: 'Your bias + levels for the pre-market post (today only)' }), ta, el('div', { class: 'row' }, [save, skip])]);
   }
 
   // ---------- agent cards ----------
@@ -2027,7 +2029,7 @@
     listen('agents', function (a) { S.agentCfg = {}; a.forEach(function (x) { S.agentCfg[x._id] = x; }); });
     listen('queue', function (a) { S.queue = a; });
     listen('news', function (a) { S.news = a; });
-    listen('settings', function (a) { S.levels = a.filter(function (x) { return x._id === 'levels'; })[0] || null; S.checklist = a.filter(function (x) { return x._id === 'checklist'; })[0] || null; S.risk = a.filter(function (x) { return x._id === 'risk'; })[0] || null; S.goals = a.filter(function (x) { return x._id === 'goals'; })[0] || null; });
+    listen('settings', function (a) { S.levels = a.filter(function (x) { return x._id === 'levels'; })[0] || null; S.checklist = a.filter(function (x) { return x._id === 'checklist'; })[0] || null; S.risk = a.filter(function (x) { return x._id === 'risk'; })[0] || null; S.goals = a.filter(function (x) { return x._id === 'goals'; })[0] || null; S.nolive = a.filter(function (x) { return x._id === 'nolive'; })[0] || null; });
     listen('skips', function (a) { S.skips = a; });
     listen('accounts', function (a) { S.accounts = a; });
     listen('plan', function (a) { S.plans = {}; a.forEach(function (x) { S.plans[x._id] = x; }); });
