@@ -12,6 +12,9 @@ import { readFileSync, existsSync } from 'node:fs';
 import http from 'node:http';
 import Anthropic from '@anthropic-ai/sdk';
 import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
+// Scheduled posts load separately so the bot keeps answering even if they fail to load.
+let schedule = null;
+try { schedule = await import('./schedule.js'); } catch (err) { console.log('schedule: disabled,', err.message); }
 
 // Load .env without extra packages.
 const envPath = new URL('./.env', import.meta.url);
@@ -127,7 +130,7 @@ const client = new Client({
   partials: [Partials.Channel],
   allowedMentions: { parse: [], repliedUser: true },
 });
-client.once(Events.ClientReady, (c) => console.log(`greeter: online as ${c.user.tag}`));
+client.once(Events.ClientReady, (c) => { console.log(`greeter: online as ${c.user.tag}`); if (schedule) schedule.startSchedule(c); });
 
 client.on(Events.GuildMemberAdd, async (member) => {
   if (member.user.bot || !WELCOME_CHANNEL_ID) return;
@@ -172,6 +175,7 @@ async function reply(msg) {
 
 client.on(Events.MessageCreate, async (msg) => {
   if (msg.author.bot || !msg.guild || !msg.content) return;
+  if (schedule && schedule.handleCommand(msg)) return;
   if (IGNORED.has(msg.channelId) || (msg.channel.parentId && IGNORED.has(msg.channel.parentId))) return;
   const mentioned = msg.mentions.users.has(client.user.id);
   let repliedToBot = false;
