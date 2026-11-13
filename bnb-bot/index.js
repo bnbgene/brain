@@ -172,7 +172,6 @@ async function reply(msg) {
 client.on(Events.MessageCreate, async (msg) => {
   if (msg.author.bot || !msg.guild || !msg.content) return;
   if (IGNORED.has(msg.channelId) || (msg.channel.parentId && IGNORED.has(msg.channel.parentId))) return;
-  if (OWNER_ID && msg.author.id === OWNER_ID) return; // never answer Gene himself unless he @mentions it
   const mentioned = msg.mentions.users.has(client.user.id);
   let repliedToBot = false;
   if (msg.reference?.messageId) {
@@ -180,6 +179,7 @@ client.on(Events.MessageCreate, async (msg) => {
     repliedToBot = !!ref && ref.author.id === client.user.id;
   }
   if (mentioned || repliedToBot) return void reply(msg);
+  if (OWNER_ID && msg.author.id === OWNER_ID) return; // Gene only gets answers when he @mentions or replies to it
 
   // Everything else: only real questions, and only if nobody answers first.
   if (msg.content.length < 12) return;
