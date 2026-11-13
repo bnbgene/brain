@@ -424,6 +424,7 @@
         </details>
         <p class="wide ckb ap" id="tCheckNote" hidden style="margin:0;padding:8px 10px;border-radius:8px"></p>
         <button class="btn wide" type="submit">Save trade</button>
+        <button class="btn ghost small wide" id="recapNow" type="button">Post today&rsquo;s recap now</button>
       </form>
       <datalist id="acctList"></datalist>
     </div>
@@ -547,7 +548,7 @@
   var AGENTS = [
     { id: 'market', live: true, name: 'Market Desk', shirt: '#2f9bff', hair: '#1b1b1e', skin: '#c68b59', ch: 'pre-market', days: WEEKDAYS, at: OPEN - 45, dur: 12,
       job: 'Draws the NQ pre-market chart, marks the overnight high and low plus yesterday’s high, low and close, lists the red-folder news, and calls everyone to the live.',
-      hi: 'I post the daily bias in #schedule 45 minutes before the open: real NQ chart, levels, news. Type your bias and levels here and I’ll use yours. Off today? Hit Not going live today and the live ping skips.',
+      hi: 'Every weekday at 6:45 AM MST I post the daily bias in #pre-market with a real NQ chart, the levels and the day\u2019s news, then Live in 10 at 7:20. I run on the Discord bot, so Claude outages can\u2019t stop me.',
       steps: ['Pulling overnight NQ…', 'Drawing levels…', 'Checking news…', 'Posting to #pre-market'] },
     { id: 'news', name: 'News Desk', shirt: '#ff8a3d', hair: '#2a1a10', skin: '#e0ac7e', ch: 'news', days: DAILY, at: 1260, dur: 10, live: true,
       times: [60, 240, 360, 480, 600, 720, 840, 960, 1140, 1320],
@@ -1099,18 +1100,15 @@
     return wrap;
   }
   function levelsForm() {
-    var today = nowAZ().date, cur = S.levels && S.levels.date === today ? S.levels.text : '';
-    var ta = el('textarea', { id: 'lvlText', placeholder: 'Bias: bearish rn\nwant to see 28,950 then 28,700', 'aria-label': 'Your bias and levels for today' });
-    ta.value = cur;
-    var save = el('button', { class: 'btn small', type: 'button', text: cur ? 'Update my levels' : 'Use my levels today' });
-    save.addEventListener('click', function () {
-      var txt = ta.value.trim(); if (!txt) { toast('Type at least one level.'); return; }
-      dbSet('settings/levels', { date: today, text: txt.slice(0, 600), updated: new Date().toISOString() }).then(function () { toast('Got it. Market Desk will use your levels today.'); });
-    });
-    var off = S.nolive && S.nolive.date === today, skip = el('button', { class: 'btn ghost small', type: 'button', text: off ? 'Live ping is off today' : 'Not going live today' });
-    skip.addEventListener('click', function () { dbSet('settings/nolive', { date: off ? '' : today }).then(function () { S.nolive = { date: off ? '' : today }; toast(off ? 'Live ping is back on for today.' : 'Got it. No live ping today.'); if (talking) openTalk(talking); }); });
-    return el('div', { style: 'display:grid;gap:8px' }, [el('span', { class: 'label', text: 'Your bias + levels for the pre-market post (today only)' }), ta, el('div', { class: 'row' }, [save, skip])]);
+    function cmd(t, d) { return el('div', { class: 'acct-line' }, [el('code', { class: 'ckb', text: t }), el('span', { class: 'muted', text: d })]); }
+    return el('div', { style: 'display:grid;gap:6px' }, [
+      el('span', { class: 'label', text: 'Control me from Discord (only you can)' }),
+      cmd('!bias bearish rn, watching 28,950', 'your bias in the 6:45 AM post'),
+      cmd('!nolive', 'skip today\u2019s Live in 10'),
+      cmd('!live', 'undo !nolive')
+    ]);
   }
+
 
   // ---------- agent cards ----------
   var cardEls = {}, selected = null;
@@ -1445,7 +1443,7 @@
       $('impMsg').textContent = 'Importing ' + adds.length + ' trades…';
       var chain = Promise.resolve();
       adds.forEach(function (t, i) { chain = chain.then(function () { return S.db.doc('trades/' + ('t' + t.src).slice(0, 180)).set(t); }); });
-      chain.then(function () { $('impMsg').textContent = 'Imported ' + adds.length + ' trades into ' + acct + '. Set “Followed my rules?” on any you broke.'; toast('Imported ' + adds.length + ' trades'); })
+      chain.then(function () { $('impMsg').textContent = 'Imported ' + adds.length + ' trades into ' + acct + '. Set “Followed my rules?” on any you broke.'; toast('Imported ' + adds.length + ' trades'); fireRecap(true); })
         .catch(function () { $('impMsg').textContent = 'Some trades didn’t save. Try the file again; duplicates are skipped.'; });
     }
   }
@@ -1521,6 +1519,21 @@
     document.body.appendChild(box); setTimeout(function () { box.remove(); }, 3500);
   }
 
+
+  // Kick off the Recap agent right after trades are logged (uses Gene's Claude Code Remote connector).
+  var RECAP_TRIGGER = 'trig_018tvnW4hA7Lj2fJ4t8krHyV', lastRecapFire = 0, recapTimer = null;
+  var mcpP = (window.claude && window.claude.use) ? window.claude.use('mcp') : Promise.resolve(null);
+  function fireRecap(manual) {
+    var wait = 120000 - (Date.now() - lastRecapFire);
+    if (!manual && wait > 0) { clearTimeout(recapTimer); recapTimer = setTimeout(function () { fireRecap(true); }, wait); return; }
+    lastRecapFire = Date.now();
+    mcpP.then(function (mcp) {
+      if (!mcp) { toast('Recap will post after the close.'); return; }
+      return mcp.callTool('Claude Code Remote', 'fire_trigger', { trigger_id: RECAP_TRIGGER, text: 'Gene just logged trades in the farm. Post the recap for his un-recapped trades now (ignore the time window).' })
+        .then(function () { toast('Recap posting to Discord in about a minute \ud83d\udcca'); })
+        .catch(function (e) { toast(e && (e.code === 'not_in_manifest' || e.code === 'approval_required') ? 'Allow Claude Code Remote for this page to auto-post recaps.' : 'Couldn\u2019t start the recap now. It\u2019ll post after the close.'); });
+    });
+  }
   // ===================================================================
   // STRATEGY CHECKLIST (private: never read by the posting agents)
   // ===================================================================
@@ -1884,6 +1897,7 @@
     $('eqLabel').textContent = days.length + ' trading day' + (days.length === 1 ? '' : 's');
   }
   $('tDate').value = isoLocal(new Date());
+  $('recapNow').addEventListener('click', function () { fireRecap(true); });
   $('tAcct').addEventListener('change', function () { var a = S.accounts.filter(function (x) { return x.name === $('tAcct').value; })[0]; if (a) $('tType').value = a.stage === 'test' ? 'eval' : 'funded'; });
   $('tradeForm').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -1892,7 +1906,7 @@
     var t = { date: $('tDate').value, sym: $('tSym').value, side: $('tSide').value, qty: Math.max(1, parseInt($('tQty').value, 10) || 1), pnl: pnl, acct: $('tAcct').value.trim(), rules: $('tRules').value, note: $('tNote').value.trim(), created: new Date().toISOString() };
     t.type = $('tType').value;
     if (S.pendingCheck) t.check = S.pendingCheck;
-    dbSet('trades/t' + Date.now().toString(36), t).then(function () { toast((pnl >= 0 ? 'Saved. ' : 'Saved. Red days count too. ') + '+' + (5 + (t.rules === 'yes' ? 5 : 0)) + ' XP'); $('tPnl').value = ''; $('tNote').value = ''; S.pendingCheck = null; renderPendingCheck(); ck.ticks = {}; ckSaveTicks(); });
+    dbSet('trades/t' + Date.now().toString(36), t).then(function () { toast((pnl >= 0 ? 'Saved. ' : 'Saved. Red days count too. ') + '+' + (5 + (t.rules === 'yes' ? 5 : 0)) + ' XP'); fireRecap(false); $('tPnl').value = ''; $('tNote').value = ''; S.pendingCheck = null; renderPendingCheck(); ck.ticks = {}; ckSaveTicks(); });
   });
 
   // ===================================================================
