@@ -29,7 +29,7 @@ const {
   IGNORE_CHANNEL_IDS = '',       // comma-separated channels it never answers in (announcements, #applicants...)
   ANSWER_MODEL = 'claude-opus-5-5',
   TRIAGE_MODEL = 'claude-haiku-5-5',
-  WAIT_SECONDS = '75',           // how long to give a human the chance to answer first
+  REPLY_DELAY_SECONDS = '30',    // how long to give a human the chance to answer first
   PORT,
 } = process.env;
 
@@ -191,7 +191,7 @@ client.on(Events.MessageCreate, async (msg) => {
   setTimeout(async () => {
     if (await someoneAnswered(msg)) return;
     reply(msg);
-  }, Math.max(0, +WAIT_SECONDS || 75) * 1000);
+  }, Math.max(0, +REPLY_DELAY_SECONDS || 30) * 1000);
 });
 
 if (PORT) http.createServer((_, res) => { res.writeHead(200); res.end(client.isReady() ? 'ok' : 'starting'); }).listen(PORT);

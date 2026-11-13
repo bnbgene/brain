@@ -1,6 +1,6 @@
 # Gene's AI (BNB Discord bot)
 
-Talks like Gene, welcomes every new member, and answers questions in any channel. When someone asks a real question and nobody answers within about a minute, it replies. It always replies when it's @mentioned or replied to. It says it's Gene's AI (never Gene himself) and never gives trade signals.
+Talks like Gene, welcomes every new member, and answers questions in any channel. When someone asks a real question and nobody answers within about 30 seconds, it replies. It always replies when it's @mentioned or replied to. It says it's Gene's AI (never Gene himself) and never gives trade signals.
 
 - `knowledge.md`: facts about BNBProfits it can use.
 - `voice.md`: paste Gene's real messages here so it sounds like him.
