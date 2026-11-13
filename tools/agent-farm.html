@@ -633,7 +633,8 @@
     { id: 'checklist', name: 'Checklist Shrine', tx: 17, ty: 27, w: 3, h: 2, open: 'checklist' },
     { id: 'campfire', name: 'Campfire', tx: 9, ty: 22, w: 3, h: 3, agent: 'hype', open: null, walkable: true },
     { id: 'mailbox', name: 'Application Box', tx: 8, ty: 17, w: 1, h: 1, agent: 'lead' },
-    { id: 'trophy', name: 'Goal Trophy', tx: 24, ty: 15, w: 1, h: 1, open: 'payouts' }
+    { id: 'trophy', name: 'Goal Trophy', tx: 24, ty: 15, w: 1, h: 1, open: 'payouts' },
+    { id: 'board', name: 'Command Board', tx: 28, ty: 14, w: 2, h: 2, open: 'agents' }
   ];
   STATIONS.forEach(function (s) {
     s.cx = (s.tx + s.w / 2) * TL; s.cy = (s.ty + s.h / 2) * TL;
@@ -822,6 +823,14 @@
       rect(g, X + 18, Y + 22, 12, 3, '#5e3c22');
     } else if (s.id === 'trophy') {
       rect(g, X - 4, Y + 6, 24, 10, '#8c8f99'); rect(g, X - 4, Y + 6, 24, 2, '#a8abb4'); rect(g, X - 2, Y + 15, 20, 1, 'rgba(0,0,0,.3)');
+    } else if (s.id === 'board') {
+      shadow(g, X, Y + 4, W, H - 4);
+      rect(g, X + 3, Y + 18, 3, 14, '#5e3c22'); rect(g, X + W - 6, Y + 18, 3, 14, '#5e3c22');
+      rect(g, X, Y, W, 22, '#7a5232'); rect(g, X, Y, W, 2, '#a37446'); rect(g, X + 2, Y + 3, W - 4, 17, '#c9a36b');
+      rect(g, X + 4, Y + 5, 10, 7, '#f4f4f1'); rect(g, X + 5, Y + 7, 7, 1, '#3ddc84'); rect(g, X + 5, Y + 9, 5, 1, '#6d6d73');
+      rect(g, X + 17, Y + 4, 11, 8, '#fff1b8'); rect(g, X + 18, Y + 6, 8, 1, '#ff5a4e'); rect(g, X + 18, Y + 8, 6, 1, '#6d6d73');
+      rect(g, X + 7, Y + 13, 12, 6, '#f4f4f1'); rect(g, X + 8, Y + 15, 9, 1, '#2f9bff'); rect(g, X + 8, Y + 17, 6, 1, '#6d6d73');
+      rect(g, X + 8, Y + 5, 2, 2, '#ff5a4e'); rect(g, X + 22, Y + 4, 2, 2, '#2f9bff'); rect(g, X + 12, Y + 13, 2, 2, '#f5b84a');
     } else if (s.id === 'mailbox') {
       rect(g, X + 7, Y + 6, 2, 10, '#5e3c22'); rect(g, X + 2, Y - 2, 12, 9, '#2f9bff'); rect(g, X + 2, Y - 2, 12, 2, '#5fb4ff'); rect(g, X + 13, Y - 4, 1, 5, '#ff5a4e');
     }
@@ -969,9 +978,60 @@
     var Vt = ST.vault, tot = S.payouts.reduce(function (s2, p) { return s2 + (+p.amount || 0); }, 0), n = Math.min(12, Math.ceil(tot / 2500));
     for (var k2 = 0; k2 < n; k2++) rect(g, Vt.tx * TL + Vt.w * TL + 3 + (k2 % 3) * 3, Vt.ty * TL + Vt.h * TL - 3 - Math.floor(k2 / 3) * 2, 4, 2, k2 % 2 ? '#d99a2b' : '#f5b84a');
     drawTrophy(g, t);
+    // LIVE sign on the tower while you're live
+    var tw = ST.tower, lx0 = tw.cx - 18, ly0 = tw.ty * TL + 38, pre = c.dow > 0 && c.dow < 6 && c.min >= OPEN - 10 && c.min < OPEN;
+    if (open || pre) {
+      var on = open ? Math.floor(t / 600) % 2 === 0 : true;
+      rect(g, lx0, ly0, 36, 12, '#1a1a1f'); rect(g, lx0 + 1, ly0 + 1, 34, 10, open ? (on ? '#ff3b30' : '#a8241c') : '#f5b84a');
+      g.font = '6px "Press Start 2P", monospace'; g.fillStyle = open ? '#fff' : '#0a0a0b'; g.textAlign = 'center'; g.fillText(open ? 'LIVE' : 'IN 10', tw.cx, ly0 + 9); g.textAlign = 'left';
+    }
+    // recap billboard: green light once today's recap is posted, camera if a screenshot went with it
+    var todayT = S.trades.filter(function (x) { return x.date === nowAZ().date; });
+    if (todayT.length && todayT.every(function (x) { return x.recapped; })) rect(g, B.tx * TL + B.w * TL - 9, by + 2, 3, 3, Math.floor(t / 700) % 2 ? '#3ddc84' : '#2fbf70');
+    if (todayT.some(function (x) { return x.shot; })) { rect(g, B.tx * TL + B.w * TL - 11, by + 12, 6, 5, '#a3a3a8'); rect(g, B.tx * TL + B.w * TL - 9, by + 13, 2, 2, '#0a0a0b'); rect(g, B.tx * TL + B.w * TL - 10, by + 11, 2, 1, '#a3a3a8'); }
+    // status beacons over each agent's building + paper planes flying to Discord after a post
+    BEACONS.forEach(function (bc) {
+      var st = ST[bc.st], k = beaconKind(bc.agent); if (!st || !k) return;
+      var bx2 = (st.tx + st.w) * TL - 2, by2 = st.ty * TL - (bc.tall ? 24 : 10) + Math.round(Math.sin(t / 380 + st.tx) * 1.5);
+      drawBeacon(g, bx2, by2, k);
+      var r = S.runs[bc.agent];
+      if (r && r.ok !== false && r.at && Date.now() - Date.parse(r.at) < 20 * 60000 && bc.st !== 'portal') {
+        var f = ((t / 2600) + st.tx * .13) % 1, P2 = ST.portal, x0 = st.cx, y0 = st.ty * TL, x1 = P2.cx, y1 = P2.cy - 6;
+        drawPlane(g, x0 + (x1 - x0) * f, y0 + (y1 - y0) * f - Math.sin(f * Math.PI) * 40, x1 > x0 ? 1 : -1);
+      }
+    });
     return { hot: hot, N: N, C: C, fx: fx, fy: fy };
   }
+  var BEACONS = [
+    { st: 'tower', agent: 'market', tall: true }, { st: 'newsroom', agent: 'news', tall: true }, { st: 'lighthouse', agent: 'outlook', tall: true },
+    { st: 'recap', agent: 'recap' }, { st: 'vault', agent: 'payout' }, { st: 'campfire', agent: 'hype' }, { st: 'portal', agent: 'greeter' }
+  ];
+  function beaconKind(id) {
+    if (!cfg(id).on) return 'off';
+    if (id === 'market' || id === 'greeter') return 'bot';
+    var r = S.runs[id]; if (!r || !r.at) return null;
+    return r.ok === false ? 'bad' : 'ok';
+  }
+  var GLYPH = {
+    ok: ['0000001', '0000011', '1000110', '1101100', '0111000', '0010000'],
+    bad: ['0011100', '0011100', '0011100', '0001000', '0000000', '0011100'],
+    bot: ['0001100', '0011000', '0111110', '0001100', '0011000', '0010000'],
+    off: ['0000000', '0000000', '1101011', '0000000', '0000000', '0000000']
+  };
+  var BCOL = { ok: '#3ddc84', bad: '#ff5a4e', bot: '#5865f2', off: '#6d6d73' };
+  function drawBeacon(g, x, y, k) {
+    rect(g, x - 1, y - 1, 13, 12, '#1a1a1f'); rect(g, x, y, 11, 10, BCOL[k]); rect(g, x, y, 11, 1, 'rgba(255,255,255,.35)');
+    rect(g, x + 4, y + 10, 3, 2, '#1a1a1f'); rect(g, x + 5, y + 10, 1, 1, BCOL[k]);
+    GLYPH[k].forEach(function (row, j) { for (var i = 0; i < row.length; i++) if (row[i] === '1') rect(g, x + 2 + i, y + 2 + j, 1, 1, '#fff'); });
+  }
+  function drawPlane(g, x, y, d) {
+    x = Math.round(x); y = Math.round(y);
+    rect(g, x - 1, y + 3, 5, 1, 'rgba(0,0,0,.25)');
+    var rows = d > 0 ? ['1000000', '1110000', '1111111', '1110000', '1000000'] : ['0000001', '0000111', '1111111', '0000111', '0000001'];
+    rows.forEach(function (row, j) { for (var i = 0; i < row.length; i++) if (row[i] === '1') rect(g, x - 3 + i, y - 8 + j, 1, 1, j === 2 ? '#dfe3ea' : '#fff'); });
+  }
   function drawLights(g, t, night, L) {
+    if (night > .3) BEACONS.forEach(function (bc) { var st = ST[bc.st], k = beaconKind(bc.agent); if (st && k && k !== 'off') glow(g, (st.tx + st.w) * TL + 4, st.ty * TL - (bc.tall ? 19 : 5), 14, k === 'bad' ? 'rgba(255,90,78,.4)' : k === 'bot' ? 'rgba(88,101,242,.4)' : 'rgba(61,220,132,.4)'); });
     if (Math.floor(t / (L.hot ? 250 : 900)) % 2 === 0) { var ax = L.N.tx * TL + 8, ay = L.N.ty * TL - 14; rect(g, ax - 1, ay - 2, 3, 3, '#ff5a4e'); if (night > .3 || L.hot) glow(g, ax, ay, 14, 'rgba(255,90,78,.35)'); }
     glow(g, L.fx, L.fy - 3, 20 + night * 30, 'rgba(255,150,70,' + (.15 + night * .3).toFixed(2) + ')');
     glow(g, ST.portal.cx, ST.portal.cy, 30, 'rgba(88,101,242,' + (.12 + night * .2).toFixed(2) + ')');
@@ -1014,7 +1074,8 @@
       var bb = bubbleEls.get(p); if (!bb) { bb = el('span', { class: 'bubble' }); bb.hidden = true; ov.appendChild(bb); bubbleEls.set(p, bb); }
       var pt = pct(p.x, p.y + 2), near = Math.hypot(p.x - player.x, p.y - player.y) < (small ? 70 : 400); tg.hidden = !pt.vis || (!p.isPlayer && !near); placePct(tg, pt);
       if (p.isPlayer) { bb.hidden = true; return; }
-      var txt = p.mode === 'work' && p.atPost ? p.state.text : (p.mode === 'sleep' && p.atPost && p.state.text !== 'Off' ? 'zzz' : p.chat);
+      var rr = S.runs[p.a.id], fresh = rr && rr.at && Date.now() - Date.parse(rr.at) < 30 * 60000 && rr.what;
+      var txt = p.mode === 'work' && p.atPost ? p.state.text : fresh ? (rr.ok === false ? '\u26a0\ufe0f ' : '\u2705 ') + rr.what : (p.mode === 'sleep' && p.atPost && p.state.text !== 'Off' ? 'zzz' : p.chat);
       var bp = pct(p.x, p.y - 25); bb.hidden = !bp.vis || !txt; if (txt && bb.textContent !== txt) bb.textContent = txt; placePct(bb, bp);
     });
     STATIONS.forEach(function (s) {
@@ -1092,10 +1153,12 @@
         newsroom: latestNewsLine(),
         studio: (function () { var pl = S.plans[nowAZ().date]; return pl && pl.main ? 'Today\u2019s video is ready: \u201c' + pl.main.hook + '\u201d. Script, caption and Discord lines are inside.' : 'The Script Writer drops your script here every morning at 5:50 AM MST.'; })(),
         trophy: goalLine(),
+        board: 'Your Discord commands. Type them in any channel. Only you can use them, and the bot deletes your message after it reacts. Signs over each building: green check = posted fine, red ! = something failed, blue bolt = runs on the Discord bot 24/7, grey = turned off.',
         checklist: 'Run your checklist before every trade. All boxes ticked means it’s an A+ setup. Missing a must-have means you pass, and passing on a bad setup earns XP too.'
       };
       typeText($('dText'), lines[o.id] || '');
-      var goto = { trophy: ['Open my goal', 'payouts'], studio: ['Get my scripts', 'content'], journal: ['Open my journal', 'trades'], vault: ['Open payouts', 'payouts'], portal: ['Enter Discord', 'discord'], newsroom: ['Read the news', 'news'], checklist: ['Run my checklist', 'checklist'] }[o.id];
+      if (o.id === 'board') body.appendChild(el('div', { class: 'cmds' }, cmdRows()));
+      var goto = { trophy: ['Open my goal', 'payouts'], studio: ['Get my scripts', 'content'], journal: ['Open my journal', 'trades'], vault: ['Open payouts', 'payouts'], portal: ['Enter Discord', 'discord'], newsroom: ['Read the news', 'news'], checklist: ['Run my checklist', 'checklist'], board: ['See all agents', 'agents'] }[o.id];
       if (goto) body.appendChild(el('div', { class: 'row' }, [goBtn(goto[0], goto[1])]));
       if (o.agent) { var ag = bots.filter(function (x) { return x.a.id === o.agent; })[0]; if (ag) { var tb = el('button', { class: 'btn ghost small', type: 'button', text: 'Talk to ' + ag.a.name }); tb.addEventListener('click', function () { openTalk({ kind: 'bot', ref: ag }); }); body.appendChild(el('div', { class: 'row' }, [tb])); } }
     }
