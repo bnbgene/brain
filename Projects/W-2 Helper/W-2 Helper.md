@@ -10,6 +10,7 @@ Clients send W-2 photos through **TaxesToGo**, but TaxSlayer Pro doesn't fill in
 ## Tools
 - [[W-2 Helper App]]: the Windows app (installer, how it works, recent changes)
 - Web demo: https://claude.ai/artifact/WdWrcdWsuvSeFwS3pRwfCX
+- [[Competitor - SmartWiz]]: the main competitor and how we beat them
 
 ## Key Decisions
 - 2026-10-24: Windows desktop app next to TaxSlayer Pro Desktop. Clients keep using TaxesToGo.
@@ -22,6 +23,8 @@ Clients send W-2 photos through **TaxesToGo**, but TaxSlayer Pro doesn't fill in
 - 2026-10-24: Code lives in a private repo, never public. Real sample W-2s are never saved in the repo.
 
 ## Next Steps
+- [ ] Beta at the office: Read with AI on a caregiver W-2, track minutes saved and errors caught
+- [ ] Then: time-saved counter, add 1099s
 - [x] Screenshots of the office's W-2 screen (2026-10-24): it's the **E Tax web app** (etax.cloudtaxoffice.com) in Chrome
 - [x] Numbering test done; box order set from it
 - [x] Installed v0.2.2 + Chrome add-on; Fill on a practice return filled every box (2026-10-24)

@@ -1,6 +1,6 @@
 # BNB Profits
 
-**Status:** 🟢 Site live, daily content system running. Growing the free Discord and 1:1 mentorship.
+**Status:** 🟢 Agent Farm + 9 auto-posting agents + Gene's AI bot running; Discord cleaned up (2026-11-13).
 **Chat:** "BNB PROFITS" · **Files live on branch:** `claude/vigilant-ritchie-sli5xu`
 **Log:** [[BNB Profits/Session Log|Session Log]]
 
@@ -11,6 +11,7 @@ Gene (@bnbgene) trades NQ futures full time. BNBProfits is the trading brand:
 - Proof on the site: prop firm payouts (Lucid, Topstep, Tradeify), P&L screenshots, student wins
 
 ## Tools Claude built
+- [[Agent Farm]] · [[Gene's AI (Discord Bot)]] · [[Discord Server]]
 - [[BNBProfits Website]] · [[Content HQ]] · [[Story Maker]]
 
 | Tool | What it does | Link |
@@ -21,15 +22,27 @@ Gene (@bnbgene) trades NQ futures full time. BNBProfits is the trading brand:
 | Site Preview | Older preview of the site | [open](https://claude.ai/artifact/N9iHmaar3Xfn3uNrymq7KX) |
 
 ## Key Decisions
+- 2026-11-12: Built the Agent Farm as the daily command center; agents auto-post to Discord. Live times in MST. Removed Tradeify code/affiliate copy.
+- 2026-11-13: Cleaned up the Discord layout (backup saved). Gene's AI bot answers after 30s.
 - 2026-10-06: Hide the strategy and the mentorship price on the site.
 - 2026-10-12: Site points to the **free** Discord. Content = one-take talking-head scripts only.
 - 2026-10-15: 1:1 applications post straight into Discord (Netlify function). The Discord webhook setting needs a Netlify redeploy to take effect.
 - 2026-10-16: Added 24 controversial, relatable and business video ideas. Morning routine mixes in non-trading takes.
 
 ## Next Steps
+- [ ] Set your payout goal number (Payouts tab) and tap "Match my real balance" on the TPT card
+- [ ] Text your leads: **Damond and Tai** applied and are waiting
+- [ ] Update IG/TikTok bios with the new Discord link (https://discord.gg/AfcS4MHA6U)
+- [ ] Decide: News Desk 10 checks/day or trim to 5 (saves Claude usage)
+- [ ] Install the farm as an app (see [[Agent Farm]])
 - [ ] Confirm 1:1 applications are arriving in Discord (redeploy on Netlify if not)
 - [ ] Post daily from Content HQ
 - [ ] Send Damond the 1:1 mentorship text (drafted in the BNB PROFITS chat); follow up with price + payment link if he's ready
+
+## Links
+- Site: https://bnbprofits.netlify.app
+- Farm: https://claude.ai/artifact/3fsux837tHKNAtZedkY33V
+- Discord: https://discord.gg/AfcS4MHA6U
 
 ## Files
 - [Website source](https://github.com/bnbgene/brain/blob/claude/vigilant-ritchie-sli5xu/bnbprofits/index.html)

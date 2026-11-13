@@ -3,6 +3,10 @@
 Newest entries at the top. Back to [[Web Design]].
 
 ---
+## 2026-11-12
+**Did:** New sample site for AZ EZ Moving (Chandler mover). Live: https://bnbgene.github.io/brain/az-ez-moving/
+**Next:** Confirm their services list.
+
 ## 2026-10-23
 **Did:** Built 23 sample sites (house style) for Bay Area leads from Facebook groups, and moved J&R Hauling, Jireh Services and Bay Harbor to free GitHub hosting. J&R now says "Bay Area" instead of "Peninsula". Jireh rebuilt in their black/orange logo colors with real before/after cleanout photos.
 
