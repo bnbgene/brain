@@ -32,5 +32,6 @@ Your BNB Profits command center, built as a pixel-island game. Each AI "agent" h
 - When paid: log the payout.
 
 ## Changes
+- 2026-11-13 (later): Edit trades, screenshot uploads, recap posts right after you log a trade, agent status lights, commands card; island gets status beacons, paper planes on posts, LIVE sign, command board.
 - 2026-11-13: Bias box + "Not going live today" button; agents live, auto-posting by default.
 - 2026-11-12: Built (agent office → walkable island game), trade/payout tracker, Tradovate import, checklist modes, Content tab, full-screen mode. Live times switched to MST. Tradeify code and affiliate copy removed.

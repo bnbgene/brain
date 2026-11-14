@@ -3,6 +3,10 @@
 Newest entries at the top. Back to [[BNB Profits]].
 
 ---
+## 2026-11-14 (from 11-13 work)
+**Did:** Hype Man's first nightly post worked. The daily bias and "Live in 10" did NOT auto-post on Friday morning, so they were rebuilt as built-in scheduled jobs in the bot (no AI needed), with `!bias` and `!nolive` Discord commands. Farm: edit trades, screenshot uploads, recap posts right after logging a trade, agent status lights, command board and LIVE sign on the island. Bot: `!help`.
+**Next:** First automatic bias post is **Monday 6:45 AM MST**. Check that it goes out.
+
 ## 2026-11-13
 **Did:** Cleaned up the Discord server (new start-here, weekly-outlook and news channels; old ones hidden, backup saved). Bot now replies after 30s in Gene's slang. Farm got a bias box and "Not going live today" button; agents set to auto-post.
 **Next:** Payout goal + TPT balance, text Damond and Tai, update bios.
