@@ -30,6 +30,7 @@ Gene (@bnbgene) trades NQ futures full time. BNBProfits is the trading brand:
 - 2026-10-16: Added 24 controversial, relatable and business video ideas. Morning routine mixes in non-trading takes.
 
 ## Next Steps
+- [ ] Monday 6:45 AM MST: check the first automatic daily bias post went out (Friday's didn't)
 - [ ] Set your payout goal number (Payouts tab) and tap "Match my real balance" on the TPT card
 - [ ] Text your leads: **Damond and Tai** applied and are waiting
 - [ ] Update IG/TikTok bios with the new Discord link (https://discord.gg/AfcS4MHA6U)
