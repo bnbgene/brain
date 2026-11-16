@@ -9,6 +9,15 @@ Match these live examples before inventing anything new:
 - Home services built with the client playbook's prompts (GSAP motion, sticky how-it-works, swipe gallery):
   https://bnbgene.github.io/brain/family-tree-trimming/ (`docs/family-tree-trimming/concept.html`)
 
+**Newest approved look (default from now on, Nov 2026):** https://bnbgene.github.io/brain/family-tree-trimming/
+(`docs/family-tree-trimming/concept.html`). Copy it for any service business, then swap colors/fonts to match their logo:
+- Hero = a real moving video behind the headline. Use the client's own phone video if we have one; otherwise make one from
+  4 photos with `node tools/make_hero_video.mjs docs/<slug>/media <photo1> <photo2> <photo3> <photo4>` (label "Example footage").
+- Trust bar under the hero (years, rating, family/owner, hours), service photo cards, an "about the owners" section,
+  3 steps with a line that fills on scroll, a dark call-now band, area + quote form with photo upload, giant name in footer.
+- Subtle GSAP motion (headline lines slide up, sections rise in). The video is the one wow moment.
+- Restaurants/shops: keep the Freestyllez pattern (menu, pre-order) but use the same video-hero idea.
+
 The fastest way to build a new one is to copy the closest example and swap in the new business.
 
 ## What the owner wants
