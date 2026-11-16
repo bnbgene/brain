@@ -40,7 +40,7 @@ Older samples on Netlify (`samples/`): A Blessing Tree Service, Advanced Europea
 ## Key Decisions
 - 2026-11-16: Business name **BNB Growth Co**: website + email on **bnbgrowthco.com**, Instagram **@bnbgrowth.co**. Homepage follows Gridly's section order with the demo button first.
 - 2026-11-16: Your client playbook prompts are now the rules for every site build ([client-playbook.md](https://github.com/bnbgene/brain/blob/claude/clever-shannon-qbaqz7/templates/client-playbook.md)): pick a template by business type, add motion, one signature interaction. Family Tree Trimming is the new default look.
-- 2026-11-15: Packages set: Starter \$500 + \$150/mo, **Growth \$900 + \$300/mo**, Pro \$1,500 + \$500/mo. All samples get Google schema + photo upload.
+- 2026-11-15: Packages set: Starter $500 + $150/mo, **Growth $900 + $300/mo**, Pro $1,500 + $500/mo. All samples get Google schema + photo upload.
 - Sample sites follow the house style in `templates/sample-style/PLAYBOOK.md`. Best examples to copy: Sandoval, Freestyllez, Emeryville.
 - 2026-10-13: Use free GitHub Pages (`docs/`). Don't touch `samples/`, because every change there costs Netlify credits.
 - 2026-10-13: Preview first; nothing is published until you OK it.
