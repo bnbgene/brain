@@ -2,7 +2,11 @@
 
 - Sample sites: ALWAYS follow `templates/sample-style/PLAYBOOK.md` (house style, honesty rules, publishing steps).
   Copy the closest example in `docs/` (sandoval-concrete, freestyllez, emeryville-tax-services, family-tree-trimming) and adapt it.
-- Business system (site templates, motion prompts, pricing, outreach rules): `templates/client-playbook.md`.
+- Owner's prompts = the rules for EVERY site: `templates/client-playbook.md` (all of it). For each build:
+  pick the matching site template (restaurant / hotel / barbershop-salon / home services / coffee-bakery), follow its
+  section list + "Rules for every site build", then apply the "Make it move" prompts 1, 2, 3 and one signature
+  interaction from 5. Use a showcase prompt (motion graphics, scroll story, image sequence, 3D, particles,
+  scroll-built) only when the owner asks for one. The PLAYBOOK below adds our honesty rules + publishing steps.
   Packages + monthly client report: `templates/packages-and-monthly-report.md`.
 - Free hosting: GitHub Pages serves `docs/` at https://bnbgene.github.io/brain/<slug>/ (branch `claude/clever-shannon-qbaqz7`).
   Do not change `samples/` (old Netlify site; every change there costs Netlify credits).

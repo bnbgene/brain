@@ -9,7 +9,8 @@ Match these live examples before inventing anything new:
 - Home services built with the client playbook's prompts (GSAP motion, sticky how-it-works, swipe gallery):
   https://bnbgene.github.io/brain/family-tree-trimming/ (`docs/family-tree-trimming/concept.html`)
 
-**Newest approved look (default from now on, Nov 2026):** https://bnbgene.github.io/brain/family-tree-trimming/
+**The owner's prompts in `templates/client-playbook.md` decide every build** (template sections + motion prompts).
+Best example of them applied: https://bnbgene.github.io/brain/family-tree-trimming/
 (`docs/family-tree-trimming/concept.html`). Copy it for any service business, then swap colors/fonts to match their logo:
 - Hero = a real moving video behind the headline. Use the client's own phone video if we have one; otherwise make one from
   4 photos with `node tools/make_hero_video.mjs docs/<slug>/media <photo1> <photo2> <photo3> <photo4>` (label "Example footage").
