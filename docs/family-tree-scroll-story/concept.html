@@ -1,0 +1,130 @@
+<meta charset="utf-8">
+<title>Family Tree: Scroll Story</title>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"HomeAndConstructionBusiness","name":"Family Tree Trimming & Landscaping LLC","telephone":"+1-480-340-7907","email":"familytreellc.landscape@gmail.com","address":{"@type":"PostalAddress","addressLocality":"Apache Junction","addressRegion":"AZ","postalCode":"85120","addressCountry":"US"},"areaServed":"East Valley, Arizona","foundingDate":"2006-05-04","openingHours":"Mo-Su 00:00-23:59"}</script>
+<meta name="description" content="Family-owned tree trimming, tree removal and land clean up in Apache Junction and the East Valley since 2006. Showcase demo: 2 · Scroll story.">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Inter:wght@400;500;600;700&display=swap">
+
+<style>
+:root{color-scheme:dark;--bg:#0E1510;--bg2:#16241B;--ink:#F4F1E8;--muted:#A9B3AA;--sun:#F2A93B;--leaf:#7FB069;--display:"Archivo",system-ui,sans-serif;--body:"Inter",system-ui,sans-serif}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--body);overflow-x:hidden}
+a{color:inherit}img{display:block;max-width:100%}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--display);margin:0;letter-spacing:-.03em;line-height:.98}
+.sample-note{position:sticky;top:0;z-index:60;background:#FFD27A;color:#2A1D00;font:700 13px/1.4 var(--body);text-align:center;padding:7px 16px}
+.topbar{position:sticky;top:33px;z-index:50;background:#0E1510CC;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid #ffffff14}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;gap:12px}
+.logo{font:800 17px var(--display);text-decoration:none;letter-spacing:-.01em;white-space:nowrap}.logo span{color:var(--sun)}
+.tag{font:600 12px var(--body);color:var(--muted);margin-left:10px}
+@media (max-width:640px){.tag{display:none}}
+.btn{display:inline-flex;align-items:center;gap:9px;justify-content:center;font:700 15.5px var(--body);padding:14px 22px;border-radius:12px;text-decoration:none;background:var(--sun);color:#16241B;border:0;transition:transform .25s,box-shadow .25s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px #F2A93B55}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px #ffffff40}
+.ex{position:absolute;right:12px;bottom:12px;z-index:3;font:600 11px/1 var(--body);background:#000a;color:#fff;padding:6px 9px;border-radius:99px}
+footer.foot{border-top:1px solid #ffffff14;padding:40px 0 48px;color:var(--muted);font-size:14.5px}
+footer.foot .wrap{display:flex;flex-wrap:wrap;gap:10px 26px;justify-content:space-between}
+footer.foot b{color:var(--ink)}
+.callbar{display:none}
+@media (max-width:700px){.callbar{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:55;gap:8px}.callbar a{flex:1;box-shadow:0 10px 24px #0008}body{padding-bottom:84px}.topbar .btn span{display:none}.topbar .btn{padding:11px}}
+.demo-note{font:600 12.5px var(--body);color:var(--muted)}
+
+.intro{padding:90px 0 40px;text-align:center}
+.intro .k{font:700 13px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--sun)}
+.intro h1{font-size:clamp(52px,9vw,130px);font-weight:900;margin:16px auto 20px;max-width:12ch}
+.intro p{color:var(--muted);font-size:19px;max-width:34em;margin:0 auto}
+.shrink{height:200vh;position:relative}
+.shrink .stick{position:sticky;top:95px;height:calc(100vh - 95px);display:grid;place-items:center;overflow:hidden}
+.shrink .card{position:relative;width:100vw;height:100%;overflow:hidden;border-radius:0}
+.shrink .card img{width:100%;height:100%;object-fit:cover}
+.shrink .cap{position:absolute;left:0;right:0;bottom:8%;text-align:center;font:800 clamp(28px,4vw,52px)/1.05 var(--display);letter-spacing:-.02em;text-shadow:0 4px 30px #000a;padding:0 20px}
+.pinwrap{position:relative}
+.story{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;min-height:calc(100vh - 95px);padding:40px 0}
+.story>*{min-width:0}
+.story .steps{position:relative;padding-left:32px}
+.story .bar{position:absolute;left:0;top:0;bottom:0;width:4px;background:#ffffff1a;border-radius:4px}
+.story .bar i{position:absolute;left:0;top:0;width:100%;height:0;background:var(--sun);border-radius:4px}
+.story .s{padding:14px 0;transition:color .4s}.anim .story .s{color:#ffffff40}
+.anim .story .s.on{color:var(--ink)}
+.story .s b{font:800 13px var(--body);letter-spacing:.16em;color:inherit}
+.story .s h3{font-size:clamp(26px,3vw,40px);margin:6px 0 6px}
+.story .s p{margin:0;font-size:16px}
+.story .s p{color:var(--muted)}
+.story .frame{position:relative;aspect-ratio:4/5;border-radius:26px;overflow:hidden;background:var(--bg2)}
+.story .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s}
+.story .frame img.on{opacity:1}
+.hscroll{overflow:hidden;padding:40px 0}
+.hscroll h2,.statement h2{font-size:clamp(40px,6vw,80px);font-weight:900}
+.hscroll .row{display:flex;gap:20px;padding:30px 20px 10px;width:max-content}
+.hscroll figure{margin:0;width:min(70vw,420px);aspect-ratio:3/4;border-radius:22px;overflow:hidden;position:relative;flex:none}
+.hscroll figure img{width:100%;height:100%;object-fit:cover}
+.hscroll figcaption{position:absolute;left:14px;bottom:14px;background:#0E1510E6;padding:6px 12px;border-radius:8px;font:700 14px var(--body)}
+.statement{padding:140px 0}
+.statement p{font:800 clamp(34px,5.4vw,72px)/1.08 var(--display);letter-spacing:-.025em;margin:0;max-width:18ch}
+.statement .wd{transition:color .2s}.statement .wd.hl{color:var(--sun)}
+.anim .statement .wd{color:#ffffff26}
+.anim .statement .wd.lit{color:var(--ink)}
+.anim .statement .wd.hl.lit{color:var(--sun)}
+.final{text-align:center;padding:120px 0 140px}
+.final h2{font-size:clamp(44px,7vw,96px);font-weight:900;margin-bottom:28px}
+@media (max-width:860px){.anim .story .s{color:var(--ink)}.story{grid-template-columns:1fr;min-height:0}.story .frame{display:none}.story .s{color:var(--ink)}
+ .hscroll .row{width:auto;overflow-x:auto;scroll-snap-type:x mandatory}.hscroll figure{scroll-snap-align:start}}
+@media (prefers-reduced-motion:reduce){.statement .wd{color:var(--ink)}}
+</style>
+<div class="sample-note">Website concept prepared for Family Tree Trimming &amp; Landscaping. Not their official site. Buttons are for preview only.</div>
+<div class="topbar"><div class="wrap"><a class="logo" href="#top">Family Tree<span>.</span><span class="tag">Showcase test: 2 · Scroll story</span></a><a class="btn" href="#contact"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span>(480) 340-7907</span></a></div></div>
+<main id="top">
+
+<section class="intro wrap"><div class="k">Family-owned · Apache Junction</div><h1>Trees, handled.</h1><p>Tree trimming, tree removals and land clean up in the East Valley. Rated A+ by the BBB.</p></section>
+<section class="shrink"><div class="stick"><div class="card"><img src="https://images.unsplash.com/photo-1781297770538-605dccdc52a7?w=2000&q=70&auto=format&fit=crop" alt="Arborist climbing a palm tree to trim it"><div class="cap">Up the tree so you don't have to.</div><span class="ex">Example photo</span></div></div></section>
+<section class="pinwrap" id="how"><div class="wrap story">
+  <div class="steps"><div class="bar"><i></i></div>
+  <div class="s on"><b>STEP 01</b><h3>Call or send photos</h3><p>Tell us about the tree or the lot.</p></div><div class="s"><b>STEP 02</b><h3>Free quote</h3><p>A clear price before work starts.</p></div><div class="s"><b>STEP 03</b><h3>We do the work</h3><p>Trimming, removal, or both.</p></div><div class="s"><b>STEP 04</b><h3>We clean up</h3><p>Branches and debris hauled off.</p></div>
+  </div>
+  <div class="frame"><img class="on" src="https://images.unsplash.com/photo-1754321889123-0485c7fea5f1?w=1000&q=70&auto=format&fit=crop" alt=""><img class="" src="https://images.unsplash.com/photo-1754321871548-61bdbc6f1506?w=1000&q=70&auto=format&fit=crop" alt=""><img class="" src="https://images.unsplash.com/photo-1626828476637-5bd713ef9f22?w=1000&q=70&auto=format&fit=crop" alt=""><img class="" src="https://images.unsplash.com/photo-1754322449185-31f56117ed87?w=1000&q=70&auto=format&fit=crop" alt=""><span class="ex">Example photos</span></div>
+</div></section>
+<section class="hscroll" id="work"><div class="wrap"><h2>The kind of work we do.</h2></div>
+  <div class="row"><figure><img src="https://images.unsplash.com/photo-1781297770538-605dccdc52a7?w=900&q=70&auto=format&fit=crop" alt="Palm trimming"><figcaption>Palm trimming</figcaption><span class="ex">Example photo</span></figure><figure><img src="https://images.unsplash.com/photo-1588878309774-4b3f42a19a8f?w=900&q=70&auto=format&fit=crop" alt="Branch removal"><figcaption>Branch removal</figcaption><span class="ex">Example photo</span></figure><figure><img src="https://images.unsplash.com/photo-1764421175587-f1fe472c411d?w=900&q=70&auto=format&fit=crop" alt="Off-the-roof trimming"><figcaption>Off-the-roof trimming</figcaption><span class="ex">Example photo</span></figure><figure><img src="https://images.unsplash.com/photo-1781642945922-b9452456d658?w=900&q=70&auto=format&fit=crop" alt="Tree removal"><figcaption>Tree removal</figcaption><span class="ex">Example photo</span></figure><figure><img src="https://images.unsplash.com/photo-1765064519883-651c506ec70d?w=900&q=70&auto=format&fit=crop" alt="Big-tree pruning"><figcaption>Big-tree pruning</figcaption><span class="ex">Example photo</span></figure><figure><img src="https://images.unsplash.com/photo-1754321871548-61bdbc6f1506?w=900&q=70&auto=format&fit=crop" alt="Ladder work"><figcaption>Ladder work</figcaption><span class="ex">Example photo</span></figure></div>
+</section>
+<section class="statement"><div class="wrap"><p><span class="wd">Since</span> <span class="wd hl">2006,</span> <span class="wd">the</span> <span class="wd hl">Graham</span> <span class="wd hl">family</span> <span class="wd">has</span> <span class="wd">trimmed,</span> <span class="wd">removed</span> <span class="wd">and</span> <span class="wd">cleaned</span> <span class="wd">up</span> <span class="wd">trees</span> <span class="wd">across</span> <span class="wd">the</span> <span class="wd">East</span> <span class="wd">Valley.</span></p></div></section>
+<section class="final" id="contact"><div class="wrap"><h2>Let's look at your trees.</h2><a class="btn" href="#contact"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call (480) 340-7907</a></div></section>
+
+</main>
+<footer class="foot"><div class="wrap"><span><b>Family Tree Trimming &amp; Landscaping LLC</b> · Since 2006 · BBB A+</span><span>Apache Junction, AZ · (480) 340-7907 · Open 24/7</span><span>© 2026</span></div></footer>
+<div class="callbar"><a class="btn ghost" href="#contact" style="background:#16241B"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a><a class="btn" href="#contact">Free quote</a></div>
+<script>(function(){var n=document.querySelector('.sample-note'),t=document.querySelector('.topbar');function f(){t.style.top=n.offsetHeight+'px'}f();addEventListener('resize',f)})()</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+
+(function(){
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches||!window.gsap)return;
+ gsap.registerPlugin(ScrollTrigger);document.documentElement.classList.add('anim');
+ var top=95;
+ gsap.from('.intro>*',{y:30,opacity:0,stagger:.12,duration:.8,ease:'power3.out'});
+ // hero image shrinks into a rounded card
+ gsap.fromTo('.shrink .card',{width:'100vw',borderRadius:0},{width:'min(86vw,980px)',height:'70%',borderRadius:28,ease:'none',
+   scrollTrigger:{trigger:'.shrink',start:'top '+top,end:'bottom bottom',scrub:true}});
+ gsap.from('.shrink .cap',{y:40,opacity:0,scrollTrigger:{trigger:'.shrink',start:'top '+top,end:'30% top',scrub:true}});
+ var mq=matchMedia('(min-width:861px)').matches;
+ if(mq){
+  // pinned 4-step story
+  var ss=document.querySelectorAll('.story .s'),im=document.querySelectorAll('.story .frame img');
+  ScrollTrigger.create({trigger:'.pinwrap',start:'top '+top,end:'+=2400',pin:true,scrub:true,
+    onUpdate:function(st){var i=Math.min(3,Math.floor(st.progress*4));
+      ss.forEach(function(s,k){s.classList.toggle('on',k===i)});im.forEach(function(s,k){s.classList.toggle('on',k===i)});
+      document.querySelector('.story .bar i').style.height=(st.progress*100)+'%'}});
+  // horizontal gallery
+  var row=document.querySelector('.hscroll .row');
+  gsap.to(row,{x:function(){return -(row.scrollWidth-innerWidth+40)},ease:'none',
+    scrollTrigger:{trigger:'.hscroll',start:'top '+top,end:function(){return '+='+(row.scrollWidth-innerWidth+40)},pin:true,scrub:true,invalidateOnRefresh:true}});
+ }
+ // each word lights grey -> white
+ var wd=document.querySelectorAll('.statement .wd');
+ ScrollTrigger.create({trigger:'.statement',start:'top 75%',end:'bottom 45%',scrub:true,onUpdate:function(st){
+   var n=Math.round(st.progress*wd.length);wd.forEach(function(w,i){w.classList.toggle('lit',i<n)})}});
+ gsap.from('.final h2,.final .btn',{y:30,opacity:0,stagger:.15,scrollTrigger:{trigger:'.final',start:'top 75%'}});
+})();
+
+</script>
