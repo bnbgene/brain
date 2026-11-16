@@ -7,7 +7,7 @@ Start here. This is the front page of your brain.
 |---|---|---|
 | [[AI Characters]] | 🟡 Kasey Mae designed. Next: accounts + first videos | "AI CHARACTERS" |
 | [[BNB Profits]] | 🟢 Agent Farm + auto-posting agents + Discord bot live; next: text Damond & Tai | "BNB PROFITS" |
-| [[Web Design]] | 🟢 23 new Bay Area sample sites; next: send them to the owners | "WEBSITE DESIGN" |
+| [[Web Design]] | 🟢 Brand = BNB Growth Co, packages set; next: domain + homepage, send samples | "WEBSITE DESIGN" |
 | [[Airbnb]] | 🟡 Sample upgraded to a walk-through video; next: DM real hosts | "AIRBNB" |
 | [[W-2 Helper]] | 🟢 Fills W-2s into E Tax; SmartWiz researched; next: office beta | "TAX HELPER SOFTWARE" |
 

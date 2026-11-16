@@ -3,6 +3,9 @@
 Newest entries at the top. Back to [[BNB Profits]].
 
 ---
+## 2026-11-15
+**Did:** Week Ahead now posts Sundays 30 min before futures open (about 3:30 PM MST). First run 11/22.
+
 ## 2026-11-14 (from 11-13 work)
 **Did:** Hype Man's first nightly post worked. The daily bias and "Live in 10" did NOT auto-post on Friday morning, so they were rebuilt as built-in scheduled jobs in the bot (no AI needed), with `!bias` and `!nolive` Discord commands. Farm: edit trades, screenshot uploads, recap posts right after logging a trade, agent status lights, command board and LIVE sign on the island. Bot: `!help`.
 **Next:** First automatic bias post is **Monday 6:45 AM MST**. Check that it goes out.

@@ -17,6 +17,8 @@ Live free on GitHub Pages: `https://bnbgene.github.io/brain/<name>/`
 | On Scene (animated demo) | https://bnbgene.github.io/brain/on-scene-cleaning-services-demo/ |
 | ro.tinyfits (kids clothing reseller): shop grid, size picker, pre-order form | https://bnbgene.github.io/brain/ro-tinyfits/ |
 
+| Family Tree Trimming (added 2026-11-15, the new default look) | https://bnbgene.github.io/brain/family-tree-trimming/ |
+| Family Tree showcase tests: [motion graphics](https://bnbgene.github.io/brain/family-tree-motion-graphics/) · [scroll story](https://bnbgene.github.io/brain/family-tree-scroll-story/) · [video scroll](https://bnbgene.github.io/brain/family-tree-video-scroll/) · [3D](https://bnbgene.github.io/brain/family-tree-3d/) · [particles](https://bnbgene.github.io/brain/family-tree-particles/) · [scroll-built](https://bnbgene.github.io/brain/family-tree-scroll-built/) | |
 | AZ EZ Moving (Chandler mover, added 2026-11-12) | https://bnbgene.github.io/brain/az-ez-moving/ |
 
 ## Bay Area leads (added 2026-10-23, from Facebook-group leads)

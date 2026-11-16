@@ -12,7 +12,7 @@ BNB web design + ads for local (mostly Phoenix-area) businesses. Process:
 4. Send the link to the business owner
 
 ## Tools
-- [[BNB Lead Desk]] · [[Sample Sites]] · [[After the Close]]
+- [[BNB Lead Desk]] · [[Sample Sites]] · [[After the Close]] · [[Packages & Pricing]]
 
 | Tool | Link |
 |---|---|
@@ -30,6 +30,7 @@ BNB web design + ads for local (mostly Phoenix-area) businesses. Process:
 | A+ Pressure Washing | [link](https://bnbgene.github.io/brain/a-plus-pressure-washing-phoenix/) |
 | A-Science Termite & Pest Control | [link](https://bnbgene.github.io/brain/a-science-termite-pest-control/) |
 | Moreno Electric Co. | [link](https://bnbgene.github.io/brain/moreno-electric/) |
+| Family Tree Trimming (new default look) | [link](https://bnbgene.github.io/brain/family-tree-trimming/) |
 | AZ EZ Moving (Chandler mover) | [link](https://bnbgene.github.io/brain/az-ez-moving/) |
 | ro.tinyfits (kids clothing) | [link](https://bnbgene.github.io/brain/ro-tinyfits/) |
 | On Scene Cleaning Services | [link](https://bnbgene.github.io/brain/on-scene-cleaning-services/) · [animated demo](https://bnbgene.github.io/brain/on-scene-cleaning-services-demo/) |
@@ -37,11 +38,16 @@ BNB web design + ads for local (mostly Phoenix-area) businesses. Process:
 Older samples on Netlify (`samples/`): A Blessing Tree Service, Advanced European Tailoring, Ana's Detailed House Cleaning, AZ Handyman, Done By Dri, M.V.P Tree Service. Also a C&S Construction LLC draft (`index.html` in this repo).
 
 ## Key Decisions
+- 2026-11-16: Business name **BNB Growth Co**: website + email on **bnbgrowthco.com**, Instagram **@bnbgrowth.co**. Homepage follows Gridly's section order with the demo button first.
+- 2026-11-16: Your client playbook prompts are now the rules for every site build ([client-playbook.md](https://github.com/bnbgene/brain/blob/claude/clever-shannon-qbaqz7/templates/client-playbook.md)): pick a template by business type, add motion, one signature interaction. Family Tree Trimming is the new default look.
+- 2026-11-15: Packages set: Starter \$500 + \$150/mo, **Growth \$900 + \$300/mo**, Pro \$1,500 + \$500/mo. All samples get Google schema + photo upload.
 - Sample sites follow the house style in `templates/sample-style/PLAYBOOK.md`. Best examples to copy: Sandoval, Freestyllez, Emeryville.
 - 2026-10-13: Use free GitHub Pages (`docs/`). Don't touch `samples/`, because every change there costs Netlify credits.
 - 2026-10-13: Preview first; nothing is published until you OK it.
 
 ## Next Steps
+- [ ] Register **bnbgrowthco.com** and grab **@bnbgrowth.co** on Instagram (if not done)
+- [ ] Build the BNB Growth Co homepage
 - [ ] Check AZ EZ Moving's services list with them
 - [ ] Send the 23 new Bay Area samples to those business owners
 - [ ] Send the latest samples to their business owners

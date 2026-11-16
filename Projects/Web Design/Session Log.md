@@ -3,6 +3,10 @@
 Newest entries at the top. Back to [[Web Design]].
 
 ---
+## 2026-11-15/16
+**Did:** Saved your client playbook (now the rules for every build) and set packages + a monthly client report. All samples got Google schema and photo upload. Built Family Tree Trimming (warm serif look, looping work-footage hero) plus 6 showcase test pages; it's the new default look. Picked the business brand: **bnbgrowthco.com** for site and email, **@bnbgrowth.co** on Instagram.
+**Next:** Lock in the domain and handle, build the BNB Growth Co homepage.
+
 ## 2026-11-12
 **Did:** New sample site for AZ EZ Moving (Chandler mover). Live: https://bnbgene.github.io/brain/az-ez-moving/
 **Next:** Confirm their services list.
