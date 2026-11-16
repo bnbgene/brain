@@ -6,6 +6,8 @@ Match these live examples before inventing anything new:
 - Construction: https://bnbgene.github.io/brain/sandoval-concrete/ (`docs/sandoval-concrete/concept.html`)
 - Restaurant / food: https://bnbgene.github.io/brain/freestyllez/ (`docs/freestyllez/concept.html`)
 - Office / services with a mascot: https://bnbgene.github.io/brain/emeryville-tax-services/ (`docs/emeryville-tax-services/concept.html`)
+- Home services built with the client playbook's prompts (GSAP motion, sticky how-it-works, swipe gallery):
+  https://bnbgene.github.io/brain/family-tree-trimming/ (`docs/family-tree-trimming/concept.html`)
 
 The fastest way to build a new one is to copy the closest example and swap in the new business.
 
@@ -43,6 +45,18 @@ video: people working, a real person up front, things moving. Motion all the way
   green wordmark). Never default to generic green-on-dark.
 - Fonts from Google Fonts; big confident headline with one highlighted phrase.
 - Must look right at 390px wide (phone) with no sideways scroll. Check desktop and phone screenshots before publishing.
+
+## Also from the client playbook (`templates/client-playbook.md`)
+- Pick the matching site template there (restaurant, hotel, barbershop/salon, home services, coffee/bakery) for the section list.
+- Every page gets Google schema markup: a `<script type="application/ld+json">` right after `<title>` (LocalBusiness or a
+  closer type like HomeAndConstructionBusiness / FoodEstablishment) with only real name, phone, city/state/zip, email.
+- Home-services quote forms include a photo upload field ("Photos of the job (optional)").
+- Motion can use GSAP 3.12.5 + ScrollTrigger from cdnjs (masked headline reveal, staggered scroll reveals, count-ups,
+  header that goes solid + blurred on scroll) plus ONE signature interaction. Content must stay visible if JS fails,
+  and `prefers-reduced-motion` turns it off.
+- Free stock photos: Pexels (`images.pexels.com/photos/<id>/...`) or Unsplash (`images.unsplash.com/photo-<id>?w=1600`),
+  always labeled "Example photo".
+- No reviews section unless we have real review text; never show star numbers we can't source.
 
 ## Honesty rules (always)
 - Sticky banner first: "Website concept prepared for <Name>. Not their official site. Buttons are for preview only."

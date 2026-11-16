@@ -1,7 +1,9 @@
 # BNB (web design + ads for local businesses)
 
 - Sample sites: ALWAYS follow `templates/sample-style/PLAYBOOK.md` (house style, honesty rules, publishing steps).
-  Copy the closest example in `docs/` (sandoval-concrete, freestyllez, emeryville-tax-services) and adapt it.
+  Copy the closest example in `docs/` (sandoval-concrete, freestyllez, emeryville-tax-services, family-tree-trimming) and adapt it.
+- Business system (site templates, motion prompts, pricing, outreach rules): `templates/client-playbook.md`.
+  Packages + monthly client report: `templates/packages-and-monthly-report.md`.
 - Free hosting: GitHub Pages serves `docs/` at https://bnbgene.github.io/brain/<slug>/ (branch `claude/clever-shannon-qbaqz7`).
   Do not change `samples/` (old Netlify site; every change there costs Netlify credits).
 - Lead desk: claude.ai artifact https://claude.ai/artifact/HNxTexwdUEPjHzWPoRvPq3 (source in `lead-desk/index.html`;
