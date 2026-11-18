@@ -3,6 +3,9 @@
 Newest entries at the top. Back to [[BNB Profits]].
 
 ---
+## 2026-11-17 🎉
+**Did:** TPT **Test account passed** (11/16). PRO is now the only active account. Logged a **+$1,400** trade on 11/17 in the Farm.
+
 ## 2026-11-15
 **Did:** Week Ahead now posts Sundays 30 min before futures open (about 3:30 PM MST). First run 11/22.
 
