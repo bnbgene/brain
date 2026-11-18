@@ -22,6 +22,7 @@ Gene (@bnbgene) trades NQ futures full time. BNBProfits is the trading brand:
 | Site Preview | Older preview of the site | [open](https://claude.ai/artifact/N9iHmaar3Xfn3uNrymq7KX) |
 
 ## Key Decisions
+- 2026-11-16: Passed the TPT Test account; PRO is now the only active account.
 - 2026-11-12: Built the Agent Farm as the daily command center; agents auto-post to Discord. Live times in MST. Removed Tradeify code/affiliate copy.
 - 2026-11-13: Cleaned up the Discord layout (backup saved). Gene's AI bot answers after 30s.
 - 2026-10-06: Hide the strategy and the mentorship price on the site.
