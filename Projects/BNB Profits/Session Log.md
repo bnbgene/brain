@@ -3,6 +3,9 @@
 Newest entries at the top. Back to [[BNB Profits]].
 
 ---
+## 2026-11-18
+**Idea:** A video editor for your trading clips. Copying CapCut isn't a good idea, but a custom **"BNB Clip Studio"** made for trading clips could be built. For now, free editors like Shotcut or DaVinci Resolve work.
+
 ## 2026-11-17 🎉
 **Did:** TPT **Test account passed** (11/16). PRO is now the only active account. Logged a **+$1,400** trade on 11/17 in the Farm.
 
