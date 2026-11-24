@@ -553,6 +553,7 @@
   function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
   var toastT;
   function toast(msg) { var t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true; }, 2600); }
+  function cents(n) { return '$' + (+n).toLocaleString('en-US', { minimumFractionDigits: (+n) % 1 ? 2 : 0, maximumFractionDigits: 2 }); }
   function money(n, signed) {
     var s = Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: Math.abs(n) % 1 ? 2 : 0 });
     return (n < 0 ? '-$' : (signed && n > 0 ? '+$' : '$')) + s;
@@ -1148,7 +1149,7 @@
       var td = todaysTradesSummary(), tot = S.payouts.reduce(function (s, p) { return s + (+p.amount || 0); }, 0);
       var lines = {
         journal: 'Your trade journal. ' + (td.n ? 'Today: ' + money(td.pnl, true) + ' on ' + td.n + ' trade' + (td.n === 1 ? '' : 's') + '.' : 'Nothing logged today.') + ' Every trade you log is +5 XP, +5 more if you followed your rules.',
-        vault: tot ? 'The vault holds ' + money(tot) + ' in logged payouts. Next milestone: ' + nextMilestoneText(tot) + '.' : 'Empty vault. Log your payouts and watch the gold stack up.',
+        vault: tot ? 'The vault holds ' + cents(tot) + ' in logged payouts. Next milestone: ' + nextMilestoneText(tot) + '.' : 'Empty vault. Log your payouts and watch the gold stack up.',
         portal: 'Step through to see exactly what each agent posts in your Discord.',
         newsroom: latestNewsLine(),
         studio: (function () { var pl = S.plans[nowAZ().date]; return pl && pl.main ? 'Today\u2019s video is ready: \u201c' + pl.main.hook + '\u201d. Script, caption and Discord lines are inside.' : 'The Script Writer drops your script here every morning at 5:50 AM MST.'; })(),
@@ -1425,7 +1426,7 @@
   var RULES = {
     test: { label: 'Test (eval)', ddType: 'eod', note: 'End-of-day trailing drawdown, stops trailing once the floor reaches your starting balance. No single day can be 50% or more of your total profit. Minimum 5 trading days (some sources say 3). Flat by the close.' },
     pro: { label: 'PRO', ddType: 'intraday', split: .8, note: 'Intraday trailing drawdown (open profit counts) that stops at your starting balance. Build the buffer first (start + drawdown), then withdraw anything above it daily at 80/20. No consistency rule. Withdrawals of $250 or less cost $50.' },
-    proplus: { label: 'PRO+', ddType: 'eod', split: .9, note: 'End-of-day drawdown, 90/10 split, no buffer.' }
+    proplus: { label: 'PRO+ (live)', ddType: 'eod', split: .9, note: 'Live funded. End-of-day trailing drawdown, 90/10 profit split, no withdrawal buffer, so any profit above your starting balance can come out.' }
   };
   function acctTrades(a) { return S.trades.filter(function (t) { return t.acct === a.name && (!a.start || t.date >= a.start); }); }
   function acctStats(a) {
@@ -1460,6 +1461,17 @@
         var up = el('button', { class: 'btn small' + (passed ? '' : ' ghost'), type: 'button', text: 'Passed: upgrade to PRO' });
         up.addEventListener('click', function () { upgradeToPro(a); });
         rows.push(el('div', { class: 'row' }, [up, balanceBtn(a, st)]));
+      } else if (a.stage === 'proplus') {
+        var wdp = Math.max(0, st.bal - a.startBalance), splitP = r.split || .9;
+        rows.push(el('div', { class: 'acct-line' }, [el('span', { class: 'label', text: 'Withdrawable (no buffer)' }), el('span', { class: 'num ' + (wdp ? 'pos' : ''), text: money(Math.floor(wdp)) + (wdp ? ' · you keep ' + money(Math.floor(wdp * splitP)) : '') })]));
+        rows.push(el('div', { class: 'acct-line' }, [el('span', { class: 'label', text: 'Room to drawdown' }), el('span', { class: 'num ' + (st.room < a.dd * .35 ? 'neg' : ''), text: money(Math.round(st.room)) + ' (floor ' + money(Math.round(st.floor)) + ')' })]), bar(st.room / a.dd * 100, st.room < a.dd * .35 ? 'danger' : ''));
+        if (a.frozen) rows.push(el('div', { class: 'acct-line' }, [el('span', { class: 'label', text: 'Frozen from ' + (a.frozenFrom || 'PRO') }), el('span', { class: 'num', text: '🔒 ' + money(a.frozen) + ' · released when PRO+ closes' })]));
+        rows.push(el('div', { class: 'acct-grid' }, [
+          el('span', { class: 'label', text: 'Profit split' }), el('span', { text: Math.round(splitP * 100) + '/' + Math.round(100 - splitP * 100) }),
+          el('span', { class: 'label', text: 'Drawdown' }), el('span', { text: money(a.dd) + ' end-of-day trailing' }),
+          el('span', { class: 'label', text: 'Trading days' }), el('span', { text: String(st.days) })
+        ]));
+        rows.push(el('div', { class: 'row' }, [balanceBtn(a, st), setupBtn(a)]));
       } else {
         var bufTarget = a.startBalance + a.dd, toBuf = bufTarget - st.bal, wd = Math.max(0, st.bal - bufTarget);
         rows.push(el('div', { class: 'acct-line' }, [el('span', { class: 'label', text: 'Buffer (' + money(bufTarget) + ')' }), el('span', { class: 'num', text: toBuf > 0 ? money(Math.ceil(toBuf)) + ' to go' : 'Built ✓' })]), bar((st.bal - a.startBalance) / a.dd * 100));
@@ -1476,6 +1488,7 @@
       keep.push(el('details', { class: 'fold' }, [el('summary', { class: 'label', text: 'Details' })].concat(more)));
       box.appendChild(el('div', { class: 'acct' }, keep));
     });
+    var pastEl = pastAccounts(); if (pastEl) box.appendChild(pastEl);
     var sel = $('tAcct'); if (sel) { var cur = sel.value; sel.innerHTML = ''; accts.forEach(function (a) { sel.appendChild(el('option', { value: a.name, text: a.name })); }); sel.appendChild(el('option', { value: '', text: 'Other / none' })); if (cur && accts.some(function (a) { return a.name === cur; })) sel.value = cur; }
     var imp = $('impAcct'); if (imp) { imp.innerHTML = ''; accts.forEach(function (a) { imp.appendChild(el('option', { value: a.name, text: a.name })); }); }
   }
@@ -1487,6 +1500,27 @@
       wrap.appendChild(inp); wrap.appendChild(ok); b.remove(); inp.focus();
     });
     return b;
+  }
+  function setupBtn(a) {
+    var b = el('button', { class: 'btn ghost small', type: 'button', text: 'Edit start + drawdown' });
+    b.addEventListener('click', function () {
+      var wrap = b.parentNode, sb = el('input', { type: 'number', step: '0.01', value: String(a.startBalance), 'aria-label': 'Starting balance', style: 'max-width:150px' }), dd = el('input', { type: 'number', step: '100', value: String(a.dd), 'aria-label': 'Drawdown', style: 'max-width:120px' }), ok = el('button', { class: 'btn small', type: 'button', text: 'Save' });
+      ok.addEventListener('click', function () { var v = parseFloat(sb.value), d = parseFloat(dd.value); if (!(v >= 0) || !(d > 0)) { toast('Check the starting balance and drawdown.'); return; } dbUpdate('accounts/' + a._id, { startBalance: v, dd: d }).then(function () { toast('Account updated.'); }); });
+      wrap.appendChild(el('label', { class: 'label', text: 'Start' })); wrap.appendChild(sb); wrap.appendChild(el('label', { class: 'label', text: 'Drawdown' })); wrap.appendChild(dd); wrap.appendChild(ok); b.remove(); sb.focus();
+    });
+    return b;
+  }
+  function pastAccounts() {
+    var past = S.accounts.filter(function (a) { return a.active === false; }).sort(function (a, b) { return String(b.start).localeCompare(String(a.start)); });
+    if (!past.length) return null;
+    return el('details', { class: 'fold' }, [el('summary', { class: 'label', text: 'Past accounts (' + past.length + ')' })].concat(past.map(function (a) {
+      var st = acctStats(a), w = a.withdrawal;
+      var bits = [a.promoted ? 'Promoted to ' + (a.promotedTo || 'PRO+') + ' ' + a.promoted.slice(5).replace('-', '/') : a.passed ? 'Passed ' + a.passed.slice(5).replace('-', '/') : 'Closed',
+        'final ' + money(Math.round(st.bal)), 'profit ' + money(Math.round(st.profit), true), st.days + ' days'];
+      if (w) bits.push('withdrew ' + cents(w.gross) + ' (' + cents(w.net) + ' net)');
+      if (a.frozen) bits.push('🔒 ' + money(a.frozen) + ' frozen');
+      return el('div', { class: 'acct-line', style: 'padding:6px 0;border-top:1px solid var(--line)' }, [el('b', { text: a.name }), el('span', { class: 'muted', text: bits.join(' · ') })]);
+    })));
   }
   function upgradeToPro(a) {
     var id = 'a' + Date.now().toString(36), today = isoLocal(new Date());
@@ -2109,7 +2143,7 @@
   // PAYOUTS
   // ===================================================================
   var MILESTONES = [[1, 'FIRST PAYOUT'], [1000, '$1K CLUB'], [5000, '$5K'], [10000, '$10K'], [25000, '$25K'], [50000, '$50K'], [100000, '$100K'], [250000, '$250K']];
-  function nextMilestoneText(total) { var n = MILESTONES.filter(function (m) { return total < m[0]; })[0]; return n ? money(n[0] - total) + ' to ' + n[1] : 'every milestone unlocked'; }
+  function nextMilestoneText(total) { var n = MILESTONES.filter(function (m) { return total < m[0]; })[0]; return n ? money(Math.ceil(n[0] - total)) + ' to ' + n[1] : 'every milestone unlocked'; }
   function renderPayouts() {
     var ps = S.payouts, total = ps.reduce(function (s, p) { return s + (+p.amount || 0); }, 0);
     var yr = String(new Date().getFullYear()), yTot = ps.filter(function (p) { return p.date.slice(0, 4) === yr; }).reduce(function (s, p) { return s + (+p.amount); }, 0);
@@ -2119,7 +2153,7 @@
     if (box) tiles.forEach(function (t) { box.appendChild(el('div', { class: 'tile' }, [el('span', { class: 'label', text: t[0] }), el('b', { class: t[2], text: t[1] })])); });
     var next = MILESTONES.filter(function (m) { return total < m[0]; })[0], prev = MILESTONES.filter(function (m) { return total >= m[0]; }).pop(), base = prev ? prev[0] : 0;
     $('goalFill').style.width = next ? Math.min(100, (total - base) / (next[0] - base) * 100) + '%' : '100%';
-    $('goalText').textContent = next ? money(next[0] - total) + ' to ' + next[1] : 'Every milestone unlocked';
+    $('goalText').textContent = next ? money(Math.ceil(next[0] - total)) + ' to ' + next[1] : 'Every milestone unlocked';
     var bx = $('badges'); bx.innerHTML = '';
     MILESTONES.forEach(function (m, i) { var got = total >= m[0], cv = el('canvas', { width: '10', height: '10', 'aria-hidden': 'true' }); drawCoin(cv, got, i); bx.appendChild(el('div', { class: 'badge' + (got ? '' : ' locked') }, [cv, el('b', { text: m[1] }), el('span', { class: 'label', text: got ? 'Unlocked' : 'Locked' })])); });
     var list = $('payList'); list.innerHTML = '';
@@ -2128,7 +2162,7 @@
     sorted.forEach(function (p) {
       var x = el('button', { class: 'x', type: 'button', 'aria-label': 'Delete payout', text: '×' });
       x.addEventListener('click', function () { confirmDel(x, function () { dbDel('payouts/' + p._id); }); });
-      list.appendChild(el('div', { class: 'li' }, [el('div', { style: 'min-width:0' }, [el('div', { text: p.date + (p.firm ? ' · ' + p.firm : '') + (p.acct ? ' · ' + p.acct : '') }), el('div', { class: 'sub', text: p.post === false ? 'Private' : 'Shared to #payouts' })]), el('b', { class: 'num pos', text: money(+p.amount) }), x]));
+      list.appendChild(el('div', { class: 'li' }, [el('div', { style: 'min-width:0' }, [el('div', { text: p.date + (p.firm ? ' · ' + p.firm : '') + (p.acct ? ' · ' + p.acct : '') }), el('div', { class: 'sub', text: (p.gross ? money(+p.gross) + ' gross · ' : '') + (p.post === false ? 'Private' : 'Shared to #payouts') })]), el('b', { class: 'num pos', text: cents(p.amount) }), x]));
     });
     drawPayChart();
   }
