@@ -261,6 +261,9 @@
   .light.ok i { background: var(--good); box-shadow: 0 0 8px var(--good); }
   .light.bad i { background: var(--bad); box-shadow: 0 0 8px var(--bad); }
   .light.bot i { background: #5865f2; box-shadow: 0 0 8px #5865f2; }
+  .party-banner { position: absolute; left: 50%; top: 44px; transform: translateX(-50%); background: linear-gradient(90deg, #f5b84a, #ff5a4e, #9b7bff, #2f9bff, #3ddc84); color: #0a0a0b; font-family: var(--pixel); font-size: clamp(7px, 1.2vw, 10px); padding: 7px 12px; border-radius: 6px; white-space: nowrap; box-shadow: 0 2px 0 #000; animation: partyPulse 1s ease-in-out infinite; pointer-events: none; z-index: 3; }
+  @keyframes partyPulse { 50% { transform: translateX(-50%) scale(1.05); } }
+  @media (prefers-reduced-motion: reduce) { .party-banner { animation: none; } }
   .acct-line { display: flex; justify-content: space-between; gap: 10px; font-size: .86rem; flex-wrap: wrap; }
   .acct-grid { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: .86rem; align-items: baseline; }
   .goal-bar.danger i { background: var(--bad); }
@@ -881,8 +884,28 @@
 
   // ---------- bot brain ----------
   var POIS = [{ x: ICX * TL, y: ICY * TL + 10 }, { x: (ICX - 2) * TL, y: (ICY + 1) * TL }, { x: (ICX + 2) * TL, y: (ICY - 1) * TL }];
+  // ---------- payout party: for an hour after you log a payout, everyone celebrates at the trophy ----------
+  var PARTY_MS = 3600000;
+  function party() {
+    var now = Date.now(), best = null;
+    S.payouts.forEach(function (p) { var c = Date.parse(p.created || ''); if (c && now - c >= 0 && now - c < PARTY_MS && (!best || c > best.c)) best = { p: p, c: c }; });
+    return best;
+  }
+  var CHEERS = ['LET\u2019S GOOO \ud83c\udf89', 'PAY DAY \ud83d\udcb8', 'bro is HIM \ud83d\udd25', 'another one \ud83e\udd1d', 'we eating fr \ud83c\udf7d\ufe0f', 'GG \ud83c\udfc6', 'told y\u2019all \ud83d\ude24', 'locked in \ud83d\udd12', 'money printer \ud83d\udda8\ufe0f'];
+  function partySpot(b) { var i = bots.indexOf(b), n = bots.length, ang = i / n * Math.PI * 2 + .3; return { x: ICX * TL + Math.cos(ang) * 58, y: ICY * TL + 12 + Math.sin(ang) * 36 }; }
   function updateBot(b, dt, now) {
     var st = scheduleState(b.a, clock()); b.state = st; b.mode = st.mode === 'go' ? 'free' : st.mode;
+    var pt = party();
+    if (pt) {
+      var sp2 = partySpot(b);
+      if (b.goal !== 'party') { b.path = findPath(b.x, b.y, sp2.x, sp2.y); b.goal = 'party'; }
+      b.atPost = false; b.mode = 'free';
+      if (b.path.length) { moveAlong(b, dt, 46); b.partying = false; return; }
+      b.partying = true; b.moving = true; b.step += dt * 50;
+      b.dir = ['down', 'left', 'up', 'right'][Math.floor(now / 350 + bots.indexOf(b)) % 4];
+      return;
+    }
+    if (b.goal === 'party') { b.goal = null; b.path = []; b.partying = false; b.waitUntil = 0; }
     var wantPost = st.mode === 'work' || st.mode === 'go' || st.mode === 'sleep';
     if (wantPost) {
       var atPost = Math.hypot(b.x - b.post.x, b.y - b.post.y) < 1.5;
@@ -1031,7 +1054,20 @@
     var rows = d > 0 ? ['1000000', '1110000', '1111111', '1110000', '1000000'] : ['0000001', '0000111', '1111111', '0000111', '0000001'];
     rows.forEach(function (row, j) { for (var i = 0; i < row.length; i++) if (row[i] === '1') rect(g, x - 3 + i, y - 8 + j, 1, 1, j === 2 ? '#dfe3ea' : '#fff'); });
   }
+  var FW = [], fwNext = 0;
+  function drawFireworks(g, t) {
+    if (!party()) { FW.length = 0; return; }
+    if (t > fwNext) { fwNext = t + 500 + Math.random() * 700; FW.push({ x: ICX * TL + (Math.random() - .5) * 260, y: ICY * TL - 60 - Math.random() * 90, t0: t, c: ['#f5b84a', '#ff5a4e', '#3ddc84', '#2f9bff', '#9b7bff', '#fff1b8'][Math.random() * 6 | 0] }); }
+    for (var i = FW.length - 1; i >= 0; i--) {
+      var f = FW[i], age = (t - f.t0) / 1400; if (age > 1) { FW.splice(i, 1); continue; }
+      g.globalAlpha = 1 - age;
+      for (var k = 0; k < 20; k++) { var a = k / 20 * Math.PI * 2, r = age * 46; rect(g, f.x + Math.cos(a) * r, f.y + Math.sin(a) * r + age * age * 20, 2, 2, f.c); }
+      if (age < .25) glow(g, f.x, f.y, 26, 'rgba(255,240,200,.5)');
+      g.globalAlpha = 1;
+    }
+  }
   function drawLights(g, t, night, L) {
+    drawFireworks(g, t);
     if (night > .3) BEACONS.forEach(function (bc) { var st = ST[bc.st], k = beaconKind(bc.agent); if (st && k && k !== 'off') glow(g, (st.tx + st.w) * TL + 4, st.ty * TL - (bc.tall ? 19 : 5), 14, k === 'bad' ? 'rgba(255,90,78,.4)' : k === 'bot' ? 'rgba(88,101,242,.4)' : 'rgba(61,220,132,.4)'); });
     if (Math.floor(t / (L.hot ? 250 : 900)) % 2 === 0) { var ax = L.N.tx * TL + 8, ay = L.N.ty * TL - 14; rect(g, ax - 1, ay - 2, 3, 3, '#ff5a4e'); if (night > .3 || L.hot) glow(g, ax, ay, 14, 'rgba(255,90,78,.35)'); }
     glow(g, L.fx, L.fy - 3, 20 + night * 30, 'rgba(255,150,70,' + (.15 + night * .3).toFixed(2) + ')');
@@ -1075,6 +1111,8 @@
       var bb = bubbleEls.get(p); if (!bb) { bb = el('span', { class: 'bubble' }); bb.hidden = true; ov.appendChild(bb); bubbleEls.set(p, bb); }
       var pt = pct(p.x, p.y + 2), near = Math.hypot(p.x - player.x, p.y - player.y) < (small ? 70 : 400); tg.hidden = !pt.vis || (!p.isPlayer && !near); placePct(tg, pt);
       if (p.isPlayer) { bb.hidden = true; return; }
+      var ptv = party();
+      if (ptv && p.partying) { var cheer = Math.floor(Date.now() / 4000 + bots.indexOf(p)) % 3 === 0 ? money(Math.round(+ptv.p.amount)) + ' payout!! \ud83d\udcb0' : CHEERS[(bots.indexOf(p) + Math.floor(Date.now() / 4000)) % CHEERS.length]; var bp0 = pct(p.x, p.y - 25); tg.hidden = true; bb.hidden = !bp0.vis || (bots.indexOf(p) + Math.floor(Date.now() / 4000)) % 2 === 1; if (bb.textContent !== cheer) bb.textContent = cheer; placePct(bb, bp0); return; }
       var rr = S.runs[p.a.id], fresh = rr && rr.at && Date.now() - Date.parse(rr.at) < 30 * 60000 && rr.what;
       var txt = p.mode === 'work' && p.atPost ? p.state.text : fresh ? (rr.ok === false ? '\u26a0\ufe0f ' : '\u2705 ') + rr.what : (p.mode === 'sleep' && p.atPost && p.state.text !== 'Off' ? 'zzz' : p.chat);
       var bp = pct(p.x, p.y - 25); bb.hidden = !bp.vis || !txt; if (txt && bb.textContent !== txt) bb.textContent = txt; placePct(bb, bp);
@@ -1084,6 +1122,13 @@
       var top = s.ty * TL - (s.id === 'lighthouse' || s.id === 'newsroom' || s.id === 'tower' ? 18 : s.id === 'trophy' ? 16 : 4), p = pct(s.cx, top);
       n.hidden = !p.vis || (small && Math.hypot(s.stand.x - player.x, s.stand.y - player.y) > 110); placePct(n, p);
     });
+    var pb = $('partyBanner'), ptb = party();
+    if (ptb) {
+      if (!pb) { pb = el('div', { class: 'party-banner', id: 'partyBanner', 'aria-live': 'polite' }); office.appendChild(pb); }
+      var left = Math.max(1, Math.ceil((ptb.c + PARTY_MS - Date.now()) / 60000)), bt = '\ud83c\udf89 PAYOUT PARTY \u00b7 ' + cents(ptb.p.amount) + ' \u00b7 ' + left + ' MIN LEFT';
+      if (pb.textContent !== bt) pb.textContent = bt; pb.hidden = false;
+      if (updateOverlay.partyFor !== ptb.c) { updateOverlay.partyFor = ptb.c; confetti(160); }
+    } else if (pb) pb.hidden = true;
     var c = clock(); $('simClock').textContent = DOW[c.dow].toUpperCase() + ' ' + fmtMin(c.min) + ' MST';
     var near2 = $('dialog').hidden ? nearestTarget() : null, pr = $('prompt');
     if (near2) { pr.hidden = false; pr.textContent = (window.matchMedia('(hover: hover)').matches ? 'E · ' : '') + (near2.kind === 'bot' ? 'Talk to ' + near2.ref.a.name : near2.ref.name); pr.onclick = function () { openTalk(near2); }; }
