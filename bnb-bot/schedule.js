@@ -23,7 +23,9 @@ function partsIn(tz, d = new Date()) {
     .formatToParts(d).forEach((p) => { o[p.type] = p.value; });
   return { date: `${o.year}-${o.month}-${o.day}`, dow: o.weekday, min: (parseInt(o.hour, 10) % 24) * 60 + parseInt(o.minute, 10) };
 }
-const isTradingDay = (et) => !['Sat', 'Sun'].includes(et.dow) && !HOLIDAYS.has(et.date);
+// Days Gene is off (no bias post, no live ping), on top of market holidays.
+const OFF_DAYS = new Set(['2026-11-27']);
+const isTradingDay = (et) => !['Sat', 'Sun'].includes(et.dow) && !HOLIDAYS.has(et.date) && !OFF_DAYS.has(et.date);
 function mstOpen() { // 9:30 ET in Arizona time, e.g. "7:30 AM MST"
   const ny = partsIn('America/New_York'), az = partsIn('America/Phoenix');
   const diff = ((ny.min - az.min) % 1440 + 1440) % 1440, m = 570 - diff, h = Math.floor(m / 60);
