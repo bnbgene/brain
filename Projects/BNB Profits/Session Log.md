@@ -3,6 +3,9 @@
 Newest entries at the top. Back to [[BNB Profits]].
 
 ---
+## 2026-11-24
+**Did:** Farm now has a **PRO+ account** card (frozen profits, past accounts, editable start balance and drawdown). Payout party runs for an hour after every payout; payouts are private by default. "Log a trade" moved under the calendar on the Trades tab.
+
 ## 2026-11-18
 **Idea:** A video editor for your trading clips. Copying CapCut isn't a good idea, but a custom **"BNB Clip Studio"** made for trading clips could be built. For now, free editors like Shotcut or DaVinci Resolve work.
 
