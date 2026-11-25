@@ -426,38 +426,40 @@
       </details>
     </div>
     <div class="tiles" id="tradeTiles"></div>
-    <div class="panel">
-      <h2>Log a trade</h2>
-      <form class="log quick" id="tradeForm">
-        <label>P&amp;L ($)<input type="number" id="tPnl" step="0.01" placeholder="640 or -220" required inputmode="decimal"></label>
-        <label>Side<select id="tSide"><option>Long</option><option>Short</option></select></label>
-        <label>Size<input type="number" id="tQty" min="1" step="1" value="10" required></label>
-        <label>Contract<select id="tSym"><option>MNQ</option><option>NQ</option><option>ES</option><option>MES</option></select></label>
-        <details class="wide more">
-          <summary class="label">More</summary>
-          <div class="log">
-            <label>Date<input type="date" id="tDate" required></label>
-            <label>Account<select id="tAcct"></select></label>
-            <label>Account type<select id="tType"><option value="eval">Eval</option><option value="funded">Funded</option></select></label>
-            <label>Followed my rules?<select id="tRules"><option value="yes">Yes</option><option value="no">No</option></select></label>
-            <label class="wide">Note<input type="text" id="tNote" placeholder="What happened, in a few words"></label>
-          </div>
-        </details>
-        <div class="wide shot" id="shotZone" tabindex="0" role="button" aria-label="Add a chart screenshot">
-          <span id="shotHint">📸 <b>Add your chart screenshot</b><br><span class="muted">Paste it (Ctrl+V), drop it here or tap to pick. It goes out with the recap.</span></span>
-          <img id="shotPrev" alt="Screenshot preview" hidden>
-        </div>
-        <input type="file" id="shotFile" accept="image/*" hidden>
-        <p class="wide ckb ap" id="tCheckNote" hidden style="margin:0;padding:8px 10px;border-radius:8px"></p>
-        <button class="btn wide" type="submit">Save trade</button>
-        <button class="btn ghost small wide" id="recapNow" type="button">Post today&rsquo;s recap now</button>
-      </form>
-      <datalist id="acctList"></datalist>
-    </div>
     <div class="grid2">
+      <div style="display:grid;gap:18px;align-content:start;min-width:0">
+        <div class="panel">
+          <div class="row between"><h2 id="calTitle">This month</h2><div class="row"><button class="btn ghost small" id="calPrev" type="button" aria-label="Previous month">‹</button><button class="btn ghost small" id="calNext" type="button" aria-label="Next month">›</button></div></div>
+          <div class="cal" id="cal"></div>
+        </div>
       <div class="panel">
-        <div class="row between"><h2 id="calTitle">This month</h2><div class="row"><button class="btn ghost small" id="calPrev" type="button" aria-label="Previous month">‹</button><button class="btn ghost small" id="calNext" type="button" aria-label="Next month">›</button></div></div>
-        <div class="cal" id="cal"></div>
+        <h2>Log a trade</h2>
+        <form class="log quick" id="tradeForm">
+          <label>P&amp;L ($)<input type="number" id="tPnl" step="0.01" placeholder="640 or -220" required inputmode="decimal"></label>
+          <label>Side<select id="tSide"><option>Long</option><option>Short</option></select></label>
+          <label>Size<input type="number" id="tQty" min="1" step="1" value="10" required></label>
+          <label>Contract<select id="tSym"><option>MNQ</option><option>NQ</option><option>ES</option><option>MES</option></select></label>
+          <details class="wide more">
+            <summary class="label">More</summary>
+            <div class="log">
+              <label>Date<input type="date" id="tDate" required></label>
+              <label>Account<select id="tAcct"></select></label>
+              <label>Account type<select id="tType"><option value="eval">Eval</option><option value="funded">Funded</option></select></label>
+              <label>Followed my rules?<select id="tRules"><option value="yes">Yes</option><option value="no">No</option></select></label>
+              <label class="wide">Note<input type="text" id="tNote" placeholder="What happened, in a few words"></label>
+            </div>
+          </details>
+          <div class="wide shot" id="shotZone" tabindex="0" role="button" aria-label="Add a chart screenshot">
+            <span id="shotHint">📸 <b>Add your chart screenshot</b><br><span class="muted">Paste it (Ctrl+V), drop it here or tap to pick. It goes out with the recap.</span></span>
+            <img id="shotPrev" alt="Screenshot preview" hidden>
+          </div>
+          <input type="file" id="shotFile" accept="image/*" hidden>
+          <p class="wide ckb ap" id="tCheckNote" hidden style="margin:0;padding:8px 10px;border-radius:8px"></p>
+          <button class="btn wide" type="submit">Save trade</button>
+          <button class="btn ghost small wide" id="recapNow" type="button">Post today&rsquo;s recap now</button>
+        </form>
+        <datalist id="acctList"></datalist>
+      </div>
       </div>
       <div class="panel">
         <h2>Recent trades</h2>
