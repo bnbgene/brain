@@ -1643,7 +1643,8 @@
     var ps = S.payouts.filter(function (p) { return String(p.date).slice(0, 4) === yr && p.goal !== false; });
     var amt = ps.reduce(function (s, p) { return s + (+p.amount || 0); }, 0);
     var end = new Date(+yr, 11, 31, 23, 59), daysLeft = Math.max(0, Math.ceil((end - new Date()) / 864e5));
-    return { yr: yr, g: g, amt: amt, n: ps.length, daysLeft: daysLeft, pctAmt: g && g.amount ? amt / g.amount : 0, pctN: 1 };
+    var nAll = S.payouts.filter(function (p) { return String(p.date).slice(0, 4) === yr; }).length, life = S.payouts.reduce(function (s, p) { return s + (+p.amount || 0); }, 0);
+    return { yr: yr, g: g, amt: amt, n: nAll, life: life, daysLeft: daysLeft, pctAmt: g && g.amount ? amt / g.amount : 0, pctN: 1 };
   }
   function goalLine() {
     var d = goalData();
@@ -1679,6 +1680,7 @@
     card.appendChild(bar(d.pctAmt * 100, 'gold'));
     card.appendChild(el('p', { class: 'goal-pace', text: done ? 'Goal smashed 🏆 Raise it?' : money(Math.ceil(left)) + ' to go · about ' + money(Math.ceil(left / weeks)) + ' a week' }));
     card.appendChild(el('p', { class: 'muted', style: 'font-size:.84rem', text: d.n + ' payout' + (d.n === 1 ? '' : 's') + ' so far this year' }));
+    if (d.life) card.appendChild(el('p', { class: 'muted', style: 'font-size:.76rem;margin-top:-6px', text: 'Total paid out all time: ' + cents(Math.round(d.life * 100) / 100) }));
   }
   function drawTrophy(g, t) {
     var T = ST.trophy; if (!T) return;
