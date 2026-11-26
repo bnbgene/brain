@@ -3,6 +3,9 @@
 Newest entries at the top. Back to [[BNB Profits]].
 
 ---
+## 2026-11-25
+**Did:** Payouts tab counts every payout this year (6 so far) and shows an **all-time total of $19,155.20**. Payouts can be left out of the yearly goal. Bot skips the bias and live ping on **Fri 11/27** (Thanksgiving break).
+
 ## 2026-11-24
 **Did:** Farm now has a **PRO+ account** card (frozen profits, past accounts, editable start balance and drawdown). Payout party runs for an hour after every payout; payouts are private by default. "Log a trade" moved under the calendar on the Trades tab.
 
