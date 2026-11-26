@@ -1640,7 +1640,7 @@
   var goalEdit = false;
   function goalData() {
     var yr = String(new Date().getFullYear()), g = S.goals && S.goals.year === yr ? S.goals : null;
-    var ps = S.payouts.filter(function (p) { return String(p.date).slice(0, 4) === yr; });
+    var ps = S.payouts.filter(function (p) { return String(p.date).slice(0, 4) === yr && p.goal !== false; });
     var amt = ps.reduce(function (s, p) { return s + (+p.amount || 0); }, 0);
     var end = new Date(+yr, 11, 31, 23, 59), daysLeft = Math.max(0, Math.ceil((end - new Date()) / 864e5));
     return { yr: yr, g: g, amt: amt, n: ps.length, daysLeft: daysLeft, pctAmt: g && g.amount ? amt / g.amount : 0, pctN: 1 };
