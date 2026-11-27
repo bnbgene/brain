@@ -96,6 +96,11 @@
   .ov { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
   .tag { position: absolute; transform: translate(-50%, 0); font-family: var(--pixel); font-size: clamp(6px, 1.1vw, 8px); background: rgba(10,10,11,.8); color: var(--fg); padding: 3px 5px; border-radius: 3px; white-space: nowrap; }
   .tag.you { background: var(--good); color: #0a0a0b; }
+  .tag.you.gold { background: #f5b84a; box-shadow: 0 0 8px rgba(245,184,74,.8); }
+  .lvl-badge { cursor: pointer; }
+  .unl { display: grid; grid-template-columns: 54px 26px 1fr; gap: 8px; align-items: center; font-size: .84rem; padding: 6px 0; border-top: 1px solid var(--line); }
+  .unl.locked { opacity: .45; }
+  .unl b { font-family: var(--pixel); font-size: .55rem; }
   .bubble { position: absolute; transform: translate(-50%, -100%); background: var(--fg); color: #0a0a0b; font-size: clamp(9px, 1.4vw, 12px); font-weight: 700; line-height: 1.25; padding: 4px 8px; border-radius: 6px; white-space: nowrap; }
   .bubble::after { content: ""; position: absolute; left: 50%; bottom: -5px; transform: translateX(-50%); border: 5px solid transparent; border-bottom: 0; border-top-color: var(--fg); }
   .hud { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; pointer-events: none; }
@@ -311,7 +316,7 @@
   <div class="top-row">
     <div class="brand"><h1>BNB Agent Farm</h1><span class="label" id="azClock">MST</span></div>
     <div class="lvl">
-      <span class="lvl-badge" id="lvlBadge">LVL 1</span>
+      <span class="lvl-badge" id="lvlBadge" role="button" tabindex="0" title="See what your levels unlock">LVL 1</span>
       <div class="xp"><div class="xp-bar"><i id="xpFill"></i></div><span class="label" id="xpText">0 XP</span></div>
     </div>
   </div>
@@ -700,6 +705,9 @@
   STATIONS.forEach(function (s) { if (s.walkable) return; for (var y = s.ty; y < s.ty + s.h; y++) for (var x = s.tx; x < s.tx + s.w; x++) SOLID[y][x] = true; });
   if (ST.campfire) SOLID[ST.campfire.ty + 1][ST.campfire.tx + 1] = true;
   // trees, rocks, flowers on free grass
+  // spots saved for level unlocks (car, house + pool, dock, helipad)
+  var RESERVED = [{ tx: 29, ty: 20, w: 2, h: 1 }, { tx: 28, ty: 21, w: 6, h: 3 }, { tx: 19, ty: 32, w: 1, h: 3 }, { tx: 10, ty: 11, w: 3, h: 3 }];
+  function inReserved(x, y) { return RESERVED.some(function (r) { return x >= r.tx - 1 && x <= r.tx + r.w && y >= r.ty - 1 && y <= r.ty + r.h; }); }
   var TREES = [], DECOR = [];
   (function () {
     var r = seeded(11);
@@ -708,6 +716,7 @@
       var nearPath = PATH[y - 1][x] || PATH[y + 1][x] || PATH[y][x - 1] || PATH[y][x + 1];
       var nearSt = STATIONS.some(function (s) { return x >= s.tx - 1 && x <= s.tx + s.w && y >= s.ty - 1 && y <= s.ty + s.h + 1; });
       var v = r();
+      if (inReserved(x, y)) continue;
       if (!nearPath && !nearSt && v < .1 && Math.hypot(x - ICX, y - ICY) > 5) { TREES.push({ x: x, y: y, palm: LAND[y + 1][x] === 1 || LAND[y - 1][x] === 1 || hash(x, y) > .8 }); SOLID[y][x] = true; }
       else if (v < .16) DECOR.push({ x: x, y: y, k: 'flower', c: ['#ff5a4e', '#f5b84a', '#f4f4f1', '#9b7bff'][r() * 4 | 0] });
       else if (v < .18 && !nearPath) { DECOR.push({ x: x, y: y, k: 'rock' }); SOLID[y][x] = true; }
@@ -855,7 +864,8 @@
     rect(g, x + 3, y + 16 + Math.max(0, legA), 4, 6 - Math.max(0, legA), OUT); rect(g, x + 4, y + 16, 2, 4 - Math.max(0, legA), p.pants || '#2b3352');
     rect(g, x + 8, y + 16 + Math.max(0, -legA), 4, 6 - Math.max(0, -legA), OUT); rect(g, x + 9, y + 16, 2, 4 - Math.max(0, -legA), p.pants || '#2b3352');
     // body
-    rect(g, x + 2, y + 9 - bob, 11, 9, OUT); rect(g, x + 3, y + 10 - bob, 9, 7, p.shirt); if (p.isPlayer) rect(g, x + 5, y + 12 - bob, 5, 1, '#f5b84a');
+    rect(g, x + 2, y + 9 - bob, 11, 9, OUT); rect(g, x + 3, y + 10 - bob, 9, 7, p.shirt); if (p.isPlayer && !has(8)) rect(g, x + 5, y + 12 - bob, 5, 1, '#f5b84a');
+    if (p.isPlayer && has(8) && dir !== 'up') { [[4, 10], [5, 11], [6, 12], [8, 12], [9, 11], [10, 10]].forEach(function (c) { px(g, x + c[0], y + c[1] - bob, '#f5d76e'); }); rect(g, x + 6, y + 13 - bob, 3, 2, '#f5b84a'); }
     // arms
     var sw = working ? (Math.floor(t / 150) % 2 ? -1 : 1) : p.moving ? [0, 1, 0, -1][fr] : 0;
     if (dir !== 'left') { rect(g, x + 12, y + 10 - bob + sw, 3, 7, OUT); rect(g, x + 13, y + 11 - bob + sw, 1, 4, p.shirt); px(g, x + 13, y + 15 - bob + sw, p.skin); }
@@ -922,7 +932,9 @@
       var s = Math.random() < .6 ? STATIONS[Math.floor(Math.random() * STATIONS.length)] : null, dest = s ? s.stand : POIS[Math.floor(Math.random() * POIS.length)];
       b.path = findPath(b.x, b.y, dest.x + (Math.random() - .5) * 20, dest.y + (Math.random() * 10));
       b.goal = 'wander';
+      var brag = UNLOCKS.filter(function (u) { return has(u[0]); }).map(function (u) { return ({ 5: 'the dog stays winning \ud83d\udc15', 8: 'that chain hitting \u26d3\ufe0f', 10: 'that car tho \ud83d\ude2d', 12: 'bro got a boat now \ud83d\ude2d', 15: 'crib looking crazy', 18: 'fireworks again?? \ud83c\udf86', 20: 'gold plaza different', 25: 'a HELICOPTER \ud83d\ude2d', 30: 'BNB City fr \ud83c\udf03' })[u[0]]; });
       b.goalSay = s ? ({ campfire: '🔥 vibes', vault: '💰 counting', tower: 'NQ looking spicy', newsroom: 'any headlines?', portal: 'checking the Discord', checklist: 'rules first', journal: 'logging trades' })[s.id] || null : null;
+      if (brag.length && Math.random() < .3) b.goalSay = brag[Math.floor(Math.random() * brag.length)];
       b.chat = null; b.waitUntil = Infinity;
     }
   }
@@ -1004,6 +1016,7 @@
     var Vt = ST.vault, tot = S.payouts.reduce(function (s2, p) { return s2 + (+p.amount || 0); }, 0), n = Math.min(12, Math.ceil(tot / 2500));
     for (var k2 = 0; k2 < n; k2++) rect(g, Vt.tx * TL + Vt.w * TL + 3 + (k2 % 3) * 3, Vt.ty * TL + Vt.h * TL - 3 - Math.floor(k2 / 3) * 2, 4, 2, k2 % 2 ? '#d99a2b' : '#f5b84a');
     drawTrophy(g, t);
+    drawUnlocks(g, t, night);
     // LIVE sign on the tower while you're live
     var tw = ST.tower, lx0 = tw.cx - 18, ly0 = tw.ty * TL + 38, pre = c.dow > 0 && c.dow < 6 && c.min >= OPEN - 10 && c.min < OPEN;
     if (open || pre) {
@@ -1027,6 +1040,83 @@
       }
     });
     return { hot: hot, N: N, C: C, fx: fx, fy: fy };
+  }
+  // ---------- level unlocks ----------
+  var UNLOCKS = [
+    [5, '🐕', 'Pet dog', 'Follows you around the island'],
+    [8, '⛓️', 'Gold chain', 'Drip for your character'],
+    [10, '🚗', 'Your car', 'Parked by the plaza'],
+    [12, '⛵', 'Dock + boat', 'Down on the south beach'],
+    [15, '🏠', 'Your house', 'East of the plaza'],
+    [18, '🎆', 'Green-day fireworks', 'Every green day lights up the sky'],
+    [20, '🏆', 'Gold plaza', 'Gold plaza, gold name tag, 2nd floor on the house'],
+    [25, '🚁', 'Helipad', 'Helicopter, plus a pool at the house'],
+    [30, '🌃', 'BNB City', 'A city skyline lights up at night']
+  ];
+  var RANKS = [[1, 'Rookie'], [5, 'Funded'], [10, 'Consistent'], [15, 'Payout Machine'], [25, 'Legend']];
+  function rankOf(l) { var r = RANKS[0][1]; RANKS.forEach(function (x) { if (l >= x[0]) r = x[1]; }); return r; }
+  function has(l) { return (S.level || 1) >= l; }
+  function applyUnlockSolids() {
+    if (!SOLID.length) return;
+    for (var y = 21; y < 24; y++) for (var x = 28; x < 32; x++) SOLID[y][x] = has(15);
+    SOLID[20][29] = SOLID[20][30] = has(10);
+  }
+  var petTrail = [], pet = null;
+  function drawUnlocks(g, t, night) {
+    if (has(20)) { for (var py = ICY - 3; py <= ICY + 2; py++) for (var pxx = ICX - 3; pxx <= ICX + 2; pxx++) if (PATH[py][pxx] === 2) { rect(g, pxx * TL, py * TL, TL, TL, 'rgba(245,184,74,.28)'); if ((pxx + py) % 2) rect(g, pxx * TL + 2, py * TL + 2, 2, 2, 'rgba(255,241,184,.6)'); } }
+    if (has(10)) { // car
+      var cx = 29 * TL + 1, cy = 20 * TL + 1;
+      rect(g, cx + 2, cy + 13, 30, 3, 'rgba(0,0,0,.25)');
+      rect(g, cx + 2, cy - 1, 6, 3, '#111'); rect(g, cx + 22, cy - 1, 6, 3, '#111'); rect(g, cx + 2, cy + 12, 6, 3, '#111'); rect(g, cx + 22, cy + 12, 6, 3, '#111');
+      rect(g, cx, cy + 1, 30, 12, '#1a1a1f'); rect(g, cx + 1, cy + 2, 28, 10, '#16161a'); rect(g, cx + 9, cy + 3, 12, 8, '#5fb4ff'); rect(g, cx + 10, cy + 4, 10, 6, '#2a2a33');
+      rect(g, cx + 1, cy + 6, 28, 2, '#f5b84a'); rect(g, cx + 28, cy + 3, 2, 2, '#fff1b8'); rect(g, cx + 28, cy + 9, 2, 2, '#fff1b8'); rect(g, cx, cy + 3, 1, 2, '#ff3b30'); rect(g, cx, cy + 9, 1, 2, '#ff3b30');
+    }
+    if (has(15)) { // house (+2nd floor at 20, pool at 25)
+      var X = 28 * TL, Y = 21 * TL, W = 4 * TL, H = 3 * TL, tall = has(20), roofH = tall ? 14 : 22, wallY = Y + roofH;
+      shadow(g, X, Y, W, H);
+      bricks(g, X, wallY, W, H - roofH, '#e8e2d4', '#cfc6b2');
+      if (tall) { rect(g, X, wallY + 14, W, 2, '#8c8f99'); windowPx(g, X + 8, wallY + 3); windowPx(g, X + W - 16, wallY + 3); rect(g, X + 22, wallY + 2, 20, 10, '#2a2a33'); rect(g, X + 23, wallY + 3, 18, 8, '#8fd3ff'); }
+      roofTiles(g, X - 2, Y, W + 4, roofH + 2, '#2a2a33', '#3a3a44');
+      door(g, X + W / 2 - 4, Y + H); windowPx(g, X + 6, Y + H - 16); windowPx(g, X + W - 14, Y + H - 16);
+      g.font = '6px "Press Start 2P", monospace'; g.fillStyle = '#f5b84a'; g.textAlign = 'center'; g.fillText('BNB', X + W / 2, Y + roofH - 4); g.textAlign = 'left';
+      if (has(25)) { var PX = 32 * TL + 2, PY = 21 * TL + 4; rect(g, PX - 2, PY - 2, 30, 24, '#d9d2c2'); rect(g, PX, PY, 26, 20, '#2f9bff'); for (var w = 0; w < 4; w++) rect(g, PX + 3 + ((w * 7 + t / 120) % 20 | 0), PY + 4 + w * 4, 5, 1, '#8fd3ff'); }
+    }
+    if (has(12)) { // dock + boat
+      var DX = 19 * TL, DY = 32 * TL - 4;
+      for (var k = 0; k < 40; k += 4) rect(g, DX + 2, DY + k, 12, 3, k % 8 ? '#a37446' : '#8a5a35');
+      rect(g, DX + 1, DY + 38, 2, 6, '#5e3c22'); rect(g, DX + 13, DY + 38, 2, 6, '#5e3c22');
+      var bob2 = Math.round(Math.sin(t / 600) * 1.5), BX = 20 * TL + 4, BY = 33 * TL + 4 + bob2;
+      rect(g, BX + 2, BY + 12, 26, 3, 'rgba(0,0,0,.2)'); rect(g, BX, BY + 2, 28, 10, '#f4f4f1'); rect(g, BX + 2, BY, 20, 2, '#f4f4f1'); rect(g, BX + 22, BY + 3, 6, 8, '#d9d2c2');
+      rect(g, BX + 6, BY + 4, 10, 5, '#2a2a33'); rect(g, BX, BY + 10, 28, 2, '#2f9bff'); g.font = '5px "Press Start 2P", monospace'; g.fillStyle = '#16161a'; g.fillText('BNB', BX + 6, BY + 15);
+    }
+    if (has(25)) { // helipad + helicopter
+      var HX = 10 * TL, HY = 11 * TL;
+      rect(g, HX, HY, 48, 48, '#5f5f68'); rect(g, HX + 2, HY + 2, 44, 44, '#6f6f78');
+      g.strokeStyle = '#f5b84a'; g.lineWidth = 2; g.beginPath(); g.arc(HX + 24, HY + 24, 18, 0, 7); g.stroke();
+      rect(g, HX + 17, HY + 16, 3, 16, '#f4f4f1'); rect(g, HX + 28, HY + 16, 3, 16, '#f4f4f1'); rect(g, HX + 20, HY + 23, 8, 3, '#f4f4f1');
+      var hx = HX + 24, hy = HY + 22;
+      rect(g, hx - 9, hy - 5, 18, 11, '#16161a'); rect(g, hx + 4, hy - 3, 4, 6, '#5fb4ff'); rect(g, hx - 22, hy - 1, 14, 3, '#16161a'); rect(g, hx - 24, hy - 4, 3, 9, '#16161a'); rect(g, hx - 8, hy + 7, 16, 1, '#3a3a44');
+      g.strokeStyle = 'rgba(30,30,35,.75)'; g.lineWidth = 2; var ra = t / 60;
+      for (var bl = 0; bl < 2; bl++) { var aa = ra + bl * Math.PI / 2; g.beginPath(); g.moveTo(hx - Math.cos(aa) * 20, hy - Math.sin(aa) * 20); g.lineTo(hx + Math.cos(aa) * 20, hy + Math.sin(aa) * 20); g.stroke(); }
+    }
+    if (has(30) && night > .3) { // BNB City skyline across the north water
+      for (var b = 0; b < 40; b++) { var bw = 10 + (hash(b, 3) * 14 | 0), bh = 10 + (hash(b, 4) * 26 | 0), bx = b * 20 + (hash(b, 5) * 6 | 0); rect(g, bx, 38 - bh, bw, bh, '#0d0f18'); }
+    }
+    if (has(5) && player) { // pet dog
+      var last = petTrail[petTrail.length - 1];
+      if (!last || Math.hypot(player.x - last.x, player.y - last.y) > 2) { petTrail.push({ x: player.x, y: player.y, d: player.dir }); if (petTrail.length > 14) petTrail.shift(); }
+      var pp = petTrail[0] || player, moving = petTrail.length > 3 && player.moving, dx2 = Math.round(pp.x) - 5, dy2 = Math.round(pp.y) - 7, hop = moving && Math.floor(t / 120) % 2 ? 1 : 0, left = player.x < pp.x;
+      rect(g, dx2 + 1, dy2 + 7, 9, 2, 'rgba(0,0,0,.25)');
+      rect(g, dx2, dy2 + 2 - hop, 10, 5, '#1a1a1f'); rect(g, dx2 + 1, dy2 + 3 - hop, 8, 3, '#b07a45');
+      var hx2 = left ? dx2 - 3 : dx2 + 7; rect(g, hx2, dy2 - hop, 6, 5, '#1a1a1f'); rect(g, hx2 + 1, dy2 + 1 - hop, 4, 3, '#b07a45'); rect(g, hx2 + (left ? 0 : 4), dy2 + 2 - hop, 1, 1, '#1a1a1f'); rect(g, hx2 + (left ? 4 : 1), dy2 - 1 - hop, 1, 2, '#6b4526');
+      var tw = Math.floor(t / 150) % 2; rect(g, left ? dx2 + 10 : dx2 - 2, dy2 + 1 - tw - hop, 2, 2, '#b07a45');
+      rect(g, dx2 + 1, dy2 + 7 - hop, 1, 1 + hop, '#1a1a1f'); rect(g, dx2 + 8, dy2 + 7 - hop, 1, 1 + hop, '#1a1a1f');
+    }
+  }
+  function drawCityLights(g, t, night) {
+    if (!has(30) || night <= .3) return;
+    for (var b = 0; b < 40; b++) { var bw = 10 + (hash(b, 3) * 14 | 0), bh = 10 + (hash(b, 4) * 26 | 0), bx = b * 20 + (hash(b, 5) * 6 | 0);
+      for (var wy = 38 - bh + 3; wy < 36; wy += 4) for (var wx = bx + 2; wx < bx + bw - 2; wx += 3) if (hash(wx, wy) > .55) rect(g, wx, wy, 1, 2, 'rgba(255,220,140,' + (night * .9).toFixed(2) + ')'); }
   }
   var BEACONS = [
     { st: 'tower', agent: 'market', tall: true }, { st: 'newsroom', agent: 'news', tall: true }, { st: 'lighthouse', agent: 'outlook', tall: true },
@@ -1058,7 +1148,7 @@
   }
   var FW = [], fwNext = 0;
   function drawFireworks(g, t) {
-    if (!party()) { FW.length = 0; return; }
+    if (!party() && !(has(18) && (dayPnl()[nowAZ().date] || 0) > 0)) { FW.length = 0; return; }
     if (t > fwNext) { fwNext = t + 500 + Math.random() * 700; FW.push({ x: ICX * TL + (Math.random() - .5) * 260, y: ICY * TL - 60 - Math.random() * 90, t0: t, c: ['#f5b84a', '#ff5a4e', '#3ddc84', '#2f9bff', '#9b7bff', '#fff1b8'][Math.random() * 6 | 0] }); }
     for (var i = FW.length - 1; i >= 0; i--) {
       var f = FW[i], age = (t - f.t0) / 1400; if (age > 1) { FW.splice(i, 1); continue; }
@@ -1070,6 +1160,7 @@
   }
   function drawLights(g, t, night, L) {
     drawFireworks(g, t);
+    drawCityLights(g, t, night);
     if (night > .3) BEACONS.forEach(function (bc) { var st = ST[bc.st], k = beaconKind(bc.agent); if (st && k && k !== 'off') glow(g, (st.tx + st.w) * TL + 4, st.ty * TL - (bc.tall ? 19 : 5), 14, k === 'bad' ? 'rgba(255,90,78,.4)' : k === 'bot' ? 'rgba(88,101,242,.4)' : 'rgba(61,220,132,.4)'); });
     if (Math.floor(t / (L.hot ? 250 : 900)) % 2 === 0) { var ax = L.N.tx * TL + 8, ay = L.N.ty * TL - 14; rect(g, ax - 1, ay - 2, 3, 3, '#ff5a4e'); if (night > .3 || L.hot) glow(g, ax, ay, 14, 'rgba(255,90,78,.35)'); }
     glow(g, L.fx, L.fy - 3, 20 + night * 30, 'rgba(255,150,70,' + (.15 + night * .3).toFixed(2) + ')');
@@ -1110,6 +1201,7 @@
     var small = office.clientWidth < 640;
     people.forEach(function (p) {
       var tg = tagEls.get(p); if (!tg) { tg = el('span', { class: 'tag' + (p.isPlayer ? ' you' : ''), text: p.isPlayer ? 'YOU' : p.a.name }); ov.appendChild(tg); tagEls.set(p, tg); }
+      if (p.isPlayer) tg.classList.toggle('gold', has(20));
       var bb = bubbleEls.get(p); if (!bb) { bb = el('span', { class: 'bubble' }); bb.hidden = true; ov.appendChild(bb); bubbleEls.set(p, bb); }
       var pt = pct(p.x, p.y + 2), near = Math.hypot(p.x - player.x, p.y - player.y) < (small ? 70 : 400); tg.hidden = !pt.vis || (!p.isPlayer && !near); placePct(tg, pt);
       if (p.isPlayer) { bb.hidden = true; return; }
@@ -1211,6 +1303,16 @@
       if (o.agent) { var ag = bots.filter(function (x) { return x.a.id === o.agent; })[0]; if (ag) { var tb = el('button', { class: 'btn ghost small', type: 'button', text: 'Talk to ' + ag.a.name }); tb.addEventListener('click', function () { openTalk({ kind: 'bot', ref: ag }); }); body.appendChild(el('div', { class: 'row' }, [tb])); } }
     }
   }
+  function openLevels() {
+    showTab('farm'); keys = {}; if (player) player.path = [];
+    var d = $('dialog'), body = $('dBody'); body.innerHTML = ''; d.hidden = false; talking = { kind: 'levels' };
+    var l = S.level || 1, nxt = UNLOCKS.filter(function (u) { return u[0] > l; })[0];
+    $('dName').textContent = 'LVL ' + l + ' \u00b7 ' + rankOf(l).toUpperCase();
+    typeText($('dText'), (S.xp || 0).toLocaleString('en-US') + ' XP. ' + (nxt ? 'Next unlock at LVL ' + nxt[0] + ': ' + nxt[2] + '.' : 'Everything unlocked. Legend.') + ' Earn XP by following your rules (+10 a trade, -10 when you break them), notes + screenshot (+10), running the checklist (+5), green days (+10), passing on bad setups (+15), posting content (+20) and payouts (+100).');
+    body.appendChild(el('div', null, UNLOCKS.map(function (u) { return el('div', { class: 'unl' + (l >= u[0] ? '' : ' locked') }, [el('b', { text: 'LVL ' + u[0] }), el('span', { text: l >= u[0] ? u[1] : '\ud83d\udd12', 'aria-hidden': 'true' }), el('span', null, [el('strong', { text: u[2] + ' ' }), el('span', { class: 'muted', text: u[3] })])]); })));
+  }
+  $('lvlBadge').addEventListener('click', openLevels);
+  $('lvlBadge').addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLevels(); } });
   function goBtn(label, tab, ch) {
     var b = el('button', { class: 'btn small', type: 'button', text: label });
     b.addEventListener('click', function () { if (ch) dcSel = ch; closeTalk(); showTab(tab); window.scrollTo({ top: 0 }); });
@@ -2185,7 +2287,7 @@
     t.type = $('tType').value;
     if (S.pendingCheck) t.check = S.pendingCheck;
     var shotBlob = S.shot;
-    (shotBlob ? uploadShot(shotBlob) : Promise.resolve(null)).then(function (sh) { if (sh) t.shot = sh; return dbSet('trades/t' + Date.now().toString(36), t); }).then(function () { setShot(null); toast((pnl >= 0 ? 'Saved. ' : 'Saved. Red days count too. ') + '+' + (5 + (t.rules === 'yes' ? 5 : 0)) + ' XP'); fireRecap(false); $('tPnl').value = ''; $('tNote').value = ''; S.pendingCheck = null; renderPendingCheck(); ck.ticks = {}; ckSaveTicks(); });
+    (shotBlob ? uploadShot(shotBlob) : Promise.resolve(null)).then(function (sh) { if (sh) t.shot = sh; return dbSet('trades/t' + Date.now().toString(36), t); }).then(function () { setShot(null); toast((pnl >= 0 ? 'Saved. ' : 'Saved. Red days count too. ') + (t.rules === 'no' ? '-5 XP (broke rules)' : '+' + (10 + (t.note && t.shot ? 10 : 0) + (t.check ? 5 : 0)) + ' XP')); fireRecap(false); $('tPnl').value = ''; $('tNote').value = ''; S.pendingCheck = null; renderPendingCheck(); ck.ticks = {}; ckSaveTicks(); });
   });
 
   // ===================================================================
@@ -2243,7 +2345,7 @@
     if (!S.db) { toast('Open the farm from your sidebar to save.'); return; }
     var amt = parseFloat($('pAmt').value); if (!(amt > 0)) { toast('Add the payout amount in dollars.'); return; }
     var p = { date: $('pDate').value, amount: amt, firm: $('pFirm').value.trim(), acct: $('pAcct').value.trim(), post: $('pPost').value === 'yes', created: new Date().toISOString() };
-    dbSet('payouts/p' + Date.now().toString(36), p).then(function () { toast('Payout saved. +' + Math.round(amt / 10) + ' XP 💰'); $('pAmt').value = ''; confetti(140); });
+    dbSet('payouts/p' + Date.now().toString(36), p).then(function () { toast('Payout saved. +100 XP 💰'); $('pAmt').value = ''; confetti(140); });
   });
 
   // ===================================================================
@@ -2251,13 +2353,26 @@
   // ===================================================================
   function renderXp() {
     var xp = 0, dp = dayPnl();
-    S.trades.forEach(function (t) { xp += 5 + (t.rules !== 'no' ? 5 : 0); });
+    S.trades.forEach(function (t) {
+      xp += t.rules === 'no' ? -5 : 10;          // +5 for logging, +5 for following your rules, -10 for breaking them
+      if (t.note && t.shot) xp += 10;            // quest: notes + screenshot
+      if (t.check) xp += 5;                      // quest: ran the checklist first
+    });
     Object.keys(dp).forEach(function (d) { if (dp[d] > 0) xp += 10; });
-    S.payouts.forEach(function (p) { xp += Math.round((+p.amount || 0) / 10); });
+    xp += S.payouts.length * 100;
     xp += S.skips.length * 15;
     Object.keys(S.days).forEach(function (k) { if (S.days[k].ig || S.days[k].tt) xp += 20; });
+    xp = Math.max(0, xp);
     var lvl = Math.floor(Math.sqrt(xp / 60)) + 1, cur = 60 * Math.pow(lvl - 1, 2), nxt = 60 * Math.pow(lvl, 2);
-    $('lvlBadge').textContent = 'LVL ' + lvl;
+    S.xp = xp; S.level = lvl; applyUnlockSolids();
+    $('lvlBadge').textContent = 'LVL ' + lvl + ' \u00b7 ' + rankOf(lvl).toUpperCase();
+    var prev = null; try { prev = +localStorage.getItem('farmLvl') || null; } catch (e) {}
+    if (S.db && S.trades.length && prev && lvl > prev) {
+      var got = UNLOCKS.filter(function (u) { return u[0] > prev && u[0] <= lvl; });
+      toast('LVL ' + lvl + ' \ud83c\udf89 ' + (got.length ? 'Unlocked: ' + got.map(function (u) { return u[1] + ' ' + u[2]; }).join(', ') : 'Keep stacking.'));
+      confetti(got.length ? 180 : 90);
+    }
+    if (S.db && S.trades.length) { try { localStorage.setItem('farmLvl', String(lvl)); } catch (e) {} }
     $('xpFill').style.width = ((xp - cur) / (nxt - cur) * 100).toFixed(1) + '%';
     $('xpText').textContent = xp.toLocaleString('en-US') + ' XP · ' + (nxt - xp).toLocaleString('en-US') + ' to LVL ' + (lvl + 1);
   }
