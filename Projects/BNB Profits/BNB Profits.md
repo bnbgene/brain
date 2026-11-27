@@ -31,6 +31,7 @@ Gene (@bnbgene) trades NQ futures full time. BNBProfits is the trading brand:
 - 2026-10-16: Added 24 controversial, relatable and business video ideas. Morning routine mixes in non-trading takes.
 
 ## Next Steps
+- [ ] Send the TPT payout certificates/screenshots for Nov 24 ($5,375.20) and Nov 25 ($1,780) to the BNB PROFITS chat
 - [ ] Monday 6:45 AM MST: check the first automatic daily bias post went out (Friday's didn't)
 - [ ] Set your payout goal number (Payouts tab) and tap "Match my real balance" on the TPT card
 - [ ] Text your leads: **Damond and Tai** applied and are waiting
