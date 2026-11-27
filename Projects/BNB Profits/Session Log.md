@@ -3,6 +3,10 @@
 Newest entries at the top. Back to [[BNB Profits]].
 
 ---
+## 2026-11-26 💰
+**Payouts:** $5,375.20 (Nov 24) and $1,780 (Nov 25).
+**Waiting on you:** the BNB PROFITS chat needs the TPT payout certificates or dashboard screenshots for both payouts.
+
 ## 2026-11-25
 **Did:** Payouts tab counts every payout this year (6 so far) and shows an **all-time total of $19,155.20**. Payouts can be left out of the yearly goal. Bot skips the bias and live ping on **Fri 11/27** (Thanksgiving break).
 
