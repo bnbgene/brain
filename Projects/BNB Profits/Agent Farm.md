@@ -32,6 +32,7 @@ Your BNB Profits command center, built as a pixel-island game. Each AI "agent" h
 - When paid: log the payout.
 
 ## Changes
+- 2026-11-27: Levels (XP, ranks, unlocks) and open-world features: car, missions, heat, minimap, phone, cash counter, radio, safehouse.
 - 2026-11-25: Payouts tab counts all payouts this year + all-time total; payouts can be excluded from the yearly goal.
 - 2026-11-24: PRO+ account card (frozen profits, past accounts, editable start/drawdown); hour-long payout party; payouts private by default; Log a trade under the calendar. Pinned to the Claude sidebar.
 - 2026-11-13 (later): Edit trades, screenshot uploads, recap posts right after you log a trade, agent status lights, commands card; island gets status beacons, paper planes on posts, LIVE sign, command board.
