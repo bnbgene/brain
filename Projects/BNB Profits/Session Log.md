@@ -3,6 +3,9 @@
 Newest entries at the top. Back to [[BNB Profits]].
 
 ---
+## 2026-11-27
+**Did:** Farm went open-world: XP, ranks and level unlocks, plus a car, missions, heat, minimap, phone, cash counter, radio and safehouse. All live (refresh the farm).
+
 ## 2026-11-26 💰
 **Payouts:** $5,375.20 (Nov 24) and $1,780 (Nov 25).
 **Waiting on you:** the BNB PROFITS chat needs the TPT payout certificates or dashboard screenshots for both payouts.
